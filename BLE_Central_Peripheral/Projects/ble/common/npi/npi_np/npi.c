@@ -132,8 +132,6 @@ void NPI_InitTransportEx( npiCBack_t npiCBack, uint8 baudrate)
   // configure UART
   uartConfig.configured           = TRUE;
   uartConfig.baudRate             = baudrate;//NPI_UART_BR;
-  //uartConfig.parity              = parity;
-  //uartConfig.stopbit              = stopbit;
   uartConfig.flowControl          = NPI_UART_FC;
   uartConfig.flowControlThreshold = NPI_UART_FC_THRESHOLD;
   uartConfig.rx.maxBufSize        = NPI_UART_RX_BUF_SIZE;

@@ -66,6 +66,7 @@
 #include "gapbondmgr.h"
 #include "simpleGATTprofile.h"
 #include "simpleBLECentral.h"
+#include "simpleBLEUart.h"
 
 /*********************************************************************
  * MACROS
@@ -275,7 +276,7 @@ static const gapBondCBs_t simpleBLEBondCB =
 void SimpleBLECentral_Init( uint8 task_id )
 {
   simpleBLETaskId = task_id;
-
+  ble_uart_init();
   // Setup Central Profile
   {
     uint8 scanRes = DEFAULT_MAX_SCAN_RES;

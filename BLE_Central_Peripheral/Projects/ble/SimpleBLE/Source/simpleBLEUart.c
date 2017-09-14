@@ -7,8 +7,9 @@
 
 void ble_uart_init()
 {
-    NPI_InitTransportEx(NpiSerialCallback, HAL_UART_BR_115200);
-    NPI_PrintString("UART Init Done\r\n");
+    NPI_InitTransport(NpiSerialCallback);
+    NPI_WriteTransport("SimpleBLETest_Init\r\n", 20);
+    NPI_PrintString("UART Init Done");
 }
 
 // 串口回调函数， 下面把该回调函数里实现的功能讲解一下
@@ -91,23 +92,23 @@ static void ble_command_parse(uint8 *buffer, uint8 numBytes)
         }
         else
         {
-            command[commend_len-2] = buffer[i];
+            command[command_len-2] = buffer[i];
             command_len++;
         }
     }
     if (command_len == 4) {
-        ble_process_command(uint8 *buffer);
+        ble_process_command(command);
         osal_memset(command, 0, 2);
     }
 }
 
 static void ble_process_command(uint8 *buffer)
 {
-    switch buffer[0]
+    switch (buffer[0])
     {
         case 0x01:
         //LED CASE
-        HalLedSet(buffer[1] >> 4, buffer[1]&0xF)
+        HalLedSet(buffer[1] >> 4, buffer[1]&0xF);
         break;
         default:
         break;

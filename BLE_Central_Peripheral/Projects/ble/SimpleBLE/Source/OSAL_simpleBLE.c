@@ -20,7 +20,6 @@
  
  void osalInitTasks(void)
  {
-    ble_uart_init();
     if (1) {
         peripheral_osalInitTasks();
     } else {

@@ -33,10 +33,13 @@
 
 #include "simpleBLEPeripheral.h"
 
+#include "simpleBLEUart.h"
+
 #if defined FEATURE_OAD
   #include "oad.h"
   #include "oad_target.h"
 #endif
+
 
 /*********************************************************************
  * MACROS
@@ -183,7 +186,7 @@ static uint8 advertData[] =
   0x00, 0x00, //Major. index
   0x00, 0x00, //Minor. battery value.
   0xCD
-}
+};
 
 // GAP GATT Attributes
 static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = "DarrenBLEPeri";
@@ -251,7 +254,7 @@ static simpleProfileCBs_t simpleBLEPeripheral_SimpleProfileCBs =
 void SimpleBLEPeripheral_Init( uint8 task_id )
 {
   simpleBLEPeripheral_TaskID = task_id;
-
+  ble_uart_init();
   // Setup the GAP
   VOID GAP_SetParamValue( TGAP_CONN_PAUSE_PERIPHERAL, DEFAULT_CONN_PAUSE_PERIPHERAL );
   
@@ -260,11 +263,14 @@ void SimpleBLEPeripheral_Init( uint8 task_id )
     // For other hardware platforms, device starts advertising upon initialization
     uint8 initial_advertising_enable = TRUE;
 
+    uint8 advType = GAP_ADTYPE_ADV_NONCONN_IND;   // use non-connectable advertisements
+    
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
     // until the enabler is set back to TRUE
     uint16 gapRole_AdvertOffTime = 0;
-
+    GAPRole_SetParameter( GAPROLE_ADV_EVENT_TYPE, sizeof( uint8 ), &advType );
+    
     uint8 enable_update_request = DEFAULT_ENABLE_UPDATE_REQUEST;
     uint16 desired_min_interval = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
     uint16 desired_max_interval = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
@@ -277,7 +283,7 @@ void SimpleBLEPeripheral_Init( uint8 task_id )
 
     GAPRole_SetParameter( GAPROLE_SCAN_RSP_DATA, sizeof ( scanRspData ), scanRspData );
     GAPRole_SetParameter( GAPROLE_ADVERT_DATA, sizeof( advertData ), advertData );
-
+    
     GAPRole_SetParameter( GAPROLE_PARAM_UPDATE_ENABLE, sizeof( uint8 ), &enable_update_request );
     GAPRole_SetParameter( GAPROLE_MIN_CONN_INTERVAL, sizeof( uint16 ), &desired_min_interval );
     GAPRole_SetParameter( GAPROLE_MAX_CONN_INTERVAL, sizeof( uint16 ), &desired_max_interval );
