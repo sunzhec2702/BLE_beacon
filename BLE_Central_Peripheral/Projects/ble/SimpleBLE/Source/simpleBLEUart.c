@@ -1,8 +1,15 @@
 #include "simpleBLEUart.h"
 #include "npi.h"
 #include "hal_uart.h"
+#include "hal_led.h"
 
 #define BLE_UART_BR HAL_UART_BR_115200
+
+void ble_uart_init()
+{
+    NPI_InitTransportEx(NpiSerialCallback, HAL_UART_BR_115200);
+    NPI_PrintString("UART Init Done\r\n");
+}
 
 // 串口回调函数， 下面把该回调函数里实现的功能讲解一下
 /*
@@ -37,7 +44,10 @@ static void NpiSerialCallback(uint8 port, uint8 events)
 
                 //把收到的数据发送到串口-实现回环
                 NPI_WriteTransport(buffer, numBytes);
-
+                
+                // Process the command.
+                ble_command_parse(buffer, numBytes);
+                
                 //释放申请的缓冲区
                 osal_mem_free(buffer);
             }
@@ -45,7 +55,61 @@ static void NpiSerialCallback(uint8 port, uint8 events)
     }
 }
 
-void ble_uart_init()
+/*
+  0xDE
+  0xAD // Start flag.
+  0x01 // TYPE: LED
+  0x31 // LED1/LED2/LED3 HAL_LED_MODE_ON
+  */  // Total 4 bytes. StartFlag, TYPE, VALUE
+static uint8 command[2];
+static uint8 command_len;
+static void ble_command_parse(uint8 *buffer, uint8 numBytes)
 {
-    NPI_InitTransportEx(NpiSerialCallback, HAL_UART_BR_115200);
+    uint8 i;
+    for (i = 0; i < numBytes; i++)
+    {
+        if (command_len < 2)
+        {
+            switch(buffer[i])
+            {
+                case 0xDE:
+                if (command_len == 0)
+                    command_len++;
+                else
+                    command_len = 0;
+                break;
+                case 0xAD:
+                if (command_len == 1)
+                    command_len++;
+                else
+                    command_len = 0;
+                break;
+                default:
+                break;
+            }
+            continue;
+        }
+        else
+        {
+            command[commend_len-2] = buffer[i];
+            command_len++;
+        }
+    }
+    if (command_len == 4) {
+        ble_process_command(uint8 *buffer);
+        osal_memset(command, 0, 2);
+    }
+}
+
+static void ble_process_command(uint8 *buffer)
+{
+    switch buffer[0]
+    {
+        case 0x01:
+        //LED CASE
+        HalLedSet(buffer[1] >> 4, buffer[1]&0xF)
+        break;
+        default:
+        break;
+    }
 }

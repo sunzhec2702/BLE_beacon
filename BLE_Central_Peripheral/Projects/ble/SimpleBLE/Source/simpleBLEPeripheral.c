@@ -1,51 +1,3 @@
-/******************************************************************************
-
- @file  simpleBLEPeripheral.c
-
- @brief This file contains the Simple BLE Peripheral sample application for use
-        with the CC2540 Bluetooth Low Energy Protocol Stack.
-
- Group: WCS, BTS
- Target Device: CC2540, CC2541
-
- ******************************************************************************
- 
- Copyright (c) 2010-2016, Texas Instruments Incorporated
- All rights reserved.
-
- IMPORTANT: Your use of this Software is limited to those specific rights
- granted under the terms of a software license agreement between the user
- who downloaded the software, his/her employer (which must be your employer)
- and Texas Instruments Incorporated (the "License"). You may not use this
- Software unless you agree to abide by the terms of the License. The License
- limits your use, and you acknowledge, that the Software may not be modified,
- copied or distributed unless embedded on a Texas Instruments microcontroller
- or used solely and exclusively in conjunction with a Texas Instruments radio
- frequency transceiver, which is integrated into your product. Other than for
- the foregoing purpose, you may not use, reproduce, copy, prepare derivative
- works of, modify, distribute, perform, display or sell this Software and/or
- its documentation for any purpose.
-
- YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
- INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
- NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
- TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
- NEGLIGENCE, STRICT LIABILITY, CONTRIBUTION, BREACH OF WARRANTY, OR OTHER
- LEGAL EQUITABLE THEORY ANY DIRECT OR INDIRECT DAMAGES OR EXPENSES
- INCLUDING BUT NOT LIMITED TO ANY INCIDENTAL, SPECIAL, INDIRECT, PUNITIVE
- OR CONSEQUENTIAL DAMAGES, LOST PROFITS OR LOST DATA, COST OF PROCUREMENT
- OF SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
- (INCLUDING BUT NOT LIMITED TO ANY DEFENSE THEREOF), OR OTHER SIMILAR COSTS.
-
- Should you have any questions regarding your right to use this Software,
- contact Texas Instruments Incorporated at www.TI.com.
-
- ******************************************************************************
- Release Name: ble_sdk_1.4.2.2
- Release Date: 2016-06-09 06:57:10
- *****************************************************************************/
-
 /*********************************************************************
  * INCLUDES
  */
@@ -69,9 +21,11 @@
 #include "devinfoservice.h"
 #include "simpleGATTprofile.h"
 
+#if 0
 #if defined( CC2540_MINIDK )
   #include "simplekeys.h"
 #endif
+#endif 
 
 #include "peripheral.h"
 
@@ -97,6 +51,7 @@
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define DEFAULT_ADVERTISING_INTERVAL          160
+#define NORMAL_ADVERTISING_INTERVAL           8000 // 5s
 
 // Limited discoverable mode advertises for 30.72s, and then stops
 // General discoverable mode advertises indefinitely
@@ -160,28 +115,17 @@ static gaprole_States_t gapProfileState = GAPROLE_INIT;
 static uint8 scanRspData[] =
 {
   // complete name
-  0x14,   // length of this data
+  0x0A,   // length of this data
   GAP_ADTYPE_LOCAL_NAME_COMPLETE,
-  0x53,   // 'S'
-  0x69,   // 'i'
-  0x6d,   // 'm'
-  0x70,   // 'p'
-  0x6c,   // 'l'
-  0x65,   // 'e'
-  0x42,   // 'B'
-  0x4c,   // 'L'
-  0x45,   // 'E'
-  0x50,   // 'P'
-  0x65,   // 'e'
-  0x72,   // 'r'
-  0x69,   // 'i'
-  0x70,   // 'p'
-  0x68,   // 'h'
-  0x65,   // 'e'
-  0x72,   // 'r'
-  0x61,   // 'a'
-  0x6c,   // 'l'
-
+  0x44,
+  0x61,
+  0x72,
+  0x72,
+  0x65,
+  0x6E,
+  0x42,
+  0x4C,
+  0x45,
   // connection interval range
   0x05,   // length of this data
   GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE,
@@ -196,6 +140,7 @@ static uint8 scanRspData[] =
   0       // 0dBm
 };
 
+#if 0
 // GAP - Advertisement data (max size = 31 bytes, though this is
 // best kept short to conserve power while advertisting)
 static uint8 advertData[] =
@@ -215,9 +160,33 @@ static uint8 advertData[] =
   HI_UINT16( SIMPLEPROFILE_SERV_UUID ),
 
 };
+#endif
+
+static uint8 advertData[] =
+{
+  // Flags; this sets the device to use limited discoverable
+  // mode (advertises for 30 seconds at a time) instead of general
+  // discoverable mode (advertises indefinitely)
+  0x02,   // length of this data
+  GAP_ADTYPE_FLAGS,
+  GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
+
+  // three-byte broadcast of the data "1 2 3"
+  0x1A,   // length of this data including the data type byte
+  GAP_ADTYPE_MANUFACTURER_SPECIFIC,      // manufacturer specific advertisement data type
+  0x4C,
+  0x00,
+  0x02,
+  0x15,
+  0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48, 0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7,
+  0x10, 0x96, 0xE0,
+  0x00, 0x00, //Major. index
+  0x00, 0x00, //Minor. battery value.
+  0xCD
+}
 
 // GAP GATT Attributes
-static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = "Simple BLE Peripheral";
+static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = "DarrenBLEPeri";
 
 /*********************************************************************
  * LOCAL FUNCTIONS
@@ -288,13 +257,8 @@ void SimpleBLEPeripheral_Init( uint8 task_id )
   
   // Setup the GAP Peripheral Role Profile
   {
-    #if defined( CC2540_MINIDK )
-      // For the CC2540DK-MINI keyfob, device doesn't start advertising until button is pressed
-      uint8 initial_advertising_enable = FALSE;
-    #else
-      // For other hardware platforms, device starts advertising upon initialization
-      uint8 initial_advertising_enable = TRUE;
-    #endif
+    // For other hardware platforms, device starts advertising upon initialization
+    uint8 initial_advertising_enable = TRUE;
 
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
@@ -372,34 +336,10 @@ void SimpleBLEPeripheral_Init( uint8 task_id )
   }
 
 
-#if defined( CC2540_MINIDK )
-
-  SK_AddService( GATT_ALL_SERVICES ); // Simple Keys Profile
+  // SK_AddService( GATT_ALL_SERVICES ); // Simple Keys Profile// We don't need to SimpleKey Service.
 
   // Register for all key events - This app will handle all key events
   RegisterForKeys( simpleBLEPeripheral_TaskID );
-
-  // makes sure LEDs are off
-  HalLedSet( (HAL_LED_1 | HAL_LED_2), HAL_LED_MODE_OFF );
-
-  // For keyfob board set GPIO pins into a power-optimized state
-  // Note that there is still some leakage current from the buzzer,
-  // accelerometer, LEDs, and buttons on the PCB.
-
-  P0SEL = 0; // Configure Port 0 as GPIO
-  P1SEL = 0; // Configure Port 1 as GPIO
-  P2SEL = 0; // Configure Port 2 as GPIO
-
-  P0DIR = 0xFC; // Port 0 pins P0.0 and P0.1 as input (buttons),
-                // all others (P0.2-P0.7) as output
-  P1DIR = 0xFF; // All port 1 pins (P1.0-P1.7) as output
-  P2DIR = 0x1F; // All port 1 pins (P2.0-P2.4) as output
-
-  P0 = 0x03; // All pins on port 0 to low except for P0.0 and P0.1 (buttons)
-  P1 = 0;   // All pins on port 1 to low
-  P2 = 0;   // All pins on port 2 to low
-
-#endif // #if defined( CC2540_MINIDK )
 
 #if (defined HAL_LCD) && (HAL_LCD == TRUE)
 
@@ -478,6 +418,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
     VOID GAPBondMgr_Register( &simpleBLEPeripheral_BondMgrCBs );
 
     // Set timer for first periodic event
+    // Need to figure out do we need this.
     osal_start_timerEx( simpleBLEPeripheral_TaskID, SBP_PERIODIC_EVT, SBP_PERIODIC_EVT_PERIOD );
 
     return ( events ^ SBP_START_DEVICE_EVT );
