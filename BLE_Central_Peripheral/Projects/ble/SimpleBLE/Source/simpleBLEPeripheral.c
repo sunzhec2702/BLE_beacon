@@ -54,7 +54,7 @@
 #define SBP_PERIODIC_PER_HOUR_PERIOD              3600000 // 1 hour
 #define SBP_PERIODIC_BUTTON_LED_PERIOD            100
 #define BUTTON_LED_TOGGLE_COUNT                   4
-#define SBP_PERIODIC_ADVERT_CHG_PERIOD            5000 // 5s
+#define SBP_PERIODIC_ADVERT_CHG_PERIOD            10000 // 10s
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define DEFAULT_ADVERTISING_INTERVAL          160  // 100ms
@@ -472,12 +472,17 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
     return (events ^ SBP_PERIODIC_BUTTON_LED_EVT);
   }
 
-  if ( events & SBP_PERIODIC_CHN_ADVERT_EVT )
+  if ( events & SBP_PERIODIC_CHN_ADVERT_EVT_PRESS )
   {
-    change_advertise_data(FALSE);
-    return (events ^ SBP_PERIODIC_CHN_ADVERT_EVT);
+    change_advertise_data(TRUE);
+    return (events ^ SBP_PERIODIC_CHN_ADVERT_EVT_PRESS);
   }
   
+  if ( events & SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE )
+  {
+    change_advertise_data(FALSE);
+    return (events ^ SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE);
+  }
 
   // Discard unknown events
   return 0;
@@ -534,8 +539,6 @@ static void simpleBLEPeripheral_HandleKeys( uint8 shift, uint8 keys )
       osal_set_event( simpleBLEPeripheral_TaskID, SBP_PERIODIC_BUTTON_LED_EVT ); // Start the led event immediatly.
     }
     change_advertise_data(TRUE);
-    // TODO: Need to check what is going on when start a timer which is running already.
-    // osal_start_timerEx(simpleBLEPeripheral_TaskID, SBP_PERIODIC_CHN_ADVERT_EVT, SBP_PERIODIC_ADVERT_CHG_PERIOD);
   }
 
   #if 0
@@ -893,43 +896,60 @@ char *bdAddr2Str( uint8 *pAddr )
 }
 #endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
 
+#define ENABLE_DISABLE_PERIOD 1000
+static target_interval = NORMAL_ADVERTISING_INTERVAL;
 static void change_advertise_data(uint8 key_pressed)
 {
+  uint8 initial_advertising_enable;
+  GAPRole_GetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
   if (key_pressed == TRUE)
   {
     NPI_PrintString("KEY is PRESSED\r\n");
-    // Set advertising interval
+    if (initial_advertising_enable == TRUE)
     {
-      uint8 initial_advertising_enable = FALSE;
+      initial_advertising_enable = FALSE;
       GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
-      uint16 advInt = DEFAULT_ADVERTISING_INTERVAL;
-      GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
-      GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
-      GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
-      GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
-      initial_advertising_enable = TRUE;
-      GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
-      uint16 gapRole_AdvertOffTime = 0; 
-      GAPRole_SetParameter( GAPROLE_ADVERT_OFF_TIME, sizeof( uint16 ), &gapRole_AdvertOffTime );
+      osal_start_timerEx(simpleBLEPeripheral_TaskID, SBP_PERIODIC_CHN_ADVERT_EVT_PRESS, ENABLE_DISABLE_PERIOD); // 1s for test.
     }
-    advertData[27] |= 0x80;
+    else
+    {
+      advertData[27] |= 0x80;
+      // Set advertising interval
+      {
+        target_interval = DEFAULT_ADVERTISING_INTERVAL;
+        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
+        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
+        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
+        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
+        initial_advertising_enable = TRUE;
+        GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
+      }
+      osal_start_timerEx(simpleBLEPeripheral_TaskID, SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE, SBP_PERIODIC_ADVERT_CHG_PERIOD); // 1s for test.
+    }
   }
   else
   {
-    NPI_PrintString("KEY is RELEASED\r\n");    
-    // Set advertising interval
+    NPI_PrintString("KEY is RELEASED\r\n");
+    if (initial_advertising_enable == TRUE)
     {
-      uint8 initial_advertising_enable = FALSE;
+      initial_advertising_enable = FALSE;
       GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
-      initial_advertising_enable = TRUE;
-      GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
-      uint16 advInt = NORMAL_ADVERTISING_INTERVAL;
-      GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
-      GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
-      GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
-      GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
+      osal_start_timerEx(simpleBLEPeripheral_TaskID, SBP_PERIODIC_CHN_ADVERT_EVT_PRESS, ENABLE_DISABLE_PERIOD); // 1s for test.
     }
-    advertData[27] &= 0x7F;
+    else
+    {
+      advertData[27] &= 0x7F;
+      // Set advertising interval
+      {
+        target_interval = NORMAL_ADVERTISING_INTERVAL;
+        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
+        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
+        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
+        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
+        initial_advertising_enable = TRUE;
+        GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
+      }
+    }
   }
 }
 

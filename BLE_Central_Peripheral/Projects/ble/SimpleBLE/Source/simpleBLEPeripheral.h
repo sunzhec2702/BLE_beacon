@@ -68,7 +68,8 @@ extern "C"
 #define SBP_PERIODIC_EVT                                  0x0002
 #define SBP_PERIODIC_BUTTON_LED_EVT                       0x0004
 #define SBP_PERIODIC_PER_HOUR_EVT                         0x0008
-#define SBP_PERIODIC_CHN_ADVERT_EVT                       0x0010
+#define SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE               0x0010
+#define SBP_PERIODIC_CHN_ADVERT_EVT_PRESS                 0x0020
 
 /*********************************************************************
  * MACROS
