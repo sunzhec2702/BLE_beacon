@@ -27,7 +27,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -180,7 +180,7 @@ enum
 static uint8 simpleBLETaskId;
 
 // GAP GATT Attributes
-static const uint8 simpleBLEDeviceName[GAP_DEVICE_NAME_LEN] = "Simple BLE Central";
+static const uint8 simpleBLEDeviceName[GAP_DEVICE_NAME_LEN] = "DarrenCentral";
 
 // Number of scan results and scan result index
 static uint8 simpleBLEScanRes;
@@ -316,7 +316,7 @@ void SimpleBLECentral_Init( uint8 task_id )
   RegisterForKeys( simpleBLETaskId );
   
   // makes sure LEDs are off
-  HalLedSet( (HAL_LED_1 | HAL_LED_2), HAL_LED_MODE_OFF );
+  HalLedSet( (HAL_LED_1 | HAL_LED_2 | HAL_LED_3), HAL_LED_MODE_OFF );
   
   // Setup a delayed profile startup
   osal_set_event( simpleBLETaskId, START_DEVICE_EVT );
@@ -679,6 +679,7 @@ static uint8 simpleBLECentralEventCB( gapCentralRoleEvent_t *pEvent )
 
     case GAP_DEVICE_INFO_EVENT:
       {
+        // Darren: this is for advertising??????
         // if filtering device discovery results based on service UUID
         if ( DEFAULT_DEV_DISC_BY_SVC_UUID == TRUE )
         {
