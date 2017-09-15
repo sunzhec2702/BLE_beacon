@@ -54,11 +54,11 @@
 #define SBP_PERIODIC_PER_HOUR_PERIOD              3600000 // 1 hour
 #define SBP_PERIODIC_BUTTON_LED_PERIOD            100
 #define BUTTON_LED_TOGGLE_COUNT                   4
-#define SBP_PERIODIC_ADVERT_CHG_PERIOD            10000 // 10s
+#define SBP_PERIODIC_ADVERT_CHG_PERIOD            5000 // 5s
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define DEFAULT_ADVERTISING_INTERVAL          160  // 100ms
-#define NORMAL_ADVERTISING_INTERVAL           4800 // 3s
+#define NORMAL_ADVERTISING_INTERVAL           3200 // 2s
 
 // Limited discoverable mode advertises for 30.72s, and then stops
 // General discoverable mode advertises indefinitely
@@ -897,11 +897,11 @@ char *bdAddr2Str( uint8 *pAddr )
 #endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
 
 #define ENABLE_DISABLE_PERIOD 1000
-static target_interval = NORMAL_ADVERTISING_INTERVAL;
+static uint16 target_interval = NORMAL_ADVERTISING_INTERVAL;
 static void change_advertise_data(uint8 key_pressed)
 {
   uint8 initial_advertising_enable;
-  GAPRole_GetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
+  GAPRole_GetParameter( GAPROLE_ADVERT_ENABLED, &initial_advertising_enable );
   if (key_pressed == TRUE)
   {
     NPI_PrintString("KEY is PRESSED\r\n");
@@ -917,10 +917,10 @@ static void change_advertise_data(uint8 key_pressed)
       // Set advertising interval
       {
         target_interval = DEFAULT_ADVERTISING_INTERVAL;
-        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
-        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
-        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
-        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
+        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, target_interval );
+        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, target_interval );
+        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, target_interval );
+        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, target_interval );
         initial_advertising_enable = TRUE;
         GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
       }
@@ -934,7 +934,7 @@ static void change_advertise_data(uint8 key_pressed)
     {
       initial_advertising_enable = FALSE;
       GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
-      osal_start_timerEx(simpleBLEPeripheral_TaskID, SBP_PERIODIC_CHN_ADVERT_EVT_PRESS, ENABLE_DISABLE_PERIOD); // 1s for test.
+      osal_start_timerEx(simpleBLEPeripheral_TaskID, SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE, ENABLE_DISABLE_PERIOD); // 1s for test.
     }
     else
     {
@@ -942,10 +942,10 @@ static void change_advertise_data(uint8 key_pressed)
       // Set advertising interval
       {
         target_interval = NORMAL_ADVERTISING_INTERVAL;
-        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
-        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
-        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
-        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
+        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, target_interval );
+        GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, target_interval );
+        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, target_interval );
+        GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, target_interval );
         initial_advertising_enable = TRUE;
         GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
       }
