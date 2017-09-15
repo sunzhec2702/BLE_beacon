@@ -50,11 +50,15 @@
  */
 
 // How often to perform periodic event
-#define SBP_PERIODIC_EVT_PERIOD                   5000
+#define SBP_PERIODIC_EVT_PERIOD                   1000 // 1s
+#define SBP_PERIODIC_PER_HOUR_PERIOD              3600000 // 1 hour
+#define SBP_PERIODIC_BUTTON_LED_PERIOD            100
+#define BUTTON_LED_TOGGLE_COUNT                   4
+#define SBP_PERIODIC_ADVERT_CHG_PERIOD            5000 // 5s
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
-#define DEFAULT_ADVERTISING_INTERVAL          160
-#define NORMAL_ADVERTISING_INTERVAL           8000 // 5s
+#define DEFAULT_ADVERTISING_INTERVAL          160  // 100ms
+#define NORMAL_ADVERTISING_INTERVAL           4800 // 3s
 
 // Limited discoverable mode advertises for 30.72s, and then stops
 // General discoverable mode advertises indefinitely
@@ -167,13 +171,9 @@ static uint8 advertData[] =
 
 static uint8 advertData[] =
 {
-  // Flags; this sets the device to use limited discoverable
-  // mode (advertises for 30 seconds at a time) instead of general
-  // discoverable mode (advertises indefinitely)
   0x02,   // length of this data
   GAP_ADTYPE_FLAGS,
   GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
-
   // three-byte broadcast of the data "1 2 3"
   0x1A,   // length of this data including the data type byte
   GAP_ADTYPE_MANUFACTURER_SPECIFIC,      // manufacturer specific advertisement data type
@@ -183,7 +183,7 @@ static uint8 advertData[] =
   0x15,
   0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48, 0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7,
   0x10, 0x96, 0xE0,
-  0x00, 0x00, //Major. index
+  0x00, 0x00, //Major. index [25]~[26]
   0x00, 0x00, //Minor. battery value.
   0xCD
 };
@@ -191,18 +191,20 @@ static uint8 advertData[] =
 // GAP GATT Attributes
 static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = "DarrenBLEPeri";
 
+// key_led_count
+static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
 static void simpleBLEPeripheral_ProcessOSALMsg( osal_event_hdr_t *pMsg );
 static void simpleBLEPeripheral_ProcessGATTMsg( gattMsgEvent_t *pMsg );
 static void peripheralStateNotificationCB( gaprole_States_t newState );
-static void performPeriodicTask( void );
+static void performPeriodicTask(uint16 event_id);
 static void simpleProfileChangeCB( uint8 paramID );
 
-#if defined( CC2540_MINIDK )
+
 static void simpleBLEPeripheral_HandleKeys( uint8 shift, uint8 keys );
-#endif
+static void change_advertise_data(uint8 key_pressed);
 
 #if (defined HAL_LCD) && (HAL_LCD == TRUE)
 static char *bdAddr2Str ( uint8 *pAddr );
@@ -296,7 +298,7 @@ void SimpleBLEPeripheral_Init( uint8 task_id )
 
   // Set advertising interval
   {
-    uint16 advInt = DEFAULT_ADVERTISING_INTERVAL;
+    uint16 advInt = NORMAL_ADVERTISING_INTERVAL;
 
     GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
     GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
@@ -369,13 +371,6 @@ void SimpleBLEPeripheral_Init( uint8 task_id )
   // is halted
   HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT );
 
-#if defined ( DC_DC_P0_7 )
-
-  // Enable stack to toggle bypass control on TPS62730 (DC/DC converter)
-  HCI_EXT_MapPmIoPortCmd( HCI_EXT_PM_IO_PORT_P0, HCI_EXT_PM_IO_PORT_PIN7 );
-
-#endif // defined ( DC_DC_P0_7 )
-
   // Setup a delayed profile startup
   osal_set_event( simpleBLEPeripheral_TaskID, SBP_START_DEVICE_EVT );
 
@@ -426,6 +421,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
     // Set timer for first periodic event
     // Need to figure out do we need this.
     osal_start_timerEx( simpleBLEPeripheral_TaskID, SBP_PERIODIC_EVT, SBP_PERIODIC_EVT_PERIOD );
+    osal_start_timerEx( simpleBLEPeripheral_TaskID, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD );
 
     return ( events ^ SBP_START_DEVICE_EVT );
   }
@@ -439,10 +435,49 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
     }
 
     // Perform periodic application task
-    performPeriodicTask();
+    performPeriodicTask(SBP_PERIODIC_EVT);
 
     return (events ^ SBP_PERIODIC_EVT);
   }
+
+  if ( events & SBP_PERIODIC_PER_HOUR_EVT )
+  {
+    // Restart timer
+    if ( SBP_PERIODIC_EVT_PERIOD )
+    {
+      osal_start_timerEx( simpleBLEPeripheral_TaskID, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD );
+    }
+
+    // Perform periodic application task
+    performPeriodicTask(SBP_PERIODIC_PER_HOUR_EVT);
+
+    return (events ^ SBP_PERIODIC_PER_HOUR_EVT);
+  }
+
+  
+  if ( events & SBP_PERIODIC_BUTTON_LED_EVT )
+  {
+    // Restart timer
+    if ( key_led_count > 0 )
+    {
+      osal_start_timerEx( simpleBLEPeripheral_TaskID, SBP_PERIODIC_BUTTON_LED_EVT, SBP_PERIODIC_BUTTON_LED_PERIOD );
+      // Perform periodic application task
+      performPeriodicTask(SBP_PERIODIC_BUTTON_LED_EVT);
+    } 
+    else if (key_led_count == 0)
+    {
+      key_led_count = BUTTON_LED_TOGGLE_COUNT;
+    }
+
+    return (events ^ SBP_PERIODIC_BUTTON_LED_EVT);
+  }
+
+  if ( events & SBP_PERIODIC_CHN_ADVERT_EVT )
+  {
+    change_advertise_data(FALSE);
+    return (events ^ SBP_PERIODIC_CHN_ADVERT_EVT);
+  }
+  
 
   // Discard unknown events
   return 0;
@@ -461,13 +496,11 @@ static void simpleBLEPeripheral_ProcessOSALMsg( osal_event_hdr_t *pMsg )
 {
   switch ( pMsg->event )
   {     
-  #if defined( CC2540_MINIDK )
+
     case KEY_CHANGE:
       simpleBLEPeripheral_HandleKeys( ((keyChange_t *)pMsg)->state, 
                                       ((keyChange_t *)pMsg)->keys );
       break;
-  #endif // #if defined( CC2540_MINIDK )
- 
     case GATT_MSG_EVENT:
       // Process GATT message
       simpleBLEPeripheral_ProcessGATTMsg( (gattMsgEvent_t *)pMsg );
@@ -479,7 +512,6 @@ static void simpleBLEPeripheral_ProcessOSALMsg( osal_event_hdr_t *pMsg )
   }
 }
 
-#if defined( CC2540_MINIDK )
 /*********************************************************************
  * @fn      simpleBLEPeripheral_HandleKeys
  *
@@ -492,17 +524,21 @@ static void simpleBLEPeripheral_ProcessOSALMsg( osal_event_hdr_t *pMsg )
  *
  * @return  none
  */
+
 static void simpleBLEPeripheral_HandleKeys( uint8 shift, uint8 keys )
 {
-  uint8 SK_Keys = 0;
-
   VOID shift;  // Intentionally unreferenced parameter
-
   if ( keys & HAL_KEY_SW_1 )
   {
-    SK_Keys |= SK_KEY_LEFT;
+    if (key_led_count == BUTTON_LED_TOGGLE_COUNT) {
+      osal_set_event( simpleBLEPeripheral_TaskID, SBP_PERIODIC_BUTTON_LED_EVT ); // Start the led event immediatly.
+    }
+    change_advertise_data(TRUE);
+    // TODO: Need to check what is going on when start a timer which is running already.
+    // osal_start_timerEx(simpleBLEPeripheral_TaskID, SBP_PERIODIC_CHN_ADVERT_EVT, SBP_PERIODIC_ADVERT_CHG_PERIOD);
   }
 
+  #if 0
   if ( keys & HAL_KEY_SW_2 )
   {
 
@@ -541,8 +577,8 @@ static void simpleBLEPeripheral_HandleKeys( uint8 shift, uint8 keys )
   // Set the value of the keys state to the Simple Keys Profile;
   // This will send out a notification of the keys state if enabled
   SK_SetParameter( SK_KEY_ATTR, sizeof ( uint8 ), &SK_Keys );
+  #endif
 }
-#endif // #if defined( CC2540_MINIDK )
 
 /*********************************************************************
  * @fn      simpleBLEPeripheral_ProcessGATTMsg
@@ -742,11 +778,32 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
  *
  * @return  none
  */
-static void performPeriodicTask( void )
+static void performPeriodicTask(uint16 event_id)
 {
+  switch(event_id)
+  {
+    case SBP_PERIODIC_EVT:
+    uint16 index = (advertData[25] << 8) + advertData[26];
+    index++;
+    advertData[25] = index >> 8;
+    advertData[26] = index & 0x00FF;
+    GAPRole_SetParameter( GAPROLE_ADVERT_DATA, sizeof( advertData ), advertData );
+    break;
+    case SBP_PERIODIC_PER_HOUR_EVT:
+    NPI_PrintString("This is a per hour event\r\n");
+    break;
+    case SBP_PERIODIC_BUTTON_LED_EVT:
+    HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
+    key_led_count--;
+    break;
+    default:
+    break;
+  }
+
+
+  #if 0
   uint8 valueToCopy;
   uint8 stat;
-
   // Call to retrieve the value of the third characteristic in the profile
   stat = SimpleProfile_GetParameter( SIMPLEPROFILE_CHAR3, &valueToCopy);
 
@@ -760,6 +817,7 @@ static void performPeriodicTask( void )
      */
     SimpleProfile_SetParameter( SIMPLEPROFILE_CHAR4, sizeof(uint8), &valueToCopy);
   }
+  #endif
 }
 
 /*********************************************************************
@@ -834,6 +892,48 @@ char *bdAddr2Str( uint8 *pAddr )
   return str;
 }
 #endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
+
+static void change_advertise_data(uint8 key_pressed)
+{
+  if (key_pressed == TRUE)
+  {
+    NPI_PrintString("KEY is PRESSED\r\n");
+    // Set advertising interval
+    {
+      uint8 initial_advertising_enable = FALSE;
+      GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
+      uint16 advInt = DEFAULT_ADVERTISING_INTERVAL;
+      GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
+      GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
+      GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
+      GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
+      initial_advertising_enable = TRUE;
+      GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
+      uint16 gapRole_AdvertOffTime = 0; 
+      GAPRole_SetParameter( GAPROLE_ADVERT_OFF_TIME, sizeof( uint16 ), &gapRole_AdvertOffTime );
+    }
+    advertData[27] |= 0x80;
+  }
+  else
+  {
+    NPI_PrintString("KEY is RELEASED\r\n");    
+    // Set advertising interval
+    {
+      uint8 initial_advertising_enable = FALSE;
+      GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
+      initial_advertising_enable = TRUE;
+      GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
+      uint16 advInt = NORMAL_ADVERTISING_INTERVAL;
+      GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MIN, advInt );
+      GAP_SetParamValue( TGAP_LIM_DISC_ADV_INT_MAX, advInt );
+      GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MIN, advInt );
+      GAP_SetParamValue( TGAP_GEN_DISC_ADV_INT_MAX, advInt );
+    }
+    advertData[27] &= 0x7F;
+  }
+}
+
+
 
 /*********************************************************************
 *********************************************************************/

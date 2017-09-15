@@ -4,6 +4,7 @@
 #include "hal_types.h"
 #include "OSAL.h"
 #include "OSAL_Tasks.h"
+#include "npi.h"
 
 #define MAX_TASKS 12
 
