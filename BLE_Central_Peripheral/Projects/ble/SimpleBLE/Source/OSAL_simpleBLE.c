@@ -20,11 +20,11 @@
  
  void osalInitTasks(void)
  {
-    if (1) {
-        peripheral_osalInitTasks();
-    } else {
-        central_osalInitTasks();
-    }
+#if (CURRENT_ROLE == ROLE_CENT)
+    central_osalInitTasks();
+#elif (CURRENT_ROLE == ROLE_PERI)
+    peripheral_osalInitTasks();
+#endif
  }
  
  /*********************************************************************

@@ -16,4 +16,6 @@ typedef enum
 
 extern BLE_ROLE current_role;
 
+#define CURRENT_ROLE    ROLE_CENT
+
 #endif
