@@ -424,9 +424,7 @@ void CheckKeyForSetAllParaDefault(void)
         // 重启， 实际上是利用看门狗了
         HAL_SYSTEM_RESET();     
     }
-#endif
 
-#if 0
     if(P0_1 == 0)// 有按键按下
     {
         simpleBle_LedSetState(HAL_LED_MODE_ON);  

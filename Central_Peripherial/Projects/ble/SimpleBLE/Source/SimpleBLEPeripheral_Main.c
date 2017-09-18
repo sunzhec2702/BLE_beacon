@@ -47,13 +47,13 @@ int main(void)
 
 // For quick validation, we don't this.
 #if 1
-
     // 从设置中读出以保存的数据， 以便决定现在应该是跑主机还是从机
     // 注意， 这里用到了 osal_snv_xxx ， 数据是存在flash里边的， 大家可以找找相关代码和说明
     // 需要注意的是 osal_snv_read 和 osal_snv_write ， 第一个 参数 osalSnvId_t id
     // 这个id， 我们编程可用的是从 0x80 至 0xff, 其中目前程序中可用的空间是 2048 字节
     // 这个大小定义于 osal_snv.c 中， 即以下宏定义， 跟踪代码进去就能看到
     /*
+    // We may need this later.
     // NV page configuration
     #define OSAL_NV_PAGE_SIZE       HAL_FLASH_PAGE_SIZE
     #define OSAL_NV_PAGES_USED      HAL_NV_PAGE_CNT
@@ -69,9 +69,6 @@ int main(void)
             simpleBLE_SetAllParaDefault(PARA_ALL_FACTORY);
             simpleBLE_WriteAllDataToFlash();
         } 
-
-        // 执行  串口初始化
-//        simpleBLE_NPI_init();     
     }
 #endif//这一段代码和说明是 amomcu 增加的  
 

@@ -135,6 +135,11 @@
   #define ADV_IN_CONN_WAIT                    500 // delay 500 ms
 #endif
 
+
+// Default WAKEUP period
+#define DEFAULT_WAKE_TIME_HOURS               (24 * 10) //10 days
+static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+
 /*********************************************************************
  * TYPEDEFS
  */
@@ -757,9 +762,11 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
             g_sleepFlag = TRUE;
 
             //设置p02的功能，1为uart脚， 0为输入中断脚
-            HalKey_Set_P02_for_UartRX_or_GPIO(false);
+            // Use the Button as the interrupt.
+            // HalKey_Set_P02_for_UartRX_or_GPIO(false);
             osal_pwrmgr_device( PWRMGR_BATTERY);   //  自动睡眠
-            //osal_pwrmgr_device( PWRMGR_ALWAYS_ON);   //  不睡眠，功耗很高的        
+            osal_stop_timerEx(simpleBLETaskID, SBP_PERIODIC_ALL);
+            // osal_pwrmgr_device( PWRMGR_ALWAYS_ON);   //  不睡眠，功耗很高的        
             // 格式化
             sprintf(strTemp, "+SLEEP\r\nOK\r\n");
             NPI_WriteTransport((uint8*)strTemp, osal_strlen(strTemp)); 
@@ -866,9 +873,12 @@ static void simpleBLEPeripheral_HandleKeys( uint8 shift, uint8 keys )
     VOID shift;  // Intentionally unreferenced parameter
     if ( keys & HAL_KEY_SW_1 )
     {
+      wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
       if (key_led_count == BUTTON_LED_TOGGLE_COUNT) {
         osal_set_event( simpleBLETaskId, SBP_PERIODIC_BUTTON_LED_EVT ); // Start the led event immediatly.
       }
+      if (g_sleepFlag ==  TRUE)
+        osal_set_event(simpleBLETaskId, START_DEVICE_EVT);
       change_advertise_data(TRUE);
     }
     //simpleBLE_HandleKeys(keys);
@@ -1180,6 +1190,12 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     break;
     case SBP_PERIODIC_PER_HOUR_EVT:
     NPI_PrintString("This is a per hour event\r\n");
+    wake_up_hours_remain--;
+    if (wake_up_hours_remain == 0)
+    {
+      NPI_PrintString("Enter Sleep mode\r\n");
+      osal_start_timerEx( simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
+    }
     break;
     case SBP_PERIODIC_BUTTON_LED_EVT:
     HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);

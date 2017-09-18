@@ -79,7 +79,7 @@
 #define DEFAULT_MAX_SCAN_RES                  6//8
 
 // Scan duration in ms
-#define DEFAULT_SCAN_DURATION                 1500//4000  默认扫描时间 ms
+#define DEFAULT_SCAN_DURATION                 4000//4000  默认扫描时间 ms
 
 // Discovey mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE                DEVDISC_MODE_ALL
@@ -278,9 +278,7 @@ void SimpleBLECentral_Init( uint8 task_id )
   // Setup GAP
   GAP_SetParamValue( TGAP_GEN_DISC_SCAN, DEFAULT_SCAN_DURATION );
   GAP_SetParamValue( TGAP_LIM_DISC_SCAN, DEFAULT_SCAN_DURATION );  
-  //GGS_SetParameter( GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, (uint8 *) simpleBLEDeviceName );
   GGS_SetParameter( GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, simpleBle_GetAttDeviceName() );
-
 
   // Setup the GAP Bond Manager
   {
@@ -329,7 +327,7 @@ void SimpleBLECentral_Init( uint8 task_id )
   RegisterForKeys( simpleBLETaskId );
   
   // makes sure LEDs are on to distinguish Host/Slave
-  HalLedSet( (HAL_LED_1 | HAL_LED_2| HAL_LED_3), HAL_LED_MODE_ON );
+  // HalLedSet( (HAL_LED_1 | HAL_LED_2| HAL_LED_3), HAL_LED_MODE_ON );
 
   // Setup a delayed profile startup
   osal_set_event( simpleBLETaskId, START_DEVICE_EVT );
@@ -337,11 +335,8 @@ void SimpleBLECentral_Init( uint8 task_id )
 
 void simpleBLEStartScan()
 {
-//     LCD_WRITE_STRING( "--simpleBLEStartScan", HAL_LCD_LINE_2 );
-      
-     simpleBLECentralCanSend = FALSE;
+    simpleBLECentralCanSend = FALSE;
     
-    //开机后就马上进行，自动开始搜索
     if ( !simpleBLEScanning/* & simpleBLEScanRes == 0 */)
     {
       simpleBLEScanning = TRUE;
@@ -405,16 +400,6 @@ uint16 SimpleBLECentral_ProcessEvent( uint8 task_id, uint16 events )
 
     CheckKeyForSetAllParaDefault(); //按键按下3秒， 恢复出厂设置
 
-    // 判断 如如果设置过 AT+IMME0 的， 则去连接最近连接过的从机 
-    /*
-    if(1 == sys_config.workMode)
-    {
-        g_Central_connect_cmd  = BLE_CENTRAL_CONNECT_CMD_CONNL;
-
-        // 开始扫描
-        simpleBLEStartScan();
-    }
-    */
     // Start scanning directly.
     simpleBLEStartScan();
 
@@ -426,7 +411,7 @@ uint16 SimpleBLECentral_ProcessEvent( uint8 task_id, uint16 events )
   if ( events & SBP_WAKE_EVT )
   {      
     g_sleepFlag = FALSE;
-    osal_pwrmgr_device( PWRMGR_ALWAYS_ON);   //  不睡眠，功耗很高的        
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON);   //  不睡眠，功耗很高的        
     return ( events ^ SBP_WAKE_EVT );
   }
 

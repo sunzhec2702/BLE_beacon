@@ -26,7 +26,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -248,34 +248,19 @@ void HalKey_Set_P02_for_UartRX_or_GPIO(bool flag)
 void HalKeyInit( void )
 {
   halKeySavedKeys = 0;  // Initialize previous key to 0.
-
-#if defined ( CC2540_MINIDK )
-  HAL_KEY_SW_1_SEL &= ~(HAL_KEY_SW_1_BIT);    /* Set pin function to GPIO */
-  HAL_KEY_SW_1_DIR &= ~(HAL_KEY_SW_1_BIT);    /* Set pin direction to Input */
-  HAL_KEY_SW_2_SEL &= ~(HAL_KEY_SW_2_BIT);    /* Set pin function to GPIO */
-  HAL_KEY_SW_2_DIR &= ~(HAL_KEY_SW_2_BIT);    /* Set pin direction to Input */
-#else
   HAL_KEY_SW_6_SEL &= ~(HAL_KEY_SW_6_BIT);    /* Set pin function to GPIO */
   HAL_KEY_SW_6_DIR &= ~(HAL_KEY_SW_6_BIT);    /* Set pin direction to Input */
   HAL_KEY_SW_7_SEL &= ~(HAL_KEY_SW_7_BIT);    /* Set pin function to GPIO */
   HAL_KEY_SW_7_DIR &= ~(HAL_KEY_SW_7_BIT);    /* Set pin direction to Input */
   HAL_KEY_JOY_MOVE_SEL &= ~(HAL_KEY_JOY_MOVE_BIT); /* Set pin function to GPIO */
   HAL_KEY_JOY_MOVE_DIR &= ~(HAL_KEY_JOY_MOVE_BIT); /* Set pin direction to Input */
-
   P2INP |= PUSH2_BV;  /* Configure GPIO tri-state. */
-#endif
 
   /* Initialize callback function */
   pHalKeyProcessFunction  = NULL;
 
   /* Start with key is not configured */
   HalKeyConfigured = FALSE;
-
-#if defined ( CC2540_MINIDK )
-  /* Rising/Falling edge configuratinn */
-  PICTL |= HAL_KEY_SW_1_EDGEBIT;   /* Set the edge bit to set falling edge to give int */
-  HAL_KEY_SW_1_IEN |= ( HAL_KEY_SW_1_IENBIT | HAL_KEY_SW_2_IENBIT );   /* enable CPU interrupt */
-#endif
 }
 
 
@@ -300,13 +285,6 @@ void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
   /* Determine if interrupt is enable or not */
   if (Hal_KeyIntEnable)
   {
-#if defined ( CC2540_MINIDK )
-    HAL_KEY_SW_1_ICTL |= HAL_KEY_SW_1_ICTLBIT; /* enable interrupt generation at port */    
-    HAL_KEY_SW_1_PXIFG = ~(HAL_KEY_SW_1_BIT);  /* Clear any pending interrupt */
-    HAL_KEY_SW_2_ICTL |= HAL_KEY_SW_2_ICTLBIT; /* enable interrupt generation at port */
-    HAL_KEY_SW_2_PXIFG = ~(HAL_KEY_SW_2_BIT);  /* Clear any pending interrupt */
-
-#else
     /* Rising/Falling edge configuratinn */
     PICTL &= ~(HAL_KEY_SW_6_EDGEBIT);    /* Clear the edge bit */
     /* For falling edge, the bit must be set. */
@@ -345,7 +323,6 @@ void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
     HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_ICTLBIT;
     HAL_KEY_JOY_MOVE_IEN |= HAL_KEY_JOY_MOVE_IENBIT;
     HAL_KEY_JOY_MOVE_PXIFG = ~(HAL_KEY_JOY_MOVE_BIT);
-#endif // !CC2540_MINIDK
 
     /* Do this only after the hal_key is configured - to work with sleep stuff */
     if (HalKeyConfigured == TRUE)
