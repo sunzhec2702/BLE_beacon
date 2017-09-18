@@ -1187,12 +1187,20 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     GAPRole_SetParameter( GAPROLE_ADVERT_DATA, sizeof( advertData_iBeacon ), advertData_iBeacon );
     break;
     case SBP_PERIODIC_PER_HOUR_EVT:
-    NPI_PrintString("This is a per hour event\r\n");
-    wake_up_hours_remain--;
-    if (wake_up_hours_remain == 0)
+    if (g_sleepFlag == TRUE)
     {
-      NPI_PrintString("Enter Sleep mode\r\n");
-      osal_start_timerEx( simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
+      NPI_PrintString("sleep already, stop the per hour timer\r\n");
+      osal_stop_timerEx(simpleBLETaskID, SBP_PERIODIC_PER_HOUR_EVT);
+    }
+    else
+    {
+      NPI_PrintString("This is a per hour event\r\n");
+      wake_up_hours_remain--;
+      if (wake_up_hours_remain == 0)
+      {
+        NPI_PrintString("Enter Sleep mode\r\n");
+        osal_start_timerEx( simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
+      }
     }
     break;
     case SBP_PERIODIC_BUTTON_LED_EVT:
