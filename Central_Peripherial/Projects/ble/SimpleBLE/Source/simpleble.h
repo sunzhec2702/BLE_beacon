@@ -24,11 +24,11 @@ extern "C"
 #define SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE            0x1000
 #define SBP_PERIODIC_CHN_ADVERT_EVT_PRESS              0x2000
 #define SBP_PERIODIC_INDEX_EVT                         0x4000//系统轮询定时器
-#define SBP_PERIODIC_ALL (SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
+#define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
 // How often to perform periodic event
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
-#define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000 // 1 hour
+#define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   //3600000 // 1 hour
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
 #define BUTTON_LED_TOGGLE_COUNT                         4
 #define SBP_PERIODIC_ADVERT_CHG_PERIOD                  5000 // 5s
@@ -44,7 +44,7 @@ extern "C"
 #define     VERSION     "v0.1"  //
 
 //设备名称的字符长度 <= 12
-#define DEV_NAME_DEFAULT                           "DarreBLE"
+#define DEV_NAME_DEFAULT                           "DarrenBLE"
 
 
 //设备名称的字符长度 <= 12

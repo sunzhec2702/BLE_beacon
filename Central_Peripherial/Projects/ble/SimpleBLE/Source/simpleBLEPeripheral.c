@@ -50,6 +50,7 @@
 #include "hal_led.h"
 #include "hal_key.h"
 #include "hal_lcd.h"
+#include "hal_mcu.h"
 
 #include "gatt.h"
 
@@ -137,7 +138,7 @@
 
 
 // Default WAKEUP period
-#define DEFAULT_WAKE_TIME_HOURS               (24 * 10) //10 days
+#define DEFAULT_WAKE_TIME_HOURS               (10 * 24) //10 days
 static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
 
 /*********************************************************************
@@ -583,12 +584,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
 
     osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD );
     osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD );
-    
-
-#if defined ( AMOMCU_UART_RX_MODE)
-    osal_start_timerEx( simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
-#endif
-
+    osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_LED_EVT, SBP_PERIODIC_PER_HOUR_PERIOD );
     /*
     // Don't need this so far.
     CheckKeyForSetAllParaDefault(); //按键按下3秒， 恢复出厂设置
@@ -617,7 +613,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
   if ( events & SBP_PERIODIC_PER_HOUR_EVT )
   {
     // Restart timer
-    if ( SBP_PERIODIC_EVT_PERIOD )
+    if ( SBP_PERIODIC_PER_HOUR_PERIOD )
     {
       osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD );
     }
@@ -746,7 +742,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
       return ( events ^ SBP_UART_EVT );
   }  
 
-#if defined ( AMOMCU_UART_RX_MODE)
   if ( events & SBP_SLEEP_EVT )
   {      
       extern uint8 uart_sleep_count; 
@@ -763,7 +758,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
             // Use the Button as the interrupt.
             // HalKey_Set_P02_for_UartRX_or_GPIO(false);
             osal_pwrmgr_device(PWRMGR_BATTERY);   //  自动睡眠
-            osal_stop_timerEx(simpleBLETaskID, SBP_PERIODIC_ALL);
+            osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
             uint8 initial_advertising_enable = FALSE;
             GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
             // osal_pwrmgr_device( PWRMGR_ALWAYS_ON);   //  不睡眠，功耗很高的        
@@ -783,8 +778,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
       
       return ( events ^ SBP_SLEEP_EVT );
   }
-#else
-#endif
 
   if ( events & SBP_PERIODIC_EVT )
   {
@@ -806,12 +799,13 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
 
     if(++led_conut < 10)
     {
-        HalLedSet(HAL_LED_1 | HAL_LED_2 | HAL_LED_3, HAL_LED_MODE_TOGGLE);
+        HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
         osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_LED_EVT, 100 );
     }
     else
     {
-        HalLedSet(HAL_LED_1 | HAL_LED_2 | HAL_LED_3, HAL_LED_MODE_OFF);
+        HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
+        osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
     }
 
     return (events ^ SBP_PERIODIC_LED_EVT);
@@ -875,14 +869,14 @@ static void simpleBLEPeripheral_HandleKeys( uint8 shift, uint8 keys )
     {
 
     }
-    if (key & HAL_KEY_SW_6)
+    if (keys & HAL_KEY_SW_6)
     {
       wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
       if (key_led_count == BUTTON_LED_TOGGLE_COUNT) {
         osal_set_event( simpleBLETaskId, SBP_PERIODIC_BUTTON_LED_EVT ); // Start the led event immediatly.
       }
-      if (g_sleepFlag ==  TRUE){
-        SimpleBLEPeripheral_Init(simpleBLETaskId);
+      if (g_sleepFlag ==  TRUE) {
+        HAL_SYSTEM_RESET();
       } else
         change_advertise_data(TRUE);
     }
@@ -965,7 +959,6 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
           HalLcdWriteString( "Connected",  HAL_LCD_LINE_3 );
         #endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
         simpleBle_LedSetState(HAL_LED_MODE_OFF);
-        NPI_WriteTransport("Connected\r\n", 11);
         simpleBLE_Delay_1ms(1);  //为了等发送完整所以延时一小下
 
         // Get connection handle
@@ -980,7 +973,7 @@ static void peripheralStateNotificationCB( gaprole_States_t newState )
     case GAPROLE_WAITING:
       {
         #if (defined HAL_LCD) && (HAL_LCD == TRUE)
-          HalLcdWriteString( "Disconnected",  HAL_LCD_LINE_3 );
+          HalLcdWriteString( "In State Waiting",  HAL_LCD_LINE_3 );
         #endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
       }
       break;
