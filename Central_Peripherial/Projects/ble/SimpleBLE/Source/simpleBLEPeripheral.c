@@ -241,10 +241,8 @@ static uint8 advertData_iBeacon[] =
   0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48,0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7, 0x10, 0x96, 0xE0,
   /*Major Value (2 Bytes)*/
   0x00, 0x00,
-  
   /*Minor Value (2 Bytes)*/
   0x00, 0x00,
-  
   /*Measured Power*/
   0xCD
 };
@@ -764,8 +762,10 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
             //设置p02的功能，1为uart脚， 0为输入中断脚
             // Use the Button as the interrupt.
             // HalKey_Set_P02_for_UartRX_or_GPIO(false);
-            osal_pwrmgr_device( PWRMGR_BATTERY);   //  自动睡眠
+            osal_pwrmgr_device(PWRMGR_BATTERY);   //  自动睡眠
             osal_stop_timerEx(simpleBLETaskID, SBP_PERIODIC_ALL);
+            uint8 initial_advertising_enable = FALSE;
+            GAPRole_SetParameter( GAPROLE_ADVERT_ENABLED, sizeof( uint8 ), &initial_advertising_enable );
             // osal_pwrmgr_device( PWRMGR_ALWAYS_ON);   //  不睡眠，功耗很高的        
             // 格式化
             sprintf(strTemp, "+SLEEP\r\nOK\r\n");
@@ -873,13 +873,18 @@ static void simpleBLEPeripheral_HandleKeys( uint8 shift, uint8 keys )
     VOID shift;  // Intentionally unreferenced parameter
     if ( keys & HAL_KEY_SW_1 )
     {
+
+    }
+    if (key & HAL_KEY_SW_6)
+    {
       wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
       if (key_led_count == BUTTON_LED_TOGGLE_COUNT) {
         osal_set_event( simpleBLETaskId, SBP_PERIODIC_BUTTON_LED_EVT ); // Start the led event immediatly.
       }
-      if (g_sleepFlag ==  TRUE)
-        osal_set_event(simpleBLETaskId, START_DEVICE_EVT);
-      change_advertise_data(TRUE);
+      if (g_sleepFlag ==  TRUE){
+        SimpleBLEPeripheral_Init(simpleBLETaskId);
+      } else
+        change_advertise_data(TRUE);
     }
     //simpleBLE_HandleKeys(keys);
  }
