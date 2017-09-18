@@ -611,6 +611,20 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
     return (events ^ SBP_PERIODIC_INDEX_EVT);
   }
   
+  if ( events & SBP_PERIODIC_PER_HOUR_EVT )
+  {
+    // Restart timer
+    if ( SBP_PERIODIC_EVT_PERIOD )
+    {
+      osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD );
+    }
+
+    // Perform periodic application task
+    PeripherialPerformPeriodicTask(SBP_PERIODIC_PER_HOUR_EVT);
+
+    return (events ^ SBP_PERIODIC_PER_HOUR_EVT);
+  }
+
   if ( events & SBP_PERIODIC_BUTTON_LED_EVT )
   {
     // Restart timer
