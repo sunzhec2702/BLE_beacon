@@ -584,7 +584,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events )
 
     osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD );
     osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD );
-    osal_start_timerEx( simpleBLETaskId, SBP_PERIODIC_LED_EVT, SBP_PERIODIC_PER_HOUR_PERIOD );
+    osal_set_event( simpleBLETaskId, SBP_PERIODIC_LED_EVT );
     /*
     // Don't need this so far.
     CheckKeyForSetAllParaDefault(); //按键按下3秒， 恢复出厂设置
