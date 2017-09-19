@@ -54,14 +54,15 @@ extern "C"
 {
 #endif
 
-
+#define MAX_ADV_SIZE  31
 typedef struct
 {
+  uint8 magic[4];
   uint8 addrType;
   uint8 addr[B_ADDR_LEN];
   int8 rssi;
   uint8 dataLen;
-  uint8 pEvtData[0];
+  uint8 pEvtData[MAX_ADV_SIZE];
 } dev_adv_ret_t;
 
 /*********************************************************************

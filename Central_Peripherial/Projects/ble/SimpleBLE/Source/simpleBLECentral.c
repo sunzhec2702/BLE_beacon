@@ -716,14 +716,17 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
   case GAP_DEVICE_INFO_EVENT:
   {
     dev_adv_ret_t dev_ret;
+    dev_ret.magic[0] = 0xDE;
+    dev_ret.magic[1] = 0xAD;
+    dev_ret.magic[2] = 0xBE;
+    dev_ret.magic[3] = 0xAF;
     dev_ret.addrType = pEvent->deviceInfo.addrType;
     dev_ret.rssi = pEvent->deviceInfo.rssi;
     dev_ret.dataLen = pEvent->deviceInfo.dataLen;
-    dev_ret.data = osal_mem_alloc(dev_ret.dataLen);
     osal_memcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
     osal_memcpy(dev_ret.data, pEvent->deviceInfo.data, dev_ret.dataLen);
     NPI_WriteTransport(&dev_ret, sizeof(dev_adv_ret_t) + dev_ret.dataLen);
-   
+
     NPI_PrintString(bdAddr2Str(pEvent->deviceInfo.addr));
     NPI_PrintString(" - ");
     NPI_PrintValue("RSSI: ", pEvent->deviceInfo.rssi, 10);
@@ -912,8 +915,6 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     {
       simpleBLEState = BLE_STATE_CONNECTED;
       simpleBLEConnHandle = pEvent->linkCmpl.connectionHandle;
-      //simpleBLEProcedureInProgress = TRUE;
-
       // If service discovery not performed initiate service discovery
       if (simpleBLECharHdl == 0)
       {
@@ -932,13 +933,10 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     {
       simpleBLEState = BLE_STATE_IDLE;
       simpleBLEConnHandle = GAP_CONNHANDLE_INIT;
-      //simpleBLERssi = FALSE;
       simpleBLEDiscState = BLE_DISC_STATE_IDLE;
       simpleBLECentralCanSend = FALSE;
-
       LCD_WRITE_STRING("Connect Failed", HAL_LCD_LINE_1);
       LCD_WRITE_STRING_VALUE("Reason:", pEvent->gap.hdr.status, 10, HAL_LCD_LINE_2);
-      //HalLedSet(HAL_LED_3, HAL_LED_MODE_OFF );   //关LED3
     }
   }
   break;
@@ -947,21 +945,13 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
   {
     simpleBLEState = BLE_STATE_IDLE;
     simpleBLEConnHandle = GAP_CONNHANDLE_INIT;
-    //simpleBLERssi = FALSE;
     simpleBLEDiscState = BLE_DISC_STATE_IDLE;
     simpleBLECharHdl = 0;
-    //simpleBLEProcedureInProgress = FALSE;
     simpleBLECentralCanSend = FALSE;
-
-    NPI_WriteTransport("Disconnected\r\n", 14);
     LCD_WRITE_STRING("Disconnected", HAL_LCD_LINE_1);
     LCD_WRITE_STRING_VALUE("Reason:", pEvent->linkTerminate.reason, 10, HAL_LCD_LINE_2);
-    //HalLedSet(HAL_LED_3, HAL_LED_MODE_OFF );   //关LED3
     //这里连接失败后， 可以尝试执行重启或者继续扫描从机
     simpleBLEScanRes = 0;
-    //LCD_WRITE_STRING_VALUE( "simpleBLEScanning=", simpleBLEScanning, 10, HAL_LCD_LINE_1 );
-    //LCD_WRITE_STRING_VALUE( "simpleBLEScanRes=", simpleBLEScanRes, 10, HAL_LCD_LINE_1 );
-
     simpleBLEScanning = 0;
     simpleBLEScanRes = 0;
     simpleBLEStartScan();
@@ -971,7 +961,6 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
   case GAP_LINK_PARAM_UPDATE_EVENT:
   {
     LCD_WRITE_STRING("Param Update", HAL_LCD_LINE_1);
-    NPI_WriteTransport("Param Update\r\n", 14);
     osal_start_timerEx(simpleBLETaskId, SBP_CONNECT_EVT, 1000);
     g_sleepFlag = FALSE;
     osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
@@ -1003,8 +992,6 @@ bool simpleBLEConnect(uint8 index)
   if (simpleBLEState == BLE_STATE_IDLE)
   {
     simpleBLEState = BLE_STATE_CONNECTING;
-
-    NPI_WriteTransport("Connecting\r\n", 12);
 
     LCD_WRITE_STRING("Connecting", HAL_LCD_LINE_1);
     LCD_WRITE_STRING(bdAddr2Str(peerAddr), HAL_LCD_LINE_2);
