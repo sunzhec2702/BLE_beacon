@@ -27,7 +27,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -53,6 +53,16 @@
 extern "C"
 {
 #endif
+
+
+typedef struct
+{
+  uint8 addrType;
+  uint8 addr[B_ADDR_LEN];
+  int8 rssi;
+  uint8 dataLen;
+  uint8 pEvtData[0];
+} dev_adv_ret_t;
 
 /*********************************************************************
  * INCLUDES
@@ -93,6 +103,7 @@ extern void SimpleBLECentral_Init( uint8 task_id );
  * Task Event Processor for the BLE Application
  */
 extern uint16 SimpleBLECentral_ProcessEvent( uint8 task_id, uint16 events );
+void simpleBLECentral_HandleKeys(uint8 keys);
 
 /*********************************************************************
 *********************************************************************/

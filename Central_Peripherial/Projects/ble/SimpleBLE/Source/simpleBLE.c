@@ -545,15 +545,12 @@ static int dist_filer(int dist)
 void simpleBle_SetRssi(int8 rssi)
 {
     sys_config.rssi = rssi;
-
     if(simpleBLE_IfConnected())
     {
         char str[32];    
-
         float nfDist = GUA_CalcDistByRSSI(rssi);         //通过算法获得r，单位为m  
         int nDist = (int)(nfDist * 100);                    //将r的数值放大100倍，单位为cm  
         sprintf(str, "Rssi=%2d,%4dCM\r\n", (uint8) (-rssi), dist_filer(nDist));
-
         if(g_rssi_flag)
         {
             NPI_WriteTransport((uint8*)str, strlen(str));
@@ -563,7 +560,6 @@ void simpleBle_SetRssi(int8 rssi)
             // 启动事件，然后在事件中再启动定时器定时检测数据并发送到网络
             osal_set_event( simpleBLETaskId, SBP_UART_EVT );     
         }
-
         LCD_WRITE_STRING(str, HAL_LCD_LINE_5 );
     }  
 }
