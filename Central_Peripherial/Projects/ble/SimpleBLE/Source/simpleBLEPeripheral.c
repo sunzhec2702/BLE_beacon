@@ -1195,6 +1195,10 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     else
     {
       NPI_PrintString("This is a per hour event\r\n");
+      HalAdcSetReference(HAL_ADC_REF_125V);
+      battery_voltage = HalAdcRead(HAL_ADC_CHANNEL_BATTERY, HAL_ADC_RESOLUTION_10) * 3;
+      NPI_PrintValue("Battery voltage is ", battery_voltage, 10);
+      NPI_PrintString("\r\n");
       wake_up_hours_remain--;
       if (wake_up_hours_remain == 0)
       {
