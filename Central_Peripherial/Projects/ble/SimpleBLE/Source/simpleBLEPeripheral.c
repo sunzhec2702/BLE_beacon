@@ -140,7 +140,7 @@
 // Default WAKEUP period
 #define DEFAULT_WAKE_TIME_HOURS               (10 * 24) //10 days
 static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-
+static uint16 battery_voltage;
 /*********************************************************************
  * TYPEDEFS
  */

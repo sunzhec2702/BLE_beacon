@@ -27,7 +27,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -108,17 +108,9 @@ extern "C"
 #define HAL_LED_BLINK_DELAY()   st( { volatile uint32 i; for (i=0; i<0x5800; i++) { }; } )
 
 /* 1 - Green */
-#if defined(USE_P20_LED1)
 #define LED1_BV                        BV(0)
-#define LED1_SBIT                      P2_0
-#define LED1_DDR                       P2DIR
-#define LED1_POLARITY                  ACTIVE_HIGH
-#else
-#define LED1_BV                        BV(0)
-#define LED1_SBIT                      P1_0
 #define LED1_DDR                       P1DIR
 #define LED1_POLARITY                  ACTIVE_HIGH
-#endif
 
 #ifdef HAL_BOARD_CC2530EB_REV17
   /* 2 - Red */
