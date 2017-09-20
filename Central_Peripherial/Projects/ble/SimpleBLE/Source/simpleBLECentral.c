@@ -76,10 +76,10 @@
  */
 
 // Maximum number of scan responses
-#define DEFAULT_MAX_SCAN_RES 6 //8
+#define DEFAULT_MAX_SCAN_RES  50//8
 
 // Scan duration in ms
-#define DEFAULT_SCAN_DURATION 4000 //4000  默认扫描时间 ms
+#define DEFAULT_SCAN_DURATION 30000 //4000  默认扫描时间 ms
 
 // Discovey mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE DEVDISC_MODE_ALL
@@ -174,7 +174,7 @@ static uint8 simpleBLEScanRes; //扫描结果
 static uint8 simpleBLEScanIdx;
 
 // Scan result list
-static gapDevRec_t simpleBLEDevList[DEFAULT_MAX_SCAN_RES];
+//static gapDevRec_t simpleBLEDevList[DEFAULT_MAX_SCAN_RES];
 
 // Scanning state
 static uint8 simpleBLEScanning = FALSE;
@@ -671,6 +671,7 @@ static void simpleBLECentralRssiCB(uint16 connHandle, int8 rssi)
 // 显示下一个从设备的地址  nextFalg=true则显示下一个地址，否则显示当前地址
 void simpleBLECentraDisplaNextPeriAddr(bool nextFalg)
 {
+  /*
   char str[24];
 
   if (nextFalg)
@@ -685,6 +686,7 @@ void simpleBLECentraDisplaNextPeriAddr(bool nextFalg)
     LCD_WRITE_STRING(str, HAL_LCD_LINE_3);
     //LCD_WRITE_STRING( bdAddr2Str( simpleBLEDevList[simpleBLEScanIdx].addr ), HAL_LCD_LINE_3);
   }
+  */
 }
 
 // 获取当前从设备地址的索引号
@@ -715,6 +717,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
   case GAP_DEVICE_INFO_EVENT:
   {
+
     dev_adv_ret_t dev_ret;
     dev_ret.magic[0] = 0xDE;
     dev_ret.magic[1] = 0xAD;
@@ -724,8 +727,9 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     dev_ret.rssi = pEvent->deviceInfo.rssi;
     dev_ret.dataLen = pEvent->deviceInfo.dataLen;
     osal_memcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
-    osal_memcpy(dev_ret.data, pEvent->deviceInfo.data, dev_ret.dataLen);
-    NPI_WriteTransport(&dev_ret, sizeof(dev_adv_ret_t) + dev_ret.dataLen);
+    osal_memcpy(dev_ret.data, pEvent->deviceInfo.pEvtData, dev_ret.dataLen);
+
+    //NPI_WriteTransport((unsigned char*) &dev_ret, sizeof(dev_adv_ret_t) + dev_ret.dataLen);
 
     NPI_PrintString(bdAddr2Str(pEvent->deviceInfo.addr));
     NPI_PrintString(" - ");
@@ -736,8 +740,14 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     {
       NPI_PrintString(" - ");
       NPI_PrintString(" TRUE ");
+      if (dev_ret.data[27] == 0x80)
+      {
+        NPI_PrintString(" - ");
+        NPI_PrintString(" PRESSED ");
+      }
     }
     NPI_PrintString("\r\n");
+
   }
   break;
 
@@ -911,6 +921,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
   case GAP_LINK_ESTABLISHED_EVENT:
   {
+    /*
     if (pEvent->gap.hdr.status == SUCCESS)
     {
       simpleBLEState = BLE_STATE_CONNECTED;
@@ -938,6 +949,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
       LCD_WRITE_STRING("Connect Failed", HAL_LCD_LINE_1);
       LCD_WRITE_STRING_VALUE("Reason:", pEvent->gap.hdr.status, 10, HAL_LCD_LINE_2);
     }
+    */
   }
   break;
 
@@ -975,6 +987,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
 bool simpleBLEConnect(uint8 index)
 {
+/*
   uint8 addrType;
   uint8 *peerAddr;
   uint8 i = index;
@@ -1005,6 +1018,8 @@ bool simpleBLEConnect(uint8 index)
   {
     //LCD_WRITE_STRING( "BLE_STATE not in IDLE", HAL_LCD_LINE_1 );
   }
+  return FALSE;
+*/
   return FALSE;
 }
 
@@ -1183,7 +1198,10 @@ static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)
 {
   if (dataLen == 30)
   {
-    return osal_memcmp(self_id, data[start_index], sizeof(self_id));
+    if ((osal_memcmp(self_id, &data[start_index], sizeof(self_id)) == TRUE) && data[26] == 0)
+    {
+      return TRUE;
+    }
   }
 }
 
@@ -1259,6 +1277,7 @@ static bool simpleBLEFindSvcUuid(uint16 uuid, uint8 *pData, uint8 dataLen)
  */
 static void simpleBLEAddDeviceInfo(uint8 *pAddr, uint8 addrType)
 {
+/*
   uint8 i;
 
   // If result count not at max
@@ -1280,4 +1299,5 @@ static void simpleBLEAddDeviceInfo(uint8 *pAddr, uint8 addrType)
     // Increment scan result count
     simpleBLEScanRes++;
   }
+*/
 }

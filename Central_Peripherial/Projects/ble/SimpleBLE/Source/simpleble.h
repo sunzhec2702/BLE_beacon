@@ -28,10 +28,12 @@ extern "C"
 
 // How often to perform periodic event
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
-#define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   //3600000 // 1 hour
+#define SBP_PERIODIC_PER_HOUR_PERIOD                    60000   //3600000 // 1 hour
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
 #define BUTTON_LED_TOGGLE_COUNT                         4
 #define SBP_PERIODIC_ADVERT_CHG_PERIOD                  5000 // 5s
+
+#define DEFAULT_WAKE_TIME_HOURS                         (3 * 24) //10 days
 
 
 #define SLEEP_MS                                        300  //睡眠时间， 串口激活事件
@@ -53,7 +55,7 @@ extern "C"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-#define PRESET_ROLE BLE_ROLE_PERIPHERAL
+#define PRESET_ROLE BLE_ROLE_CENTRAL
 
 
 //以下参数请勿修改--------------------------------amomcu.com--------------------

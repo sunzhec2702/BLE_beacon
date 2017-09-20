@@ -62,7 +62,7 @@ typedef struct
   uint8 addr[B_ADDR_LEN];
   int8 rssi;
   uint8 dataLen;
-  uint8 pEvtData[MAX_ADV_SIZE];
+  uint8 data[MAX_ADV_SIZE];
 } dev_adv_ret_t;
 
 /*********************************************************************
@@ -104,8 +104,8 @@ extern void SimpleBLECentral_Init( uint8 task_id );
  * Task Event Processor for the BLE Application
  */
 extern uint16 SimpleBLECentral_ProcessEvent( uint8 task_id, uint16 events );
-void simpleBLECentral_HandleKeys(uint8 keys);
-
+void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys);
+bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen);
 /*********************************************************************
 *********************************************************************/
 

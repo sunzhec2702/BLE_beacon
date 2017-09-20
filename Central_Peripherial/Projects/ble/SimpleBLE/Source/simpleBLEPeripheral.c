@@ -97,7 +97,6 @@
 #endif
 
 // Default WAKEUP period
-#define DEFAULT_WAKE_TIME_HOURS (10 * 24) //10 days
 static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
 static uint16 battery_voltage;
 /*********************************************************************
@@ -1143,7 +1142,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     if (g_sleepFlag == TRUE)
     {
       NPI_PrintString("sleep already, stop the per hour timer\r\n");
-      osal_stop_timerEx(simpleBLETaskID, SBP_PERIODIC_PER_HOUR_EVT);
+      osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT);
     }
     else
     {

@@ -109,8 +109,11 @@ extern "C"
 
 /* 1 - Green */
 #define LED1_BV                        BV(0)
+#define LED1_BV                        BV(0)
+#define LED1_SBIT                      P1_0
 #define LED1_DDR                       P1DIR
 #define LED1_POLARITY                  ACTIVE_HIGH
+
 
 #ifdef HAL_BOARD_CC2530EB_REV17
   /* 2 - Red */
