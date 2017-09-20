@@ -79,7 +79,7 @@
 #define DEFAULT_MAX_SCAN_RES  50//8
 
 // Scan duration in ms
-#define DEFAULT_SCAN_DURATION 30000 //4000  默认扫描时间 ms
+#define DEFAULT_SCAN_DURATION 4000 //4000  默认扫描时间 ms
 
 // Discovey mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE DEVDISC_MODE_ALL
@@ -342,11 +342,11 @@ void simpleBLEStartScan()
     GAPCentralRole_StartDiscovery(DEFAULT_DISCOVERY_MODE,
                                   DEFAULT_DISCOVERY_ACTIVE_SCAN,
                                   DEFAULT_DISCOVERY_WHITE_LIST);
-    LCD_WRITE_STRING("Start Scanning...", HAL_LCD_LINE_1);
+    //LCD_WRITE_STRING("Start Scanning...", HAL_LCD_LINE_1);
   }
   else
   {
-    LCD_WRITE_STRING("In Scanning...", HAL_LCD_LINE_1);
+    // LCD_WRITE_STRING("In Scanning...", HAL_LCD_LINE_1);
   }
 }
 
@@ -719,7 +719,8 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
   {
     if (simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
     {
-      dev_adv_ret_t dev_ret;
+      static dev_adv_ret_t dev_ret;
+      osal_memset(&dev_ret, 0x00, sizeof(dev_adv_ret_t));
       dev_ret.magic[0] = 0xDE;
       dev_ret.magic[1] = 0xAD;
       dev_ret.magic[2] = 0xBE;
@@ -1190,10 +1191,10 @@ static void simpleBLEGATTDiscoveryEvent(gattMsgEvent_t *pMsg)
 static uint8 start_index = 5;
 static uint8 self_id[] = 
 {
-  0x5A, // 5 Z
-  0x48, // 6 H
-  0x45, // 7 E
-  0x53, // 8 S
+  0x4C, // 5
+  0x00, // 6
+  0x02, // 7
+  0x15 // 8
 };
 
 static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)

@@ -31,7 +31,7 @@ extern "C"
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    60000   //3600000 // 1 hour
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
 #define BUTTON_LED_TOGGLE_COUNT                         4
-#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  5000 // 5s
+#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  8000 // 8s
 
 #define DEFAULT_WAKE_TIME_HOURS                         (3 * 24) //10 days
 
@@ -55,7 +55,7 @@ extern "C"
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-#define PRESET_ROLE BLE_ROLE_CENTRAL
+
 
 
 //以下参数请勿修改--------------------------------amomcu.com--------------------
@@ -78,6 +78,7 @@ typedef enum
     PARA_PARI_FACTORY = 1,          //配对信息恢复出厂设置-相当于清除配对信息与从机信息
 }PARA_SET_FACTORY;
 
+#define PRESET_ROLE BLE_ROLE_PERIPHERAL
 // 当前单片机运行的角色
 typedef enum
 {

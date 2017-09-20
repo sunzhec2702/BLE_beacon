@@ -60,6 +60,7 @@
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define RAPID_ADVERTISING_INTERVAL 160
 #define SLOW_ADVERTISING_INTERVAL (1600 * 2) // 2s
+
 // Limited discoverable mode advertises for 30.72s, and then stops
 // General discoverable mode advertises indefinitely
 
@@ -192,10 +193,10 @@ static uint8 advertData_iBeacon[] =
   0x1A, // length of this data 26byte, 3
   GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
   /*Apple Pre-Amble*/
-  0x5A, // 5 Z
-  0x48, // 6 H
-  0x45, // 7 E
-  0x53, // 8 S
+  0x4C, // 5
+  0x00, // 6
+  0x02, // 7
+  0x15, // 8
   /*Device UUID (16 Bytes)*/
   0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48, 0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7, 0x10, 0x96, 0xE0, //9 ~ 24
   /*Major Value (2 Bytes)*/
