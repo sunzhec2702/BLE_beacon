@@ -717,37 +717,40 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
   case GAP_DEVICE_INFO_EVENT:
   {
-
-    dev_adv_ret_t dev_ret;
-    dev_ret.magic[0] = 0xDE;
-    dev_ret.magic[1] = 0xAD;
-    dev_ret.magic[2] = 0xBE;
-    dev_ret.magic[3] = 0xAF;
-    dev_ret.addrType = pEvent->deviceInfo.addrType;
-    dev_ret.rssi = pEvent->deviceInfo.rssi;
-    dev_ret.dataLen = pEvent->deviceInfo.dataLen;
-    osal_memcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
-    osal_memcpy(dev_ret.data, pEvent->deviceInfo.pEvtData, dev_ret.dataLen);
-
-    //NPI_WriteTransport((unsigned char*) &dev_ret, sizeof(dev_adv_ret_t) + dev_ret.dataLen);
-
-    NPI_PrintString(bdAddr2Str(pEvent->deviceInfo.addr));
-    NPI_PrintString(" - ");
-    NPI_PrintValue("RSSI: ", pEvent->deviceInfo.rssi, 10);
-    NPI_PrintString(" - ");
-    NPI_PrintValue("DataLen: ", pEvent->deviceInfo.dataLen, 10);
-    if (simpleBLEFilterSelfBeacon(dev_ret.data, dev_ret.dataLen) == TRUE)
+    if (simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
     {
+      dev_adv_ret_t dev_ret;
+      dev_ret.magic[0] = 0xDE;
+      dev_ret.magic[1] = 0xAD;
+      dev_ret.magic[2] = 0xBE;
+      dev_ret.magic[3] = 0xAF;
+      dev_ret.addrType = pEvent->deviceInfo.addrType;
+      dev_ret.rssi = pEvent->deviceInfo.rssi;
+      dev_ret.dataLen = pEvent->deviceInfo.dataLen;
+      osal_memcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
+      osal_memcpy(dev_ret.data, pEvent->deviceInfo.pEvtData, dev_ret.dataLen);
+      NPI_WriteTransport((unsigned char*) &dev_ret, sizeof(dev_adv_ret_t));
+    }
+    /*
+    {
+      NPI_PrintString(bdAddr2Str(pEvent->deviceInfo.addr));
       NPI_PrintString(" - ");
-      NPI_PrintString(" TRUE ");
-      if (dev_ret.data[27] == 0x80)
+      NPI_PrintValue("RSSI: ", pEvent->deviceInfo.rssi, 10);
+      NPI_PrintString(" - ");
+      NPI_PrintValue("DataLen: ", pEvent->deviceInfo.dataLen, 10);
+      if (simpleBLEFilterSelfBeacon(dev_ret.data, dev_ret.dataLen) == TRUE)
       {
         NPI_PrintString(" - ");
-        NPI_PrintString(" PRESSED ");
+        NPI_PrintString(" TRUE ");
+        if (dev_ret.data[27] == 0x80)
+        {
+          NPI_PrintString(" - ");
+          NPI_PrintString(" PRESSED ");
+        }
       }
+      NPI_PrintString("\r\n");
     }
-    NPI_PrintString("\r\n");
-
+    */
   }
   break;
 
@@ -1187,22 +1190,18 @@ static void simpleBLEGATTDiscoveryEvent(gattMsgEvent_t *pMsg)
 static uint8 start_index = 5;
 static uint8 self_id[] = 
 {
-  /*Apple Pre-Amble*/
-  0x4C, // 5
-  0x00, // 6
-  0x02, // 7
-  0x15 // 8
+  0x5A, // 5 Z
+  0x48, // 6 H
+  0x45, // 7 E
+  0x53, // 8 S
 };
 
 static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)
 {
-  if (dataLen == 30)
-  {
-    if ((osal_memcmp(self_id, &data[start_index], sizeof(self_id)) == TRUE) && data[26] == 0)
+    if ((osal_memcmp(self_id, &data[start_index], sizeof(self_id)) == TRUE))
     {
       return TRUE;
     }
-  }
 }
 
 /*********************************************************************
