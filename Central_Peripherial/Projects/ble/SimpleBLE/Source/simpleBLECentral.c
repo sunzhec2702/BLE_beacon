@@ -727,7 +727,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
       dev_ret.addrType = pEvent->deviceInfo.addrType;
       dev_ret.rssi = pEvent->deviceInfo.rssi;
       dev_ret.dataLen = pEvent->deviceInfo.dataLen;
-      osal_memcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
+      osal_revmemcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
       osal_memcpy(dev_ret.data, pEvent->deviceInfo.pEvtData, dev_ret.dataLen);
       NPI_WriteTransport((unsigned char*) &dev_ret, sizeof(dev_adv_ret_t));
     }
