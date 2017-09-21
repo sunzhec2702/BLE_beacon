@@ -160,26 +160,6 @@ static uint8 scanRspData[] =
 
 // GAP - Advertisement data (max size = 31 bytes, though this is
 // best kept short to conserve power while advertisting)
-static uint8 advertData[] =
-    {
-        // Flags; this sets the device to use limited discoverable
-        // mode (advertises for 30 seconds at a time) instead of general
-        // discoverable mode (advertises indefinitely)
-        0x02, // length of this data
-        GAP_ADTYPE_FLAGS,
-        DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
-
-        // service UUID, to notify central devices what services are included
-        // in this peripheral
-        0x03,                  // length of this data
-        GAP_ADTYPE_16BIT_MORE, // some of the UUID's, but not all
-        LO_UINT16(SIMPLEPROFILE_SERV_UUID),
-        HI_UINT16(SIMPLEPROFILE_SERV_UUID),
-
-};
-
-// GAP - Advertisement data (max size = 31 bytes, though this is
-// best kept short to conserve power while advertisting)
 static uint8 advertData_iBeacon[] =
 {
   // Flags; this sets the device to use limited discoverable
@@ -358,15 +338,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     }
 #endif
 
-    if (simpleBLE_CheckIfUse_iBeacon())
-    {
-      GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
-    }
-    else
-    {
-      GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData), advertData);
-    }
-
+    GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
     GAPRole_SetParameter(GAPROLE_PARAM_UPDATE_ENABLE, sizeof(uint8), &enable_update_request);
     GAPRole_SetParameter(GAPROLE_MIN_CONN_INTERVAL, sizeof(uint16), &desired_min_interval);
     GAPRole_SetParameter(GAPROLE_MAX_CONN_INTERVAL, sizeof(uint16), &desired_max_interval);
@@ -416,19 +388,8 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
-
-    //#if defined( BLE_BOND_PAIR )
-    if (simpleBle_GetIfNeedPassword())
-    {
-      pairMode = GAPBOND_PAIRING_MODE_INITIATE; //配对模式，置配成等待主机的配对请求
-    }
-    else
-    {
-      pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
-    }
-    //#endif
-
-    GAPBondMgr_SetParameter(GAPBOND_DEFAULT_PASSCODE, sizeof(uint32), &passkey);
+    pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
+     GAPBondMgr_SetParameter(GAPBOND_DEFAULT_PASSCODE, sizeof(uint32), &passkey);
     GAPBondMgr_SetParameter(GAPBOND_PAIRING_MODE, sizeof(uint8), &pairMode);
     GAPBondMgr_SetParameter(GAPBOND_MITM_PROTECTION, sizeof(uint8), &mitm);
     GAPBondMgr_SetParameter(GAPBOND_IO_CAPABILITIES, sizeof(uint8), &ioCap);
@@ -541,10 +502,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
     osal_set_event(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
-    /*
-    // Don't need this so far.
-    CheckKeyForSetAllParaDefault(); //按键按下3秒， 恢复出厂设置
-    */
 
     // 延时400ms后唤醒， 不然会继续睡眠，原因不明
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
@@ -1011,13 +968,6 @@ static void simpleProfileChangeCB(uint8 paramID)
 
   case SIMPLEPROFILE_CHAR6:
     SimpleProfile_GetParameter(SIMPLEPROFILE_CHAR6, newChar6Value, &returnBytes);
-    if (returnBytes > 0)
-    {
-      if (simpleBLE_CheckIfUse_Uart2Uart()) //使用透传模式时才透传
-      {
-        NPI_WriteTransport(newChar6Value, returnBytes);
-      }
-    }
     break;
   default:
     // should not reach here!
@@ -1034,12 +984,8 @@ static void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 
 
 //在这里可以设置存储，保存之前设定的密码，这样就可以动态修改配对密码了。
 // Create random passcode
-#if 0
   LL_Rand( ((uint8 *) &passcode), sizeof( uint32 ));
   passcode %= 1000000;
-#else
-  passcode = simpleBle_GetPassword();
-#endif
   //在lcd上显示当前的密码，这样手机端，根据此密码连接。
   // Display passcode to user
   if (uiOutputs != 0)
@@ -1047,22 +993,7 @@ static void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 
     HalLcdWriteString("Passcode:", HAL_LCD_LINE_1);
     HalLcdWriteString((char *)_ltoa(passcode, str, 10), HAL_LCD_LINE_2);
   }
-
-  if (simpleBle_GetIfNeedPassword())
-  {
-    HalLcdWriteString(">>>need Passcode", HAL_LCD_LINE_1);
-
-    //  串口输出密码
-    simpleBle_PrintPassword();
-
-    // Send passcode response  发送密码请求给主机
-    GAPBondMgr_PasscodeRsp(connectionHandle, SUCCESS, passcode);
-  }
-  else
-  {
-    // 无需密码
-    HalLcdWriteString(">>>no Passcode", HAL_LCD_LINE_1);
-  }
+  HalLcdWriteString(">>>no Passcode", HAL_LCD_LINE_1);
 }
 
 //绑定过程中的状态管理，在这里可以设置标志位，当密码不正确时不允许连接。
@@ -1127,11 +1058,14 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   switch (event_id)
   {
   case SBP_PERIODIC_INDEX_EVT:
-    uint16 index = (advertData_iBeacon[25] << 8) + advertData_iBeacon[26];
-    index++;
-    advertData_iBeacon[25] = index >> 8;
-    advertData_iBeacon[26] = index & 0x00FF;
-    GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
+    {
+      uint16 index;
+      index = (advertData_iBeacon[25] << 8) + advertData_iBeacon[26];
+      index++;
+      advertData_iBeacon[25] = index >> 8;
+      advertData_iBeacon[26] = index & 0x00FF;
+      GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
+    }
     break;
   case SBP_PERIODIC_PER_HOUR_EVT:
     if (g_sleepFlag == TRUE)

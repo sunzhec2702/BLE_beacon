@@ -170,7 +170,6 @@ uint8 simpleBLETaskId;
 //static const uint8 simpleBLEDeviceName[GAP_DEVICE_NAME_LEN] = "Simple BLE Central";
 
 // Number of scan results and scan result index
-static uint8 simpleBLEScanRes; //扫描结果
 static uint8 simpleBLEScanIdx;
 
 // Scan result list
@@ -225,8 +224,8 @@ static void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys);
 static void simpleBLECentral_ProcessOSALMsg(osal_event_hdr_t *pMsg);
 static void simpleBLEGATTDiscoveryEvent(gattMsgEvent_t *pMsg);
 static void simpleBLECentralStartDiscovery(void);
-static bool simpleBLEFindSvcUuid(uint16 uuid, uint8 *pData, uint8 dataLen);
-static void simpleBLEAddDeviceInfo(uint8 *pAddr, uint8 addrType);
+//static void simpleBLEAddDeviceInfo(uint8 *pAddr, uint8 addrType);
+//static bool simpleBLEFindSvcUuid(uint16 uuid, uint8 *pData, uint8 dataLen);
 
 /*********************************************************************
  * PROFILE CALLBACKS
@@ -280,7 +279,7 @@ void SimpleBLECentral_Init(uint8 task_id)
 
   // Setup the GAP Bond Manager
   {
-    uint32 passkey = simpleBle_GetPassword();
+    uint32 passkey = DEFAULT_PASSCODE;
     uint8 pairMode; // = DEFAULT_PAIRING_MODE;
     uint8 mitm = DEFAULT_MITM_MODE;
     uint8 ioCap = DEFAULT_IO_CAPABILITIES;
@@ -293,16 +292,7 @@ void SimpleBLECentral_Init(uint8 task_id)
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
-
-    //#if defined( BLE_BOND_PAIR )
-    if (simpleBle_GetIfNeedPassword())
-    {
-      pairMode = GAPBOND_PAIRING_MODE_INITIATE; //配对模式，置配成等待主机的配对请求
-    }
-    else
-    {
-      pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
-    }
+    pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
     //#endif
     GAPBondMgr_SetParameter(GAPBOND_DEFAULT_PASSCODE, sizeof(uint32), &passkey);
     GAPBondMgr_SetParameter(GAPBOND_PAIRING_MODE, sizeof(uint8), &pairMode);
@@ -335,10 +325,9 @@ void simpleBLEStartScan()
 {
   simpleBLECentralCanSend = FALSE;
 
-  if (!simpleBLEScanning /* & simpleBLEScanRes == 0 */)
+  if (!simpleBLEScanning)
   {
     simpleBLEScanning = TRUE;
-    simpleBLEScanRes = 0;
     GAPCentralRole_StartDiscovery(DEFAULT_DISCOVERY_MODE,
                                   DEFAULT_DISCOVERY_ACTIVE_SCAN,
                                   DEFAULT_DISCOVERY_WHITE_LIST);
@@ -393,9 +382,6 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     GAPBondMgr_Register((gapBondCBs_t *)&simpleBLEBondCB);
 
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT, SBP_PERIODIC_EVT_PERIOD);
-
-    CheckKeyForSetAllParaDefault(); //按键按下3秒， 恢复出厂设置
-
     // Start scanning directly.
     simpleBLEStartScan();
 
@@ -597,7 +583,6 @@ static void simpleBLECentralProcessGATTMsg(gattMsgEvent_t *pMsg)
     if (pMsg->method == ATT_ERROR_RSP)
     {
       //uint8 status = pMsg->msg.errorRsp.errCode;
-
       //LCD_WRITE_STRING_VALUE( "Read Error", status, 10, HAL_LCD_LINE_1 );
     }
     else
@@ -634,17 +619,7 @@ static void simpleBLECentralProcessGATTMsg(gattMsgEvent_t *pMsg)
   }
   else if ((pMsg->method == ATT_HANDLE_VALUE_NOTI)) //通知
   {
-    if (pMsg->msg.handleValueNoti.handle == simpleBLECharHd6 /*0x0035*/) //CHAR6的通知  串口打印
-    {
-      if (simpleBLE_CheckIfUse_Uart2Uart()) //使用透传模式时才透传
-      {
-        NPI_WriteTransport(pMsg->msg.handleValueNoti.pValue, pMsg->msg.handleValueNoti.len);
-
-        // 这里可以处理一下数据，比如发命令点灯
-        // MT 命令处理 函数
-        simpleBLE_MT_CMD_Handle(pMsg->msg.handleValueNoti.pValue, pMsg->msg.handleValueNoti.len);
-      }
-    }
+    // Do nothing.
   }
 
 EXIT:
@@ -966,9 +941,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     LCD_WRITE_STRING("Disconnected", HAL_LCD_LINE_1);
     LCD_WRITE_STRING_VALUE("Reason:", pEvent->linkTerminate.reason, 10, HAL_LCD_LINE_2);
     //这里连接失败后， 可以尝试执行重启或者继续扫描从机
-    simpleBLEScanRes = 0;
     simpleBLEScanning = 0;
-    simpleBLEScanRes = 0;
     simpleBLEStartScan();
   }
   break;
@@ -1069,26 +1042,7 @@ static void simpleBLECentralPairStateCB(uint16 connHandle, uint8 state, uint8 st
 static void simpleBLECentralPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle,
                                        uint8 uiInputs, uint8 uiOutputs)
 {
-  //#if (HAL_LCD == TRUE)
-
-  uint32 passcode = simpleBle_GetPassword();
-  uint8 str[7];
-
-  // Create random passcode
-  //LL_Rand( ((uint8 *) &passcode), sizeof( uint32 ));
-  //passcode %= 1000000;
-
-  // Display passcode to user
-  if (uiOutputs != 0)
-  {
-    LCD_WRITE_STRING("Passcode:", HAL_LCD_LINE_1);
-    LCD_WRITE_STRING((char *)_ltoa(passcode, str, 10), HAL_LCD_LINE_2);
-  }
-
-  LCD_WRITE_STRING_VALUE(">>>passcode=", passcode, 10, HAL_LCD_LINE_1);
-  // Send passcode response
-  GAPBondMgr_PasscodeRsp(connectionHandle, SUCCESS, passcode);
-  //#endif
+  return;
 }
 
 /*********************************************************************
@@ -1202,8 +1156,10 @@ static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)
     {
       return TRUE;
     }
+    return FALSE;
 }
 
+#if 0
 /*********************************************************************
  * @fn      simpleBLEFindSvcUuid
  *
@@ -1267,6 +1223,9 @@ static bool simpleBLEFindSvcUuid(uint16 uuid, uint8 *pData, uint8 dataLen)
   return FALSE;
 }
 
+#endif
+
+#if 0
 /*********************************************************************
  * @fn      simpleBLEAddDeviceInfo
  *
@@ -1300,3 +1259,4 @@ static void simpleBLEAddDeviceInfo(uint8 *pAddr, uint8 addrType)
   }
 */
 }
+#endif

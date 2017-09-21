@@ -143,44 +143,18 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.parity = 0;
     sys_config.stopbit = 0;
 
-    sys_config.mode = BLE_MODE_SERIAL; //工作模式 0:透传 ， 1: 直驱 , 2: iBeacon
-
     sprintf((char *)sys_config.name, DEV_NAME_DEFAULT); //设备名称
 
     sys_config.role = BLE_ROLE_PERIPHERAL; //主从模式, 默认从机
     //sys_config.role = BLE_ROLE_CENTRAL;
 
-    sprintf((char *)sys_config.pass, "000000"); //密码
-    sys_config.type = 0;                        //鉴权模式
     osal_memset(sys_config.mac_addr, 0, sizeof(sys_config.mac_addr));
-
-    sys_config.ever_connect_peripheral_mac_addr_conut = 0;
-    sys_config.ever_connect_peripheral_mac_addr_index = 0;
-    //曾经成功连接过的从机地址
-    osal_memset(sys_config.ever_connect_mac_status, 0, MAX_PERIPHERAL_MAC_ADDR * MAC_ADDR_CHAR_LEN);
-
-    sys_config.try_connect_time_ms = 0; // 尝试连接时间---目前无效
 
     sys_config.rssi = 0; //  RSSI 信号值
-
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  接收增益强度
     sys_config.txPower = 0;                  //  发射信号强度
-
-    sys_config.ibeacon_adver_time_ms = 500;
-    //  模块工作类型  0: 立即工作， 1: 等待AT+CON 或 AT+CONNL 命令
-    sys_config.workMode = 0;
   }
-  else if (flag == PARA_PARI_FACTORY)
-  {
-    //sprintf((char*)sys_config.pass, "000000");      //密码
-    osal_memset(sys_config.mac_addr, 0, sizeof(sys_config.mac_addr));
-    sys_config.ever_connect_peripheral_mac_addr_conut = 0;
-    sys_config.ever_connect_peripheral_mac_addr_index = 0;
-    osal_memset(sys_config.ever_connect_mac_status, 0, MAX_PERIPHERAL_MAC_ADDR * MAC_ADDR_CHAR_LEN);
-  }
-
   GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //清除绑定信息
-
   simpleBLE_WriteAllDataToFlash();
 }
 
@@ -201,10 +175,6 @@ void PrintAllPara(void)
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
   simpleBLE_Delay_1ms(100);
 
-  sprintf(strTemp, "sys_config.mode = %d\r\n", sys_config.mode);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
   sprintf(strTemp, "sys_config.name = %s\r\n", sys_config.name);
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
   simpleBLE_Delay_1ms(100);
@@ -213,31 +183,7 @@ void PrintAllPara(void)
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
   simpleBLE_Delay_1ms(100);
 
-  sprintf(strTemp, "sys_config.pass = %s\r\n", sys_config.pass);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
-  sprintf(strTemp, "sys_config.type = %d\r\n", sys_config.type);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
   sprintf(strTemp, "sys_config.mac_addr = %s\r\n", sys_config.mac_addr);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
-  //曾经成功连接过的从机地址
-  //LCD_WRITE_STRING_VALUE( "addr_conut:", sys_config.ever_connect_peripheral_mac_addr_conut, 10, HAL_LCD_LINE_2 );
-
-  for (int i = 0; i < sys_config.ever_connect_peripheral_mac_addr_conut; i++)
-  {
-    uint8 temp_addr[MAC_ADDR_CHAR_LEN + 1] = {0};
-    osal_memcpy(temp_addr, sys_config.ever_connect_mac_status[i], MAC_ADDR_CHAR_LEN);
-    sprintf(strTemp, "[%d] = %s\r\n", i, temp_addr);
-    NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-    simpleBLE_Delay_1ms(200);
-  }
-
-  sprintf(strTemp, "sys_config.try_connect_time_ms = %d\r\n", sys_config.try_connect_time_ms);
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
   simpleBLE_Delay_1ms(100);
 
@@ -249,13 +195,6 @@ void PrintAllPara(void)
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
   simpleBLE_Delay_1ms(100);
 
-  sprintf(strTemp, "sys_config.ibeacon_adver_time_ms = %d12\r\n", sys_config.ibeacon_adver_time_ms);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
-  sprintf(strTemp, "sys_config.workMode = %d\r\n", sys_config.workMode);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
 }
 
 // 返回设备角色
@@ -283,73 +222,7 @@ bool simpleBLE_IfConnected()
 // 增加从机地址， 注意， 需要连接成功后， 再增加该地址
 void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
 {
-  if (GetBleRole() == BLE_ROLE_CENTRAL) //主机
-  {
-    uint8 Addr[MAC_ADDR_CHAR_LEN];
-    uint8 index;
-
-    //LCD_WRITE_STRING_VALUE( "_conut:", sys_config.ever_connect_peripheral_mac_addr_conut, 10, HAL_LCD_LINE_2 );
-    // 要增加从机地址， 需要先检查我们的地址列表里是否已经存有改地址， 如果已经有了， 那么无需再增加
-    for (index = 0; index < sys_config.ever_connect_peripheral_mac_addr_conut; index++)
-    {
-      if (simpleBLE_GetPeripheralMacAddr(index, Addr))
-      {
-        if (osal_memcmp(Addr, pAddr, MAC_ADDR_CHAR_LEN)) //地址一样时直接返回
-        {
-          //LCD_WRITE_STRING_VALUE( "_index: return", index, 10, HAL_LCD_LINE_2 );
-          //最新一次成功连接过的从机地址index， 用于针对AT+CONNL 这个指令
-          sys_config.last_connect_peripheral_mac_addr_index = index;
-          return;
-        }
-      }
-      else
-      {
-        break;
-      }
-    }
-
-    //LCD_WRITE_STRING_VALUE( "_index:", sys_config.last_connect_peripheral_mac_addr_index, 10, HAL_LCD_LINE_2 );
-
-    //只增加这多的从机地址， 超出后, 覆盖最先的一个地址记录，列表里只保存最近的     MAX_PERIPHERAL_MAC_ADDR    个地址
-    osal_memcpy(sys_config.ever_connect_mac_status[sys_config.ever_connect_peripheral_mac_addr_index], pAddr, MAC_ADDR_CHAR_LEN);
-
-    //最新一次成功连接过的从机地址index， 用于针对AT+CONNL 这个指令
-    sys_config.last_connect_peripheral_mac_addr_index = sys_config.ever_connect_peripheral_mac_addr_index;
-
-    sys_config.ever_connect_peripheral_mac_addr_index++;
-    // 注意下面这个的技巧用法
-    sys_config.ever_connect_peripheral_mac_addr_index %= MAX_PERIPHERAL_MAC_ADDR;
-
-    // 只记录  MAX_PERIPHERAL_MAC_ADDR 个最新的地址
-    if (sys_config.ever_connect_peripheral_mac_addr_conut < MAX_PERIPHERAL_MAC_ADDR)
-    {
-      sys_config.ever_connect_peripheral_mac_addr_conut++;
-    }
-
-    //LCD_WRITE_STRING_VALUE( "_conut2:", sys_config.ever_connect_peripheral_mac_addr_conut, 10, HAL_LCD_LINE_2 );
-
-    // 保存地址 ， 以便重启机子后可以也使用
-    simpleBLE_WriteAllDataToFlash();
-  }
-}
-
-// 读取从机地址, index < MAX_PERIPHERAL_MAC_ADDR
-// 用于判断是否系统中已存有该Mac地址
-/*
-index: 应该是 < MAX_PERIPHERAL_MAC_ADDR,
-*/
-bool simpleBLE_GetPeripheralMacAddr(uint8 index, uint8 *pAddr)
-{
-  if (GetBleRole() == BLE_ROLE_CENTRAL) //主机
-  {
-    if (index < sys_config.ever_connect_peripheral_mac_addr_conut
-        /*&& index < MAX_PERIPHERAL_MAC_ADDR*/)
-    {
-      osal_memcpy(pAddr, sys_config.ever_connect_mac_status[index], MAC_ADDR_CHAR_LEN);
-      return TRUE;
-    }
-  }
-  return FALSE;
+  return;
 }
 
 // 有按键按下，则启动为主机， 否则默认启动为从机
@@ -379,11 +252,12 @@ bool Check_startup_peripheral_or_central(void)
     return false;
 }
 
+#if 0  
 //开机时判断到按键按下3秒， 恢复出厂设置
 //按键定义为  p0.7
 void CheckKeyForSetAllParaDefault(void)
 {
-#if 0  
+
     uint8 i;
     uint32 old_time  = 30; 
 
@@ -432,8 +306,8 @@ void CheckKeyForSetAllParaDefault(void)
         simpleBle_LedSetState(HAL_LED_MODE_OFF);  
         return;
     }
-#endif
 }
+#endif
 
 // 串行口 uart 初始化
 void simpleBLE_NPI_init(void)
@@ -472,7 +346,7 @@ void simpleBle_LedSetState(uint8 onoff)
   P0_6 = onoff;
 }
 
-#if 1
+#if 0
 static float GUA_CalcDistByRSSI(int rssi)
 {
   uint8 A = 49;
@@ -537,13 +411,6 @@ void simpleBLE_performPeriodicTask(void)
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
 {
   (void)port;
-
-  static uint32 old_time;              //老时间
-  static uint32 old_time_data_len = 0; //老时间是的数据长度
-  uint32 new_time;                     //新时间
-  bool ret;
-  uint8 readMaxBytes = SIMPLEPROFILE_CHAR6_LEN;
-
   if (events & (HAL_UART_RX_TIMEOUT | HAL_UART_RX_FULL)) //串口有数据
   {
     (void)port;
@@ -563,4 +430,3 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
     return;
   }
 }
-

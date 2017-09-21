@@ -61,7 +61,6 @@ int main(void)
   if (false == Check_startup_peripheral_or_central())
   {
     sys_config.role = BLE_ROLE_PERIPHERAL;
-    sys_config.mode = BLE_MODE_iBeacon;
     simpleBLE_WriteAllDataToFlash();
   }
   else
