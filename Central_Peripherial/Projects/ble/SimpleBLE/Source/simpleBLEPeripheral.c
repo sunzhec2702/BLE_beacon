@@ -57,18 +57,8 @@
  * CONSTANTS
  */
 
-// What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
-#define RAPID_ADVERTISING_INTERVAL 160
-#define SLOW_ADVERTISING_INTERVAL (1600 * 2) // 2s
-
-// Limited discoverable mode advertises for 30.72s, and then stops
 // General discoverable mode advertises indefinitely
-
-#if defined(CC2540_MINIDK)
-#define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_LIMITED
-#else
 #define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_GENERAL
-#endif // defined ( CC2540_MINIDK )
 
 // Minimum connection interval (units of 1.25ms, 80=100ms) if automatic parameter update request is enabled
 #define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   连接间隔与数据发送量有关， 连接间隔越短， 单位时间内就能发送越多的数据
@@ -100,6 +90,7 @@
 // Default WAKEUP period
 static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
 static uint16 battery_voltage;
+static 
 /*********************************************************************
  * TYPEDEFS
  */
@@ -151,7 +142,6 @@ static uint8 scanRspData[] =
         HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
         LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL), // 1s
         HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
-
         // Tx power level
         0x02, // length of this data
         GAP_ADTYPE_POWER_LEVEL,
@@ -298,46 +288,8 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     // Set the GAP Role Parameters
     GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
     GAPRole_SetParameter(GAPROLE_ADVERT_OFF_TIME, sizeof(uint16), &gapRole_AdvertOffTime);
-#if 1
+
     GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof(scanRspData), scanRspData);
-#else
-    {
-      uint8 AttDeviceNameLen = osal_strlen((char *)simpleBle_GetAttDeviceName());
-      uint8 pSscanRspDataLen = (11 + AttDeviceNameLen);
-      uint8 *pSscanRspData = osal_mem_alloc(pSscanRspDataLen);
-      if (pSscanRspData)
-      {
-        uint8 index = 0;
-
-        pSscanRspData[0] = AttDeviceNameLen + 1;
-        pSscanRspData[1] = GAP_ADTYPE_LOCAL_NAME_COMPLETE;
-        osal_memcpy(&pSscanRspData[2], simpleBle_GetAttDeviceName(), AttDeviceNameLen);
-
-        index = 2 + AttDeviceNameLen;
-
-        pSscanRspData[index + 0] = 0x05;
-        pSscanRspData[index + 1] = GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE;
-        pSscanRspData[index + 2] = LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL); // 100ms
-        pSscanRspData[index + 3] = HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL);
-        pSscanRspData[index + 4] = LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL); // 1s
-        pSscanRspData[index + 5] = HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL);
-
-        // Tx power level
-        pSscanRspData[index + 6] = 0x02; // length of this data
-        pSscanRspData[index + 7] = GAP_ADTYPE_POWER_LEVEL;
-        pSscanRspData[index + 8] = 0; // 0dBm
-
-        GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, pSscanRspDataLen, pSscanRspData);
-
-        osal_mem_free(pSscanRspData);
-      }
-      else
-      {
-        HalLcdWriteString("ERR:pSscanRspData", HAL_LCD_LINE_1);
-      }
-    }
-#endif
-
     GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
     GAPRole_SetParameter(GAPROLE_PARAM_UPDATE_ENABLE, sizeof(uint8), &enable_update_request);
     GAPRole_SetParameter(GAPROLE_MIN_CONN_INTERVAL, sizeof(uint16), &desired_min_interval);
@@ -395,7 +347,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     GAPBondMgr_SetParameter(GAPBOND_IO_CAPABILITIES, sizeof(uint8), &ioCap);
     GAPBondMgr_SetParameter(GAPBOND_BONDING_ENABLED, sizeof(uint8), &bonding);
   }
-
+  
   // Initialize GATT attributes
   GGS_AddService(GATT_ALL_SERVICES);           // GAP
   GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
@@ -442,9 +394,6 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // Register callback with SimpleGATTprofile
   VOID SimpleProfile_RegisterAppCBs(&simpleBLEPeripheral_SimpleProfileCBs);
 
-  // Enable clock divide on halt
-  // This reduces active current while radio is active and CC254x MCU
-  // is halted
   // 需要关闭的CLK自动分频，在初始化中加入HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT )?  // 如果开启，会导致频率自动切换，DMA工作受到影响，小范围丢数。
   // 这里把他关闭， 如果想降低功耗， 这个应该要开启的， 这里矛盾了
   HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT);
@@ -575,73 +524,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_DATA_EVT)
   {
-#if 1
-    uint8 send_count = 3;
-    while (send_count--)
-    {
-      uint16 totalbytes = qq_total();
-      uint8 numBytes;
-
-      //        totalbytes = 20;
-
-      // 读  RdLen 个字节数据到 缓冲区 RdBuf， 返回读取到的有效数据长度
-      if (totalbytes > 0 && simpleBLEChar6DoWrite2)
-      {
-        numBytes = ((totalbytes > SIMPLEPROFILE_CHAR6_LEN) ? SIMPLEPROFILE_CHAR6_LEN : totalbytes);
-
-        if (simpleBLEChar6DoWrite2) //写入成功后再写入
-        {
-//            uint8 buf[SIMPLEPROFILE_CHAR6_LEN];
-
-#if 0 // 这种速度慢 SimpleProfile_SetParameter           
-    //            simpleBLEChar6DoWrite2 = FALSE;
-                qq_read(buf, numBytes);
-                SimpleProfile_SetParameter( SIMPLEPROFILE_CHAR6, numBytes, buf );
-#else // 这种速度快 GATT_Notification
-          // 目前有问题， 不要启用
-          attHandleValueNoti_t pReport;
-          pReport.pValue = GATT_bm_alloc(gapConnHandle, ATT_WRITE_REQ, numBytes, NULL);
-          if (pReport.pValue != NULL)
-          {
-            pReport.len = numBytes;
-            pReport.handle = 0x0035;
-
-            qq_read(pReport.pValue, pReport.len);
-
-            GATT_Notification(gapConnHandle, &pReport, FALSE);
-          }
-//                else
-//                {
-//                    LCD_WRITE_STRING_VALUE( "err: line=", __LINE__, 10, HAL_LCD_LINE_1 );
-//                    HalLedSet(HAL_LED_1 | HAL_LED_2 | HAL_LED_3, HAL_LED_MODE_ON);
-//                    while(1);
-//                }
-#endif
-        }
-        else
-        {
-          LCD_WRITE_STRING_VALUE("line=", __LINE__, 10, HAL_LCD_LINE_1);
-        }
-      }
-      else
-      {
-        break;
-      }
-    }
-
-    if (qq_total() > 0)
-    {
-      timerIsOn = TRUE;
-      osal_start_timerEx(simpleBLETaskId, SBP_DATA_EVT, 6);
-      //         osal_start_timerEx( simpleBLETaskId, SBP_DATA_EVT, 16);
-    }
-    else
-    {
-      timerIsOn = FALSE;
-    }
-#else
-
-#endif
     return (events ^ SBP_DATA_EVT);
   }
 
@@ -663,21 +545,12 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     {
       if (g_sleepFlag == FALSE)
       {
-        char strTemp[64];
-
         g_sleepFlag = TRUE;
-
-        //设置p02的功能，1为uart脚， 0为输入中断脚
-        // Use the Button as the interrupt.
-        // HalKey_Set_P02_for_UartRX_or_GPIO(false);
         osal_pwrmgr_device(PWRMGR_BATTERY); //  自动睡眠
         osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
         uint8 initial_advertising_enable = FALSE;
         GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
-        // osal_pwrmgr_device( PWRMGR_ALWAYS_ON);   //  不睡眠，功耗很高的
-        // 格式化
-        sprintf(strTemp, "+SLEEP\r\nOK\r\n");
-        NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
+        DEBUG_PRINT("Enter Sleep Mode\r\n");
         // 为了让串口数据发送完毕， 需要先延时一下，否则进入了睡眠就发送乱码了， 1ms即可
         simpleBLE_Delay_1ms(1);
       }
@@ -876,7 +749,6 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
 
     // Get connection handle
     GAPRole_GetParameter(GAPROLE_CONNHANDLE, &gapConnHandle);
-
     // 连接上了
     g_sleepFlag = FALSE;
     osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
@@ -1070,20 +942,20 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   case SBP_PERIODIC_PER_HOUR_EVT:
     if (g_sleepFlag == TRUE)
     {
-      NPI_PrintString("sleep already, stop the per hour timer\r\n");
+      DEBUG_PRINT("sleep already, stop the per hour timer\r\n");
       osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT);
     }
     else
     {
-      NPI_PrintString("This is a per hour event\r\n");
+      DEBUG_PRINT("This is a per hour event\r\n");
       HalAdcSetReference(HAL_ADC_REF_125V);
       battery_voltage = HalAdcRead(HAL_ADC_CHANNEL_BATTERY, HAL_ADC_RESOLUTION_10) * 3;
       NPI_PrintValue("Battery voltage is ", battery_voltage, 10);
-      NPI_PrintString("\r\n");
+      DEBUG_PRINT("\r\n");
       wake_up_hours_remain--;
       if (wake_up_hours_remain == 0)
       {
-        NPI_PrintString("Enter Sleep mode\r\n");
+        DEBUG_PRINT("Enter Sleep mode\r\n");
         osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
       }
     }
@@ -1104,7 +976,7 @@ static void change_advertise_data(uint8 key_pressed)
   GAPRole_GetParameter(GAPROLE_ADVERT_ENABLED, &initial_advertising_enable);
   if (key_pressed == TRUE)
   {
-    NPI_PrintString("KEY is PRESSED\r\n");
+    DEBUG_PRINT("KEY is PRESSED\r\n");
     if (initial_advertising_enable == TRUE)
     {
       initial_advertising_enable = FALSE;
@@ -1129,7 +1001,7 @@ static void change_advertise_data(uint8 key_pressed)
   }
   else
   {
-    NPI_PrintString("KEY is RELEASED\r\n");
+    DEBUG_PRINT("KEY is RELEASED\r\n");
     if (initial_advertising_enable == TRUE)
     {
       initial_advertising_enable = FALSE;

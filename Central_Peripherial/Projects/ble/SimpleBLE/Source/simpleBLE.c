@@ -26,23 +26,17 @@
 #include "string.h"
 #include "math.h"
 
-#if 1
 SYS_CONFIG sys_config;
 bool g_sleepFlag = TRUE;    //睡眠标志
 uint8 uart_sleep_count = 0; // 睡眠计数器
-
 bool g_rssi_flag = false; //是否开启测距
-
 extern gaprole_States_t gapProfileState; // 从机连接状态
 // Connection handle
 extern uint16 gapConnHandle;
-
 BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd = BLE_CENTRAL_CONNECT_CMD_NULL;
-
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events);
-#endif
 
-#if 1
+
 // 该函数延时时间为1ms， 用示波器测量过， 稍有误差， 但误差很小  --amomcu.com
 void simpleBLE_Delay_1ms(int times)
 {
@@ -118,7 +112,6 @@ char *bdAddr2Str(uint8 *pAddr)
 
   return str;
 }
-#endif
 
 // 保存所有数据到nv flash
 void simpleBLE_WriteAllDataToFlash()
@@ -252,63 +245,6 @@ bool Check_startup_peripheral_or_central(void)
     return false;
 }
 
-#if 0  
-//开机时判断到按键按下3秒， 恢复出厂设置
-//按键定义为  p0.7
-void CheckKeyForSetAllParaDefault(void)
-{
-
-    uint8 i;
-    uint32 old_time  = 30; 
-
-    P0SEL &= ~0x02;     //设置P0.1为普通IO口  
-    P0DIR &= ~0x02;     //按键接在P0.1口上，设P0.1为输入模式 
-    P0INP &= ~0x02;     //打开P0.1上拉电阻
-
-
-    //判断3s 內按键都没有松开
-    while(--old_time)
-    {
-        if(P0_1 == 0)
-        {
-            simpleBle_LedSetState(HAL_LED_MODE_ON);  
-            simpleBLE_Delay_1ms(100);
-        }
-        else
-        {
-            simpleBle_LedSetState(HAL_LED_MODE_OFF);  
-            return;
-        }        
-    }
-
-    //判断3s 內按键都没有松开， 那么就行恢复出厂设置，下面会先闪灯三下再恢复出厂设置然后重启
-    if(old_time == 0)
-    {
-        simpleBLE_SetAllParaDefault(PARA_ALL_FACTORY);
-        for(i = 0; i < 6; i++)    
-        {
-            simpleBle_LedSetState(HAL_LED_MODE_ON);  
-            simpleBLE_Delay_1ms(100);
-            simpleBle_LedSetState(HAL_LED_MODE_OFF);
-            simpleBLE_Delay_1ms(100);
-        }   
-        // 重启， 实际上是利用看门狗了
-        HAL_SYSTEM_RESET();     
-    }
-
-    if(P0_1 == 0)// 有按键按下
-    {
-        simpleBle_LedSetState(HAL_LED_MODE_ON);  
-        simpleBLE_Delay_1ms(100);
-    }
-    else
-    {
-        simpleBle_LedSetState(HAL_LED_MODE_OFF);  
-        return;
-    }
-}
-#endif
-
 // 串行口 uart 初始化
 void simpleBLE_NPI_init(void)
 {
@@ -345,55 +281,6 @@ void simpleBle_LedSetState(uint8 onoff)
   P0DIR |= 0x60; // P0.6定义为输出
   P0_6 = onoff;
 }
-
-#if 0
-static float GUA_CalcDistByRSSI(int rssi)
-{
-  uint8 A = 49;
-  float n = 3.0;
-
-  int iRssi = abs(rssi);
-  float power = (iRssi - A) / (10 * n);
-  return pow(10, power);
-}
-
-// 求滑动平均值
-#define DIST_MAX 5
-int nDistbuf[DIST_MAX];
-uint8 index = 0;
-
-static int dist_filer(int dist)
-{
-  int i = 0;
-  int sum = 0;
-  int max = 0;
-  int min = 1000;
-  if (index == DIST_MAX)
-  {
-    static int index2 = 0;
-    nDistbuf[index2++] = dist;
-    index2 %= DIST_MAX;
-
-    // 去掉最大最小值, 再求平均
-
-    for (i = 0; i < DIST_MAX; i++)
-    {
-      if (max < nDistbuf[i])
-        max = nDistbuf[i];
-      if (min > nDistbuf[i])
-        min = nDistbuf[i];
-
-      sum += nDistbuf[i];
-    }
-    return (sum - max - min) / (DIST_MAX - 2);
-  }
-  else
-  {
-    nDistbuf[index++] = dist;
-    return 0;
-  }
-}
-#endif
 
 // 获取设备名称
 uint8 *simpleBle_GetAttDeviceName()

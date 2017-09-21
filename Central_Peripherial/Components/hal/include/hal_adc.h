@@ -100,7 +100,7 @@ extern "C"
 
 #define HAL_ADC_CHANNEL_TEMP       HAL_ADC_CHN_TEMP
 #define HAL_ADC_CHANNEL_VDD        HAL_ADC_CHN_VDD3   /* channel VDD divided by 3 */
-#define HAL_ADC_CHANNEL_BATTERY    HAL_ADC_CHN_AIN0
+#define HAL_ADC_CHANNEL_BATTERY    HAL_ADC_CHN_AIN7
 
 /* Vdd Limits */
 #define HAL_ADC_VDD_LIMIT_0        0x00

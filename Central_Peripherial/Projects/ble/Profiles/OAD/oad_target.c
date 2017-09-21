@@ -26,7 +26,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -619,7 +619,6 @@ static void oadImgIdentifyReq(uint16 connHandle, img_hdr_t *pImgHdr)
 
 #if !defined FEATURE_OAD_SECURE
 
-#if 0
 /**************************************************************************************************
  * @fn          crcCalcDL
  *
@@ -682,7 +681,6 @@ static uint16 crcCalcDL(void)
     }
   }
 }
-#endif
 
 /**************************************************************************************************
  * @fn          crcCalcDLDMA

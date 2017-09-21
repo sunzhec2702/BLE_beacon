@@ -27,7 +27,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -414,39 +414,6 @@ static gattAttribute_t simpleProfileAttrTbl[SERVAPP_NUM_ATTR_SUPPORTED] =
         0, 
         simpleProfileChar6UserDesp 
       },
-#if 0      
-      // Characteristic 7 Declaration
-    { 
-      { ATT_BT_UUID_SIZE, characterUUID },
-      GATT_PERMIT_READ, 
-      0,
-      &simpleProfileChar7Props 
-    },
-
-      // Characteristic Value 7
-      { 
-        { ATT_BT_UUID_SIZE, simpleProfilechar7UUID },
-        0,
-        0, 
-        simpleProfileChar7 
-      },
-
-      // Characteristic 7 configuration
-      { 
-        { ATT_BT_UUID_SIZE, clientCharCfgUUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE, 
-        0, 
-        (uint8 *)simpleProfileChar7Config 
-      },
-      
-      // Characteristic 7 User Description
-      { 
-        { ATT_BT_UUID_SIZE, charUserDescUUID },
-        GATT_PERMIT_READ, 
-        0, 
-        simpleProfileChar7UserDesp 
-      },
-#endif
 };
 
 /*********************************************************************

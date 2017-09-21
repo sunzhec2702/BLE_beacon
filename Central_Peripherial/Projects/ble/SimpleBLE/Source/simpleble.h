@@ -2,11 +2,22 @@
 #define SIMPLEBLE_H
 
 #ifdef __cplusplus
+#include "npi.h"
 extern "C"
 {
 #endif
 #include "hal_types.h"
-  
+
+#define DEBUG_BOARD 1
+#ifdef DEBUG_BOARD
+#define LCD_TO_UART TRUE
+#define DEBUG_PRINT(x) NPI_PrintString(x)
+#else
+#define LCD_TO_UART FALSE
+#define DEBUG_PRINT(x) {}
+#endif
+
+
 // 主机从机事件共用定义
 #define START_DEVICE_EVT                               0x0001//启动设备
 #define SBP_PERIODIC_EVT                               0x0002//系统轮询定时器
@@ -26,18 +37,26 @@ extern "C"
 #define SBP_PERIODIC_INDEX_EVT                         0x4000//系统轮询定时器
 #define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
+// What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
+#define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
+#define SLOW_ADVERTISING_INTERVAL (1600) // 1s
+
 // How often to perform periodic event
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
-#define SBP_PERIODIC_PER_HOUR_PERIOD                    60000   //3600000 // 1 hour
+
+#ifdef DEBUG_BOARD
+#define SBP_PERIODIC_PER_HOUR_PERIOD                    60000    // 1 min
+#define DEFAULT_WAKE_TIME_HOURS                         (5) // 5 mins
+#else
+#define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   // 1 hour
+#define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
+#endif
+
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
 #define BUTTON_LED_TOGGLE_COUNT                         4
-#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  8000 // 8s
-
-#define DEFAULT_WAKE_TIME_HOURS                         (3 * 24) //10 days
-
+#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  5000 // 5s
 
 #define SLEEP_MS                                        300  //睡眠时间， 串口激活事件
-
 
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------

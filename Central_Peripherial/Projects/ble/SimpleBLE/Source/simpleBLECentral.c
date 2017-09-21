@@ -169,12 +169,6 @@ uint8 simpleBLETaskId;
 // GAP GATT Attributes
 //static const uint8 simpleBLEDeviceName[GAP_DEVICE_NAME_LEN] = "Simple BLE Central";
 
-// Number of scan results and scan result index
-static uint8 simpleBLEScanIdx;
-
-// Scan result list
-//static gapDevRec_t simpleBLEDevList[DEFAULT_MAX_SCAN_RES];
-
 // Scanning state
 static uint8 simpleBLEScanning = FALSE;
 
@@ -313,10 +307,7 @@ void SimpleBLECentral_Init(uint8 task_id)
 
   // Register for all key events - This app will handle all key events
   RegisterForKeys(simpleBLETaskId);
-
-  // makes sure LEDs are on to distinguish Host/Slave
-  // HalLedSet( (HAL_LED_1 | HAL_LED_2| HAL_LED_3), HAL_LED_MODE_ON );
-
+  //HalLedSet(HAL_LED_3, HAL_LED_MODE_ON );
   // Setup a delayed profile startup
   osal_set_event(simpleBLETaskId, START_DEVICE_EVT);
 }
@@ -331,11 +322,6 @@ void simpleBLEStartScan()
     GAPCentralRole_StartDiscovery(DEFAULT_DISCOVERY_MODE,
                                   DEFAULT_DISCOVERY_ACTIVE_SCAN,
                                   DEFAULT_DISCOVERY_WHITE_LIST);
-    //LCD_WRITE_STRING("Start Scanning...", HAL_LCD_LINE_1);
-  }
-  else
-  {
-    // LCD_WRITE_STRING("In Scanning...", HAL_LCD_LINE_1);
   }
 }
 
@@ -551,12 +537,6 @@ static void simpleBLECentral_ProcessOSALMsg(osal_event_hdr_t *pMsg)
  */
 static void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys)
 {
-  /*
-    按键处理公共函数， 主机与从机都是运行这个函数，
-    注意每次启动不是主机就是从机，不是同时是主机与从机的， 所以他们不冲突的
-    */
-  // simpleBLE_HandleKeys(keys);
-  // Only show key is pressed.
   HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
 }
 
@@ -645,28 +625,7 @@ static void simpleBLECentralRssiCB(uint16 connHandle, int8 rssi)
 // 显示下一个从设备的地址  nextFalg=true则显示下一个地址，否则显示当前地址
 void simpleBLECentraDisplaNextPeriAddr(bool nextFalg)
 {
-  /*
-  char str[24];
-
-  if (nextFalg)
-  {
-    simpleBLEScanIdx++;
-    simpleBLEScanIdx %= simpleBLEScanRes;
-  }
-
-  if (simpleBLEScanRes > 0)
-  {
-    sprintf(str, "[%d]: %s", simpleBLEScanIdx, bdAddr2Str(simpleBLEDevList[simpleBLEScanIdx].addr));
-    LCD_WRITE_STRING(str, HAL_LCD_LINE_3);
-    //LCD_WRITE_STRING( bdAddr2Str( simpleBLEDevList[simpleBLEScanIdx].addr ), HAL_LCD_LINE_3);
-  }
-  */
-}
-
-// 获取当前从设备地址的索引号
-uint8 simpleBLECentraGetAddrId()
-{
-  return simpleBLEScanIdx;
+  return;
 }
 
 /*********************************************************************
@@ -705,27 +664,26 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
       osal_revmemcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
       osal_memcpy(dev_ret.data, pEvent->deviceInfo.pEvtData, dev_ret.dataLen);
       NPI_WriteTransport((unsigned char*) &dev_ret, sizeof(dev_adv_ret_t));
-    }
-    /*
-    {
-      NPI_PrintString(bdAddr2Str(pEvent->deviceInfo.addr));
-      NPI_PrintString(" - ");
+      #ifdef DEBUG_BOARD
+      DEBUG_PRINT((unsigned char*)bdAddr2Str(pEvent->deviceInfo.addr));
+      DEBUG_PRINT(" - ");
       NPI_PrintValue("RSSI: ", pEvent->deviceInfo.rssi, 10);
-      NPI_PrintString(" - ");
+      DEBUG_PRINT(" - ");
       NPI_PrintValue("DataLen: ", pEvent->deviceInfo.dataLen, 10);
       if (simpleBLEFilterSelfBeacon(dev_ret.data, dev_ret.dataLen) == TRUE)
       {
-        NPI_PrintString(" - ");
-        NPI_PrintString(" TRUE ");
+        DEBUG_PRINT(" - ");
+        DEBUG_PRINT(" TRUE ");
         if (dev_ret.data[27] == 0x80)
         {
-          NPI_PrintString(" - ");
-          NPI_PrintString(" PRESSED ");
+          DEBUG_PRINT(" - ");
+          DEBUG_PRINT(" PRESSED ");
         }
       }
-      NPI_PrintString("\r\n");
+      DEBUG_PRINT("\r\n");
+      #endif
     }
-    */
+
   }
   break;
 
@@ -734,200 +692,11 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     // discovery complete, keep scanning.
     simpleBLEScanning = FALSE;
     simpleBLEStartScan();
-    /*
-        bool ifDoConnect = FALSE;
-        // if not filtering device discovery results based on service UUID
-        if ( DEFAULT_DEV_DISC_BY_SVC_UUID == FALSE )
-        {
-          // Copy results
-          simpleBLEScanRes = pEvent->discCmpl.numDevs;
-          osal_memcpy( simpleBLEDevList, pEvent->discCmpl.pDevList,
-                       (sizeof( gapDevRec_t ) * pEvent->discCmpl.numDevs) );
-        }
-        LCD_WRITE_STRING_VALUE( "Devices Found", simpleBLEScanRes,
-                                10, HAL_LCD_LINE_1 );
-        if ( simpleBLEScanRes > 0 )
-        {
-            //simpleBLEScanIdx = 0;
-
-            LCD_WRITE_STRING( "<- To Select", HAL_LCD_LINE_2 );
-//            LCD_WRITE_STRING_VALUE( "simpleBLEState = ", simpleBLEState, 10, HAL_LCD_LINE_2 );
-            //这里可以决定连接到所搜索到的哪一个从机， 这里可以进行从机地址码的判断， 比如， 可以连接到最近一次连接成功的mac地址的从机
-            //HalLedSet(HAL_LED_3, HAL_LED_MODE_ON );   //开LED3
-            if ( simpleBLEState == BLE_STATE_IDLE )
-            {           
-              uint8 addrType;
-              uint8 *peerAddr;
-              uint8 i;
-              uint8 Addr[MAC_ADDR_CHAR_LEN];
-              //bool ret = FALSE;;
-
-              simpleBLECentraDisplaNextPeriAddr(FALSE);
-//              for(i = 0; i < simpleBLEScanRes; i++)
-//              {
-//                  LCD_WRITE_STRING( bdAddr2Str( simpleBLEDevList[i].addr ), HAL_LCD_LINE_2+i );  
-//              }  
-#if 1         
-//            LCD_WRITE_STRING_VALUE( "g_Central_connect_cmd = ", g_Central_connect_cmd, 10, HAL_LCD_LINE_2 );
-            // 打印从机地址， 格式:  OK+DISC:123456789012
-            if(g_Central_connect_cmd  == BLE_CENTRAL_CONNECT_CMD_DISC)
-            {
-                char strTemp[24] = {0};
-                for(i = 0; i < simpleBLEScanRes; i++)
-                {
-                    sprintf(strTemp, "OK+DISC:");
-                    osal_memcpy(strTemp + 8,  bdAddr2Str( simpleBLEDevList[i].addr )+2, MAC_ADDR_CHAR_LEN);
-                    strTemp[20] = '\r'; 
-                    strTemp[21] = '\n'; 
-                    strTemp[22] = 0;
-                    NPI_WriteTransport((uint8*)strTemp, osal_strlen(strTemp)); 
-                }
-                
-                // 搜索完成后返回 OK+DISCE。
-                sprintf(strTemp, "OK+DISCE\r\n");
-                NPI_WriteTransport((uint8*)strTemp, osal_strlen(strTemp)); 
-            }
-            else if(g_Central_connect_cmd  == BLE_CENTRAL_CONNECT_CMD_CONNL
-            || g_Central_connect_cmd  == BLE_CENTRAL_CONNECT_CMD_CONN )
-            {//连接指定最后成功的从机
-                // 连接从机
-                if(simpleBLE_GetToConnectFlag(Addr))
-                {
-                  uint8 tempstr[13] = {0};
-                  osal_memcpy(tempstr, Addr, 12);
-                  LCD_WRITE_STRING_VALUE( "ConAddr ", 0, 10, HAL_LCD_LINE_2 );
-                  LCD_WRITE_STRING( (char *)tempstr, HAL_LCD_LINE_2 );  
-
-                  // 连接指定的mac 地址的从机设备  
-                  //simpleBLEScanIdx = 0;
-                  for(i = 0; i < simpleBLEScanRes; i++)
-                  {
-//                      LCD_WRITE_STRING_VALUE( "peerAddr ", i, 10, HAL_LCD_LINE_2 );
-//                      LCD_WRITE_STRING( bdAddr2Str( simpleBLEDevList[i].addr ), HAL_LCD_LINE_2 );  
-
-                      // connect to current device in scan result 
-                      peerAddr = simpleBLEDevList[i].addr;
-                      addrType = simpleBLEDevList[i].addrType;
-
-                      if(osal_memcmp(Addr, bdAddr2Str( simpleBLEDevList[i].addr )+2, MAC_ADDR_CHAR_LEN))
-                      {
-                        //simpleBLEScanIdx = i;
-                        ifDoConnect = TRUE;
-                        break;                          
-                      }
-                  }
-                } 
-            }
-            else if(g_Central_connect_cmd  == BLE_CENTRAL_CONNECT_CMD_CON)
-            {//连接指定地址的从机
-                if(simpleBLE_GetToConnectFlag(Addr))
-                {
-                  uint8 tempstr[13] = {0};
-                  osal_memcpy(tempstr, Addr, 12);
-//                  LCD_WRITE_STRING_VALUE( "ConAddr ", 0, 10, HAL_LCD_LINE_2 );
-//                  LCD_WRITE_STRING( (char *)tempstr, HAL_LCD_LINE_2 );  
-
-                  // 连接指定的mac 地址的从机设备  
-                  //simpleBLEScanIdx = 0;
-                  for(i = 0; i < simpleBLEScanRes; i++)
-                  {
-//                      LCD_WRITE_STRING_VALUE( "peerAddr ", i, 10, HAL_LCD_LINE_2 );
-//                      LCD_WRITE_STRING( bdAddr2Str( simpleBLEDevList[i].addr ), HAL_LCD_LINE_2 );  
-
-                      // connect to current device in scan result 
-                      peerAddr = simpleBLEDevList[i].addr;
-                      addrType = simpleBLEDevList[i].addrType;
-
-                      if(osal_memcmp(Addr, bdAddr2Str( simpleBLEDevList[i].addr )+2, MAC_ADDR_CHAR_LEN))
-                      {
-                        //simpleBLEScanIdx = i;
-                        ifDoConnect = TRUE;
-                        break;                          
-                      }
-                  }
-                } 
-            }
-
-#endif
-              if(ifDoConnect)
-              {
-                  simpleBLEState = BLE_STATE_CONNECTING;
-
-                 NPI_WriteTransport("Connecting\r\n", 12); 
-                 
-//                 LCD_WRITE_STRING( "Connecting", HAL_LCD_LINE_1 );
-//                 LCD_WRITE_STRING( bdAddr2Str( pEvent->linkCmpl.devAddr ), HAL_LCD_LINE_2 );  
-              
-                 GAPCentralRole_EstablishLink( DEFAULT_LINK_HIGH_DUTY_CYCLE,
-                                                DEFAULT_LINK_WHITE_LIST,
-                                                addrType, peerAddr );
-              }
-              else
-              {
-//                LCD_WRITE_STRING( "Continue scanning", HAL_LCD_LINE_1 );
-                
-                // 继续扫描
-                simpleBLEScanning  = FALSE;
-                //simpleBLEScanRes = 0;                
-                //simpleBLEStartScan();
-              }
-            }
-            
-            //HalLedSet(HAL_LED_3, HAL_LED_MODE_OFF ); 
-
-            // initialize scan index to last device
-            //simpleBLEScanIdx = simpleBLEScanRes;
-        }
-
-        if( ifDoConnect == FALSE )
-        {
-
-            simpleBLEStartScan();
-            // 判断 如如果设置过 AT+IMME0 的， 扫描不到以前连接过的从机时， 继续扫描
-            if(1 == sys_config.workMode)
-            {
-                NPI_PrintString("YOYOYO\r\n");
-                g_Central_connect_cmd  = BLE_CENTRAL_CONNECT_CMD_CONNL;
-
-                // 开始扫描
-                simpleBLEStartScan();
-            }
-        }
-      */
   }
   break;
 
   case GAP_LINK_ESTABLISHED_EVENT:
   {
-    /*
-    if (pEvent->gap.hdr.status == SUCCESS)
-    {
-      simpleBLEState = BLE_STATE_CONNECTED;
-      simpleBLEConnHandle = pEvent->linkCmpl.connectionHandle;
-      // If service discovery not performed initiate service discovery
-      if (simpleBLECharHdl == 0)
-      {
-        osal_start_timerEx(simpleBLETaskId, START_DISCOVERY_EVT, DEFAULT_SVC_DISCOVERY_DELAY);
-      }
-
-      LCD_WRITE_STRING("Connected", HAL_LCD_LINE_1);
-      LCD_WRITE_STRING(bdAddr2Str(pEvent->linkCmpl.devAddr), HAL_LCD_LINE_2);
-
-      // 增加从机地址， 注意， 需要连接成功后， 再增加改地址
-      //simpleBLE_SetPeripheralMacAddr((uint8 *)(bdAddr2Str( pEvent->linkCmpl.devAddr ))+2);
-      simpleBLE_SetPeripheralMacAddr((uint8 *)bdAddr2Str(simpleBLEDevList[simpleBLEScanIdx].addr) + 2);
-      HalLedSet(HAL_LED_3, HAL_LED_MODE_OFF);
-    }
-    else
-    {
-      simpleBLEState = BLE_STATE_IDLE;
-      simpleBLEConnHandle = GAP_CONNHANDLE_INIT;
-      simpleBLEDiscState = BLE_DISC_STATE_IDLE;
-      simpleBLECentralCanSend = FALSE;
-      LCD_WRITE_STRING("Connect Failed", HAL_LCD_LINE_1);
-      LCD_WRITE_STRING_VALUE("Reason:", pEvent->gap.hdr.status, 10, HAL_LCD_LINE_2);
-    }
-    */
   }
   break;
 
@@ -963,39 +732,6 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
 bool simpleBLEConnect(uint8 index)
 {
-/*
-  uint8 addrType;
-  uint8 *peerAddr;
-  uint8 i = index;
-
-  if (i >= simpleBLEScanRes)
-    return FALSE;
-  if (i >= DEFAULT_MAX_SCAN_RES)
-    return FALSE;
-
-  simpleBLEScanIdx = index;
-  // connect to current device in scan result
-  peerAddr = simpleBLEDevList[i].addr;
-  addrType = simpleBLEDevList[i].addrType;
-
-  if (simpleBLEState == BLE_STATE_IDLE)
-  {
-    simpleBLEState = BLE_STATE_CONNECTING;
-
-    LCD_WRITE_STRING("Connecting", HAL_LCD_LINE_1);
-    LCD_WRITE_STRING(bdAddr2Str(peerAddr), HAL_LCD_LINE_2);
-
-    GAPCentralRole_EstablishLink(DEFAULT_LINK_HIGH_DUTY_CYCLE,
-                                 DEFAULT_LINK_WHITE_LIST,
-                                 addrType, peerAddr);
-    return TRUE;
-  }
-  else
-  {
-    //LCD_WRITE_STRING( "BLE_STATE not in IDLE", HAL_LCD_LINE_1 );
-  }
-  return FALSE;
-*/
   return FALSE;
 }
 
@@ -1158,105 +894,3 @@ static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)
     }
     return FALSE;
 }
-
-#if 0
-/*********************************************************************
- * @fn      simpleBLEFindSvcUuid
- *
- * @brief   Find a given UUID in an advertiser's service UUID list.
- *
- * @return  TRUE if service UUID found
- */
-static bool simpleBLEFindSvcUuid(uint16 uuid, uint8 *pData, uint8 dataLen)
-{
-  uint8 adLen;
-  uint8 adType;
-  uint8 *pEnd;
-
-  pEnd = pData + dataLen - 1;
-
-  // While end of data not reached
-  while (pData < pEnd)
-  {
-    // Get length of next AD item
-    adLen = *pData++;
-    if (adLen > 0)
-    {
-      adType = *pData;
-
-      // If AD type is for 16-bit service UUID
-      if (adType == GAP_ADTYPE_16BIT_MORE || adType == GAP_ADTYPE_16BIT_COMPLETE)
-      {
-        pData++;
-        adLen--;
-
-        // For each UUID in list
-        while (adLen >= 2 && pData < pEnd)
-        {
-          // Check for match
-          if (pData[0] == LO_UINT16(uuid) && pData[1] == HI_UINT16(uuid))
-          {
-            // Match found
-            return TRUE;
-          }
-
-          // Go to next
-          pData += 2;
-          adLen -= 2;
-        }
-
-        // Handle possible erroneous extra byte in UUID list
-        if (adLen == 1)
-        {
-          pData++;
-        }
-      }
-      else
-      {
-        // Go to next item
-        pData += adLen;
-      }
-    }
-  }
-
-  // Match not found
-  return FALSE;
-}
-
-#endif
-
-#if 0
-/*********************************************************************
- * @fn      simpleBLEAddDeviceInfo
- *
- * @brief   Add a device to the device discovery result list
- *
- * @return  none
- */
-static void simpleBLEAddDeviceInfo(uint8 *pAddr, uint8 addrType)
-{
-/*
-  uint8 i;
-
-  // If result count not at max
-  if (simpleBLEScanRes < DEFAULT_MAX_SCAN_RES)
-  {
-    // Check if device is already in scan results
-    for (i = 0; i < simpleBLEScanRes; i++)
-    {
-      if (osal_memcmp(pAddr, simpleBLEDevList[i].addr, B_ADDR_LEN))
-      {
-        return;
-      }
-    }
-
-    // Add addr to scan result list
-    osal_memcpy(simpleBLEDevList[simpleBLEScanRes].addr, pAddr, B_ADDR_LEN);
-    simpleBLEDevList[simpleBLEScanRes].addrType = addrType;
-
-    // Increment scan result count
-    simpleBLEScanRes++;
-  }
-*/
-}
-#endif
