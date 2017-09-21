@@ -664,8 +664,7 @@ EXIT:
  */
 static void simpleBLECentralRssiCB(uint16 connHandle, int8 rssi)
 {
-  //LCD_WRITE_STRING_VALUE( "RSSI -dB:", (uint8) (-rssi), 10, HAL_LCD_LINE_1 );
-  simpleBle_SetRssi(rssi);
+  return;
 }
 
 // 显示下一个从设备的地址  nextFalg=true则显示下一个地址，否则显示当前地址

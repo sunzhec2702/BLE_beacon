@@ -971,7 +971,7 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
 
 static void peripheralRssiReadCB(int8 rssi)
 {
-  simpleBle_SetRssi(rssi);
+  return;
 }
 
 /*********************************************************************
@@ -1016,15 +1016,9 @@ static void simpleProfileChangeCB(uint8 paramID)
       if (simpleBLE_CheckIfUse_Uart2Uart()) //使用透传模式时才透传
       {
         NPI_WriteTransport(newChar6Value, returnBytes);
-
-        // 这里可以处理一下数据，比如发命令点灯
-        // MT 命令处理 函数
-        simpleBLE_MT_CMD_Handle(newChar6Value, returnBytes);
       }
     }
-
     break;
-
   default:
     // should not reach here!
     break;
