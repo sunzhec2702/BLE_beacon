@@ -1030,7 +1030,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   }
 }
 
-#define ENABLE_DISABLE_PERIOD 1000
+#define ENABLE_DISABLE_PERIOD 500
 static bool rapid_processing = FALSE;
 static void change_advertise_data(uint8 key_pressed)
 {
