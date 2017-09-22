@@ -181,12 +181,15 @@ static uint8 led_toggling = FALSE;
 static uint16 led_toggle_period = PERIPHERAL_START_LED_TOGGLE_PERIOD;
 // Default WAKEUP period
 static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-static uint16 battery_voltage;
+static uint8 battery_voltage = 0;
 // Key related
 static uint8 key_pressed_count = 0;
 static uint8 key_processing = FALSE;
 //first boot up
 static bool first_boot = TRUE;
+// Low power status
+static bool low_power_state = FALSE;
+static bool key_pressed = FALSE;
 
 //static int8 gMP = 0xCD;
 // GAP GATT Attributes
@@ -204,7 +207,7 @@ static void peripheralRssiReadCB(int8 rssi);
 static void simpleProfileChangeCB(uint8 paramID);
 static uint8 led_toggle_set_param(uint16 toggle_period, uint8 toggle_target_cnt, uint16 delay);
 static uint8 led_toggle_clean_param(void);
-static bool key_pressed = FALSE;
+static void enter_low_battery_mode(void);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
@@ -471,8 +474,15 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     if (first_boot == TRUE)
     {
       first_boot = FALSE;
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_START_LED_TOGGLE_CNT, 0);
-      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD * (PERIPHERAL_START_LED_TOGGLE_CNT));
+      if (check_low_battery() == TRUE)
+      {
+        enter_low_battery_mode();
+      }
+      else
+      {
+        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_START_LED_TOGGLE_CNT, 0);
+        osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD * (PERIPHERAL_START_LED_TOGGLE_CNT));
+      }
     }
     else
     {
@@ -565,24 +575,23 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   {
     DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
     extern uint8 uart_sleep_count;
-
     if (uart_sleep_count > 1)
     {
-        g_sleepFlag = TRUE;
-        osal_pwrmgr_device(PWRMGR_BATTERY); //  自动睡眠
-        osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
-        uint8 initial_advertising_enable = FALSE;
-        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
-        DEBUG_PRINT("Enter Sleep Mode\r\n");
-        // 为了让串口数据发送完毕， 需要先延时一下，否则进入了睡眠就发送乱码了， 1ms即可
-        simpleBLE_Delay_1ms(1);
+      low_power_state = FALSE; // set false to enable key event.
+      g_sleepFlag = TRUE;
+      osal_pwrmgr_device(PWRMGR_BATTERY); //  自动睡眠
+      osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
+      uint8 initial_advertising_enable = FALSE;
+      GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+      DEBUG_PRINT("Enter Sleep Mode\r\n");
+      // 为了让串口数据发送完毕， 需要先延时一下，否则进入了睡眠就发送乱码了， 1ms即可
+      simpleBLE_Delay_1ms(1);
     }
     else
     {
       uart_sleep_count++;
       osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
     }
-
     return (events ^ SBP_SLEEP_EVT);
   }
 
@@ -716,11 +725,10 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
     */
   if (keys & HAL_KEY_SW_6)
   {
-    if (key_processing == FALSE)
+    if (key_processing == FALSE && low_power_state == FALSE)
     {
       if (key_pressed_count == 0)
       {
-        osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
         DEBUG_PRINT("start timer \r\n");        
         osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
       }
@@ -1009,15 +1017,19 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     else
     {
       DEBUG_PRINT("This is a per hour event\r\n");
-      HalAdcSetReference(HAL_ADC_REF_125V);
-      battery_voltage = HalAdcRead(HAL_ADC_CHANNEL_BATTERY, HAL_ADC_RESOLUTION_10) * 3;
-      NPI_PrintValue("Battery voltage is ", battery_voltage, 10);
-      DEBUG_PRINT("\r\n");
-      wake_up_hours_remain--;
-      if (wake_up_hours_remain == 0)
+      if (check_low_battery() == TRUE)
       {
-        DEBUG_PRINT("Enter Sleep mode\r\n");
-        osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
+        enter_low_battery_mode();
+      }
+      else
+      {
+        advertData_iBeacon[28] = battery_voltage & 0xFF;
+        wake_up_hours_remain--;
+        if (wake_up_hours_remain == 0)
+        {
+          DEBUG_PRINT("Enter Sleep mode\r\n");
+          osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
+        }
       }
     }
     break;
@@ -1087,6 +1099,34 @@ static void change_advertise_data(uint8 key_pressed)
   }
 }
 
+#define BATTERY_LOW_THRESHOLD 240
+
+static bool check_low_battery()
+{
+  HalAdcSetReference(HAL_ADC_REF_125V);
+  uint16 adc_read = 0;
+  for (uint8 i = 0; i < 16; i++)
+  {
+    adc_read += HalAdcRead(HAL_ADC_CHANNEL_VDD, HAL_ADC_RESOLUTION_10);
+  }
+  adc_read = adc_read >> 4;
+  battery_voltage = adc_read * 3 * 125 / 512 / 10;
+  #ifdef DEBUG_BOARD
+  NPI_PrintValue("Battery Value : ", battery_voltage * 10, 10);
+  #endif
+  if (battery_voltage < BATTERY_LOW_THRESHOLD)
+  {
+    low_power_state = TRUE;
+    return TRUE;
+  }
+  return FALSE;
+}
+
+static void enter_low_battery_mode()
+{
+  led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
+  osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD * (PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT));
+}
 //#endif
 /*********************************************************************
 *********************************************************************/

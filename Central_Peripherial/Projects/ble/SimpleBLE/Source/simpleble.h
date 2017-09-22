@@ -63,6 +63,9 @@ extern "C"
 #define PERIPHERAL_START_LED_TOGGLE_CNT                 6
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD              150
 #define PERIPHERAL_KEY_CALCULATE_PERIOD                 500 // 500ms
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD            5000 // 5s
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               120000 // 120 * 5 = 600. 10 mins
+
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
