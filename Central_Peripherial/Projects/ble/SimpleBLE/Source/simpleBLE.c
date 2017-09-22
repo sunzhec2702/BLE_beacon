@@ -27,7 +27,7 @@
 #include "math.h"
 
 SYS_CONFIG sys_config;
-bool g_sleepFlag = TRUE;    //睡眠标志
+bool g_sleepFlag = FALSE;    //睡眠标志
 uint8 uart_sleep_count = 0; // 睡眠计数器
 bool g_rssi_flag = false; //是否开启测距
 extern gaprole_States_t gapProfileState; // 从机连接状态

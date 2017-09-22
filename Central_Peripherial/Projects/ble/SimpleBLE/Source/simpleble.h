@@ -25,17 +25,18 @@ extern "C"
 #define SBP_UART_EVT                                   0x0010//串口数据事件
 #define SBP_SLEEP_EVT                                  0x0020//睡眠事件
 #define SBP_WAKE_EVT                                   0x0040//唤醒事件
-#define SBP_PERIODIC_LED_EVT                           0x0080//从设备专用-led闪缩专用
+#define SBP_PERIODIC_LED_EVT                           0x0080//开机闪灯
 #define SBP_CONNECT_EVT                                0x0100//主机连接-确认连接
 #define START_DISCOVERY_EVT                            0x0200//发现从设备
-
+#define SBP_KEY_CNT_EVT                                0x0008//count the key pressed.
 
 #define SBP_PERIODIC_BUTTON_LED_EVT                    0x0400
 #define SBP_PERIODIC_PER_HOUR_EVT                      0x0800
 #define SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE            0x1000
 #define SBP_PERIODIC_CHN_ADVERT_EVT_PRESS              0x2000
 #define SBP_PERIODIC_INDEX_EVT                         0x4000//系统轮询定时器
-#define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
+
+#define SBP_PERIODIC_EVT_ALL (SBP_SLEEP_EVT|SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
@@ -53,11 +54,15 @@ extern "C"
 #endif
 
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
-#define BUTTON_LED_TOGGLE_COUNT                         4
+#define BUTTON_LED_TOGGLE_COUNT                         2
 #define SBP_PERIODIC_ADVERT_CHG_PERIOD                  5000 // 5s
 
 #define SLEEP_MS                                        300  //睡眠时间， 串口激活事件
 
+#define PERIPHERAL_WAKEUP_LED_TOGGLE_CNT                4
+#define PERIPHERAL_START_LED_TOGGLE_CNT                 6
+#define PERIPHERAL_START_LED_TOGGLE_PERIOD              150
+#define PERIPHERAL_KEY_CALCULATE_PERIOD                 500 // 500ms
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 

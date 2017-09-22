@@ -87,10 +87,6 @@
 #define ADV_IN_CONN_WAIT 500 // delay 500 ms
 #endif
 
-// Default WAKEUP period
-static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-static uint16 battery_voltage;
-static 
 /*********************************************************************
  * TYPEDEFS
  */
@@ -177,7 +173,20 @@ static uint8 advertData_iBeacon[] =
   0xCD //29
 };
 
+// LED related.
 static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
+static uint8 led_toggle_count = 0;
+static uint8 led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
+static uint8 led_toggling = FALSE;
+static uint16 led_toggle_period = PERIPHERAL_START_LED_TOGGLE_PERIOD;
+// Default WAKEUP period
+static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+static uint16 battery_voltage;
+// Key related
+static uint8 key_pressed_count = 0;
+static uint8 key_processing = FALSE;
+//first boot up
+static bool first_boot = TRUE;
 
 //static int8 gMP = 0xCD;
 // GAP GATT Attributes
@@ -193,6 +202,9 @@ static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg);
 static void peripheralStateNotificationCB(gaprole_States_t newState);
 static void peripheralRssiReadCB(int8 rssi);
 static void simpleProfileChangeCB(uint8 paramID);
+static uint8 led_toggle_set_param(uint16 toggle_period, uint8 toggle_target_cnt, uint16 delay);
+static uint8 led_toggle_clean_param(void);
+static bool key_pressed = FALSE;
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
@@ -269,7 +281,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // Setup the GAP Peripheral Role Profile
   {
     // For other hardware platforms, device starts advertising upon initialization
-    uint8 initial_advertising_enable = TRUE;
+    uint8 initial_advertising_enable = FALSE;
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
     // until the enabler is set back to TRUE
@@ -435,7 +447,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       // Release the OSAL message
       VOID osal_msg_deallocate(pMsg);
     }
-
     // return unprocessed events
     return (events ^ SYS_EVENT_MSG);
   }
@@ -448,14 +459,33 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     // Start Bond Manager
     VOID GAPBondMgr_Register(&simpleBLEPeripheral_BondMgrCBs);
 
-    osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
-    osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
-    osal_set_event(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
-
-    // 延时400ms后唤醒， 不然会继续睡眠，原因不明
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
 
     return (events ^ START_DEVICE_EVT);
+  }
+
+  if (events & SBP_WAKE_EVT)
+  {
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
+    g_sleepFlag = FALSE;
+    if (first_boot == TRUE)
+    {
+      first_boot = FALSE;
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_START_LED_TOGGLE_CNT, 0);
+      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD * (PERIPHERAL_START_LED_TOGGLE_CNT));
+    }
+    else
+    {
+      // Start advertising
+      uint8 initial_advertising_enable = TRUE;
+      GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
+      // LED
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, 0);
+    }
+    return (events ^ SBP_WAKE_EVT);
   }
 
   if (events & SBP_PERIODIC_INDEX_EVT)
@@ -474,6 +504,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_PERIODIC_PER_HOUR_EVT)
   {
+    DEBUG_PRINT("SBP_PERIODIC_PER_HOUR_EVT\r\n");
     // Restart timer
     if (SBP_PERIODIC_PER_HOUR_PERIOD)
     {
@@ -515,13 +546,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     return (events ^ SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE);
   }
 
-  if (events & SBP_WAKE_EVT)
-  {
-    g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
-    return (events ^ SBP_WAKE_EVT);
-  }
-
   if (events & SBP_DATA_EVT)
   {
     return (events ^ SBP_DATA_EVT);
@@ -539,12 +563,11 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_SLEEP_EVT)
   {
+    DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
     extern uint8 uart_sleep_count;
 
-    if (uart_sleep_count > 3)
+    if (uart_sleep_count > 1)
     {
-      if (g_sleepFlag == FALSE)
-      {
         g_sleepFlag = TRUE;
         osal_pwrmgr_device(PWRMGR_BATTERY); //  自动睡眠
         osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
@@ -553,14 +576,12 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
         DEBUG_PRINT("Enter Sleep Mode\r\n");
         // 为了让串口数据发送完毕， 需要先延时一下，否则进入了睡眠就发送乱码了， 1ms即可
         simpleBLE_Delay_1ms(1);
-      }
     }
     else
     {
       uart_sleep_count++;
+      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
     }
-
-    osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
 
     return (events ^ SBP_SLEEP_EVT);
   }
@@ -572,33 +593,78 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     {
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT, SBP_PERIODIC_EVT_PERIOD);
     }
-
-    // Perform periodic application task. DO NOTHING FOR NOW.
-    // simpleBLE_performPeriodicTask();
-
     return (events ^ SBP_PERIODIC_EVT);
   }
 
   if (events & SBP_PERIODIC_LED_EVT)
-  { // 开机测试led闪烁几次
-    static uint8 led_conut = 0;
-
-    if (++led_conut < 10)
+  {
+    if (++led_toggle_count <= led_toggle_cnt_target)
     {
       HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, 100);
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period);
     }
     else
     {
       HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
       osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
+      led_toggle_clean_param();
     }
-
     return (events ^ SBP_PERIODIC_LED_EVT);
   }
 
+  if (events & SBP_KEY_CNT_EVT)
+  {
+    if (key_pressed_count >= 2 && g_sleepFlag == TRUE)
+    {
+      osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
+    }
+    else if (key_pressed_count == 1 && g_sleepFlag == TRUE)
+    {
+      first_boot = TRUE;
+      osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
+    }
+    else if (key_pressed_count >= 2 && g_sleepFlag == FALSE)
+    {
+      DEBUG_PRINT("Timer is reset\r\n");
+      // reset timer count.
+      wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+      // LED. blink twice.
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, 0);
+    }
+    else if(key_pressed_count == 1 && g_sleepFlag == FALSE)
+    {
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, BUTTON_LED_TOGGLE_COUNT, 0);
+      change_advertise_data(TRUE);
+    }
+    key_pressed_count = 0;
+    key_processing = FALSE;    
+    return (events ^ SBP_KEY_CNT_EVT);
+  }
   // Discard unknown events
   return 0;
+}
+
+
+static uint8 led_toggle_set_param(uint16 toggle_period, uint8 toggle_target_cnt, uint16 delay)
+{
+  if (led_toggling == TRUE)
+    return FALSE;
+  led_toggling = TRUE;
+  led_toggle_period = toggle_period;
+  led_toggle_count = 0;
+  led_toggle_cnt_target = toggle_target_cnt;
+  osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, delay);
+  return TRUE;
+}
+static uint8 led_toggle_clean_param()
+{
+  if (led_toggling == FALSE)
+    return FALSE;
+  led_toggle_period = PERIPHERAL_START_LED_TOGGLE_PERIOD;
+  led_toggle_count = 0;
+  led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
+  led_toggling = FALSE;
+  return TRUE;
 }
 
 /*********************************************************************
@@ -648,25 +714,20 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
     按键处理公共函数， 主机与从机都是运行这个函数，
     注意每次启动不是主机就是从机，不是同时是主机与从机的， 所以他们不冲突的
     */
-  VOID shift; // Intentionally unreferenced parameter
-  if (keys & HAL_KEY_SW_1)
-  {
-  }
   if (keys & HAL_KEY_SW_6)
   {
-    wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-    if (key_led_count == BUTTON_LED_TOGGLE_COUNT)
+    if (key_processing == FALSE)
     {
-      osal_set_event(simpleBLETaskId, SBP_PERIODIC_BUTTON_LED_EVT); // Start the led event immediatly.
+      if (key_pressed_count == 0)
+      {
+        osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
+        DEBUG_PRINT("start timer \r\n");        
+        osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
+      }
+      key_pressed_count++;
     }
-    if (g_sleepFlag == TRUE)
-    {
-      HAL_SYSTEM_RESET();
-    }
-    else
-      change_advertise_data(TRUE);
+    key_pressed = !key_pressed;
   }
-  //simpleBLE_HandleKeys(keys);
 }
 //#endif // #if defined( CC2540_MINIDK )
 
@@ -970,20 +1031,21 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
 }
 
 #define ENABLE_DISABLE_PERIOD 1000
+static bool rapid_processing = FALSE;
 static void change_advertise_data(uint8 key_pressed)
 {
   uint8 initial_advertising_enable;
   GAPRole_GetParameter(GAPROLE_ADVERT_ENABLED, &initial_advertising_enable);
   if (key_pressed == TRUE)
   {
-    DEBUG_PRINT("KEY is PRESSED\r\n");
-    if (initial_advertising_enable == TRUE)
+    if (initial_advertising_enable == TRUE && rapid_processing == FALSE)
     {
+      rapid_processing = TRUE;
       initial_advertising_enable = FALSE;
       GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_CHN_ADVERT_EVT_PRESS, ENABLE_DISABLE_PERIOD); // 1s for test.
     }
-    else
+    else if (initial_advertising_enable == FALSE && rapid_processing == TRUE)
     {
       advertData_iBeacon[27] |= 0x80;
       // Set advertising interval
@@ -1001,14 +1063,13 @@ static void change_advertise_data(uint8 key_pressed)
   }
   else
   {
-    DEBUG_PRINT("KEY is RELEASED\r\n");
-    if (initial_advertising_enable == TRUE)
+    if (initial_advertising_enable == TRUE && rapid_processing == TRUE)
     {
       initial_advertising_enable = FALSE;
       GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE, ENABLE_DISABLE_PERIOD); // 1s for test.
     }
-    else
+    else if (initial_advertising_enable == FALSE && rapid_processing == TRUE)
     {
       advertData_iBeacon[27] &= 0x7F;
       // Set advertising interval
@@ -1021,6 +1082,7 @@ static void change_advertise_data(uint8 key_pressed)
         initial_advertising_enable = TRUE;
         GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
       }
+      rapid_processing = FALSE;
     }
   }
 }
