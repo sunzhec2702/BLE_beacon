@@ -8,6 +8,12 @@ extern "C"
 #endif
 #include "hal_types.h"
 
+#define DEVELOP_BOARD 0
+#define PRODUCT_BOARD 1
+
+#define TARGET_BOARD DEVELOP_BOARD
+
+
 #define DEBUG_BOARD 1
 #ifdef DEBUG_BOARD
 #define LCD_TO_UART TRUE
@@ -36,7 +42,7 @@ extern "C"
 #define SBP_PERIODIC_CHN_ADVERT_EVT_PRESS              0x2000
 #define SBP_PERIODIC_INDEX_EVT                         0x4000//系统轮询定时器
 
-#define SBP_PERIODIC_EVT_ALL (SBP_SLEEP_EVT|SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
+#define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
@@ -78,15 +84,8 @@ extern "C"
 
 //设备名称的字符长度 <= 12
 #define DEV_NAME_LEN                                12
-
-
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-
-
-
-//以下参数请勿修改--------------------------------amomcu.com--------------------
-
 
 // 系统定时器间隔时间
 #define SBP_PERIODIC_EVT_PERIOD                   100//必须是100ms
@@ -96,7 +95,6 @@ extern "C"
 
 //mac地址的字符长度 (一个字节等于两个字符)
 #define MAC_ADDR_CHAR_LEN                          12//mac地址的字符长度 (一个字节等于两个字符)
-
 
 // 出厂设置或清除配对信息与从机信息
 typedef enum
@@ -121,15 +119,6 @@ enum
   BLE_STATE_CONNECTED,              //已连接上
   BLE_STATE_DISCONNECTING,          //断开连接中
   BLE_STATE_ADVERTISING             //从机广播中
-};
-
-// 系统裕兴模式定义
-enum
-{
-  BLE_MODE_SERIAL,                   // 串口透传模式 【默认】
-  BLE_MODE_DRIVER,                   // 直驱模式        
-  BLE_MODE_iBeacon,                  // iBeacon 广播模式
-  BLE_MODE_MAX,
 };
 
 // 连接模式指示

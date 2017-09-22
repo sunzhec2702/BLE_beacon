@@ -68,10 +68,6 @@ extern "C"
 
 /* Board Identifier */
 
-#if !defined (HAL_BOARD_CC2530EB_REV17) && !defined (HAL_BOARD_CC2530EB_REV13)
-  #define HAL_BOARD_CC2530EB_REV17
-#endif
-
 /* Clock Speed */
 
 #define HAL_CPU_CLOCK_MHZ             32
@@ -97,9 +93,9 @@ extern "C"
 
 /* LED Configuration */
 
-#if defined (HAL_BOARD_CC2530EB_REV17) && !defined (HAL_PA_LNA) && !defined (HAL_PA_LNA_CC2590)
+#if (TARGET_BOARD == DEVELOP_BOARD)
   #define HAL_NUM_LEDS                 3
-#elif defined (HAL_BOARD_CC2530EB_REV13) || defined (HAL_PA_LNA) || defined (HAL_PA_LNA_CC2590)
+#elif (TARGET_BOARD == PRODUCT_BOARD)
   #define HAL_NUM_LEDS                 1
 #else
   #error Unknown Board Indentifier
@@ -107,26 +103,30 @@ extern "C"
 
 #define HAL_LED_BLINK_DELAY()   st( { volatile uint32 i; for (i=0; i<0x5800; i++) { }; } )
 
+#if (TARGET_BOARD == DEVELOP_BOARD)
 /* 1 - Green */
-#define LED1_BV                        BV(0)
 #define LED1_BV                        BV(0)
 #define LED1_SBIT                      P1_0
 #define LED1_DDR                       P1DIR
 #define LED1_POLARITY                  ACTIVE_HIGH
 
+/* 2 - Red */
+#define LED2_BV                      BV(1)
+#define LED2_SBIT                    P1_1
+#define LED2_DDR                     P1DIR
+#define LED2_POLARITY                ACTIVE_HIGH
 
-#ifdef HAL_BOARD_CC2530EB_REV17
-  /* 2 - Red */
-  #define LED2_BV                      BV(1)
-  #define LED2_SBIT                    P1_1
-  #define LED2_DDR                     P1DIR
-  #define LED2_POLARITY                ACTIVE_HIGH
+/* 3 - Yellow */
+#define LED3_BV                      BV(4)
+#define LED3_SBIT                    P1_4
+#define LED3_DDR                     P1DIR
+#define LED3_POLARITY                ACTIVE_HIGH
 
-  /* 3 - Yellow */
-  #define LED3_BV                      BV(4)
-  #define LED3_SBIT                    P1_4
-  #define LED3_DDR                     P1DIR
-  #define LED3_POLARITY                ACTIVE_HIGH
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+#define LED1_BV                        BV(4)
+#define LED1_SBIT                      P1_4
+#define LED1_DDR                       P1DIR
+#define LED1_POLARITY                  ACTIVE_HIGH
 #endif
 
 /* Push Button Configuration */
@@ -138,10 +138,10 @@ extern "C"
 #define PUSH1_BV                       BV(1)
 #define PUSH1_SBIT                     P0_1
 
-#ifdef HAL_BOARD_CC2530EB_REV17
+#if (TARGET_BOARD == DEVELOP_BOARD)
   #define PUSH1_POLARITY               ACTIVE_HIGH
-#elif defined (HAL_BOARD_CC2530EB_REV13)
-  #define PUSH1_POLARITY               ACTIVE_LOW
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+  #define PUSH1_POLARITY               ACTIVE_HIGH
 #else
   #error Unknown Board Indentifier
 #endif
@@ -278,8 +278,7 @@ It is meant to be used by TI only */
 #define HAL_PUSH_BUTTON6()        (0)
 
 /* LED's */
-
-#if defined (HAL_BOARD_CC2530EB_REV17) && !defined (HAL_PA_LNA) && !defined (HAL_PA_LNA_CC2590)
+#if (TARGET_BOARD == DEVELOP_BOARD)
 
   #define HAL_TURN_OFF_LED1()       st( LED1_SBIT = LED1_POLARITY (0); )
   #define HAL_TURN_OFF_LED2()       st( LED2_SBIT = LED2_POLARITY (0); )
@@ -301,7 +300,7 @@ It is meant to be used by TI only */
   #define HAL_STATE_LED3()          (LED3_POLARITY (LED3_SBIT))
   #define HAL_STATE_LED4()          HAL_STATE_LED1()
 
-#elif defined (HAL_BOARD_CC2530EB_REV13) || defined (HAL_PA_LNA) || defined (HAL_PA_LNA_CC2590)
+#elif (TARGET_BOARD == PRODUCT_BOARD)
 
   #define HAL_TURN_OFF_LED1()       st( LED1_SBIT = LED1_POLARITY (0); )
   #define HAL_TURN_OFF_LED2()       HAL_TURN_OFF_LED1()

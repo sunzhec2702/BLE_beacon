@@ -333,31 +333,10 @@ uint8 HalKeyRead ( void )
 {
   uint8 keys = 0;
 
-#if defined (CC2540_MINIDK)
-  if (!(HAL_KEY_SW_1_PORT & HAL_KEY_SW_1_BIT))    /* Key is active low */
-  {
-    keys |= HAL_KEY_SW_1;
-  }
-  if (!(HAL_KEY_SW_2_PORT & HAL_KEY_SW_2_BIT))    /* Key is active low */
-  {
-    keys |= HAL_KEY_SW_2;
-  }
-#else
-#ifdef HAL_BOARD_CC2530EB_REV17
   if ( (HAL_KEY_SW_6_PORT & HAL_KEY_SW_6_BIT))    /* Key is active high */
-#elif defined (HAL_BOARD_CC2530EB_REV13)
-  if (!(HAL_KEY_SW_6_PORT & HAL_KEY_SW_6_BIT))    /* Key is active low */
-#endif
   {
     keys |= HAL_KEY_SW_6;
   }
-
-#if defined ( AMOMCU_UART_RX_MODE)
-  if(b_amomcu_uart_rx_mode)
-  {
-    keys |= HAL_KEY_SW_7;
-  }  
-#endif
 
   if (!(HAL_KEY_SW_7_PORT & HAL_KEY_SW_7_BIT))    /* Key is active low */
   {
@@ -368,7 +347,6 @@ uint8 HalKeyRead ( void )
   {
     keys |= halGetJoyKeyInput();
   }
-#endif
   return keys;
 }
 
