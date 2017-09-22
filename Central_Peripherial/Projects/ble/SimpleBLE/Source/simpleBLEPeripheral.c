@@ -1116,7 +1116,6 @@ static bool check_low_battery()
   #endif
   if (battery_voltage < BATTERY_LOW_THRESHOLD)
   {
-    low_power_state = TRUE;
     return TRUE;
   }
   return FALSE;
@@ -1124,6 +1123,7 @@ static bool check_low_battery()
 
 static void enter_low_battery_mode()
 {
+  low_power_state = TRUE;
   led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
   osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD * (PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT));
 }
