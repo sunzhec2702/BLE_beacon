@@ -11,10 +11,10 @@ extern "C"
 #define DEVELOP_BOARD 0
 #define PRODUCT_BOARD 1
 
-#define TARGET_BOARD DEVELOP_BOARD
+#define TARGET_BOARD PRODUCT_BOARD
+//#define DEBUG_BOARD 1
 
 
-#define DEBUG_BOARD 1
 #ifdef DEBUG_BOARD
 #define LCD_TO_UART TRUE
 #define DEBUG_PRINT(x) NPI_PrintString(x)

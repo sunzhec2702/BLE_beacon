@@ -121,10 +121,12 @@ void HalLedInit (void)
 
   // Set LED GPIOs to outputs.
   LED1_DDR |= LED1_BV;
+#if (TARGET_BOARD == DEVELOP_BOARD)
 #if (!defined HAL_PA_LNA && !defined HAL_PA_LNA_CC2590)
   LED2_DDR |= LED2_BV;
 #if (!defined CC2540_MINIDK && !defined HAL_BOARD_CC2540USB)
   LED3_DDR |= LED3_BV;
+#endif
 #endif
 #endif
 #if defined BLINK_LEDS
