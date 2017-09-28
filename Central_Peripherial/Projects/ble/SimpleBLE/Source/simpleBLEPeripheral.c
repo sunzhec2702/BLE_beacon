@@ -191,6 +191,10 @@ static bool first_boot = TRUE;
 static bool low_power_state = FALSE;
 static bool key_pressed = FALSE;
 
+#ifdef DEBUG_BOARD
+static bool debug_low_power = FALSE;
+#endif
+
 //static int8 gMP = 0xCD;
 // GAP GATT Attributes
 
@@ -205,8 +209,9 @@ static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg);
 static void peripheralStateNotificationCB(gaprole_States_t newState);
 static void peripheralRssiReadCB(int8 rssi);
 static void simpleProfileChangeCB(uint8 paramID);
-static uint8 led_toggle_set_param(uint16 toggle_period, uint8 toggle_target_cnt, uint16 delay);
+static uint8 led_toggle_set_param(uint16 toggle_period, uint32 toggle_target_cnt, uint16 delay);
 static uint8 led_toggle_clean_param(void);
+static bool check_low_battery(void);
 static void enter_low_battery_mode(void);
 
 //#if defined( BLE_BOND_PAIR )
@@ -471,18 +476,17 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   {
     osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
     g_sleepFlag = FALSE;
+    if (check_low_battery() == TRUE)
+    {
+      enter_low_battery_mode();
+      return (events ^ SBP_WAKE_EVT);
+    }
+
     if (first_boot == TRUE)
     {
       first_boot = FALSE;
-      if (check_low_battery() == TRUE)
-      {
-        enter_low_battery_mode();
-      }
-      else
-      {
-        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_START_LED_TOGGLE_CNT, 0);
-        osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD * (PERIPHERAL_START_LED_TOGGLE_CNT));
-      }
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_START_LED_TOGGLE_CNT, 0);
+      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD * (PERIPHERAL_START_LED_TOGGLE_CNT));
     }
     else
     {
@@ -617,6 +621,11 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
       osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
       led_toggle_clean_param();
+      if (low_power_state == TRUE)
+      {
+        osal_set_event(simpleBLETaskId, SBP_SLEEP_EVT);
+        low_power_state = FALSE;
+      }
     }
     return (events ^ SBP_PERIODIC_LED_EVT);
   }
@@ -654,7 +663,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 }
 
 
-static uint8 led_toggle_set_param(uint16 toggle_period, uint8 toggle_target_cnt, uint16 delay)
+static uint8 led_toggle_set_param(uint16 toggle_period, uint32 toggle_target_cnt, uint16 delay)
 {
   if (led_toggling == TRUE)
     return FALSE;
@@ -725,17 +734,32 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
     */
   if (keys & HAL_KEY_SW_6)
   {
-    if (key_processing == FALSE && low_power_state == FALSE)
+    if (low_power_state == TRUE)
+    {
+      DEBUG_PRINT("Handle Keys, Low Power Mode\r\n");
+      return;
+    }
+
+    if (key_processing == FALSE)
     {
       if (key_pressed_count == 0)
       {
-        DEBUG_PRINT("start timer \r\n");        
         osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
       }
       key_pressed_count++;
     }
     key_pressed = !key_pressed;
   }
+  #ifdef DEBUG_BOARD
+  if (keys & HAL_KEY_SW_1)
+  {
+    debug_low_power = TRUE;
+  }
+  if (keys & HAL_KEY_SW_3)
+  {
+    debug_low_power = FALSE;
+  }
+  #endif
 }
 //#endif // #if defined( CC2540_MINIDK )
 
@@ -996,6 +1020,11 @@ static void ProcessPairStateCB(uint16 connHandle, uint8 state, uint8 status)
 
 static void PeripherialPerformPeriodicTask(uint16 event_id)
 {
+  if (low_power_state == TRUE)
+  {
+    return;
+  }
+
   switch (event_id)
   {
   case SBP_PERIODIC_INDEX_EVT:
@@ -1023,7 +1052,6 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       }
       else
       {
-        advertData_iBeacon[28] = battery_voltage & 0xFF;
         wake_up_hours_remain--;
         if (wake_up_hours_remain == 0)
         {
@@ -1052,6 +1080,7 @@ static void change_advertise_data(uint8 key_pressed)
   {
     if (initial_advertising_enable == TRUE && rapid_processing == FALSE)
     {
+      DEBUG_PRINT("Enter Rapid Mode\r\n");
       rapid_processing = TRUE;
       initial_advertising_enable = FALSE;
       GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
@@ -1083,6 +1112,7 @@ static void change_advertise_data(uint8 key_pressed)
     }
     else if (initial_advertising_enable == FALSE && rapid_processing == TRUE)
     {
+      DEBUG_PRINT("Exit Rapid Mode\r\n");
       advertData_iBeacon[27] &= 0x7F;
       // Set advertising interval
       {
@@ -1099,21 +1129,25 @@ static void change_advertise_data(uint8 key_pressed)
   }
 }
 
-#define BATTERY_LOW_THRESHOLD 240
-
 static bool check_low_battery()
 {
-  HalAdcSetReference(HAL_ADC_REF_125V);
-  uint16 adc_read = 0;
+  #ifdef DEBUG_BOARD
+  if (debug_low_power == TRUE)
+    return TRUE;
+  #endif
+
+  uint32 adc_read = 0;
   for (uint8 i = 0; i < 16; i++)
   {
+    HalAdcSetReference(HAL_ADC_REF_125V);
     adc_read += HalAdcRead(HAL_ADC_CHANNEL_VDD, HAL_ADC_RESOLUTION_10);
   }
   adc_read = adc_read >> 4;
-  battery_voltage = adc_read * 3 * 125 / 512 / 10;
-  #ifdef DEBUG_BOARD
-  NPI_PrintValue("Battery Value : ", battery_voltage * 10, 10);
-  #endif
+  battery_voltage = adc_read * 3 * 125 / 511 / 10;
+  DEBUG_VALUE("adc value : ", adc_read, 10);
+  DEBUG_VALUE("Battery Value : ", battery_voltage * 10, 10);
+  // Update the advertise data.
+  advertData_iBeacon[28] = battery_voltage & 0xFF;
   if (battery_voltage < BATTERY_LOW_THRESHOLD)
   {
     return TRUE;
@@ -1123,9 +1157,14 @@ static bool check_low_battery()
 
 static void enter_low_battery_mode()
 {
+  DEBUG_PRINT("Enter Low Battery Mode\r\n");
   low_power_state = TRUE;
+  // Stop advertising.
+  uint8 initial_advertising_enable = FALSE;
+  GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+  // LED Blinking.
   led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
-  osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD * (PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT));
+  //osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, (PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD * PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT));
 }
 //#endif
 /*********************************************************************

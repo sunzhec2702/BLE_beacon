@@ -18,9 +18,11 @@ extern "C"
 #ifdef DEBUG_BOARD
 #define LCD_TO_UART TRUE
 #define DEBUG_PRINT(x) NPI_PrintString(x)
+#define DEBUG_VALUE(x,y,z) {NPI_PrintValue(x, y, z);NPI_PrintString("\r\n");}
 #else
 #define LCD_TO_UART FALSE
 #define DEBUG_PRINT(x) {}
+#define DEBUG_VALUE(x,y,z) {}
 #endif
 
 
@@ -69,8 +71,19 @@ extern "C"
 #define PERIPHERAL_START_LED_TOGGLE_CNT                 6
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD              150
 #define PERIPHERAL_KEY_CALCULATE_PERIOD                 500 // 500ms
-#define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD            5000 // 5s
-#define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               120000 // 120 * 5 = 600. 10 mins
+
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_S                 5
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD            (PERIPHERAL_LOW_BAT_LED_TOGGLE_S * 1000) // 5s
+
+#ifdef DEBUG_BOARD
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_TIME              1   // 1 min
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               (60 * PERIPHERAL_LOW_BAT_LED_TOGGLE_TIME / PERIPHERAL_LOW_BAT_LED_TOGGLE_S) // 12 * 5 = 60. 10 min
+#else
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_TIME              10   // 1 min
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               (60 * PERIPHERAL_LOW_BAT_LED_TOGGLE_TIME / PERIPHERAL_LOW_BAT_LED_TOGGLE_S) // 120 * 5 = 600. 10 mins
+#endif
+
+#define BATTERY_LOW_THRESHOLD                           24 //2.4V
 
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
