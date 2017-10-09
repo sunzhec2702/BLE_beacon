@@ -223,7 +223,7 @@ typedef enum {
 static BOND_PAIR_STATUS gPairStatus = BOND_PAIR_STATUS_PAIRING;
 
 void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs);
-static void ProcessPairStateCB(uint16 connHandle, uint8 state, uint8 status);
+//static void ProcessPairStateCB(uint16 connHandle, uint8 state, uint8 status);
 //#endif
 
 //#if defined( CC2540_MINIDK )
@@ -244,6 +244,7 @@ static gapRolesCBs_t simpleBLEPeripheral_PeripheralCBs =
 };
 
 // GAP Bond Manager Callbacks
+/*
 static gapBondCBs_t simpleBLEPeripheral_BondMgrCBs =
     {
         //#if defined( BLE_BOND_PAIR )
@@ -254,13 +255,14 @@ static gapBondCBs_t simpleBLEPeripheral_BondMgrCBs =
                            //  NULL                      // Pairing / Bonding state Callback (not used by application)
                            //#endif
 };
-
+*/
 // Simple GATT Profile Callbacks
+/*
 static simpleProfileCBs_t simpleBLEPeripheral_SimpleProfileCBs =
     {
         simpleProfileChangeCB // Charactersitic value change callback
 };
-
+*/
 /*********************************************************************
  * PUBLIC FUNCTIONS
  */
@@ -412,11 +414,11 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 #endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
 
   // Register callback with SimpleGATTprofile
-  VOID SimpleProfile_RegisterAppCBs(&simpleBLEPeripheral_SimpleProfileCBs);
+  // VOID SimpleProfile_RegisterAppCBs(&simpleBLEPeripheral_SimpleProfileCBs);
 
   // 需要关闭的CLK自动分频，在初始化中加入HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT )?  // 如果开启，会导致频率自动切换，DMA工作受到影响，小范围丢数。
   // 这里把他关闭， 如果想降低功耗， 这个应该要开启的， 这里矛盾了
-  HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT);
+  HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT);
   //HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT );
 
   // 信号发射强度
@@ -465,7 +467,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     VOID GAPRole_StartDevice(&simpleBLEPeripheral_PeripheralCBs);
 
     // Start Bond Manager
-    VOID GAPBondMgr_Register(&simpleBLEPeripheral_BondMgrCBs);
+    // VOID GAPBondMgr_Register(&simpleBLEPeripheral_BondMgrCBs);
 
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
 
@@ -646,6 +648,9 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       DEBUG_PRINT("Timer is reset\r\n");
       // reset timer count.
       wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+      // reset index
+      advertData_iBeacon[25] = 0;
+      advertData_iBeacon[26] = 0;
       // LED. blink twice.
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, 0);
     }
@@ -942,6 +947,7 @@ static void simpleProfileChangeCB(uint8 paramID)
 
 //#if defined( BLE_BOND_PAIR )
 //绑定过程中的密码管理回调函数
+/*
 static void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs)
 {
   uint32 passcode;
@@ -975,12 +981,12 @@ static void ProcessPairStateCB(uint16 connHandle, uint8 state, uint8 status)
   {
     if (status == SUCCESS)
     {
-      HalLcdWriteString("Pairing success", HAL_LCD_LINE_1); /*密码正确*/
+      HalLcdWriteString("Pairing success", HAL_LCD_LINE_1); //密码正确
       gPairStatus = BOND_PAIR_STATUS_PAIRED;
     }
     else
     {
-      HalLcdWriteStringValue("Pairing fail", status, 10, HAL_LCD_LINE_1); /*密码不正确，或者先前已经绑定*/
+      HalLcdWriteStringValue("Pairing fail", status, 10, HAL_LCD_LINE_1); //密码不正确，或者先前已经绑定
 
       if (status == 8)
       { //已绑定
@@ -1017,6 +1023,7 @@ static void ProcessPairStateCB(uint16 connHandle, uint8 state, uint8 status)
     }
   }
 }
+*/
 
 static void PeripherialPerformPeriodicTask(uint16 event_id)
 {
@@ -1159,6 +1166,7 @@ static void enter_low_battery_mode()
 {
   DEBUG_PRINT("Enter Low Battery Mode\r\n");
   low_power_state = TRUE;
+  advertData_iBeacon[27] |= 0x40;
   // Stop advertising.
   uint8 initial_advertising_enable = FALSE;
   GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);

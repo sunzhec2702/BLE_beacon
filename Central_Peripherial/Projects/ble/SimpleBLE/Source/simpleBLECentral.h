@@ -80,17 +80,6 @@ typedef struct
  * MACROS
  */
 
-// LCD macros
-#if HAL_LCD == TRUE
-#define LCD_WRITE_STRING(str, option)                       HalLcdWriteString( (str), (option))
-#define LCD_WRITE_SCREEN(line1, line2)                      HalLcdWriteScreen( (line1), (line2) )
-#define LCD_WRITE_STRING_VALUE(title, value, format, line)  HalLcdWriteStringValue( (title), (value), (format), (line) )
-#else
-#define LCD_WRITE_STRING(str, option)                     
-#define LCD_WRITE_SCREEN(line1, line2)                    
-#define LCD_WRITE_STRING_VALUE(title, value, format, line)
-#endif
-
 /*********************************************************************
  * FUNCTIONS
  */

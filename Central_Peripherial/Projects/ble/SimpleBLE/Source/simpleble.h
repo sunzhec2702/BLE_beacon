@@ -16,6 +16,8 @@ extern "C"
 
 
 #ifdef DEBUG_BOARD
+#define HAL_LCD TRUE
+#define HAL_UART TRUE
 #define LCD_TO_UART TRUE
 #define DEBUG_PRINT(x) NPI_PrintString(x)
 #define DEBUG_VALUE(x,y,z) {NPI_PrintValue(x, y, z);NPI_PrintString("\r\n");}
@@ -202,9 +204,9 @@ extern bool simpleBLEChar6DoWrite2;
 #define LCD_WRITE_SCREEN(line1, line2)                      HalLcdWriteScreen( (line1), (line2) )
 #define LCD_WRITE_STRING_VALUE(title, value, format, line)  HalLcdWriteStringValue( (title), (value), (format), (line) )
 #else
-#define LCD_WRITE_STRING(str, option)                     
-#define LCD_WRITE_SCREEN(line1, line2)                    
-#define LCD_WRITE_STRING_VALUE(title, value, format, line)
+#define LCD_WRITE_STRING(str, option) {}                   
+#define LCD_WRITE_SCREEN(line1, line2) {}                  
+#define LCD_WRITE_STRING_VALUE(title, value, format, line) {}
 #endif
 #endif
 
