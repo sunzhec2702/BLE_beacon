@@ -70,7 +70,9 @@ int main(void)
   }
 
   // Æô¶¯´®¿Ú
+  #if (HAL_UART == TRUE)
   simpleBLE_NPI_init();
+  #endif
 
   /* Initialize the operating system */
   osal_init_system(sys_config.role);

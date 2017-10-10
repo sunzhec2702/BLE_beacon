@@ -158,11 +158,17 @@ static uint8 advertData_iBeacon[] =
   // in this peripheral
   0x1A, // length of this data 26byte, 3
   GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
+  0xBF, //
+  0xFB, // 
+  0x00, // Version Major
+  0x01, // version Minor
   /*Apple Pre-Amble*/
+  /*
   0x4C, // 5
   0x00, // 6
   0x02, // 7
   0x15, // 8
+  */
   /*Device UUID (16 Bytes)*/
   0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48, 0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7, 0x10, 0x96, 0xE0, //9 ~ 24
   /*Major Value (2 Bytes)*/
@@ -297,7 +303,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
     // until the enabler is set back to TRUE
-    uint16 gapRole_AdvertOffTime = 0;
+    // uint16 gapRole_AdvertOffTime = 0;
 
     // Cannot be connected.
     uint8 advType = GAP_ADTYPE_ADV_NONCONN_IND; // use non-connectable advertisements
@@ -311,7 +317,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 
     // Set the GAP Role Parameters
     GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
-    GAPRole_SetParameter(GAPROLE_ADVERT_OFF_TIME, sizeof(uint16), &gapRole_AdvertOffTime);
+    // GAPRole_SetParameter(GAPROLE_ADVERT_OFF_TIME, sizeof(uint16), &gapRole_AdvertOffTime);
 
     GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof(scanRspData), scanRspData);
     GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
@@ -335,14 +341,6 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // Set advertising interval
   {
     advInt = SLOW_ADVERTISING_INTERVAL;
-    /*
-    if(simpleBLE_CheckIfUse_iBeacon())
-    {
-        // advInt = simpleBLE_GetiBeaconAdvertisingInterral();
-        // We need to change this interval dynamically.
-        // advInt = (advInt*1000 / 625);
-    }
-    */
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, advInt);
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, advInt);
     GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, advInt);
@@ -381,6 +379,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   VOID OADTarget_AddService(); // OAD Profile
 #endif
 
+  /*
   // Setup the SimpleProfile Characteristic Values
   {
     uint8 charValue1 = 1;
@@ -398,6 +397,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     //    SimpleProfile_SetParameter( SIMPLEPROFILE_CHAR6, SIMPLEPROFILE_CHAR6_LEN, charValue6 );
     //    SimpleProfile_SetParameter( SIMPLEPROFILE_CHAR7, SIMPLEPROFILE_CHAR7_LEN, charValue7 );
   }
+  */
   // Register for all key events - This app will handle all key events
   RegisterForKeys(simpleBLETaskId);
 
@@ -466,7 +466,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   if (events & START_DEVICE_EVT)
   {
     // Start the Device
-    VOID GAPRole_StartDevice(&simpleBLEPeripheral_PeripheralCBs);
+    VOID GAPRole_StartDevice(NULL);
 
     // Start Bond Manager
     // VOID GAPBondMgr_Register(&simpleBLEPeripheral_BondMgrCBs);
@@ -478,7 +478,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_WAKE_EVT)
   {
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
+    osal_pwrmgr_device(PWRMGR_BATTERY); //  不睡眠，功耗很高的
     g_sleepFlag = FALSE;
     if (check_low_battery() == TRUE)
     {
@@ -684,6 +684,7 @@ static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_
 {
   if (led_toggling == TRUE)
     return FALSE;
+  osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
   led_toggle_status = FALSE;
   led_toggling = TRUE;
   led_toggle_period_on = toggle_period_on;
@@ -697,6 +698,7 @@ static uint8 led_toggle_clean_param()
 {
   if (led_toggling == FALSE)
     return FALSE;
+  osal_pwrmgr_device(PWRMGR_BATTERY);
   led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
   led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
   led_toggle_count = 0;
@@ -864,7 +866,7 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
     GAPRole_GetParameter(GAPROLE_CONNHANDLE, &gapConnHandle);
     // 连接上了
     g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  不睡眠，功耗很高的
+    osal_pwrmgr_device(PWRMGR_BATTERY); //  不睡眠，功耗很高的
   }
   break;
 
@@ -925,6 +927,7 @@ static void peripheralRssiReadCB(int8 rssi)
  *
  * @return  none
  */
+/*
 static void simpleProfileChangeCB(uint8 paramID)
 {
   uint8 newValue;
@@ -959,6 +962,7 @@ static void simpleProfileChangeCB(uint8 paramID)
     break;
   }
 }
+*/
 
 //#if defined( BLE_BOND_PAIR )
 //绑定过程中的密码管理回调函数
