@@ -224,10 +224,12 @@ void HalKeyInit( void )
   halKeySavedKeys = 0;  // Initialize previous key to 0.
   HAL_KEY_SW_6_SEL &= ~(HAL_KEY_SW_6_BIT);    /* Set pin function to GPIO */
   HAL_KEY_SW_6_DIR &= ~(HAL_KEY_SW_6_BIT);    /* Set pin direction to Input */
+#if (TARGET_BOARD == DEVELOP_BOARD)
   HAL_KEY_SW_7_SEL &= ~(HAL_KEY_SW_7_BIT);    /* Set pin function to GPIO */
   HAL_KEY_SW_7_DIR &= ~(HAL_KEY_SW_7_BIT);    /* Set pin direction to Input */
   HAL_KEY_JOY_MOVE_SEL &= ~(HAL_KEY_JOY_MOVE_BIT); /* Set pin function to GPIO */
   HAL_KEY_JOY_MOVE_DIR &= ~(HAL_KEY_JOY_MOVE_BIT); /* Set pin direction to Input */
+#endif
   P2INP |= PUSH2_BV;  /* Configure GPIO tri-state. */
 
   /* Initialize callback function */
@@ -305,8 +307,10 @@ void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
   {
     HAL_KEY_SW_6_ICTL &= ~(HAL_KEY_SW_6_ICTLBIT); /* don't generate interrupt */
     HAL_KEY_SW_6_IEN &= ~(HAL_KEY_SW_6_IENBIT);   /* Clear interrupt enable bit */
+#if (TARGET_BOARD == DEVELOP_BOARD)
     HAL_KEY_SW_7_ICTL &= ~(HAL_KEY_SW_7_ICTLBIT); /* don't generate interrupt */
     HAL_KEY_SW_7_IEN &= ~(HAL_KEY_SW_7_IENBIT);   /* Clear interrupt enable bit */
+#endif
     osal_set_event(Hal_TaskID, HAL_KEY_EVENT);
   }
   /* Key now is configured */
@@ -413,7 +417,7 @@ void HalKeyPoll (void)
   }
 }
 
-#if !defined ( CC2540_MINIDK )
+#if !defined ( CC2540_MINIDK ) && (TARGET_BOARD == DEVELOP_BOARD)
 /**************************************************************************************************
  * @fn      halGetJoyKeyInput
  *
@@ -562,7 +566,9 @@ HAL_ISR_FUNCTION( halKeyPort0Isr, P0INT_VECTOR )
     PxIFG has to be cleared before PxIF
   */
   HAL_KEY_SW_6_PXIFG = 0;
+#if (TARGET_BOARD == DEVELOP_BOARD)
   HAL_KEY_SW_7_PXIFG = 0;
+#endif
   HAL_KEY_CPU_PORT_0_IF = 0;
   CLEAR_SLEEP_MODE();
   HAL_EXIT_ISR();

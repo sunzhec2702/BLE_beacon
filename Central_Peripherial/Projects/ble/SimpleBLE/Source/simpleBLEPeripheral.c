@@ -490,7 +490,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     {
       first_boot = FALSE;
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_START_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
-      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD * (PERIPHERAL_START_LED_TOGGLE_CNT));
+      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF * (PERIPHERAL_START_LED_TOGGLE_CNT));
     }
     else
     {
@@ -687,7 +687,7 @@ static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_
   led_toggle_status = FALSE;
   led_toggling = TRUE;
   led_toggle_period_on = toggle_period_on;
-  led_toggle_period_off = toggle_period_off
+  led_toggle_period_off = toggle_period_off;
   led_toggle_count = 0;
   led_toggle_cnt_target = toggle_target_cnt;
   osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, delay);
@@ -697,7 +697,8 @@ static uint8 led_toggle_clean_param()
 {
   if (led_toggling == FALSE)
     return FALSE;
-  led_toggle_period = PERIPHERAL_START_LED_TOGGLE_PERIOD;
+  led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
+  led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
   led_toggle_count = 0;
   led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
   led_toggling = FALSE;
@@ -1050,7 +1051,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   {
   case SBP_PERIODIC_INDEX_EVT:
     {
-      advertData_iBeacon[ADV_INDEX_BYTE] += 1£»
+      advertData_iBeacon[ADV_INDEX_BYTE] += 1;
       GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
     }
     break;

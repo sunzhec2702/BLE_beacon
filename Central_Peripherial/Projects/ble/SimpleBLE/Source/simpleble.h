@@ -74,7 +74,7 @@ extern "C"
 #define PERIPHERAL_WAKEUP_LED_TOGGLE_CNT                4
 #define PERIPHERAL_START_LED_TOGGLE_CNT                 6
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_ON               100
-#define PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF              400
+#define PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF              200
 #define PERIPHERAL_KEY_CALCULATE_PERIOD                 500 // 500ms
 
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_S                 5
@@ -89,7 +89,7 @@ extern "C"
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               (60 * PERIPHERAL_LOW_BAT_LED_TOGGLE_TIME / PERIPHERAL_LOW_BAT_LED_TOGGLE_S) // 120 * 5 = 600. 10 mins
 #endif
 
-#define BUTTON_LED_DELAY  1500 // 1.5s
+#define BUTTON_LED_DELAY  1000 // 1.5s
 
 #define BATTERY_LOW_THRESHOLD                           24 //2.4V
 
