@@ -116,11 +116,13 @@
 #define HAL_KEY_SW_6_SEL    P0SEL
 #define HAL_KEY_SW_6_DIR    P0DIR
 
+#if (TARGET_BOARD == DEVLOP_BOARD)
 /* SW_7(uart_rx) is at P0.2 */
 #define HAL_KEY_SW_7_PORT   P0
 #define HAL_KEY_SW_7_BIT    BV(2)
 #define HAL_KEY_SW_7_SEL    P0SEL
 #define HAL_KEY_SW_7_DIR    P0DIR
+#endif
 
 /* edge interrupt */
 #define HAL_KEY_SW_6_EDGEBIT  BV(0)
@@ -133,6 +135,7 @@
 #define HAL_KEY_SW_6_ICTLBIT  BV(1) /* P0IEN - P0.1 enable/disable bit */
 #define HAL_KEY_SW_6_PXIFG    P0IFG /* Interrupt flag at source */
 
+#if (TARGET_BOARD == DEVELOP_BOARD)
 /* SW_7 interrupts */
 #define HAL_KEY_SW_7_IEN      IEN1  /* CPU interrupt mask register */
 #define HAL_KEY_SW_7_IENBIT   BV(5) /* Mask bit for all of Port_0 */
@@ -159,6 +162,7 @@
 
 #define HAL_KEY_JOY_CHN   HAL_ADC_CHANNEL_6
 
+#endif
 
 /**************************************************************************************************
  *                                            TYPEDEFS
@@ -271,18 +275,14 @@ void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
     HAL_KEY_SW_6_IEN |= HAL_KEY_SW_6_IENBIT;
     HAL_KEY_SW_6_PXIFG = ~(HAL_KEY_SW_6_BIT);
 
-#if defined ( AMOMCU_UART_RX_MODE)
-    HAL_KEY_SW_7_ICTL |= HAL_KEY_SW_7_ICTLBIT;
-    HAL_KEY_SW_7_IEN |= HAL_KEY_SW_7_IENBIT;
-    HAL_KEY_SW_7_PXIFG = ~(HAL_KEY_SW_7_BIT);
-#endif
-
+    #if (TARGET_BOARD == DEVELOP_BOARD)
     /* Rising/Falling edge configuratinn */
     HAL_KEY_JOY_MOVE_ICTL &= ~(HAL_KEY_JOY_MOVE_EDGEBIT);    /* Clear the edge bit */
     /* For falling edge, the bit must be set. */
   #if (HAL_KEY_JOY_MOVE_EDGE == HAL_KEY_FALLING_EDGE)
     HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_EDGEBIT;
   #endif
+
 
 
     /* Interrupt configuration:
@@ -293,6 +293,7 @@ void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
     HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_ICTLBIT;
     HAL_KEY_JOY_MOVE_IEN |= HAL_KEY_JOY_MOVE_IENBIT;
     HAL_KEY_JOY_MOVE_PXIFG = ~(HAL_KEY_JOY_MOVE_BIT);
+    #endif
 
     /* Do this only after the hal_key is configured - to work with sleep stuff */
     if (HalKeyConfigured == TRUE)
@@ -302,19 +303,12 @@ void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
   }
   else    /* Interrupts NOT enabled */
   {
-#if defined ( CC2540_MINIDK )
-    HAL_KEY_SW_1_ICTL &= ~(HAL_KEY_SW_1_ICTLBIT); /* don't generate interrupt */
-    HAL_KEY_SW_2_ICTL &= ~(HAL_KEY_SW_2_ICTLBIT); /* don't generate interrupt */
-#else
     HAL_KEY_SW_6_ICTL &= ~(HAL_KEY_SW_6_ICTLBIT); /* don't generate interrupt */
     HAL_KEY_SW_6_IEN &= ~(HAL_KEY_SW_6_IENBIT);   /* Clear interrupt enable bit */
     HAL_KEY_SW_7_ICTL &= ~(HAL_KEY_SW_7_ICTLBIT); /* don't generate interrupt */
     HAL_KEY_SW_7_IEN &= ~(HAL_KEY_SW_7_IENBIT);   /* Clear interrupt enable bit */
-#endif  // !CC2540_MINIDK
-
     osal_set_event(Hal_TaskID, HAL_KEY_EVENT);
   }
-
   /* Key now is configured */
   HalKeyConfigured = TRUE;
 }
@@ -338,6 +332,7 @@ uint8 HalKeyRead ( void )
     keys |= HAL_KEY_SW_6;
   }
 
+  #if (TARGET_BOARD == DEVELOP_BOARD)
   if (!(HAL_KEY_SW_7_PORT & HAL_KEY_SW_7_BIT))    /* Key is active low */
   {
     keys |= HAL_KEY_SW_7;
@@ -347,6 +342,8 @@ uint8 HalKeyRead ( void )
   {
     keys |= halGetJoyKeyInput();
   }
+  #endif
+  
   return keys;
 }
 
@@ -370,12 +367,11 @@ void HalKeyPoll (void)
     keys |= HAL_KEY_SW_6;
   }
 
+#if (TARGET_BOARD == DEVELOP_BOARD)
   if (!(HAL_KEY_SW_7_PORT & HAL_KEY_SW_7_BIT))    /* Key is active low */
   {
     keys |= HAL_KEY_SW_7;
   }
-
-#if (TARGET_BOARD == DEVELOP_BOARD)
   if ((HAL_KEY_JOY_MOVE_PORT & HAL_KEY_JOY_MOVE_BIT))  /* Key is active HIGH */
   {
     keys = halGetJoyKeyInput();
@@ -483,42 +479,21 @@ uint8 halGetJoyKeyInput(void)
  **************************************************************************************************/
 void halProcessKeyInterrupt (void)
 {
-  bool valid=FALSE;
-
-#if defined ( CC2540_MINIDK )
-  if( HAL_KEY_SW_1_PXIFG & HAL_KEY_SW_1_BIT) /* Interrupt Flag has been set by SW1 */
-  {
-    HAL_KEY_SW_1_PXIFG = ~(HAL_KEY_SW_1_BIT); /* Clear Interrupt Flag */
-    valid = TRUE;
-  }
-
-  if (HAL_KEY_SW_2_PXIFG & HAL_KEY_SW_2_BIT)  /* Interrupt Flag has been set by SW2 */
-  {
-    HAL_KEY_SW_2_PXIFG = ~(HAL_KEY_SW_2_BIT); /* Clear Interrupt Flag */
-    valid = TRUE;
-  }
-#else
+  bool valid = FALSE;
   if (HAL_KEY_SW_6_PXIFG & HAL_KEY_SW_6_BIT)  /* Interrupt Flag has been set */
   {
     HAL_KEY_SW_6_PXIFG = ~(HAL_KEY_SW_6_BIT); /* Clear Interrupt Flag */
     valid = TRUE;
   }
 
-#if defined ( AMOMCU_UART_RX_MODE)
-  if (HAL_KEY_SW_7_PXIFG & HAL_KEY_SW_7_BIT)  /* Interrupt Flag has been set */
-  {
-    HAL_KEY_SW_7_PXIFG = ~(HAL_KEY_SW_7_BIT); /* Clear Interrupt Flag */
-    b_amomcu_uart_rx_mode = true; 
-    valid = TRUE;
-  }
-#endif
-
+#if (TARGET_BOARD == DEVELOP_BOARD)
   if (HAL_KEY_JOY_MOVE_PXIFG & HAL_KEY_JOY_MOVE_BIT)  /* Interrupt Flag has been set */
   {
     HAL_KEY_JOY_MOVE_PXIFG = ~(HAL_KEY_JOY_MOVE_BIT); /* Clear Interrupt Flag */
     valid = TRUE;
   }
 #endif
+
   if (valid)
   {
     osal_start_timerEx (Hal_TaskID, HAL_KEY_EVENT, HAL_KEY_DEBOUNCE_VALUE);
@@ -570,37 +545,31 @@ HAL_ISR_FUNCTION( halKeyPort0Isr, P0INT_VECTOR )
 {
   HAL_ENTER_ISR();
 
-#if defined ( CC2540_MINIDK )
-  if ((HAL_KEY_SW_1_PXIFG & HAL_KEY_SW_1_BIT) || (HAL_KEY_SW_2_PXIFG & HAL_KEY_SW_2_BIT))
-#else
-  if( (HAL_KEY_SW_6_PXIFG & HAL_KEY_SW_6_BIT)
-   || (HAL_KEY_SW_7_PXIFG & HAL_KEY_SW_7_BIT) )
-#endif
+#if (TARGET_BOARD == DEVELOP_BOARD)
+  if( (HAL_KEY_SW_6_PXIFG & HAL_KEY_SW_6_BIT) || (HAL_KEY_SW_7_PXIFG & HAL_KEY_SW_7_BIT) )
   {
     halProcessKeyInterrupt();
   }
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+  if( (HAL_KEY_SW_6_PXIFG & HAL_KEY_SW_6_BIT) )
+  {
+    halProcessKeyInterrupt();
+  }
+#endif
 
   /*
     Clear the CPU interrupt flag for Port_0
     PxIFG has to be cleared before PxIF
   */
-#if defined ( CC2540_MINIDK )
-  HAL_KEY_SW_1_PXIFG = 0;
-  HAL_KEY_SW_2_PXIFG = 0;
-#else
   HAL_KEY_SW_6_PXIFG = 0;
   HAL_KEY_SW_7_PXIFG = 0;
-#endif
   HAL_KEY_CPU_PORT_0_IF = 0;
-
   CLEAR_SLEEP_MODE();
-
   HAL_EXIT_ISR();
-
   return;
 }
 
-#if !defined ( CC2540_MINIDK )
+#if (TARGET_BOARD == DEVELOP_BOARD)
 /**************************************************************************************************
  * @fn      halKeyPort2Isr
  *
@@ -613,12 +582,10 @@ HAL_ISR_FUNCTION( halKeyPort0Isr, P0INT_VECTOR )
 HAL_ISR_FUNCTION( halKeyPort2Isr, P2INT_VECTOR )
 {
   HAL_ENTER_ISR();
-
   if (HAL_KEY_JOY_MOVE_PXIFG & HAL_KEY_JOY_MOVE_BIT)
   {
     halProcessKeyInterrupt();
   }
-
   /*
     Clear the CPU interrupt flag for Port_2
     PxIFG has to be cleared before PxIF
@@ -626,14 +593,12 @@ HAL_ISR_FUNCTION( halKeyPort2Isr, P2INT_VECTOR )
   */
   HAL_KEY_JOY_MOVE_PXIFG = 0;
   HAL_KEY_CPU_PORT_2_IF = 0;
-
   CLEAR_SLEEP_MODE();
-
   HAL_EXIT_ISR();
-
   return;
 }
 #endif
+
 #else
 
 void HalKeyInit(void){}

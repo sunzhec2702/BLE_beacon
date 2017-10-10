@@ -166,7 +166,7 @@ static uint8 advertData_iBeacon[] =
   /*Device UUID (16 Bytes)*/
   0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48, 0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7, 0x10, 0x96, 0xE0, //9 ~ 24
   /*Major Value (2 Bytes)*/
-  0x00, 0x00, // 25-26
+  0x00, 0x00, // 25-26 // 25 for hour index, 26 for index 
   /*Minor Value (2 Bytes)*/
   0x00, 0x00, // 27-28
   /*Measured Power*/
@@ -175,10 +175,12 @@ static uint8 advertData_iBeacon[] =
 
 // LED related.
 static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
+static uint8 led_toggle_status = FALSE;
 static uint8 led_toggle_count = 0;
 static uint8 led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
 static uint8 led_toggling = FALSE;
-static uint16 led_toggle_period = PERIPHERAL_START_LED_TOGGLE_PERIOD;
+static uint16 led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
+static uint16 led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
 // Default WAKEUP period
 static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
 static uint8 battery_voltage = 0;
@@ -209,7 +211,7 @@ static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg);
 static void peripheralStateNotificationCB(gaprole_States_t newState);
 static void peripheralRssiReadCB(int8 rssi);
 static void simpleProfileChangeCB(uint8 paramID);
-static uint8 led_toggle_set_param(uint16 toggle_period, uint32 toggle_target_cnt, uint16 delay);
+static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_off, uint32 toggle_target_cnt, uint16 delay);
 static uint8 led_toggle_clean_param(void);
 static bool check_low_battery(void);
 static void enter_low_battery_mode(void);
@@ -487,7 +489,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     if (first_boot == TRUE)
     {
       first_boot = FALSE;
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_START_LED_TOGGLE_CNT, 0);
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_START_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
       osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD * (PERIPHERAL_START_LED_TOGGLE_CNT));
     }
     else
@@ -499,7 +501,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
       // LED
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, 0);
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
     }
     return (events ^ SBP_WAKE_EVT);
   }
@@ -616,10 +618,20 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     if (++led_toggle_count <= led_toggle_cnt_target)
     {
       HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period);
+      if (led_toggle_status == FALSE)
+      {
+        led_toggle_status = TRUE;
+        osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_on);
+      }
+      else if (led_toggle_status == TRUE)
+      {
+        led_toggle_status = FALSE;
+        osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_off);
+      }
     }
     else
     {
+      led_toggle_status = FALSE;
       HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
       osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
       led_toggle_clean_param();
@@ -649,14 +661,14 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       // reset timer count.
       wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
       // reset index
-      advertData_iBeacon[25] = 0;
-      advertData_iBeacon[26] = 0;
+      advertData_iBeacon[ADV_HOUR_INDEX_BYTE] = 0;
+      advertData_iBeacon[ADV_INDEX_BYTE] = 0;
       // LED. blink twice.
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, 0);
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
     }
     else if(key_pressed_count == 1 && g_sleepFlag == FALSE)
     {
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD, BUTTON_LED_TOGGLE_COUNT, 0);
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
       change_advertise_data(TRUE);
     }
     key_pressed_count = 0;
@@ -668,12 +680,14 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 }
 
 
-static uint8 led_toggle_set_param(uint16 toggle_period, uint32 toggle_target_cnt, uint16 delay)
+static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_off, uint32 toggle_target_cnt, uint16 delay)
 {
   if (led_toggling == TRUE)
     return FALSE;
+  led_toggle_status = FALSE;
   led_toggling = TRUE;
-  led_toggle_period = toggle_period;
+  led_toggle_period_on = toggle_period_on;
+  led_toggle_period_off = toggle_period_off
   led_toggle_count = 0;
   led_toggle_cnt_target = toggle_target_cnt;
   osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, delay);
@@ -1036,11 +1050,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   {
   case SBP_PERIODIC_INDEX_EVT:
     {
-      uint16 index;
-      index = (advertData_iBeacon[25] << 8) + advertData_iBeacon[26];
-      index++;
-      advertData_iBeacon[25] = index >> 8;
-      advertData_iBeacon[26] = index & 0x00FF;
+      advertData_iBeacon[ADV_INDEX_BYTE] += 1£»
       GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
     }
     break;
@@ -1059,6 +1069,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       }
       else
       {
+        advertData_iBeacon[ADV_HOUR_INDEX_BYTE] += 1;
         wake_up_hours_remain--;
         if (wake_up_hours_remain == 0)
         {
@@ -1077,7 +1088,6 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   }
 }
 
-#define ENABLE_DISABLE_PERIOD 500
 static bool rapid_processing = FALSE;
 static void change_advertise_data(uint8 key_pressed)
 {
@@ -1095,7 +1105,7 @@ static void change_advertise_data(uint8 key_pressed)
     }
     else if (initial_advertising_enable == FALSE && rapid_processing == TRUE)
     {
-      advertData_iBeacon[27] |= 0x80;
+      advertData_iBeacon[ADV_FLAG_BYTE] |= 0x80;
       // Set advertising interval
       {
         advInt = RAPID_ADVERTISING_INTERVAL;
@@ -1120,7 +1130,7 @@ static void change_advertise_data(uint8 key_pressed)
     else if (initial_advertising_enable == FALSE && rapid_processing == TRUE)
     {
       DEBUG_PRINT("Exit Rapid Mode\r\n");
-      advertData_iBeacon[27] &= 0x7F;
+      advertData_iBeacon[ADV_FLAG_BYTE] &= 0x7F;
       // Set advertising interval
       {
         advInt = SLOW_ADVERTISING_INTERVAL;
@@ -1154,7 +1164,7 @@ static bool check_low_battery()
   DEBUG_VALUE("adc value : ", adc_read, 10);
   DEBUG_VALUE("Battery Value : ", battery_voltage * 10, 10);
   // Update the advertise data.
-  advertData_iBeacon[28] = battery_voltage & 0xFF;
+  advertData_iBeacon[ADV_BAT_BYTE] = battery_voltage & 0xFF;
   if (battery_voltage < BATTERY_LOW_THRESHOLD)
   {
     return TRUE;
@@ -1166,13 +1176,12 @@ static void enter_low_battery_mode()
 {
   DEBUG_PRINT("Enter Low Battery Mode\r\n");
   low_power_state = TRUE;
-  advertData_iBeacon[27] |= 0x40;
+  advertData_iBeacon[ADV_FLAG_BYTE] |= 0x40;
   // Stop advertising.
   uint8 initial_advertising_enable = FALSE;
   GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
   // LED Blinking.
-  led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
-  //osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, (PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD * PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT));
+  led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
 }
 //#endif
 /*********************************************************************
