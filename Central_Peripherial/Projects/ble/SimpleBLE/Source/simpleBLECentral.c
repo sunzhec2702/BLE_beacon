@@ -650,6 +650,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
   case GAP_DEVICE_INFO_EVENT:
   {
+    if(simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
     {
       static dev_adv_ret_t dev_ret;
       osal_memset(&dev_ret, 0x00, sizeof(dev_adv_ret_t));
@@ -669,6 +670,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
       NPI_PrintValue("RSSI: ", pEvent->deviceInfo.rssi, 10);
       DEBUG_PRINT(" - ");
       NPI_PrintValue("DataLen: ", pEvent->deviceInfo.dataLen, 10);
+      if (simpleBLEFilterSelfBeacon(dev_ret.data, dev_ret.dataLen) == TRUE)
       {
         DEBUG_PRINT(" - ");
         DEBUG_PRINT(" TRUE ");
@@ -875,25 +877,21 @@ static void simpleBLEGATTDiscoveryEvent(gattMsgEvent_t *pMsg)
   }
 }
 
-/*
-static uint8 start_index = 5;
-static uint8 self_id[] = 
+#define BEACON_START_INDEX 5
+static uint8 beacon_id[] = 
 {
   0x4C, // 5
   0x00, // 6
   0x02, // 7
   0x15 // 8
 };
-*/
 
+// Filter if it is a beacon.
 static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)
 {
-  return TRUE;
-  /*
-    if ((osal_memcmp(self_id, &data[start_index], sizeof(self_id)) == TRUE))
-    {
-      return TRUE;
-    }
-    return FALSE;
-  */
+  if ((osal_memcmp(beacon_id, &data[BEACON_START_INDEX], sizeof(beacon_id)) == TRUE))
+  {
+    return TRUE;
+  }
+  return FALSE;
 }

@@ -154,21 +154,14 @@ static uint8 advertData_iBeacon[] =
   0x02, // length of this data, 0
   GAP_ADTYPE_FLAGS, // 1
   DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED, // 2
-
   // in this peripheral
   0x1A, // length of this data 26byte, 3
   GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
-  0xBF, //
-  0xFB, // 
-  0x00, // Version Major
-  0x01, // version Minor
   /*Apple Pre-Amble*/
-  /*
   0x4C, // 5
   0x00, // 6
   0x02, // 7
   0x15, // 8
-  */
   /*Device UUID (16 Bytes)*/
   0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48, 0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7, 0x10, 0x96, 0xE0, //9 ~ 24
   /*Major Value (2 Bytes)*/
@@ -214,9 +207,9 @@ static bool debug_low_power = FALSE;
  */
 static void simpleBLEPeripheral_ProcessOSALMsg(osal_event_hdr_t *pMsg);
 static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg);
-static void peripheralStateNotificationCB(gaprole_States_t newState);
-static void peripheralRssiReadCB(int8 rssi);
-static void simpleProfileChangeCB(uint8 paramID);
+//static void peripheralStateNotificationCB(gaprole_States_t newState);
+//static void peripheralRssiReadCB(int8 rssi);
+//static void simpleProfileChangeCB(uint8 paramID);
 static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_off, uint32 toggle_target_cnt, uint16 delay);
 static uint8 led_toggle_clean_param(void);
 static bool check_low_battery(void);
@@ -228,7 +221,7 @@ typedef enum {
   BOND_PAIR_STATUS_PAIRED,  //已配对
 } BOND_PAIR_STATUS;
 // 用来管理当前的状态，如果密码不正确，立即取消连接，并重启
-static BOND_PAIR_STATUS gPairStatus = BOND_PAIR_STATUS_PAIRING;
+// static BOND_PAIR_STATUS gPairStatus = BOND_PAIR_STATUS_PAIRING;
 
 void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs);
 //static void ProcessPairStateCB(uint16 connHandle, uint8 state, uint8 status);
@@ -245,11 +238,13 @@ static uint16 advInt;
  */
 
 // GAP Role Callbacks
+/*
 static gapRolesCBs_t simpleBLEPeripheral_PeripheralCBs =
-    {
+{
         peripheralStateNotificationCB, // Profile State Change Callbacks
         peripheralRssiReadCB,          // When a valid RSSI is read from controller (not used by application)
 };
+*/
 
 // GAP Bond Manager Callbacks
 /*
@@ -451,11 +446,9 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   if (events & SYS_EVENT_MSG)
   {
     uint8 *pMsg;
-
     if ((pMsg = osal_msg_receive(simpleBLETaskId)) != NULL)
     {
       simpleBLEPeripheral_ProcessOSALMsg((osal_event_hdr_t *)pMsg);
-
       // Release the OSAL message
       VOID osal_msg_deallocate(pMsg);
     }
@@ -467,12 +460,9 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   {
     // Start the Device
     VOID GAPRole_StartDevice(NULL);
-
     // Start Bond Manager
     // VOID GAPBondMgr_Register(&simpleBLEPeripheral_BondMgrCBs);
-
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
-
     return (events ^ START_DEVICE_EVT);
   }
 
@@ -485,19 +475,17 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       enter_low_battery_mode();
       return (events ^ SBP_WAKE_EVT);
     }
-
     if (first_boot == TRUE)
     {
       first_boot = FALSE;
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_START_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
-      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF * (PERIPHERAL_START_LED_TOGGLE_CNT));
+      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, (PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF) * (PERIPHERAL_START_LED_TOGGLE_CNT) + BUTTON_LED_DELAY);
     }
-    else
+    else // If not first boot, WAKE_EVT means start to advertise.
     {
       // Start advertising
       uint8 initial_advertising_enable = TRUE;
       GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
-
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
       // LED
@@ -582,24 +570,14 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   if (events & SBP_SLEEP_EVT)
   {
     DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
-    extern uint8 uart_sleep_count;
-    if (uart_sleep_count > 1)
-    {
-      low_power_state = FALSE; // set false to enable key event.
-      g_sleepFlag = TRUE;
-      osal_pwrmgr_device(PWRMGR_BATTERY); //  自动睡眠
-      osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
-      uint8 initial_advertising_enable = FALSE;
-      GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
-      DEBUG_PRINT("Enter Sleep Mode\r\n");
-      // 为了让串口数据发送完毕， 需要先延时一下，否则进入了睡眠就发送乱码了， 1ms即可
-      simpleBLE_Delay_1ms(1);
-    }
-    else
-    {
-      uart_sleep_count++;
-      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
-    }
+    low_power_state = FALSE; // set false to enable key event.
+    g_sleepFlag = TRUE;
+    osal_pwrmgr_device(PWRMGR_BATTERY); //  自动睡眠
+    osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
+    uint8 initial_advertising_enable = FALSE;
+    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+    DEBUG_PRINT("Enter Sleep Mode\r\n");
+    simpleBLE_Delay_1ms(1);
     return (events ^ SBP_SLEEP_EVT);
   }
 
@@ -750,10 +728,6 @@ static void simpleBLEPeripheral_ProcessOSALMsg(osal_event_hdr_t *pMsg)
  */
 static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
 {
-  /*
-    按键处理公共函数， 主机与从机都是运行这个函数，
-    注意每次启动不是主机就是从机，不是同时是主机与从机的， 所以他们不冲突的
-    */
   if (keys & HAL_KEY_SW_6)
   {
     if (low_power_state == TRUE)
@@ -806,6 +780,7 @@ static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg)
  *
  * @return  none
  */
+/*
 static void peripheralStateNotificationCB(gaprole_States_t newState)
 {
   switch (newState)
@@ -910,14 +885,13 @@ static void peripheralStateNotificationCB(gaprole_States_t newState)
                         // "CC2540 Slave" configurations
 #endif
 
-  //LCD_WRITE_STRING( "?", HAL_LCD_LINE_1 );
 }
 
 static void peripheralRssiReadCB(int8 rssi)
 {
   return;
 }
-
+*/
 /*********************************************************************
  * @fn      simpleProfileChangeCB
  *
