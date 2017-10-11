@@ -468,7 +468,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_WAKE_EVT)
   {
-    osal_pwrmgr_device(PWRMGR_BATTERY); //  不睡眠，功耗很高的
+    // osal_pwrmgr_device(PWRMGR_BATTERY); //  不睡眠，功耗很高的
     g_sleepFlag = FALSE;
     if (check_low_battery() == TRUE)
     {
@@ -478,8 +478,8 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     if (first_boot == TRUE)
     {
       first_boot = FALSE;
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_START_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
-      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, (PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF) * (PERIPHERAL_START_LED_TOGGLE_CNT) + BUTTON_LED_DELAY);
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_START_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
+      osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, (PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF) * (PERIPHERAL_START_LED_TOGGLE_CNT) + BUTTON_LEY_DELAY_IN_SLEEP);
     }
     else // If not first boot, WAKE_EVT means start to advertise.
     {
@@ -489,7 +489,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
       // LED
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
     }
     return (events ^ SBP_WAKE_EVT);
   }
@@ -561,7 +561,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   {
     if (FALSE == timerIsOn)
     {
-      //         osal_set_event( simpleBLETaskId, SBP_DATA_EVT );
       osal_start_timerEx(simpleBLETaskId, SBP_DATA_EVT, 6);
     }
     return (events ^ SBP_UART_EVT);
@@ -595,6 +594,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   {
     if (++led_toggle_count <= led_toggle_cnt_target)
     {
+      osal_pwrmgr_device(PWRMGR_ALWAYS_ON); // Make sure the LED can on correctly.
       HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
       if (led_toggle_status == FALSE)
       {
