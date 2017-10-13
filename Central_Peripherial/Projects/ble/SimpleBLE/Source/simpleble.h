@@ -51,8 +51,9 @@ extern "C"
 #define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
-#define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
-#define SLOW_ADVERTISING_INTERVAL (1600) // 1s
+#define RAPID_ADVERTISING_INTERVAL (160*5) // 500ms
+#define SLOW_ADVERTISING_INTERVAL (1600*2) // 2s
+#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  5000 // 5s
 
 // How often to perform periodic event
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
@@ -60,14 +61,17 @@ extern "C"
 #ifdef DEBUG_BOARD
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    60000    // 1 min
 #define DEFAULT_WAKE_TIME_HOURS                         (5) // 5 mins
+#define BUTTON_WAKE_TIME_HOURS                          (2) // 2 days
+#define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #else
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   // 1 hour
 #define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
+#define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
+#define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
 #endif
 
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
 #define BUTTON_LED_TOGGLE_COUNT                         2
-#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  5000 // 5s
 
 #define SLEEP_MS                                        300  //睡眠时间， 串口激活事件
 
@@ -75,7 +79,7 @@ extern "C"
 #define PERIPHERAL_START_LED_TOGGLE_CNT                 6
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_ON               50
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF              150
-#define PERIPHERAL_KEY_CALCULATE_PERIOD                 200 // 250ms
+#define PERIPHERAL_KEY_CALCULATE_PERIOD                 200 // 200ms
 
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_S                 5
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF        (PERIPHERAL_LOW_BAT_LED_TOGGLE_S * 1000) // 5s
@@ -89,14 +93,14 @@ extern "C"
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               (60 * PERIPHERAL_LOW_BAT_LED_TOGGLE_TIME / PERIPHERAL_LOW_BAT_LED_TOGGLE_S) // 120 * 5 = 600. 10 mins
 #endif
 
-#define BUTTON_LED_DELAY  1000 // 1s
-#define BUTTON_LEY_DELAY_IN_SLEEP  1000 //1s
+#define BUTTON_LED_DELAY  650 // 1s
+#define BUTTON_LEY_DELAY_IN_SLEEP  650 //1s
 
 #define BATTERY_LOW_THRESHOLD                           24 //2.4V
 
 #define ENABLE_DISABLE_PERIOD 500
 
-#define ADV_HOUR_INDEX_BYTE 25
+#define ADV_HOUR_LEFT_BYTE 25
 #define ADV_INDEX_BYTE 26
 #define ADV_FLAG_BYTE 27
 #define ADV_BAT_BYTE 28
@@ -107,6 +111,11 @@ extern "C"
 
 //#define RELEASE_VER                      //定义版本发布用
 #define     VERSION     "v0.1"  //
+#define MAJOR_HW_VERSION   0x00
+#define MINOR_HW_VERSION   0x02
+#define MAJOR_SW_VERSION   0x01
+#define MIDDLE_SW_VERSION  0x00
+#define MINOR_SW_VERSION   0x01
 
 //设备名称的字符长度 <= 12
 #define DEV_NAME_DEFAULT                           "DarrenBLE"

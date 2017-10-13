@@ -163,7 +163,13 @@ static uint8 advertData_iBeacon[] =
   0x02, // 7
   0x15, // 8
   /*Device UUID (16 Bytes)*/
-  0xE2, 0xC5, 0x6D, 0xB5, 0xDF, 0xFB, 0x48, 0xD2, 0xB0, 0x60, 0xD0, 0xF5, 0xA7, 0x10, 0x96, 0xE0, //9 ~ 24
+  0x49, 0x53, 0x53, 0x4D, 0x41, 0x52, 0x54, 0x00, // ISSMART    8 bytes.
+  0x00, 0x00, 0x01, // Device Type     3 bytes.
+  MAJOR_HW_VERSION,
+  MINOR_HW_VERSION,
+  MAJOR_SW_VERSION,
+  MIDDLE_SW_VERSION,
+  MINOR_SW_VERSION,
   /*Major Value (2 Bytes)*/
   0x00, 0x00, // 25-26 // 25 for hour index, 26 for index 
   /*Minor Value (2 Bytes)*/
@@ -181,7 +187,7 @@ static uint8 led_toggling = FALSE;
 static uint16 led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
 static uint16 led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
 // Default WAKEUP period
-static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+static uint8 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
 static uint8 battery_voltage = 0;
 // Key related
 static uint8 key_pressed_count = 0;
@@ -624,33 +630,39 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_KEY_CNT_EVT)
   {
-    if (key_pressed_count >= 2 && g_sleepFlag == TRUE)
+    if (key_pressed_count == 0)
+      return (events ^ SBP_KEY_CNT_EVT);
+
+    if (g_sleepFlag == TRUE)
     {
-      osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
+      if (key_pressed_count == 1)
+      {
+        first_boot = TRUE;
+      }
+      osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);        
     }
-    else if (key_pressed_count == 1 && g_sleepFlag == TRUE)
+    else if (g_sleepFlag == FALSE)
     {
-      first_boot = TRUE;
-      osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
-    }
-    else if (key_pressed_count >= 2 && g_sleepFlag == FALSE)
-    {
-      DEBUG_PRINT("Timer is reset\r\n");
-      // reset timer count.
-      wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-      // reset index
-      advertData_iBeacon[ADV_HOUR_INDEX_BYTE] = 0;
-      advertData_iBeacon[ADV_INDEX_BYTE] = 0;
-      // LED. blink twice.
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
-    }
-    else if(key_pressed_count == 1 && g_sleepFlag == FALSE)
-    {
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
+      if (key_pressed_count >= 2)
+      {
+        DEBUG_PRINT("Timer is reset\r\n");
+        wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+        // reset wake_up_left
+        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+        // LED blink twice
+        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
+      }
+      else if (key_pressed_count == 1)
+      {
+        // Blink once
+        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
+      }
+      // Change the advertise date anyway.
       change_advertise_data(TRUE);
     }
+    // Reset Key event.
     key_pressed_count = 0;
-    key_processing = FALSE;    
+    key_processing = FALSE;
     return (events ^ SBP_KEY_CNT_EVT);
   }
   // Discard unknown events
@@ -740,6 +752,10 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
     {
       if (key_pressed_count == 0)
       {
+        if (wake_up_hours_remain <= RESET_WAKE_TIME_HOURS_THRES)
+        {
+          wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
+        }
         osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
       }
       key_pressed_count++;
@@ -1048,8 +1064,8 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       }
       else
       {
-        advertData_iBeacon[ADV_HOUR_INDEX_BYTE] += 1;
         wake_up_hours_remain--;
+        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
         if (wake_up_hours_remain == 0)
         {
           DEBUG_PRINT("Enter Sleep mode\r\n");
