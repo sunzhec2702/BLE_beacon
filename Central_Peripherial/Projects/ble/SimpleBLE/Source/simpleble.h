@@ -121,7 +121,7 @@ extern "C"
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x02
 #define MAJOR_SW_VERSION   0x01
-#define MIDDLE_SW_VERSION  0x00
+#define MIDDLE_SW_VERSION  0x01
 #define MINOR_SW_VERSION   0x01
 
 //设备名称的字符长度 <= 12

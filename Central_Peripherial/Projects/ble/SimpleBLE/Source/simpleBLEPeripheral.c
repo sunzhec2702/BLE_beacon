@@ -571,6 +571,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       }
       if (g_long_press_flag == TRUE)
       {
+        key_pressed_count = 0;
         osal_start_timerEx(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT, PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_1);
       }
     }
@@ -621,7 +622,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     static uint8 sleep_button_event_stage = 0;
     if (g_long_press_flag == TRUE)
     {
-      if (key_pressed_count == ((sleep_toggle_cnt == 2) ? 3 : 2))
+      if (key_pressed_count == 2)
       {
         g_long_press_flag = FALSE;
         key_pressed_count = 0;
@@ -654,7 +655,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       {
         g_long_press_flag = TRUE;
         key_pressed_count = 0;
-        sleep_toggle_cnt =  ((osal_rand() % 2) + 2);
+        sleep_toggle_cnt = 3;
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, sleep_toggle_cnt << 1, 0);
       }
       else
