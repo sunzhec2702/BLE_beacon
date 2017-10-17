@@ -56,6 +56,8 @@
 /*********************************************************************
  * CONSTANTS
  */
+#define HAL_KEY_SW_6_PORT   P0
+#define HAL_KEY_SW_6_BIT    BV(1)
 
 // General discoverable mode advertises indefinitely
 #define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_GENERAL
@@ -198,44 +200,33 @@ static bool first_boot = TRUE;
 static bool low_power_state = FALSE;
 static bool key_pressed = FALSE;
 
+static bool g_long_press_flag = FALSE;
+static uint8 key_long_press_cnt = 0;
+static uint8 sleep_toggle_cnt = 0;
 #ifdef DEBUG_BOARD
 static bool debug_low_power = FALSE;
 #endif
-
-//static int8 gMP = 0xCD;
-// GAP GATT Attributes
-
-// GAP GATT Attributes
-//static uint8 attDeviceName[GAP_DEVICE_NAME_LEN] = "Simple BLE Peripheral";
 
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
 static void simpleBLEPeripheral_ProcessOSALMsg(osal_event_hdr_t *pMsg);
 static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg);
-//static void peripheralStateNotificationCB(gaprole_States_t newState);
-//static void peripheralRssiReadCB(int8 rssi);
-//static void simpleProfileChangeCB(uint8 paramID);
 static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_off, uint32 toggle_target_cnt, uint16 delay);
 static uint8 led_toggle_clean_param(void);
 static bool check_low_battery(void);
 static void enter_low_battery_mode(void);
+static bool check_keys_pressed(uint8 keys);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
   BOND_PAIR_STATUS_PAIRING, //未配对
   BOND_PAIR_STATUS_PAIRED,  //已配对
 } BOND_PAIR_STATUS;
-// 用来管理当前的状态，如果密码不正确，立即取消连接，并重启
-// static BOND_PAIR_STATUS gPairStatus = BOND_PAIR_STATUS_PAIRING;
 
 void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs);
-//static void ProcessPairStateCB(uint16 connHandle, uint8 state, uint8 status);
-//#endif
 
-//#if defined( CC2540_MINIDK )
 static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys);
-//#endif
 
 static uint16 advInt;
 
@@ -243,35 +234,6 @@ static uint16 advInt;
  * PROFILE CALLBACKS
  */
 
-// GAP Role Callbacks
-/*
-static gapRolesCBs_t simpleBLEPeripheral_PeripheralCBs =
-{
-        peripheralStateNotificationCB, // Profile State Change Callbacks
-        peripheralRssiReadCB,          // When a valid RSSI is read from controller (not used by application)
-};
-*/
-
-// GAP Bond Manager Callbacks
-/*
-static gapBondCBs_t simpleBLEPeripheral_BondMgrCBs =
-    {
-        //#if defined( BLE_BOND_PAIR )
-        ProcessPasscodeCB, // 密码回调
-        ProcessPairStateCB // 绑定状态回调
-                           //#else
-                           //  NULL,                     // Passcode callback (not used by application)
-                           //  NULL                      // Pairing / Bonding state Callback (not used by application)
-                           //#endif
-};
-*/
-// Simple GATT Profile Callbacks
-/*
-static simpleProfileCBs_t simpleBLEPeripheral_SimpleProfileCBs =
-    {
-        simpleProfileChangeCB // Charactersitic value change callback
-};
-*/
 /*********************************************************************
  * PUBLIC FUNCTIONS
  */
@@ -382,26 +344,6 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 #if defined FEATURE_OAD
   VOID OADTarget_AddService(); // OAD Profile
 #endif
-
-  /*
-  // Setup the SimpleProfile Characteristic Values
-  {
-    uint8 charValue1 = 1;
-    uint8 charValue2 = 2;
-    uint8 charValue3 = 3;
-    uint8 charValue4 = 4;
-    uint8 charValue5[SIMPLEPROFILE_CHAR5_LEN] = {1, 2, 3, 4, 5};
-    //    uint8 charValue6[SIMPLEPROFILE_CHAR6_LEN] = { 1, 2, 3, 4, 5 };
-    //    uint8 charValue7[SIMPLEPROFILE_CHAR7_LEN] = { 1, 2, 3, 4, 5 };
-    SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR1, sizeof(uint8), &charValue1);
-    SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR2, sizeof(uint8), &charValue2);
-    SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR3, sizeof(uint8), &charValue3);
-    SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR4, sizeof(uint8), &charValue4);
-    SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR5, SIMPLEPROFILE_CHAR5_LEN, charValue5);
-    //    SimpleProfile_SetParameter( SIMPLEPROFILE_CHAR6, SIMPLEPROFILE_CHAR6_LEN, charValue6 );
-    //    SimpleProfile_SetParameter( SIMPLEPROFILE_CHAR7, SIMPLEPROFILE_CHAR7_LEN, charValue7 );
-  }
-  */
   // Register for all key events - This app will handle all key events
   RegisterForKeys(simpleBLETaskId);
 
@@ -574,7 +516,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     }
     return (events ^ SBP_UART_EVT);
   }
-
+  
   if (events & SBP_SLEEP_EVT)
   {
     DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
@@ -627,6 +569,10 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
         osal_set_event(simpleBLETaskId, SBP_SLEEP_EVT);
         low_power_state = FALSE;
       }
+      if (g_long_press_flag == TRUE)
+      {
+        osal_start_timerEx(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT, PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_1);
+      }
     }
     return (events ^ SBP_PERIODIC_LED_EVT);
   }
@@ -659,6 +605,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       {
         // Blink once
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
+        osal_set_event(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
       }
       // Change the advertise date anyway.
       change_advertise_data(TRUE);
@@ -667,6 +614,61 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     key_pressed_count = 0;
     key_processing = FALSE;
     return (events ^ SBP_KEY_CNT_EVT);
+  }
+
+  if (events & SBP_KEY_LONG_PRESSED_EVT)
+  {
+    static uint8 sleep_button_event_stage = 0;
+    if (g_long_press_flag == TRUE)
+    {
+      if (key_pressed_count == ((sleep_toggle_cnt == 2) ? 3 : 2))
+      {
+        g_long_press_flag = FALSE;
+        key_pressed_count = 0;
+        sleep_button_event_stage = 0;
+        DEBUG_PRINT("Powering off\r\n");
+        first_boot = TRUE;
+        osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
+        return (events ^ SBP_KEY_LONG_PRESSED_EVT);
+      }
+      if ((key_pressed_count == 0 && sleep_button_event_stage == 0) || (sleep_button_event_stage == 1))
+      {
+        // Failed
+        sleep_button_event_stage = 0;
+        key_pressed_count = 0;
+        g_long_press_flag = FALSE;
+      }
+      else if (key_pressed_count > 0 && sleep_button_event_stage == 0)
+      {
+        sleep_button_event_stage = 1;
+        osal_start_timerEx(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT, PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_2);
+      }
+      return (events ^ SBP_KEY_LONG_PRESSED_EVT);
+    }
+
+    if (check_keys_pressed(HAL_KEY_SW_6) == TRUE)
+    {
+      key_pressed_count = 0;
+      key_long_press_cnt++;
+      if (key_long_press_cnt == PERIPHERAL_KEY_LONG_PRESS_TIME_CNT)
+      {
+        g_long_press_flag = TRUE;
+        key_pressed_count = 0;
+        sleep_toggle_cnt =  ((osal_rand() % 2) + 2);
+        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, sleep_toggle_cnt << 1, 0);
+      }
+      else
+      {
+        osal_start_timerEx(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT, PERIPHERAL_KEY_LONG_PRESS_CALC_PERIOD);
+      }
+    }
+    else if (check_keys_pressed(HAL_KEY_SW_6) == FALSE)
+    {
+      g_long_press_flag = FALSE;
+      key_long_press_cnt = 0;
+      osal_stop_timerEx(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
+    }
+    return (events ^ SBP_KEY_LONG_PRESSED_EVT);
   }
   // Discard unknown events
   return 0;
@@ -760,12 +762,16 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
           wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
           advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
         }
-        osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
+        if (g_long_press_flag == FALSE)
+        {
+          osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
+        }
       }
       key_pressed_count++;
     }
     key_pressed = !key_pressed;
   }
+
   #ifdef DEBUG_BOARD
   if (keys & HAL_KEY_SW_1)
   {
@@ -790,253 +796,6 @@ static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg)
 {
   GATT_bm_free(&pMsg->msg, pMsg->method);
 }
-
-/*********************************************************************
- * @fn      peripheralStateNotificationCB
- *
- * @brief   Notification from the profile of a state change.
- *
- * @param   newState - new state
- *
- * @return  none
- */
-/*
-static void peripheralStateNotificationCB(gaprole_States_t newState)
-{
-  switch (newState)
-  {
-  case GAPROLE_STARTED:
-  {
-    uint8 ownAddress[B_ADDR_LEN];
-    uint8 systemId[DEVINFO_SYSTEM_ID_LEN];
-
-    GAPRole_GetParameter(GAPROLE_BD_ADDR, ownAddress);
-
-    // use 6 bytes of device address for 8 bytes of system ID value
-    systemId[0] = ownAddress[0];
-    systemId[1] = ownAddress[1];
-    systemId[2] = ownAddress[2];
-
-    // set middle bytes to zero
-    systemId[4] = 0x00;
-    systemId[3] = 0x00;
-
-    // shift three bytes up
-    systemId[7] = ownAddress[5];
-    systemId[6] = ownAddress[4];
-    systemId[5] = ownAddress[3];
-
-    DevInfo_SetParameter(DEVINFO_SYSTEM_ID, DEVINFO_SYSTEM_ID_LEN, systemId);
-
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    // Display device address
-    HalLcdWriteString(bdAddr2Str(ownAddress), HAL_LCD_LINE_2);
-    HalLcdWriteString("Initialized", HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-
-    //mac 地址   bdAddr2Str( pEvent->initDone.devAddr ) 的输出格式是， 例如     0xD03972A5F3
-    osal_memcpy(sys_config.mac_addr, bdAddr2Str(ownAddress) + 2, 12);
-    sys_config.mac_addr[12] = 0;
-    //PrintAllPara();
-  }
-  break;
-
-  case GAPROLE_ADVERTISING:
-  {
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    HalLcdWriteString("Advertising", HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-  }
-  break;
-
-  case GAPROLE_CONNECTED:
-  {
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    HalLcdWriteString("Connected", HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-    simpleBle_LedSetState(HAL_LED_MODE_OFF);
-    simpleBLE_Delay_1ms(1); //为了等发送完整所以延时一小下
-
-    // Get connection handle
-    GAPRole_GetParameter(GAPROLE_CONNHANDLE, &gapConnHandle);
-    // 连接上了
-    g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_BATTERY); //  不睡眠，功耗很高的
-  }
-  break;
-
-  case GAPROLE_WAITING:
-  {
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    HalLcdWriteString("In State Waiting", HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-  }
-  break;
-
-  case GAPROLE_WAITING_AFTER_TIMEOUT:
-  {
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    HalLcdWriteString("Timed Out", HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-  }
-  break;
-
-  case GAPROLE_ERROR:
-  {
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    HalLcdWriteString("Error", HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-  }
-  break;
-
-  default:
-  {
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    HalLcdWriteString("", HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-  }
-  break;
-  }
-
-  gapProfileState = newState;
-
-#if !defined(CC2540_MINIDK)
-  VOID gapProfileState; // added to prevent compiler warning with
-                        // "CC2540 Slave" configurations
-#endif
-
-}
-
-static void peripheralRssiReadCB(int8 rssi)
-{
-  return;
-}
-*/
-/*********************************************************************
- * @fn      simpleProfileChangeCB
- *
- * @brief   Callback from SimpleBLEProfile indicating a value change
- *
- * @param   paramID - parameter ID of the value that was changed.
- *
- * @return  none
- */
-/*
-static void simpleProfileChangeCB(uint8 paramID)
-{
-  uint8 newValue;
-  uint8 newChar6Value[SIMPLEPROFILE_CHAR6_LEN];
-  uint8 returnBytes;
-
-  switch (paramID)
-  {
-  case SIMPLEPROFILE_CHAR1:
-    SimpleProfile_GetParameter(SIMPLEPROFILE_CHAR1, &newValue, &returnBytes);
-
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    HalLcdWriteStringValue("Char 1:", (uint16)(newValue), 10, HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-
-    break;
-
-  case SIMPLEPROFILE_CHAR3:
-    SimpleProfile_GetParameter(SIMPLEPROFILE_CHAR3, &newValue, &returnBytes);
-
-#if (defined HAL_LCD) && (HAL_LCD == TRUE)
-    HalLcdWriteStringValue("Char 3:", (uint16)(newValue), 10, HAL_LCD_LINE_3);
-#endif // (defined HAL_LCD) && (HAL_LCD == TRUE)
-
-    break;
-
-  case SIMPLEPROFILE_CHAR6:
-    SimpleProfile_GetParameter(SIMPLEPROFILE_CHAR6, newChar6Value, &returnBytes);
-    break;
-  default:
-    // should not reach here!
-    break;
-  }
-}
-*/
-
-//#if defined( BLE_BOND_PAIR )
-//绑定过程中的密码管理回调函数
-/*
-static void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs)
-{
-  uint32 passcode;
-  uint8 str[7];
-
-//在这里可以设置存储，保存之前设定的密码，这样就可以动态修改配对密码了。
-// Create random passcode
-  LL_Rand( ((uint8 *) &passcode), sizeof( uint32 ));
-  passcode %= 1000000;
-  //在lcd上显示当前的密码，这样手机端，根据此密码连接。
-  // Display passcode to user
-  if (uiOutputs != 0)
-  {
-    HalLcdWriteString("Passcode:", HAL_LCD_LINE_1);
-    HalLcdWriteString((char *)_ltoa(passcode, str, 10), HAL_LCD_LINE_2);
-  }
-  HalLcdWriteString(">>>no Passcode", HAL_LCD_LINE_1);
-}
-
-//绑定过程中的状态管理，在这里可以设置标志位，当密码不正确时不允许连接。
-static void ProcessPairStateCB(uint16 connHandle, uint8 state, uint8 status)
-{
-  // 主机发起连接，会进入开始绑定状态
-  if (state == GAPBOND_PAIRING_STATE_STARTED)
-  {
-    HalLcdWriteString("Pairing started", HAL_LCD_LINE_1);
-    gPairStatus = BOND_PAIR_STATUS_PAIRING;
-  }
-  // 当主机提交密码后，会进入完成
-  else if (state == GAPBOND_PAIRING_STATE_COMPLETE)
-  {
-    if (status == SUCCESS)
-    {
-      HalLcdWriteString("Pairing success", HAL_LCD_LINE_1); //密码正确
-      gPairStatus = BOND_PAIR_STATUS_PAIRED;
-    }
-    else
-    {
-      HalLcdWriteStringValue("Pairing fail", status, 10, HAL_LCD_LINE_1); //密码不正确，或者先前已经绑定
-
-      if (status == 8)
-      { //已绑定
-        gPairStatus = BOND_PAIR_STATUS_PAIRED;
-      }
-      else
-      {
-        gPairStatus = BOND_PAIR_STATUS_PAIRING;
-
-        GAPRole_TerminateConnection(); // 终止连接
-        simpleBLE_Delay_1ms(100);
-
-        // 终止连接后， 需要复位从机
-        HAL_SYSTEM_RESET();
-      }
-
-      gPairStatus = BOND_PAIR_STATUS_PAIRING;
-    }
-
-    //判断配对结果，如果不正确立刻停止连接。
-    if ((gapProfileState == GAPROLE_CONNECTED) && (gPairStatus == BOND_PAIR_STATUS_PAIRING))
-    {
-      GAPRole_TerminateConnection(); // 终止连接
-      // 终止连接后， 需要复位从机
-      HAL_SYSTEM_RESET();
-    }
-  }
-  // 当主机提交密码从机验证后进入配对成功状态
-  else if (state == GAPBOND_PAIRING_STATE_BONDED)
-  {
-    if (status == SUCCESS)
-    {
-      HalLcdWriteString("Bonding success", HAL_LCD_LINE_1);
-    }
-  }
-}
-*/
 
 static void PeripherialPerformPeriodicTask(uint16 event_id)
 {
@@ -1182,6 +941,23 @@ static void enter_low_battery_mode()
   // LED Blinking.
   led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
 }
+
+static bool check_keys_pressed(uint8 keys)
+{
+  switch (keys)
+  {
+    case HAL_KEY_SW_6:
+      if (!(HAL_KEY_SW_6_PORT & HAL_KEY_SW_6_BIT))    /* Key is active low */
+      {
+        return TRUE;
+      }
+      break;
+    default:
+      break;
+  }
+  return FALSE;
+}
+
 //#endif
 /*********************************************************************
 *********************************************************************/

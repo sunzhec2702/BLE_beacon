@@ -33,20 +33,22 @@ extern "C"
 // 主机从机事件共用定义
 #define START_DEVICE_EVT                               0x0001//启动设备
 #define SBP_PERIODIC_EVT                               0x0002//系统轮询定时器
-#define SBP_DATA_EVT                                   0x0004//数据传输
+#define SBP_DATA_EVT                                   0x8000//数据传输
+#define SBP_KEY_CNT_EVT                                0x0008//count the key pressed.
 #define SBP_UART_EVT                                   0x0010//串口数据事件
 #define SBP_SLEEP_EVT                                  0x0020//睡眠事件
 #define SBP_WAKE_EVT                                   0x0040//唤醒事件
 #define SBP_PERIODIC_LED_EVT                           0x0080//开机闪灯
 #define SBP_CONNECT_EVT                                0x0100//主机连接-确认连接
 #define START_DISCOVERY_EVT                            0x0200//发现从设备
-#define SBP_KEY_CNT_EVT                                0x0008//count the key pressed.
 
 #define SBP_PERIODIC_BUTTON_LED_EVT                    0x0400
 #define SBP_PERIODIC_PER_HOUR_EVT                      0x0800
 #define SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE            0x1000
 #define SBP_PERIODIC_CHN_ADVERT_EVT_PRESS              0x2000
 #define SBP_PERIODIC_INDEX_EVT                         0x4000//系统轮询定时器
+
+#define SBP_KEY_LONG_PRESSED_EVT                       0x0004
 
 #define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
@@ -80,6 +82,11 @@ extern "C"
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_ON               50
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF              150
 #define PERIPHERAL_KEY_CALCULATE_PERIOD                 200 // 200ms
+
+#define PERIPHERAL_KEY_LONG_PRESS_CALC_PERIOD           100 // 100ms
+#define PERIPHERAL_KEY_LONG_PRESS_TIME_CNT              (2 * 1000 / PERIPHERAL_KEY_LONG_PRESS_CALC_PERIOD) // 2s
+#define PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_1        500 // 500ms
+#define PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_2        1500 // 500ms
 
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_S                 5
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF        (PERIPHERAL_LOW_BAT_LED_TOGGLE_S * 1000) // 5s
