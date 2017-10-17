@@ -165,11 +165,11 @@ static uint8 advertData_iBeacon[] =
   /*Device UUID (16 Bytes)*/
   0x49, 0x53, 0x53, 0x4D, 0x41, 0x52, 0x54, 0x00, // ISSMART    8 bytes.
   0x00, 0x00, 0x01, // Device Type     3 bytes.
-  MAJOR_HW_VERSION,
-  MINOR_HW_VERSION,
-  MAJOR_SW_VERSION,
-  MIDDLE_SW_VERSION,
-  MINOR_SW_VERSION,
+  MAJOR_HW_VERSION, // 0x00
+  MINOR_HW_VERSION, // 0x02
+  MAJOR_SW_VERSION, // 0x01
+  MIDDLE_SW_VERSION, // 0x00
+  MINOR_SW_VERSION, // 0x01
   /*Major Value (2 Bytes)*/
   0x00, 0x00, // 25-26 // 25 for hour index, 26 for index 
   /*Minor Value (2 Bytes)*/
@@ -299,6 +299,9 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 
   // Setup the GAP Peripheral Role Profile
   {
+    // Change the ibeacon adverdata of wake up hours remain.
+    advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+
     // For other hardware platforms, device starts advertising upon initialization
     uint8 initial_advertising_enable = FALSE;
     // By setting this to zero, the device will go into the waiting state after
@@ -755,6 +758,7 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
         if (wake_up_hours_remain <= RESET_WAKE_TIME_HOURS_THRES)
         {
           wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
+          advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
         }
         osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
       }
