@@ -217,6 +217,8 @@ static uint8 led_toggle_clean_param(void);
 static bool check_low_battery(void);
 static void enter_low_battery_mode(void);
 static bool check_keys_pressed(uint8 keys);
+static void init_ibeacon_advertise(bool reset_index);
+static void advertise_control(bool enable);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
@@ -264,8 +266,6 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     // Change the ibeacon adverdata of wake up hours remain.
     advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
 
-    // For other hardware platforms, device starts advertising upon initialization
-    uint8 initial_advertising_enable = FALSE;
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
     // until the enabler is set back to TRUE
@@ -282,7 +282,8 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     uint16 desired_conn_timeout = DEFAULT_DESIRED_CONN_TIMEOUT;
 
     // Set the GAP Role Parameters
-    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+    // GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+    advertise_control(FALSE);
     // GAPRole_SetParameter(GAPROLE_ADVERT_OFF_TIME, sizeof(uint16), &gapRole_AdvertOffTime);
 
     GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof(scanRspData), scanRspData);
@@ -412,7 +413,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     // Start the Device
     VOID GAPRole_StartDevice(NULL);
     // Start Bond Manager
-    // VOID GAPBondMgr_Register(&simpleBLEPeripheral_BondMgrCBs);
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
     return (events ^ START_DEVICE_EVT);
   }
@@ -420,12 +420,12 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   if (events & SBP_WAKE_EVT)
   {
     // osal_pwrmgr_device(PWRMGR_BATTERY); //  不睡眠，功耗很高的
-    g_sleepFlag = FALSE;
     if (check_low_battery() == TRUE)
     {
       enter_low_battery_mode();
       return (events ^ SBP_WAKE_EVT);
     }
+    g_sleepFlag = FALSE;
     if (first_boot == TRUE)
     {
       first_boot = FALSE;
@@ -434,9 +434,9 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     }
     else // If not first boot, WAKE_EVT means start to advertise.
     {
+      init_ibeacon_advertise(TRUE);
       // Start advertising
-      uint8 initial_advertising_enable = TRUE;
-      GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+      advertise_control(TRUE);
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
       // LED
@@ -524,8 +524,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     g_sleepFlag = TRUE;
     osal_pwrmgr_device(PWRMGR_BATTERY); //  自动睡眠
     osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
-    uint8 initial_advertising_enable = FALSE;
-    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+    advertise_control(FALSE);
     DEBUG_PRINT("Enter Sleep Mode\r\n");
     simpleBLE_Delay_1ms(1);
     return (events ^ SBP_SLEEP_EVT);
@@ -606,7 +605,10 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       {
         // Blink once
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
+        #if (POWER_OFF_SUPPORT == TRUE)
+        key_pressed_count = 0;
         osal_set_event(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
+        #endif
       }
       // Change the advertise date anyway.
       change_advertise_data(TRUE);
@@ -629,7 +631,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
         sleep_button_event_stage = 0;
         DEBUG_PRINT("Powering off\r\n");
         first_boot = TRUE;
-        osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
+        osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 0);
         return (events ^ SBP_KEY_LONG_PRESSED_EVT);
       }
       if ((key_pressed_count == 0 && sleep_button_event_stage == 0) || (sleep_button_event_stage == 1))
@@ -656,6 +658,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
         g_long_press_flag = TRUE;
         key_pressed_count = 0;
         sleep_toggle_cnt = 3;
+        key_long_press_cnt = 0;
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, sleep_toggle_cnt << 1, 0);
       }
       else
@@ -858,9 +861,8 @@ static void change_advertise_data(uint8 key_pressed)
     {
       DEBUG_PRINT("Enter Rapid Mode\r\n");
       rapid_processing = TRUE;
-      initial_advertising_enable = FALSE;
-      GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_CHN_ADVERT_EVT_PRESS, ENABLE_DISABLE_PERIOD); // 1s for test.
+      advertise_control(FALSE);
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_CHN_ADVERT_EVT_PRESS, ENABLE_DISABLE_PERIOD);
     }
     else if (initial_advertising_enable == FALSE && rapid_processing == TRUE)
     {
@@ -872,19 +874,17 @@ static void change_advertise_data(uint8 key_pressed)
         GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, advInt);
         GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, advInt);
         GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, advInt);
-        initial_advertising_enable = TRUE;
-        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+        advertise_control(TRUE);
       }
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE, SBP_PERIODIC_ADVERT_CHG_PERIOD); // 1s for test.
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE, SBP_PERIODIC_ADVERT_CHG_PERIOD);
     }
   }
   else
   {
     if (initial_advertising_enable == TRUE && rapid_processing == TRUE)
     {
-      initial_advertising_enable = FALSE;
-      GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE, ENABLE_DISABLE_PERIOD); // 1s for test.
+      advertise_control(FALSE);
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE, ENABLE_DISABLE_PERIOD);
     }
     else if (initial_advertising_enable == FALSE && rapid_processing == TRUE)
     {
@@ -897,8 +897,7 @@ static void change_advertise_data(uint8 key_pressed)
         GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, advInt);
         GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, advInt);
         GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, advInt);
-        initial_advertising_enable = TRUE;
-        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+        advertise_control(TRUE);
       }
       rapid_processing = FALSE;
     }
@@ -924,7 +923,11 @@ static bool check_low_battery()
   DEBUG_VALUE("Battery Value : ", battery_voltage * 10, 10);
   // Update the advertise data.
   advertData_iBeacon[ADV_BAT_BYTE] = battery_voltage & 0xFF;
-  if (battery_voltage < BATTERY_LOW_THRESHOLD)
+  if (g_sleepFlag == TRUE && battery_voltage < BATTERY_LOW_THRESHOLD_SLEEP)
+  {
+    return TRUE;
+  }
+  else if (g_sleepFlag == FALSE && battery_voltage < BATTERY_LOW_THRESHOLD)
   {
     return TRUE;
   }
@@ -937,8 +940,7 @@ static void enter_low_battery_mode()
   low_power_state = TRUE;
   advertData_iBeacon[ADV_FLAG_BYTE] |= 0x40;
   // Stop advertising.
-  uint8 initial_advertising_enable = FALSE;
-  GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+  advertise_control(FALSE);
   // LED Blinking.
   led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
 }
@@ -959,6 +961,30 @@ static bool check_keys_pressed(uint8 keys)
   return FALSE;
 }
 
+static void init_ibeacon_advertise(bool reset_index)
+{
+  advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+  advertData_iBeacon[ADV_BAT_BYTE] = battery_voltage & 0xFF;
+  advertData_iBeacon[ADV_FLAG_BYTE] = 0x00;
+  if (reset_index == TRUE)
+  {
+    advertData_iBeacon[ADV_INDEX_BYTE] = 0x00;
+  }
+}
+
+static void advertise_control(bool enable)
+{
+  // status check.
+  if (enable == TRUE && g_sleepFlag == TRUE)
+  {
+    DEBUG_PRINT("enable TRUE, g_sleepFlag TRUE");
+    return;
+  }
+
+  uint8 initial_advertising_enable = enable;
+  GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
+  return;
+}
 //#endif
 /*********************************************************************
 *********************************************************************/
