@@ -16,6 +16,20 @@ extern "C"
 #define POWER_OFF_SUPPORT TRUE
 //#define DEBUG_BOARD 1
 
+#define PRESET_ROLE BLE_ROLE_PERIPHERAL
+
+// 当前单片机运行的角色
+typedef enum
+{
+    BLE_ROLE_PERIPHERAL = 0,        //从机角色
+    BLE_ROLE_CENTRAL = 1,           //主机角色    
+}BLE_ROLE;
+
+#if (PRESET_ROLE == BLE_ROLE_CENTRAL)
+#define HAL_LCD TRUE
+#define HAL_UART TRUE
+#define LCD_TO_UART TRUE
+#endif
 
 #ifdef DEBUG_BOARD
 #define HAL_LCD TRUE
@@ -23,10 +37,16 @@ extern "C"
 #define LCD_TO_UART TRUE
 #define DEBUG_PRINT(x) NPI_PrintString(x)
 #define DEBUG_VALUE(x,y,z) {NPI_PrintValue(x, y, z);NPI_PrintString("\r\n");}
-#else
-#define HAL_LCD FALSE
-#define HAL_UART FALSE
-#define LCD_TO_UART FALSE
+#else // PRODUCT_BOARD
+  #if (PRESET_ROLE == BLE_ROLE_CENTRAL)
+    #define HAL_LCD TRUE
+    #define HAL_UART TRUE
+    #define LCD_TO_UART TRUE
+  #else // PERIPHERIAL
+    #define HAL_LCD FALSE
+    #define HAL_UART FALSE
+    #define LCD_TO_UART FALSE
+  #endif // CENTRAL
 #define DEBUG_PRINT(x) {}
 #define DEBUG_VALUE(x,y,z) {}
 #endif
@@ -83,12 +103,12 @@ extern "C"
 #define PERIPHERAL_START_LED_TOGGLE_CNT                 6
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_ON               50
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF              150
-#define PERIPHERAL_KEY_CALCULATE_PERIOD                 200 // 200ms
+#define PERIPHERAL_KEY_CALCULATE_PERIOD                 250 // 250ms
 
 #define PERIPHERAL_KEY_LONG_PRESS_CALC_PERIOD           100 // 100ms
 #define PERIPHERAL_KEY_LONG_PRESS_TIME_CNT              (2 * 1000 / PERIPHERAL_KEY_LONG_PRESS_CALC_PERIOD) // 2s
 #define PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_1        500 // 500ms
-#define PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_2        1000 // 500ms
+#define PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_2        800 // 800ms
 
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_S                 3 // 3s
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF        (PERIPHERAL_LOW_BAT_LED_TOGGLE_S * 1000) // 3s
@@ -122,7 +142,7 @@ extern "C"
 #elif (POWER_OFF_SUPPORT == FALSE)
 #define MIDDLE_SW_VERSION  0x00
 #endif
-#define MINOR_SW_VERSION   0x01
+#define MINOR_SW_VERSION   0x02
 
 //设备名称的字符长度 <= 12
 #define DEV_NAME_DEFAULT                           "DarrenBLE"
@@ -148,14 +168,6 @@ typedef enum
     PARA_ALL_FACTORY = 0,           //全部恢复出厂设置
     PARA_PARI_FACTORY = 1,          //配对信息恢复出厂设置-相当于清除配对信息与从机信息
 }PARA_SET_FACTORY;
-
-#define PRESET_ROLE BLE_ROLE_PERIPHERAL
-// 当前单片机运行的角色
-typedef enum
-{
-    BLE_ROLE_PERIPHERAL = 0,        //从机角色
-    BLE_ROLE_CENTRAL = 1,           //主机角色    
-}BLE_ROLE;
 
 // 应用程序状态
 enum

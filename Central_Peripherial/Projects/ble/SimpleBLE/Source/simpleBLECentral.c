@@ -79,7 +79,7 @@
 #define DEFAULT_MAX_SCAN_RES  50//8
 
 // Scan duration in ms
-#define DEFAULT_SCAN_DURATION 4000 //4000  默认扫描时间 ms
+#define DEFAULT_SCAN_DURATION 500 //4000  默认扫描时间 ms
 
 // Discovey mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE DEVDISC_MODE_ALL
@@ -664,6 +664,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
       osal_revmemcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
       osal_memcpy(dev_ret.data, pEvent->deviceInfo.pEvtData, dev_ret.dataLen);
       NPI_WriteTransport((unsigned char*) &dev_ret, sizeof(dev_adv_ret_t));
+
       #ifdef DEBUG_BOARD
       DEBUG_PRINT((unsigned char*)bdAddr2Str(pEvent->deviceInfo.addr));
       DEBUG_PRINT(" - ");

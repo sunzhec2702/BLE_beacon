@@ -104,7 +104,7 @@
 #define HAL_KEY_RISING_EDGE   0
 #define HAL_KEY_FALLING_EDGE  1
 
-#define HAL_KEY_DEBOUNCE_VALUE  5
+#define HAL_KEY_DEBOUNCE_VALUE  20
 
 /* CPU port interrupt */
 #define HAL_KEY_CPU_PORT_0_IF P0IF

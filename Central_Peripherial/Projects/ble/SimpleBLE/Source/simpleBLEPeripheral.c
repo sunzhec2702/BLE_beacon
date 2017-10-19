@@ -651,12 +651,10 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
     if (check_keys_pressed(HAL_KEY_SW_6) == TRUE)
     {
-      key_pressed_count = 0;
       key_long_press_cnt++;
       if (key_long_press_cnt == PERIPHERAL_KEY_LONG_PRESS_TIME_CNT)
       {
         g_long_press_flag = TRUE;
-        key_pressed_count = 0;
         sleep_toggle_cnt = 3;
         key_long_press_cnt = 0;
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, sleep_toggle_cnt << 1, 0);
@@ -672,6 +670,9 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       key_long_press_cnt = 0;
       osal_stop_timerEx(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
     }
+    // Reset Key event.
+    key_pressed_count = 0;
+    key_processing = FALSE;
     return (events ^ SBP_KEY_LONG_PRESSED_EVT);
   }
   // Discard unknown events
