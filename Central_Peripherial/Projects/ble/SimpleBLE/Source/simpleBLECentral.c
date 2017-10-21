@@ -76,10 +76,10 @@
  */
 
 // Maximum number of scan responses
-#define DEFAULT_MAX_SCAN_RES  50//8
+#define DEFAULT_MAX_SCAN_RES  40//8
 
 // Scan duration in ms
-#define DEFAULT_SCAN_DURATION 500 //4000  默认扫描时间 ms
+#define DEFAULT_SCAN_DURATION 600 //4000  默认扫描时间 ms
 
 // Discovey mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE DEVDISC_MODE_ALL
