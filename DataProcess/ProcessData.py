@@ -56,9 +56,9 @@ def process_packet(packet):
 
 sync_stage = 0
 
-thread1 = timer(1, 20)
+thread1 = timer(1, 0.2)
 thread1.start()
-thread2 = timer(2, 1)
+thread2 = timer(2, 10)
 thread2.start()
 while(1):
     magic_raw  = serial_instance.read(1)
