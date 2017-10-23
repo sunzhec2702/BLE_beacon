@@ -203,6 +203,8 @@ static bool key_pressed = FALSE;
 static bool g_long_press_flag = FALSE;
 static uint8 key_long_press_cnt = 0;
 static uint8 sleep_toggle_cnt = 0;
+static bool rapid_processing = FALSE;
+
 #ifdef DEBUG_BOARD
 static bool debug_low_power = FALSE;
 #endif
@@ -858,7 +860,6 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   }
 }
 
-static bool rapid_processing = FALSE;
 static void change_advertise_data(uint8 key_pressed)
 {
   uint8 initial_advertising_enable;

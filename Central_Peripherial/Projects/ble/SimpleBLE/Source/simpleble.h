@@ -16,7 +16,7 @@ extern "C"
 #define POWER_OFF_SUPPORT TRUE
 //#define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_ROLE_CENTRAL
+#define PRESET_ROLE BLE_ROLE_PERIPHERAL
 
 // 当前单片机运行的角色
 typedef enum
@@ -110,10 +110,9 @@ typedef enum
 #define PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_1        500 // 500ms
 #define PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_2        800 // 800ms
 
-#define PERIPHERAL_LOW_BAT_LED_TOGGLE_S                 3 // 3s
-#define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF        (PERIPHERAL_LOW_BAT_LED_TOGGLE_S * 1000) // 3s
+//#define PERIPHERAL_LOW_BAT_LED_TOGGLE_S                 3 // 3s
+#define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF        (150) // 150ms
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON         (50) // 50ms
-
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               20
 
 #define BUTTON_LED_DELAY  650 // 1s
@@ -135,14 +134,14 @@ typedef enum
 //#define RELEASE_VER                      //定义版本发布用
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
-#define MINOR_HW_VERSION   0x02
+#define MINOR_HW_VERSION   0x03
 #define MAJOR_SW_VERSION   0x01
 #if (POWER_OFF_SUPPORT == TRUE)
 #define MIDDLE_SW_VERSION  0x01
 #elif (POWER_OFF_SUPPORT == FALSE)
 #define MIDDLE_SW_VERSION  0x00
 #endif
-#define MINOR_SW_VERSION   0x02
+#define MINOR_SW_VERSION   0x03
 
 //设备名称的字符长度 <= 12
 #define DEV_NAME_DEFAULT                           "DarrenBLE"
