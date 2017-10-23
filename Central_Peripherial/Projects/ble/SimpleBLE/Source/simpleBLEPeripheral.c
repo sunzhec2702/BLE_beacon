@@ -813,8 +813,15 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   {
   case SBP_PERIODIC_INDEX_EVT:
     {
-      advertData_iBeacon[ADV_INDEX_BYTE] += 1;
-      GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
+      if (rapid_processing == FALSE)
+      {
+        advertData_iBeacon[ADV_INDEX_BYTE] += 1;
+        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
+      }
+      else
+      {
+        DEBUG_PRINT("Rapid Processing, skip the index increase\r\n");
+      }
     }
     break;
   case SBP_PERIODIC_PER_HOUR_EVT:

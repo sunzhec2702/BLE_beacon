@@ -75,9 +75,9 @@ typedef enum
 #define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
-#define RAPID_ADVERTISING_INTERVAL (160*5) // 500ms
+#define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
 #define SLOW_ADVERTISING_INTERVAL (1600*2) // 2s
-#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  5000 // 5s
+#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  2000 // 5s
 
 // How often to perform periodic event
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
@@ -119,7 +119,7 @@ typedef enum
 #define BUTTON_LED_DELAY  650 // 1s
 #define BUTTON_LEY_DELAY_IN_SLEEP  650 //1s
 
-#define BATTERY_LOW_THRESHOLD_SLEEP                           24 //2.4V
+#define BATTERY_LOW_THRESHOLD_SLEEP                           26 //2.6V
 #define BATTERY_LOW_THRESHOLD                                 20 //2V
 #define ENABLE_DISABLE_PERIOD 500
 
