@@ -77,7 +77,7 @@ typedef enum
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
 #define SLOW_ADVERTISING_INTERVAL (1600*2) // 2s
-#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  2000 // 5s
+#define SBP_PERIODIC_ADVERT_CHG_PERIOD                  2000 // 2s
 
 // How often to perform periodic event
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s

@@ -818,12 +818,8 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       if (rapid_processing == FALSE)
       {
         advertData_iBeacon[ADV_INDEX_BYTE] += 1;
-        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
       }
-      else
-      {
-        DEBUG_PRINT("Rapid Processing, skip the index increase\r\n");
-      }
+      GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
     }
     break;
   case SBP_PERIODIC_PER_HOUR_EVT:
@@ -875,6 +871,7 @@ static void change_advertise_data(uint8 key_pressed)
     }
     else if (initial_advertising_enable == FALSE && rapid_processing == TRUE)
     {
+      advertData_iBeacon[ADV_INDEX_BYTE] += 1;
       advertData_iBeacon[ADV_FLAG_BYTE] |= 0x80;
       // Set advertising interval
       {
@@ -899,6 +896,7 @@ static void change_advertise_data(uint8 key_pressed)
     {
       DEBUG_PRINT("Exit Rapid Mode\r\n");
       advertData_iBeacon[ADV_FLAG_BYTE] &= 0x7F;
+      advertData_iBeacon[ADV_INDEX_BYTE] += 1;
       // Set advertising interval
       {
         advInt = SLOW_ADVERTISING_INTERVAL;
@@ -991,6 +989,10 @@ static void advertise_control(bool enable)
   }
 
   uint8 initial_advertising_enable = enable;
+  if (enable == TRUE)
+  {
+    GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
+  }
   GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8), &initial_advertising_enable);
   return;
 }
