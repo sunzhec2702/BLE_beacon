@@ -1,7 +1,9 @@
 import struct
+from threading import Thread
+
 import serial
 import time
-import multiprocessing import Pool
+import multiprocessing
 
 
 class StationSerial(object):
@@ -14,7 +16,7 @@ class StationSerial(object):
     record = False
     record_file_path = None
     communicate_state = False
-    communicate_process = None
+    communicate_thread = None
 
     def __init__(self, COM, tx_power = -51, record = False, file_path = None):
         self.serial_instance = serial.Serial(COM, 115200)
@@ -65,22 +67,29 @@ class StationSerial(object):
         flags = adv_data[27]
         battery = adv_data[28]
         self.online_beacon.add(addr_str)
-        info = [int(time.time()), self.rssi_to_distance(rssi), rssi, hour_left, index, flags, battery]
+        info = [int(time.time()), self.rssi_to_distance(rssi), rssi, int(hour_left, 16), int(index, 16), flags, int(battery, 16)]
         self.beacon_info[addr_str] = info
         if self.record_file is not None:
             self.record_file.write(str(info))
             self.record_file.write('\n')
         return
 
+    def rssi_to_distance(self, rssi):
+        distance = 10 ** ((self.tx_power - rssi) / 20)
+        return distance
+
+    def communicate_thread_func(self):
+        while(self.communicate_state is True):
+            self.sync_from_serial()
+
     def start_communication(self):
         if self.record is True and self.record_file_path is not None:
             self.record_file = open(self.record_file_path, 'a')
         self.communicate_state = True
-        while(self.communicate_state == True):
-            communicate_process = multiprocessing.Process(target= self.sync_from_serial)
+        self.communicate_thread = Thread(target=self.communicate_thread_func)
+        self.communicate_thread.start()
 
-    def 
+    def stop_communication(self):
+        self.communicate_state = False
+        self.communicate_thread.join()
 
-    def rssi_to_distance(self, rssi):
-        distance = 10 ** ((self.tx_power - rssi) / 20)
-        return distance

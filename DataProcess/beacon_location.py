@@ -15,4 +15,4 @@ class BEACON_LOCATION(object):
 
 
     def calculate_beacon(self, addr_str, timestamp, adv_index):
-        distances = self.look_up_helper(timestamp, adv_index)
+        distances = self.look_up_helper(addr_str, timestamp, adv_index)

@@ -7,27 +7,24 @@ class Test(object):
     def __init__(self):
         self.flag = False
 
-    def start_func(self):
+    def start_func(self, instance):
         while(1):
-            self.flag = True
-            print (self.flag)
+            instance.flag = True
+            print (instance.flag)
             time.sleep(1)
 
     def start(self):
-        self.start_func()
+        self.process = multiprocessing.Process(target=self.start_func, args=(self, ))
+        test.process.start()
 
     def stop(self):
         self.process.terminate()
         print(self.flag)
 
-
-def target_func():
+if __name__ == '__main__':
     test = Test()
     test.start()
 
-p = multiprocessing.Process(target=target_func)
-p.start()
-
-while(1):
-    time.sleep(5)
-    print("OK")
+    while(1):
+        time.sleep(1)
+        print(test.flag)
