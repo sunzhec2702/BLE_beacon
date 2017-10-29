@@ -1,6 +1,7 @@
 import struct
 import serial
 import time
+import multiprocessing import Pool
 
 
 class StationSerial(object):
@@ -10,13 +11,17 @@ class StationSerial(object):
     beacon_info = dict()
     tx_power = 0
     record_file = None
+    record = False
+    record_file_path = None
+    communicate_state = False
+    communicate_process = None
 
     def __init__(self, COM, tx_power = -51, record = False, file_path = None):
         self.serial_instance = serial.Serial(COM, 115200)
         self.current_stage = 0
         self.tx_power = tx_power
-        if record is True and file_path is not None:
-            self.record_file = open(file_path, 'w')
+        self.record = record
+        self.record_file_path = file_path
 
     def __del__(self):
         self.record_file.close()
@@ -64,7 +69,17 @@ class StationSerial(object):
         self.beacon_info[addr_str] = info
         if self.record_file is not None:
             self.record_file.write(str(info))
+            self.record_file.write('\n')
         return
+
+    def start_communication(self):
+        if self.record is True and self.record_file_path is not None:
+            self.record_file = open(self.record_file_path, 'a')
+        self.communicate_state = True
+        while(self.communicate_state == True):
+            communicate_process = multiprocessing.Process(target= self.sync_from_serial)
+
+    def 
 
     def rssi_to_distance(self, rssi):
         distance = 10 ** ((self.tx_power - rssi) / 20)
