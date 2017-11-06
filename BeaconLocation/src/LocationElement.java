@@ -21,9 +21,14 @@ public class LocationElement {
 		return nowRssi;
 	}
 	
-	public double rssiToDistance(double rssi) {
+	public static double rssiToDistance(double rssi) {
 		double distance = Math.pow(10, ((TX_POWER - rssi) / 20));
-		distance = Math.sqrt((Math.pow(distance, 2)) - Math.pow(this.station.z, 2));
+		//distance = Math.sqrt((Math.pow(distance, 2)) - Math.pow(this.station.z, 2));
 		return distance;
+	}
+	
+	public static double DistanceToRssi(double distance) {
+		double rssi = TX_POWER - 20 * Math.log10(distance);
+		return rssi;
 	}
 }

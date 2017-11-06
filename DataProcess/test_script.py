@@ -1,5 +1,6 @@
 import multiprocessing
 import time
+import numpy
 
 class Test(object):
     flag = False

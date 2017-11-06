@@ -4,13 +4,19 @@ import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.DecompositionSolver;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.SingularMatrixException;
 
 public class LocationCalculator {
 	List<LocationElement> elements;
-
+	double currentTarget = 0;
 	
 	LocationCalculator(List<LocationElement> elements) {
 		this.elements = elements;
+	}
+	
+	public double calucationTarget(RealMatrix A, RealMatrix B, RealMatrix X) {
+		RealMatrix result = A.multiply(X).subtract(B);
+		return result.getNorm();
 	}
 	
 	public RealMatrix locationCalculate() {
@@ -31,14 +37,43 @@ public class LocationCalculator {
 			double p2 = Math.pow(this.elements.get(i).distanceToStation, 2) - Math.pow(this.elements.get(0).distanceToStation, 2);
 			B.setEntry(i - 1, 0, constData - p1 + p2);
 		}
-		
 		RealMatrix A_T = A.transpose();
+		/*
+		System.out.println("A");
+		for (int i = 0; i < elementSize - 1; i++) {
+			System.out.println(A.getData()[i][0] + "  " + A.getData()[i][1]);
+		}
+
+		System.out.println("B");
+		for (int i = 0; i < elementSize - 1; i++) {
+			System.out.println(B.getData()[i][0]);
+		}
+		
+		
+		System.out.println("A_T");
+		for (int i = 0; i < elementSize - 1; i++) {
+			System.out.println(A_T.getData()[0][i] + "  " + A_T.getData()[1][i]);
+		}
+		
+		System.out.println("A_T * A");
+		for (int i = 0; i < 2; i++) {
+			System.out.println(A_T.multiply(A).getData()[i][0] + "  " + A_T.multiply(A).getData()[i][1]);
+		}
+		*/
+		try {
 		DecompositionSolver solver = new LUDecomposition(A_T.multiply(A)).getSolver();
 		RealMatrix result_tmp  = solver.getInverse();
 		RealMatrix result = (result_tmp.multiply(A_T).multiply(B)); 
 		if (result.getColumnDimension() != 1 || result.getRowDimension() != 2) {
 			return null;
 		}
+		
+		double target = this.calucationTarget(A, B, result);
+		System.out.println("Target is " + target);
 		return result;
+		} catch (SingularMatrixException e) {
+			return null;
+		}
+
 	}
 }
