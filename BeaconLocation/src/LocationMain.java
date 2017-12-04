@@ -9,6 +9,14 @@ public class LocationMain {
 		// TODO Auto-generated method stub
 		System.out.print("Hello World\n");
 		testData(5);
+		BeaconStation tmp = new BeaconStation(0,0,0);
+		LocationElement tmpElement = new LocationElement(tmp, null);
+		
+		System.out.println("Distance is " + tmpElement.rssiToDistance(-60));
+		
+		NetworkDataProcessor dataProcessor = new NetworkDataProcessor();
+		
+		
 	}
 	
 	public static List<RssiInfo> createRssiInfos(double rssi) {

@@ -1,5 +1,6 @@
+import java.util.Comparator;
 
-public class RssiInfo {
+public class RssiInfo{
 	double timeStamp;
 	double rssi;
 	
@@ -7,4 +8,6 @@ public class RssiInfo {
 		this.timeStamp = timeStamp;
 		this.rssi = rssi;
 	}
+	
+
 }

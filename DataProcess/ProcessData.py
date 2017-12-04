@@ -9,7 +9,8 @@ import time
 
 if __name__ == '__main__':
     station1 = StationSerial("COM3", tx_power=-51, record=True,file_path='F:\PersonalProject\BLE-CC2541\BLE_Meeting\DataProcess\\temp.txt')
+    print(station1)
     station1.start_communication()
-    time.sleep(60)
+    time.sleep(30)
     station1.stop_communication()
 

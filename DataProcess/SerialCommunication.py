@@ -18,6 +18,9 @@ class StationSerial(object):
     communicate_state = False
     communicate_thread = None
 
+    rssiNumber = 0
+    rssiAverage = 0
+
     def __init__(self, COM, tx_power = -51, record = False, file_path = None):
         self.serial_instance = serial.Serial(COM, 115200)
         self.current_stage = 0
@@ -60,6 +63,10 @@ class StationSerial(object):
         addr = packet_data[1:7]
         rssi = packet_data[7]
         rssi = int(rssi, 16) - 256
+        print(rssi)
+        self.rssiAverage += rssi
+        self.rssiNumber += 1
+        print(self.rssiAverage / self.rssiNumber)
         adv_data = packet_data[9:40]
         addr_str = (''.join(addr))
         hour_left = adv_data[25]

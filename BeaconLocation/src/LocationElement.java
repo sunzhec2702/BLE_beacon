@@ -1,4 +1,7 @@
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collector;
 
 public class LocationElement {
 	BeaconStation station;
@@ -11,8 +14,10 @@ public class LocationElement {
 	
 	LocationElement(BeaconStation station, List<RssiInfo> rssiList) {
 		this.station = station;
-		this.finalRssi = this.applyIIRFilter(rssiList);
+		ComparatorRssi comparator = new ComparatorRssi();
 		if (rssiList != null) {
+			Collections.sort(rssiList, comparator);
+			this.finalRssi = this.applyIIRFilter(rssiList);
 			this.distanceToStation = this.rssiToDistance(this.finalRssi);
 			this.distanceToStationWithoutIIR = this.rssiToDistance(rssiList.get(rssiList.size() - 1).rssi);
 		}
@@ -47,5 +52,18 @@ public class LocationElement {
 	public double DistanceToRssi(double distance) {
 		double realDistance = Math.sqrt(Math.pow(distance, 2) + Math.pow(this.station.z, 2));
 		return (TX_POWER - 20 * Math.log10(realDistance));
+	}
+
+	public class ComparatorRssi implements Comparator<RssiInfo>{
+		@Override
+		public int compare(RssiInfo arg0, RssiInfo arg1) {
+			// TODO Auto-generated method stub
+			if (arg0.timeStamp < arg1.timeStamp)
+				return -1;
+			if (arg0.timeStamp > arg1.timeStamp)
+				return 1;
+			else
+				return 0;
+		}
 	}
 }

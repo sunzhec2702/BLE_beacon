@@ -16,7 +16,7 @@ extern "C"
 #define POWER_OFF_SUPPORT TRUE
 //#define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_ROLE_CENTRAL
+#define PRESET_ROLE BLE_ROLE_PERIPHERAL
 
 // 当前单片机运行的角色
 typedef enum
