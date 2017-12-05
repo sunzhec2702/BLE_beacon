@@ -103,7 +103,7 @@ then
 fi
 
 # Debug support (default:no)
-AC_ARG_ENABLE([debug],AS_HELP_STRING([--enable-debug],[Enable debug mode]),[enable_debug=$enableval],[enable_debug="yes"])
+AC_ARG_ENABLE([debug],AS_HELP_STRING([--enable-debug],[Enable debug mode]),[enable_debug=$enableval],[enable_debug="no"])
 AC_MSG_CHECKING(for debug flag)
 AC_MSG_RESULT($enable_debug)
 AM_CONDITIONAL([WITH_DEBUG], [test "$enable_debug" != "no"])

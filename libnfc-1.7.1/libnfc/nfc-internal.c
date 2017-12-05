@@ -87,7 +87,6 @@ nfc_context_new(void)
   res->log_level = 1;
 #endif
 
-  printf("Darren:DEBUG: MAX_USER_DEFINED_DEGVICES %d\n", MAX_USER_DEFINED_DEVICES);
   // Clear user defined devices array
   for (int i = 0; i < MAX_USER_DEFINED_DEVICES; i++) {
     strcpy(res->user_defined_devices[i].name, "");
@@ -99,7 +98,6 @@ nfc_context_new(void)
 #ifdef ENVVARS
   // Load user defined device from environment variable at first
   char *envvar = getenv("LIBNFC_DEFAULT_DEVICE");
-  printf("Darren:DEBUG: LIBNFC_DEFAULT_DEVICE %s\n", envvar);
   if (envvar) {
     strcpy(res->user_defined_devices[0].name, "user defined default device");
     strncpy(res->user_defined_devices[0].connstring, envvar, NFC_BUFSIZE_CONNSTRING);

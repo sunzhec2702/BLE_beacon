@@ -92,7 +92,6 @@ pn532_uart_scan(const nfc_context *context, nfc_connstring connstrings[], const 
 
       nfc_connstring connstring;
       snprintf(connstring, sizeof(nfc_connstring), "%s:%s:%"PRIu32, PN532_UART_DRIVER_NAME, acPort, PN532_UART_DEFAULT_SPEED);
-      printf("Darren:DEBUG: in uart scan: connstring is %s\n", connstring);
       nfc_device *pnd = nfc_device_new(context, connstring);
       if (!pnd) {
         perror("malloc");
