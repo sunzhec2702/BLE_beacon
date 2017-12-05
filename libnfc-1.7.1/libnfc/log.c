@@ -90,13 +90,7 @@ log_put(const uint8_t group, const char *category, const uint8_t priority, const
     log_level = atoi(env_log_level);
   }
 
-  char tmp[1024] = "Darren:Hack";
   //  printf("log_level = %"PRIu32" group = %"PRIu8" priority = %"PRIu8"\n", log_level, group, priority);
-  strcat(tmp, format);
-  va_list va_tmp;
-  va_start(va_tmp, format);
-  vprintf(tmp, va_tmp);
-  va_end(va_tmp);
 
   if (log_level) { // If log is not disabled by log_level=none
     if (((log_level & 0x00000003) >= priority) ||   // Global log level
