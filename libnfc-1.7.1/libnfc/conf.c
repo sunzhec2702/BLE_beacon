@@ -166,6 +166,7 @@ conf_keyvalue_device(void *data, const char *key, const char *value)
 {
   char newkey[BUFSIZ];
   sprintf(newkey, "device.%s", key);
+  printf("Darren:DEBUG: key %s value %s\n", key, value);
   conf_keyvalue_context(data, newkey, value);
 }
 

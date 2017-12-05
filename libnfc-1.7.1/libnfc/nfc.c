@@ -317,12 +317,15 @@ size_t
 nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_t connstrings_len)
 {
   size_t device_found = 0;
-
+  printf("Darren:DEBUG: %s %s, %d\n", __FILE__, __FUNCTION__, __LINE__);
 #ifdef CONFFILES
+  printf("Darren:DEBUG: %s %s, %d\n", __FILE__, __FUNCTION__, __LINE__);
   // Load manually configured devices (from config file and env variables)
   // TODO From env var...
+  printf("Darren:DEBUG: user_defined_device_count %d\n", context->user_defined_device_count);
   for (uint32_t i = 0; i < context->user_defined_device_count; i++) {
     if (context->user_defined_devices[i].optional) {
+      printf("Darren:DEBUG: %s %s, %d\n", __FILE__, __FUNCTION__, __LINE__);
       // let's make sure the device exists
       nfc_device *pnd = NULL;
 
@@ -339,7 +342,7 @@ nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_
       }
       setenv("LIBNFC_LOG_LEVEL", "0", 1);
 #endif // ENVVARS
-
+      printf("Darren:DEBUG: user device %d, connstring %s\n", i, context->user_defined_devices[i].connstring);
       pnd = nfc_open(context, context->user_defined_devices[i].connstring);
 
 #ifdef ENVVARS
@@ -617,9 +620,9 @@ nfc_initiator_list_passive_targets(nfc_device *pnd,
  * @param pnd \a nfc_device struct pointer that represent currently used device
  * @param pnmModulations desired modulations
  * @param szModulations size of \a pnmModulations
- * @param uiPollNr specifies the number of polling (0x01 â€“ 0xFE: 1 up to 254 polling, 0xFF: Endless polling)
+ * @param uiPollNr specifies the number of polling (0x01 â€? 0xFE: 1 up to 254 polling, 0xFF: Endless polling)
  * @note one polling is a polling for each desired target type
- * @param uiPeriod indicates the polling period in units of 150 ms (0x01 â€“ 0x0F: 150ms â€“ 2.25s)
+ * @param uiPeriod indicates the polling period in units of 150 ms (0x01 â€? 0x0F: 150ms â€? 2.25s)
  * @note e.g. if uiPeriod=10, it will poll each desired target type during 1.5s
  * @param[out] pnt pointer on \a nfc_target (over)writable struct
  */
