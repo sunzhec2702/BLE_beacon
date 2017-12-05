@@ -5,7 +5,7 @@
 #define CONFFILES 1
 
 /* Enable debug flag */
-/* #undef DEBUG */
+#define DEBUG
 
 /* Enable envvars */
 #define ENVVARS 1
