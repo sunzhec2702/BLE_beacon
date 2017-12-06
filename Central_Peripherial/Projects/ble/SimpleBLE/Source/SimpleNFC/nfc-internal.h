@@ -137,8 +137,6 @@ struct nfc_driver {
 
 struct nfc_user_defined_device {
   char name[DEVICE_NAME_LENGTH];
-  nfc_connstring connstring;
-  bool optional;
 };
 
 /**
@@ -169,8 +167,7 @@ struct nfc_device {
 
   /** Device name string, including device wrapper firmware */
   char    name[DEVICE_NAME_LENGTH];
-  /** Device connection string */
-  nfc_connstring connstring;
+
   /** Is the CRC automaticly added, checked and removed from the frames */
   bool    bCrc;
   /** Does the chip handle parity bits, all parities are handled as data */
