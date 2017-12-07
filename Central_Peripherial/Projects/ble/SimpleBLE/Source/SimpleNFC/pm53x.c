@@ -173,11 +173,11 @@ int pn53x_transceive(struct nfc_device *pnd, const uint8_t *pbtTx, const size_t 
     PNCMD_TRACE(pbtTx[0]);
     if (timeout > 0)
     {
-        log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "Timeout value: %d", timeout);
+        //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "Timeout value: %d", timeout);
     }
     else if (timeout == 0)
     {
-        log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "No timeout");
+        //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "No timeout");
     }
     else if (timeout == -1)
     {
@@ -185,7 +185,7 @@ int pn53x_transceive(struct nfc_device *pnd, const uint8_t *pbtTx, const size_t 
     }
     else
     {
-        log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "Invalid timeout value: %d", timeout);
+        //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "Invalid timeout value: %d", timeout);
     }
 
     uint8_t abtRx[PN53x_EXTENDED_FRAME__DATA_MAX_LEN];
@@ -2894,7 +2894,7 @@ static struct sErrorMessage
     {ERFPROTO, "RF Protocol Error"},               // RF Protocol error (see PN53x manual)
     {EOVHEAT, "Chip Overheating"},                 // Temperature error: the internal temperature sensor has detected overheating, and therefore has automatically switched off the antenna drivers
     {EINBUFOVF, "Internal Buffer overflow."},      // Internal buffer overflow
-    {EINVPARAM, "Invalid Parameter"},              // Invalid parameter (range, format, â€¦)
+    {EINVPARAM, "Invalid Parameter"},              // Invalid parameter (range, format, â€?)
     {EOPNOTALL, "Operation Not Allowed"},          // Operation not allowed in this configuration (host controller interface)
     {ECMD, "Command Not Acceptable"},              // Command is not acceptable due to the current context
     {EOVCURRENT, "Over Current"},

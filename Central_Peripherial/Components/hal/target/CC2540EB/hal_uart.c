@@ -26,7 +26,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -71,6 +71,7 @@ void HalUARTIsrDMA(void);
 
 #if HAL_UART_DMA
 #include "_hal_uart_dma.c"
+#include "_hal_uart_dma_uart1.c"
 #endif
 #if HAL_UART_ISR
 #include "_hal_uart_isr.c"
@@ -93,28 +94,9 @@ void HalUARTIsrDMA(void);
  *****************************************************************************/
 void HalUARTInit(void)
 {
-#if (HAL_UART_DMA && HAL_UART_SPI)  // When both are defined, port is run-time choice.
-  if (HAL_UART_PORT)
-  {
-    HalUARTInitSPI();
-  }
-  else
-  {
-    HalUARTInitDMA();
-  }
-#else
 #if HAL_UART_DMA
   HalUARTInitDMA();
-#endif
-#if HAL_UART_ISR
-  HalUARTInitISR();
-#endif
-#if HAL_UART_SPI
-  HalUARTInitSPI();
-#endif
-#if HAL_UART_USB
-  HalUARTInitUSB();
-#endif
+  HalUARTInitDMA_UART1();
 #endif
 }
 
