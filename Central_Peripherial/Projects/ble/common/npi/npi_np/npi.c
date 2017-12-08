@@ -103,7 +103,7 @@
   *
   * @return      None.
   */
- void NPI_InitTransport( npiCBack_t npiCBack )
+ void NPI_InitTransport( uint8 port, npiCBack_t npiCBack )
  {
    halUARTCfg_t uartConfig;
  
@@ -120,7 +120,8 @@
  
    // start UART
    // Note: Assumes no issue opening UART port.
-   (void)HalUARTOpen( NPI_UART_PORT, &uartConfig );
+   // Handle different UART PORT here.
+   (void)HalUARTOpen( port, &uartConfig );
  
    return;
  }
@@ -168,6 +169,11 @@
  {
    return( HalUARTRead( NPI_UART_PORT, buf, len ) );
  }
+
+ uint16 NPI_ReadTransportPort( uint8 port, uint8 *buf, uint16 len )
+ {
+   return( HalUARTRead( port, buf, len ) );
+ }
  
  
  /*******************************************************************************
@@ -188,9 +194,13 @@
   */
  uint16 NPI_WriteTransport( uint8 *buf, uint16 len )
  {
-   return( HalUARTWrite( NPI_UART_PORT, buf, len ) );
+   return( HalUARTWrite( HAL_UART_PORT_0, buf, len ) );
  }
- 
+
+ uint16 NPI_WriteTransportPort( uint8 port, uint8 *buf, uint16 len )
+ {
+   return( HalUARTWrite( port, buf, len ) );
+ }
  
  /*******************************************************************************
   * @fn          NPI_RxBufLen
@@ -212,7 +222,11 @@
    return( Hal_UART_RxBufLen( NPI_UART_PORT ) );
  }
  
- 
+ uint16 NPI_RxBufLenPort( uint8 port )
+ {
+   return( Hal_UART_RxBufLen( port ) );
+ }
+
  /*******************************************************************************
   * @fn          NPI_GetMaxRxBufSize
   *
@@ -262,6 +276,12 @@
  {
      NPI_WriteTransport(str, osal_strlen((char*)str));
  }
+
+ void NPI_PrintStringPort(uint8 port, uint8 *str)
+ {
+     NPI_WriteTransportPort(port, str, osal_strlen((char*)str));
+ }
+
  /*
  打印指定的格式的数值
  参数
@@ -283,5 +303,18 @@
    NPI_PrintString(buf);		
  }
  
+ void NPI_PrintValuePort(uint8 port, char *title, uint16 value, uint8 format)
+ {
+   uint8 tmpLen;
+   uint8 buf[128];
+   uint32 err;
+ 
+   tmpLen = (uint8)osal_strlen( (char*)title );
+   osal_memcpy( buf, title, tmpLen );
+   buf[tmpLen] = ' ';
+   err = (uint32)(value);
+   _ltoa( err, &buf[tmpLen+1], format );
+   NPI_PrintStringPort(port, buf);		
+ }
  /*******************************************************************************
   ******************************************************************************/ 

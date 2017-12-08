@@ -119,15 +119,22 @@ typedef void (*npiCBack_t) ( uint8 port, uint8 event );
 // Network Processor Interface APIs
 //
 
-extern void   NPI_InitTransport( npiCBack_t npiCBack );
+extern void   NPI_InitTransport( uint8 port, npiCBack_t npiCBack );
 extern void   NPI_InitTransportEx( npiCBack_t npiCBack, uint8 baudrate);
 extern uint16 NPI_ReadTransport( uint8 *buf, uint16 len );
 extern uint16 NPI_WriteTransport( uint8 *, uint16 );
+
+extern uint16 NPI_ReadTransportPort( uint8 port, uint8 *buf, uint16 len );
+extern uint16 NPI_WriteTransportPort( uint8 port, uint8 *, uint16 );
+
 extern uint16 NPI_RxBufLen( void );
+extern uint16 NPI_RxBufLenPort( uint8 port );
 extern uint16 NPI_GetMaxRxBufSize( void );
 extern uint16 NPI_GetMaxTxBufSize( void );
 extern void NPI_PrintString(uint8 *str);
+void NPI_PrintStringPort(uint8 port, uint8 *str);
 extern void NPI_PrintValue(char *title, uint16 value, uint8 format);
+extern void NPI_PrintValuePort(uint8 port, char *title, uint16 value, uint8 format);
 
 /*******************************************************************************
 */

@@ -248,15 +248,20 @@ bool Check_startup_peripheral_or_central(void)
 // 串行口 uart 初始化
 void simpleBLE_NPI_init(void)
 {
-  NPI_InitTransport(simpleBLE_NpiSerialCallback);
+  
   // 开机打印主机还是从机
   if (GetBleRole() == BLE_ROLE_CENTRAL)
   {
-    NPI_WriteTransport("Central\r\n", 21);
+    NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
+    NPI_WriteTransportPort(HAL_UART_PORT_0, "Central\r\n", 21);
+    
   }
   else
   {
+    NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
     NPI_WriteTransport("Peripheral\r\n", 24);
+    NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallback);
+    NPI_WriteTransportPort(HAL_UART_PORT_1, "Peripheral\r\n", 24);
   }
 }
 
@@ -311,6 +316,30 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       if (FALSE == g_sleepFlag) //discard the data directly.
       {
         NPI_WriteTransport(buffer, numBytes); //释放串口数据
+      }
+      osal_mem_free(buffer);
+    }
+    return;
+  }
+}
+
+//uart 回调函数
+static void simpleBLE_NpiSerialCallbackUART1(uint8 port, uint8 events)
+{
+  (void)port;
+  if (events & (HAL_UART_RX_TIMEOUT | HAL_UART_RX_FULL)) //串口有数据
+  {
+    (void)port;
+    /*uint8*/ uint16 numBytes = 0;
+    uart_sleep_count = 0;
+    numBytes = NPI_RxBufLenPort(HAL_UART_PORT_1);
+    if (numBytes > 0)
+    {
+      uint8 *buffer = osal_mem_alloc(numBytes);
+      NPI_ReadTransportPort(HAL_UART_PORT_1, buffer, numBytes); //释放串口数据
+      if (FALSE == g_sleepFlag) //discard the data directly.
+      {
+        NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes); //释放串口数据
       }
       osal_mem_free(buffer);
     }
