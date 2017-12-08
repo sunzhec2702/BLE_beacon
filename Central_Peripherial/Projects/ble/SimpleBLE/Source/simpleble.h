@@ -44,7 +44,7 @@ typedef enum
     #define LCD_TO_UART TRUE
   #else // PERIPHERIAL
     #define HAL_LCD FALSE
-    #define HAL_UART FALSE
+    #define HAL_UART TRUE
     #define LCD_TO_UART FALSE
   #endif // CENTRAL
 #define DEBUG_PRINT(x) {}

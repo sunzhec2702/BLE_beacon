@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>3645941647</fileChecksum>
+  <fileChecksum>2537418360</fileChecksum>
   <configuration>
     <name>CC2541</name>
     <outputs>
@@ -211,6 +211,47 @@
       <file>$PROJ_DIR$\CC2541\Obj\OSAL_simpleBLECentral.pbi</file>
       <file>$PROJ_DIR$\CC2541\Obj\osal_snv.r51</file>
       <file>$PROJ_DIR$\..\..\..\..\Components\osal\include\comdef.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\pn53x.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\pn53x-internal.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\pn53x.c</file>
+      <file>$PROJ_DIR$\CC2541\Obj\mirror-subr.r51</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\mirror-subr.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\mirror-subr.c</file>
+      <file>$PROJ_DIR$\CC2541\Obj\mirror-subr.pbi</file>
+      <file>$TOOLKIT_DIR$\inc\clib\stdbool.h</file>
+      <file>$PROJ_DIR$\CC2541\Obj\simpleNFCUart.r51</file>
+      <file>$PROJ_DIR$\CC2541\Obj\simpleNFCInterface.pbi</file>
+      <file>$PROJ_DIR$\CC2541\Obj\pm53x.pbi</file>
+      <file>$PROJ_DIR$\CC2541\Obj\pn532_uart.r51</file>
+      <file>$PROJ_DIR$\CC2541\Obj\pn532_uart.pbi</file>
+      <file>$PROJ_DIR$\CC2541\Obj\nfc-internal.pbi</file>
+      <file>$PROJ_DIR$\CC2541\Obj\nfc-internal.r51</file>
+      <file>$PROJ_DIR$\CC2541\Obj\simpleNFCInterface.r51</file>
+      <file>$PROJ_DIR$\CC2541\Obj\simpleNFCUart.pbi</file>
+      <file>$PROJ_DIR$\CC2541\Obj\simpleNFCDevice.r51</file>
+      <file>$PROJ_DIR$\CC2541\Obj\simpleNFCDevice.pbi</file>
+      <file>$PROJ_DIR$\CC2541\Obj\pm53x.r51</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\nfc.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\pm53x.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\nfc-types.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\nfc-internal.c</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\nfc-internal.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\pm53x.c</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCDevice.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\pn532_uart.c</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCDevice.c</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\pm53x-internal.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\pn532_uart.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCInterface.c</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCInterface.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCUart.c</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCUart.h</file>
+      <file>$PROJ_DIR$\CC2541\Obj\pn53x.r51</file>
+      <file>$PROJ_DIR$\CC2541\Obj\pn53x.pbi</file>
+      <file>$PROJ_DIR$\CC2541\Obj\mirror_subr.r51</file>
+      <file>$PROJ_DIR$\CC2541\Obj\mirror_subr.pbi</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\mirror_subr.h</file>
+      <file>$PROJ_DIR$\..\Source\SimpleNFC\mirror_subr.c</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_adc.c</name>
@@ -444,6 +485,10 @@
         <tool>
           <name>ICC8051</name>
           <file> 148 149 82 140 107 204 73 185 161 179 50 176 56 153 127 9 3 76 70 1 65 66 128 142 129 133 120 72 93 112 89 143 131 98 111 106 122 0 177 173 189 43 64 84 45 150</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 107 204 73 185 161 179 50 176 56 153 127 9 3 76 70 1 65 66 128 142 129 133 120 72 93 112 89 143 131 98 111 106 122 0 177 82 173 189 43 64 84 45 150</file>
         </tool>
       </inputs>
     </file>
@@ -1129,6 +1174,205 @@
         </tool>
       </inputs>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\pn53x.c</name>
+      <outputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 240</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 241</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 148 149 82 140 173 189 179 45 43 225 227 229 205 206 209 185 161 204 73 50 176</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 173 189 179 45 43 225 227 82 229 205 206 209 185 161 204 73 50 176</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\mirror-subr.c</name>
+      <outputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 208</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 211</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 148 149 82 140 209 227</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 209 227 82</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\nfc-internal.c</name>
+      <outputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 219</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 218</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 148 149 82 140 229 225 227 45 179 43 185 161 204 73 50 176</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 229 225 227 82 45 179 43 185 161 204 73 50 176</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\pm53x.c</name>
+      <outputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 224</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 215</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 173 189 179 45 43 229 212 185 161 204 73 50 176</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\pn532_uart.c</name>
+      <outputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 216</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 217</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 148 149 82 140 235 227 173 189 179 43 225 229 205 206 185 161 204 73 50 176</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 235 227 82 173 189 179 43 225 229 205 206 185 161 204 73 50 176</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCDevice.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 223</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 148 149 82 140 231 227 229 225 235 205 206</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 231 227 82 229 225 235 205 206</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCInterface.c</name>
+      <outputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 220</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 214</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 148 149 82 140 237 229 225 227 185 161 179 204 73 50 176</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 237 229 225 227 82 185 161 179 204 73 50 176</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\simpleNFCUart.c</name>
+      <outputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 213</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 221</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 148 149 82 140 239</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 239</file>
+        </tool>
+      </inputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\Source\SimpleNFC\mirror_subr.c</name>
+      <outputs>
+        <tool>
+          <name>BICOMP</name>
+          <file> 243</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICC8051</name>
+          <file> 148 149 82 140 173 189 179</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 140 173 189 179</file>
+        </tool>
+      </inputs>
+    </file>
+    <forcedrebuild>
+      <name>[MULTI_TOOL]</name>
+      <tool>XLINK</tool>
+    </forcedrebuild>
     <forcedrebuild>
       <name>$PROJ_DIR$\..\..\Profiles\OAD\oad_target.c</name>
       <tool>ICC8051</tool>

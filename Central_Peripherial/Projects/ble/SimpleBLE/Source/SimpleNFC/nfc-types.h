@@ -6,14 +6,11 @@
 #ifndef __NFC_TYPES_H__
 #define __NFC_TYPES_H__
 
-#include <stddef.h>
-#include <stdint.h>
-#include <stdbool.h>
-#include <stdio.h>
-
 #ifndef NFC_BUFSIZE_CONNSTRING
 #define NFC_BUFSIZE_CONNSTRING 1024
 #endif
+
+#include "../simpleble.h"
 
 /**
  * NFC context
@@ -115,7 +112,7 @@ typedef enum {
   NP_FORCE_SPEED_106,
 } nfc_property;
 
-// Compiler directive, set struct alignment to 1 uint8_t for compatibility
+// Compiler directive, set struct alignment to 1 uint8 for compatibility
 #  pragma pack(1)
 
 /**
@@ -134,19 +131,19 @@ typedef enum {
  */
 typedef struct {
   /** NFCID3 */
-  uint8_t  abtNFCID3[10];
+  uint8  abtNFCID3[10];
   /** DID */
-  uint8_t  btDID;
+  uint8  btDID;
   /** Supported send-bit rate */
-  uint8_t  btBS;
+  uint8  btBS;
   /** Supported receive-bit rate */
-  uint8_t  btBR;
+  uint8  btBR;
   /** Timeout value */
-  uint8_t  btTO;
+  uint8  btTO;
   /** PP Parameters */
-  uint8_t  btPP;
+  uint8  btPP;
   /** General Bytes */
-  uint8_t  abtGB[48];
+  uint8  abtGB[48];
   size_t  szGB;
   /** DEP mode */
   nfc_dep_mode ndm;
@@ -157,12 +154,12 @@ typedef struct {
  * @brief NFC ISO14443A tag (MIFARE) information
  */
 typedef struct {
-  uint8_t  abtAtqa[2];
-  uint8_t  btSak;
+  uint8  abtAtqa[2];
+  uint8  btSak;
   size_t  szUidLen;
-  uint8_t  abtUid[10];
+  uint8  abtUid[10];
   size_t  szAtsLen;
-  uint8_t  abtAts[254]; // Maximal theoretical ATS is FSD-2, FSD=256 for FSDI=8 in RATS
+  uint8  abtAts[254]; // Maximal theoretical ATS is FSD-2, FSD=256 for FSDI=8 in RATS
 } nfc_iso14443a_info;
 
 /**
@@ -171,10 +168,10 @@ typedef struct {
  */
 typedef struct {
   size_t  szLen;
-  uint8_t  btResCode;
-  uint8_t  abtId[8];
-  uint8_t  abtPad[8];
-  uint8_t  abtSysCode[2];
+  uint8  btResCode;
+  uint8  abtId[8];
+  uint8  abtPad[8];
+  uint8  abtSysCode[2];
 } nfc_felica_info;
 
 /**
@@ -183,13 +180,13 @@ typedef struct {
  */
 typedef struct {
   /** abtPupi store PUPI contained in ATQB (Answer To reQuest of type B) (see ISO14443-3) */
-  uint8_t abtPupi[4];
+  uint8 abtPupi[4];
   /** abtApplicationData store Application Data contained in ATQB (see ISO14443-3) */
-  uint8_t abtApplicationData[4];
+  uint8 abtApplicationData[4];
   /** abtProtocolInfo store Protocol Info contained in ATQB (see ISO14443-3) */
-  uint8_t abtProtocolInfo[3];
+  uint8 abtProtocolInfo[3];
   /** ui8CardIdentifier store CID (Card Identifier) attributted by PCD to the PICC */
-  uint8_t ui8CardIdentifier;
+  uint8 ui8CardIdentifier;
 } nfc_iso14443b_info;
 
 /**
@@ -198,14 +195,14 @@ typedef struct {
  */
 typedef struct {
   /** DIV: 4 LSBytes of tag serial number */
-  uint8_t abtDIV[4];
+  uint8 abtDIV[4];
   /** Software version & type of REPGEN */
-  uint8_t btVerLog;
+  uint8 btVerLog;
   /** Config Byte, present if long REPGEN */
-  uint8_t btConfig;
+  uint8 btConfig;
   /** ATR, if any */
   size_t szAtrLen;
-  uint8_t  abtAtr[33];
+  uint8  abtAtr[33];
 } nfc_iso14443bi_info;
 
 /**
@@ -213,7 +210,7 @@ typedef struct {
  * @brief NFC ISO14443-2B ST SRx tag information
  */
 typedef struct {
-  uint8_t abtUID[8];
+  uint8 abtUID[8];
 } nfc_iso14443b2sr_info;
 
 /**
@@ -221,9 +218,9 @@ typedef struct {
  * @brief NFC ISO14443-2B ASK CTx tag information
  */
 typedef struct {
-  uint8_t abtUID[4];
-  uint8_t btProdCode;
-  uint8_t btFabCode;
+  uint8 abtUID[4];
+  uint8 btProdCode;
+  uint8 btFabCode;
 } nfc_iso14443b2ct_info;
 
 /**
@@ -231,8 +228,8 @@ typedef struct {
  * @brief NFC Jewel tag information
  */
 typedef struct {
-  uint8_t  btSensRes[2];
-  uint8_t  btId[4];
+  uint8  btSensRes[2];
+  uint8  btId[4];
 } nfc_jewel_info;
 
 /**

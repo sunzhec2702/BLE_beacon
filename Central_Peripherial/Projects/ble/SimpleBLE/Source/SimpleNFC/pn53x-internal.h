@@ -32,7 +32,7 @@
 #ifndef __PN53X_INTERNAL_H__
 #define __PN53X_INTERNAL_H__
 
-#include "log.h"
+//#include "log.h"
 
 // Miscellaneous
 #define Diagnose 0x00
@@ -120,8 +120,8 @@
 #  define PN53x_ACK_FRAME__LEN                          6
 
 typedef struct {
-  uint8_t ui8Code;
-  uint8_t ui8CompatFlags;
+  uint8 ui8Code;
+  uint8 ui8CompatFlags;
 #ifdef LOG
   const char *abtCommandText;
 #endif
@@ -143,7 +143,7 @@ typedef enum {
 #  define PNCMD_TRACE( X ) do { \
     for (size_t i=0; i<(sizeof(pn53x_commands)/sizeof(pn53x_command)); i++) { \
       if ( X == pn53x_commands[i].ui8Code ) { \
-        log_put( LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", pn53x_commands[i].abtCommandText ); \
+        //log_put( LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", pn53x_commands[i].abtCommandText ); \
         break; \
       } \
     } \
@@ -210,7 +210,7 @@ static const pn53x_command pn53x_commands[] = {
 // Registers part
 #ifdef LOG
 typedef struct {
-  uint16_t ui16Address;
+  uint16 ui16Address;
   const char *abtRegisterText;
   const char *abtRegisterDescription;
 } pn53x_register;
@@ -227,7 +227,7 @@ typedef struct {
 #  define PNREG_TRACE( X ) do { \
     for (size_t i=0; i<(sizeof(pn53x_registers)/sizeof(pn53x_register)); i++) { \
       if ( X == pn53x_registers[i].ui16Address ) { \
-        log_put( LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s (%s)", pn53x_registers[i].abtRegisterText, pn53x_registers[i].abtRegisterDescription ); \
+        //log_put( LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s (%s)", pn53x_registers[i].abtRegisterText, pn53x_registers[i].abtRegisterDescription ); \
         break; \
       } \
     } \

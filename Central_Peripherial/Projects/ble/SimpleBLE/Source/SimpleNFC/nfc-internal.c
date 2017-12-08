@@ -3,7 +3,7 @@
 * @brief Provide some useful internal functions
 */
 
-#include <nfc/nfc.h>
+//#include <nfc/nfc.h>
 #include "nfc-internal.h"
 
 #ifdef HAVE_CONFIG_H
@@ -16,7 +16,8 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <inttypes.h>
+
+#include "OSAL.h"
 
 #define LOG_GROUP    NFC_LOG_GROUP_GENERAL
 #define LOG_CATEGORY "libnfc.general"
@@ -51,36 +52,36 @@ nfc_context_free(nfc_context *context)
 }
 
 void
-prepare_initiator_data(const nfc_modulation nm, uint8_t **ppbtInitiatorData, size_t *pszInitiatorData)
+prepare_initiator_data(const nfc_modulation nm, uint8 **ppbtInitiatorData, size_t *pszInitiatorData)
 {
   switch (nm.nmt) {
     case NMT_ISO14443B: {
       // Application Family Identifier (AFI) must equals 0x00 in order to wakeup all ISO14443-B PICCs (see ISO/IEC 14443-3)
-      *ppbtInitiatorData = (uint8_t *) "\x00";
+      *ppbtInitiatorData = (uint8 *) "\x00";
       *pszInitiatorData = 1;
     }
     break;
     case NMT_ISO14443BI: {
       // APGEN
-      *ppbtInitiatorData = (uint8_t *) "\x01\x0b\x3f\x80";
+      *ppbtInitiatorData = (uint8 *) "\x01\x0b\x3f\x80";
       *pszInitiatorData = 4;
     }
     break;
     case NMT_ISO14443B2SR: {
       // Get_UID
-      *ppbtInitiatorData = (uint8_t *) "\x0b";
+      *ppbtInitiatorData = (uint8 *) "\x0b";
       *pszInitiatorData = 1;
     }
     break;
     case NMT_ISO14443B2CT: {
       // SELECT-ALL
-      *ppbtInitiatorData = (uint8_t *) "\x9F\xFF\xFF";
+      *ppbtInitiatorData = (uint8 *) "\x9F\xFF\xFF";
       *pszInitiatorData = 3;
     }
     break;
     case NMT_FELICA: {
       // polling payload must be present (see ISO/IEC 18092 11.2.2.5)
-      *ppbtInitiatorData = (uint8_t *) "\x00\xff\xff\x01\x00";
+      *ppbtInitiatorData = (uint8 *) "\x00\xff\xff\x01\x00";
       *pszInitiatorData = 5;
     }
     break;
@@ -103,20 +104,20 @@ connstring_decode(const nfc_connstring connstring, const char *driver_name, cons
     bus_name = "";
   }
   int n = strlen(connstring) + 1;
-  char *param0 = malloc(n);
+  char *param0 = osal_mem_alloc(n);
   if (param0 == NULL) {
-    perror("malloc");
+    perror("osal_mem_alloc");
     return 0;
   }
-  char *param1 = malloc(n);
+  char *param1 = osal_mem_alloc(n);
   if (param1 == NULL) {
-    perror("malloc");
+    perror("osal_mem_alloc");
     free(param0);
     return 0;
   }
-  char *param2    = malloc(n);
+  char *param2    = osal_mem_alloc(n);
   if (param2 == NULL) {
-    perror("malloc");
+    perror("osal_mem_alloc");
     free(param0);
     free(param1);
     return 0;

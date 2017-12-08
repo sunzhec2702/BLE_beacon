@@ -26,7 +26,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -65,10 +65,13 @@ typedef unsigned short  uint16;   //!< Unsigned 16 bit integer
 
 typedef signed   long   int32;    //!< Signed 32 bit integer
 typedef unsigned long   uint32;   //!< Unsigned 32 bit integer
+typedef unsigned long long uint64;
 
 typedef unsigned char   bool;     //!< Boolean data type
 
 typedef uint8           halDataAlign_t; //!< Used for byte alignment
+
+typedef unsigned int size_t;
 /** @} End HAL_TYPES */
 
 /* ------------------------------------------------------------------------------------------------

@@ -1,7 +1,8 @@
 #include "simpleNFCDevice.h"
 #include "nfc-internal.h"
 #include "pn532_uart.h"
-#include "pm53x.h"
+#include "pn53x.h"
+#include "../simpleble.h"
 
 #define NFC_NAME "DarrenNFC"
 
@@ -11,16 +12,16 @@ static struct pn532_uart_data nfc_uart_data;
 // CC2541 only have one NFC device (NP532)
 static nfc_context nfc_context_instance =
     {
-        .allow_autoscan = true,
-        .allow_intrusive_scan = false,
+        .allow_autoscan = TRUE,
+        .allow_intrusive_scan = TRUE,
 };
 static nfc_device nfc_device_instance =
     {
-        .bCrc = false,
-        .bPar = false,
-        .bEasyFraming = false,
-        .bInfiniteSelect = false,
-        .bAutoIso14443_4 = false,
+        .bCrc = FALSE,
+        .bPar = FALSE,
+        .bEasyFraming = FALSE,
+        .bInfiniteSelect = FALSE,
+        .bAutoIso14443_4 = FALSE,
         .last_error = 0,
         .name = NFC_NAME,
         .driver_data = &nfc_uart_data,
@@ -29,8 +30,8 @@ static nfc_device nfc_device_instance =
         .chip_data = &nfc_chip_data,
 };
 
-static const nfc_device *nfc_dev_ptr = &nfc_device_instance;
-static const nfc_context *nfc_con_ptr = &nfc_context_instance;
+static struct nfc_device* nfc_dev_ptr = &nfc_device_instance;
+static struct nfc_context* nfc_con_ptr = &nfc_context_instance;
 
 void nfc_init()
 {
@@ -48,11 +49,11 @@ void nfc_device_init()
     CHIP_DATA(nfc_dev_ptr)->type = PN532;
     CHIP_DATA(nfc_dev_ptr)->power_mode = LOWVBAT;
     CHIP_DATA(nfc_dev_ptr)->timer_correction = 48;
-    DRIVER_DATA(nfc_dev_ptr)->abort_flag = false;
+    // DRIVER_DATA(nfc_dev_ptr)->abort_flag = false;
     // Check communication using "Diagnose" command, with "Communication test" (0x00)
     if (pn53x_check_communication(nfc_dev_ptr) < 0)
     {
         return;
     }
-    pn53x_init(pnd);
+    pn53x_init(nfc_dev_ptr);
 }

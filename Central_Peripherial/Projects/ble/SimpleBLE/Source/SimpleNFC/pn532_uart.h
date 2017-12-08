@@ -6,10 +6,10 @@
 #ifndef __NFC_DRIVER_PN532_UART_H__
 #define __NFC_DRIVER_PN532_UART_H__
 
-#include <nfc/nfc-types.h>
+#include "nfc-types.h"
 
 struct pn532_uart_data {
-  serial_port port;
+  //serial_port port;
   int iAbortFds[2];
 };
 
