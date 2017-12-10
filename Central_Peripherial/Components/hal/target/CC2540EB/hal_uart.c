@@ -96,7 +96,7 @@ void HalUARTInit(void)
 {
 #if HAL_UART_DMA
   HalUARTInitDMA();
-  HalUARTInitDMA_UART1();
+  //HalUARTInitDMA_UART1();
 #endif
 }
 

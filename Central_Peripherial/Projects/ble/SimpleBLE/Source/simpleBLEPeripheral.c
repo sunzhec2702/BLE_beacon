@@ -63,16 +63,16 @@
 #define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_GENERAL
 
 // Minimum connection interval (units of 1.25ms, 80=100ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   Á¬½Ó¼ä¸ôÓëÊý¾Ý·¢ËÍÁ¿ÓÐ¹Ø£¬ Á¬½Ó¼ä¸ôÔ½¶Ì£¬ µ¥Î»Ê±¼äÄÚ¾ÍÄÜ·¢ËÍÔ½¶àµÄÊý¾Ý
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹Ø£ï¿½ ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ô½ï¿½Ì£ï¿½ ï¿½ï¿½Î»Ê±ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½Ü·ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 // Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   Á¬½Ó¼ä¸ôÓëÊý¾Ý·¢ËÍÁ¿ÓÐ¹Ø£¬ Á¬½Ó¼ä¸ôÔ½¶Ì£¬ µ¥Î»Ê±¼äÄÚ¾ÍÄÜ·¢ËÍÔ½¶àµÄÊý¾Ý
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹Ø£ï¿½ ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ô½ï¿½Ì£ï¿½ ï¿½ï¿½Î»Ê±ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½Ü·ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_DESIRED_SLAVE_LATENCY 0
 
 // Supervision timeout value (units of 10ms, 1000=10s) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -¸÷ÖÖÔ­Òò¶Ï¿ªÁ¬½Óºó£¬³¬Ê±²¢ÖØÐÂ¹ã²¥µÄÊ±¼ä:  100 = 1s
+#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Óºó£¬³ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Â¹ã²¥ï¿½ï¿½Ê±ï¿½ï¿½:  100 = 1s
 
 // Whether to enable automatic parameter update request when a connection is formed
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
@@ -224,8 +224,8 @@ static void advertise_control(bool enable);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
-  BOND_PAIR_STATUS_PAIRING, //Î´Åä¶Ô
-  BOND_PAIR_STATUS_PAIRED,  //ÒÑÅä¶Ô
+  BOND_PAIR_STATUS_PAIRING, //Î´ï¿½ï¿½ï¿½
+  BOND_PAIR_STATUS_PAIRED,  //ï¿½ï¿½ï¿½ï¿½ï¿½
 } BOND_PAIR_STATUS;
 
 void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs);
@@ -302,8 +302,8 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, simpleBle_GetAttDeviceName());
 
   {
-    // ÉèÖÃrssi ²ÎÊý¸üÐÂËÙÂÊ
-    uint16 rssi_read_rate_1ms = 500; //Ò»Ãë¸üÐÂ2´Î
+    // ï¿½ï¿½ï¿½ï¿½rssi ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    uint16 rssi_read_rate_1ms = 500; //Ò»ï¿½ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½
     GAPRole_SetParameter(GAPROLE_RSSI_READ_RATE, sizeof(uint16), &rssi_read_rate_1ms);
   }
 
@@ -316,18 +316,18 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, advInt);
   }
 
-  //ÏÂÃæÊÇÓëÅä¶ÔÏà¹ØµÄÉèÖÃ
+  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
   // Setup the GAP Bond Manager
   {
     uint32 passkey = 0; // passkey "000000"
     uint8 pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
     uint8 mitm = TRUE;
-    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //ÏÔÊ¾ÃÜÂë£¬ ÒÔ±ãÖ÷»úÊäÈëÅä¶ÔµÄÃÜÂë
+    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ë£¬ ï¿½Ô±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ï¿½ï¿½ï¿½ï¿½
 
     /*
-    bonding¾ÍÊÇ°ÑÅä¶ÔÐÅÏ¢¼ÇÂ¼ÏÂÀ´, ÏÂ´Î¾Í²»ÓÃÅä¶ÔÁË. ²»bondingÏÂ´Î¾Í»¹µÃÅä¶Ô.    
-    ËùÒÔÎÒÃÇ´Ó»úÕâÀï°Ñ bonding = FALSE µÄºó¹û¾ÍÊÇ£¬ Ö÷Éè±¸Ã¿´ÎÁ¬½Ó¶¼±ØÐëÊäÈëÃÜÂë
-    ¶ø°Ñ  bonding = TRUE ºó£¬ Ö÷Éè±¸Ö»ÐèµÚÒ»´ÎÁ¬½ÓÊ±ÊäÈëÃÜÂë£¬ ºóÃæ¶Ï¿ªºó¶¼²»ÐèÒªÔÙ´ÎÊäÈëÃÜÂë¼´¿ÉÁ¬½Ó
+    bondingï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½, ï¿½Â´Î¾Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½bondingï¿½Â´Î¾Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.    
+    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ bonding = FALSE ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ ï¿½ï¿½ï¿½è±¸Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    ï¿½ï¿½ï¿½ï¿½  bonding = TRUE ï¿½ï¿½ ï¿½ï¿½ï¿½è±¸Ö»ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ó¶¼²ï¿½ï¿½ï¿½Òªï¿½Ù´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¼´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -367,12 +367,12 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // Register callback with SimpleGATTprofile
   // VOID SimpleProfile_RegisterAppCBs(&simpleBLEPeripheral_SimpleProfileCBs);
 
-  // ÐèÒª¹Ø±ÕµÄCLK×Ô¶¯·ÖÆµ£¬ÔÚ³õÊ¼»¯ÖÐ¼ÓÈëHCI_EXT_ClkDivOnHaltCmd( HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT )?  // Èç¹û¿ªÆô£¬»áµ¼ÖÂÆµÂÊ×Ô¶¯ÇÐ»»£¬DMA¹¤×÷ÊÜµ½Ó°Ïì£¬Ð¡·¶Î§¶ªÊý¡£
-  // ÕâÀï°ÑËû¹Ø±Õ£¬ Èç¹ûÏë½µµÍ¹¦ºÄ£¬ Õâ¸öÓ¦¸ÃÒª¿ªÆôµÄ£¬ ÕâÀïÃ¬¶ÜÁË
+  // ï¿½ï¿½Òªï¿½Ø±Õµï¿½CLKï¿½Ô¶ï¿½ï¿½ï¿½Æµï¿½ï¿½ï¿½Ú³ï¿½Ê¼ï¿½ï¿½ï¿½Ð¼ï¿½ï¿½ï¿½HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT )?  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½áµ¼ï¿½ï¿½Æµï¿½ï¿½ï¿½Ô¶ï¿½ï¿½Ð»ï¿½ï¿½ï¿½DMAï¿½ï¿½ï¿½ï¿½ï¿½Üµï¿½Ó°ï¿½ì£¬Ð¡ï¿½ï¿½Î§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø±Õ£ï¿½ ï¿½ï¿½ï¿½ï¿½ë½µï¿½Í¹ï¿½ï¿½Ä£ï¿½ ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Ä£ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¬ï¿½ï¿½ï¿½ï¿½
   HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT);
   //HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT );
 
-  // ÐÅºÅ·¢ÉäÇ¿¶È
+  // ï¿½ÅºÅ·ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½
   HCI_EXT_SetTxPowerCmd(3 - sys_config.txPower);
 
   // Setup a delayed profile startup
@@ -421,7 +421,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_WAKE_EVT)
   {
-    // osal_pwrmgr_device(PWRMGR_BATTERY); //  ²»Ë¯Ãß£¬¹¦ºÄºÜ¸ßµÄ
+    // osal_pwrmgr_device(PWRMGR_BATTERY); //  ï¿½ï¿½Ë¯ï¿½ß£ï¿½ï¿½ï¿½ï¿½ÄºÜ¸ßµï¿½
     if (check_low_battery() == TRUE)
     {
       enter_low_battery_mode();
@@ -524,7 +524,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
     low_power_state = FALSE; // set false to enable key event.
     g_sleepFlag = TRUE;
-    osal_pwrmgr_device(PWRMGR_BATTERY); //  ×Ô¶¯Ë¯Ãß
+    osal_pwrmgr_device(PWRMGR_BATTERY); //  ï¿½Ô¶ï¿½Ë¯ï¿½ï¿½
     osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
     advertise_control(FALSE);
     DEBUG_PRINT("Enter Sleep Mode\r\n");

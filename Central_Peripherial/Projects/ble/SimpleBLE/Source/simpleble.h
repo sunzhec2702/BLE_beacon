@@ -16,7 +16,7 @@ extern "C"
 #define POWER_OFF_SUPPORT TRUE
 //#define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_ROLE_CENTRAL
+#define PRESET_ROLE BLE_ROLE_PERIPHERAL
 
 // 当前单片机运行的角色
 typedef enum
@@ -24,12 +24,6 @@ typedef enum
     BLE_ROLE_PERIPHERAL = 0,        //从机角色
     BLE_ROLE_CENTRAL = 1,           //主机角色    
 }BLE_ROLE;
-
-#if (PRESET_ROLE == BLE_ROLE_CENTRAL)
-#define HAL_LCD TRUE
-#define HAL_UART TRUE
-#define LCD_TO_UART TRUE
-#endif
 
 #ifdef DEBUG_BOARD
 #define HAL_LCD TRUE
@@ -39,7 +33,7 @@ typedef enum
 #define DEBUG_VALUE(x,y,z) {NPI_PrintValue(x, y, z);NPI_PrintString("\r\n");}
 #else // PRODUCT_BOARD
   #if (PRESET_ROLE == BLE_ROLE_CENTRAL)
-    #define HAL_LCD TRUE
+    #define HAL_LCD FALSE
     #define HAL_UART TRUE
     #define LCD_TO_UART TRUE
   #else // PERIPHERIAL
@@ -312,6 +306,9 @@ void simpleBLE_performPeriodicTask( void );
 
 //uart 回调函数
 static void simpleBLE_NpiSerialCallback( uint8 port, uint8 events );
+
+static void simpleBLE_NpiSerialCallbackUART1(uint8 port, uint8 events);
+
 // AT 命令处理 函数
 bool simpleBLE_AT_CMD_Handle(uint8 *pBuffer, uint16 length);
 // MT 命令处理 函数

@@ -27,7 +27,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED ï¿½AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -193,6 +193,9 @@ extern "C"
 #define HAL_NV_DMA_CH                  0
 #define HAL_DMA_CH_RX                  3
 #define HAL_DMA_CH_TX                  4
+#define HAL_DMA_CH_RX_UART1                  1
+#define HAL_DMA_CH_TX_UART1                  2
+
 
 #define HAL_NV_DMA_GET_DESC()  HAL_DMA_GET_DESC0()
 #define HAL_NV_DMA_SET_ADDR(a) HAL_DMA_SET_ADDR_DESC0((a))
@@ -455,7 +458,8 @@ st( \
 
 // Used to set P2 priority - USART0 over USART1 if both are defined.
 #if ((HAL_UART_DMA == 1) || (HAL_UART_ISR == 1))
-#define HAL_UART_PRIPO             0x00
+//#define HAL_UART_PRIPO             0x00 //Darren: Maybe need to change back.
+#define HAL_UART_PRIPO             0x40
 #else
 #define HAL_UART_PRIPO             0x40
 #endif

@@ -259,9 +259,13 @@ void simpleBLE_NPI_init(void)
   else
   {
     NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
-    NPI_WriteTransport("Peripheral\r\n", 24);
-    NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallback);
-    NPI_WriteTransportPort(HAL_UART_PORT_1, "Peripheral\r\n", 24);
+    NPI_PrintString("Peripheral\r\n");
+    //NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallbackUART1);
+    //NPI_PrintStringPort(HAL_UART_PORT_1, "Peripheral1\r\n");
+    //NPI_PrintStringPort(HAL_UART_PORT_1, "Peripheral2\r\n");
+    //NPI_PrintStringPort(HAL_UART_PORT_1, "Peripheral3\r\n");
+    //NPI_PrintStringPort(HAL_UART_PORT_1, "Peripheral4\r\n");
+    
   }
 }
 
@@ -313,10 +317,12 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
     {
       uint8 *buffer = osal_mem_alloc(numBytes);
       NPI_ReadTransport(buffer, numBytes); //释放串口数据
+      /* Darren:Handle this sleep issue.
       if (FALSE == g_sleepFlag) //discard the data directly.
       {
-        NPI_WriteTransport(buffer, numBytes); //释放串口数据
       }
+      */
+      NPI_WriteTransport(buffer, numBytes); //释放串口数据
       osal_mem_free(buffer);
     }
     return;
@@ -337,10 +343,13 @@ static void simpleBLE_NpiSerialCallbackUART1(uint8 port, uint8 events)
     {
       uint8 *buffer = osal_mem_alloc(numBytes);
       NPI_ReadTransportPort(HAL_UART_PORT_1, buffer, numBytes); //释放串口数据
+      /* Darren: Need to handle this.
       if (FALSE == g_sleepFlag) //discard the data directly.
       {
-        NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes); //释放串口数据
+        
       }
+      */
+      NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes); //释放串口数据
       osal_mem_free(buffer);
     }
     return;

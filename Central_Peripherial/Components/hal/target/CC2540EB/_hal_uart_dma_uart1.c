@@ -34,7 +34,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED ï¿½AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -58,48 +58,7 @@
  * ------------------------------------------------------------------------------------------------
  */
 
-#include <string.h>
-
-#include "hal_assert.h"
-#include "hal_board.h"
-#include "hal_defs.h"
-#include "hal_dma.h"
-#include "hal_mcu.h"
-#include "hal_types.h"
-#include "hal_uart.h"
-
-/* ------------------------------------------------------------------------------------------------
- *                                           Constants
- * ------------------------------------------------------------------------------------------------
- */
-
-// UxCSR_UART1 - USART Control and Status Register.
-#define CSR_MODE_UART1                   0x80
-#define CSR_RE_UART1                     0x40
-#define CSR_SLAVE_UART1                  0x20
-#define CSR_FE_UART1                     0x10
-#define CSR_ERR_UART1                    0x08
-#define CSR_RX_BYTE_UART1                0x04
-#define CSR_TX_BYTE_UART1                0x02
-#define CSR_ACTIVE_UART1                 0x01
-
-// UxUCR_UART1 - USART UART Control Register.
-#define UCR_FLUSH_UART1                  0x80
-#define UCR_FLOW_UART1                   0x40
-#define UCR_D9_UART1                     0x20
-#define UCR_BIT9_UART1                   0x10
-#define UCR_PARITY_UART1                 0x08
-#define UCR_SPB_UART1                    0x04
-#define UCR_STOP_UART1                   0x02
-#define UCR_START_UART1                  0x01
-
-#define UTX0IE_UART1                     0x04
-#define UTX1IE_UART1                     0x08
-
-#define P2DIR_PRIPO_UART1                0xC0
-
-#define HAL_DMA_U0DBUF_UART1             0x70C1
-#define HAL_DMA_U1DBUF_UART1             0x70F9
+#include "_hal_uart_dma_common.h"
 
 #undef  UxCSR_UART1
 #undef  UxUCR_UART1
@@ -114,7 +73,7 @@
 #define UxDBUF_UART1                     U1DBUF
 #define UxBAUD_UART1                     U1BAUD
 #define UxGCR_UART1                      U1GCR
-#define UTXxIE_UART1                     UTX1IE_UART1
+#define UTXxIE_UART1                     UTX1IE
 #define UTXxIF_UART1                     UTX1IF
 
 #undef  PxSEL_UART1
@@ -137,7 +96,7 @@
 #undef  DMATRIG_TX_UART1
 
 #define DMA_PAD_UART1                    U1BAUD
-#define DMA_UxDBUF_UART1                 HAL_DMA_U1DBUF_UART1
+#define DMA_UxDBUF_UART1                 HAL_DMA_U1DBUF
 #define DMATRIG_RX_UART1                 HAL_DMA_TRIG_URX1
 #define DMATRIG_TX_UART1                 HAL_DMA_TRIG_UTX1
 
@@ -161,70 +120,6 @@
 #define PICTL_BIT_UART1                  BV(2)
 #define IENx_UART1                       IEN2
 #define IEN_BIT_UART1                    BV(4)
-
-#if !defined( DMA_PM )
-#if defined POWER_SAVING
-#define DMA_PM                     0//1  
-#else
-#define DMA_PM                     0
-#endif // POWER_SAVING
-#endif // !DMA_PM
-
-// For known defects described above in the moduel description, prefer to drive the Tx by ISR vice
-// DMA unless H/W flow control is not used and full-throughput on Tx is absolutely essential.
-#if !defined HAL_UART_TX_BY_ISR
-#define HAL_UART_TX_BY_ISR         1
-#endif
-
-// Minimum delay before allowing sleep and/or clearing DMA ready-out after a DMA ready-in ISR.
-// ST-ticks for 6-msecs plus 1 tick added for when the dmaRdyDly is forced from zero to 0xFF.
-// If a greater delay than 6-msec is configured, then the logic should be changed to use a uint16.
-//efine DMA_PM_DLY_UART1                 198   // 32768 * 0.006 + 1 -> 198.
-// This delay should be set as short as possible to work with the max expected latency in the sender
-// between its asserting ready-out and its checking of the ready-in response. The RBA Master
-// logic in the internal uart-to-uart bridge app checks for ready-in immediately,
-// so this is just set to zero.
-#define DMA_PM_DLY_UART1                 0
-
-// The timeout tick is at 32-kHz, so multiply msecs by 33.
-#define HAL_UART_MSECS_TO_TICKS_UART1    33
-
-#if !defined HAL_UART_DMA_RX_MAX
-#define HAL_UART_DMA_RX_MAX        128
-#endif
-#if !defined HAL_UART_DMA_TX_MAX
-#define HAL_UART_DMA_TX_MAX        HAL_UART_DMA_RX_MAX
-#endif
-#if !defined HAL_UART_DMA_HIGH
-#define HAL_UART_DMA_HIGH         (HAL_UART_DMA_RX_MAX - 1)
-#endif
-#if !defined HAL_UART_DMA_IDLE
-#define HAL_UART_DMA_IDLE         (0 * HAL_UART_MSECS_TO_TICKS_UART1)
-#endif
-#if !defined HAL_UART_DMA_FULL
-#define HAL_UART_DMA_FULL         (HAL_UART_DMA_RX_MAX - 16)
-#endif
-
-// ST-ticks for 1 byte @ 38.4-kB plus 1 tick added for when the txTick is forced from zero to 0xFF.
-#define HAL_UART_TX_TICK_MIN_UART1       11
-
-/* ------------------------------------------------------------------------------------------------
- *                                           TypeDefs
- * ------------------------------------------------------------------------------------------------
- */
-/*
-#if HAL_UART_DMA_RX_MAX <= 256
-typedef uint8 rxIdx_t;
-#else
-typedef uint16 rxIdx_t;
-#endif
-
-#if HAL_UART_DMA_TX_MAX <= 256
-typedef uint8 txIdx_t;
-#else
-typedef uint16 txIdx_t;
-#endif
-*/
 
 /* ------------------------------------------------------------------------------------------------
  *                                           Macros
@@ -318,10 +213,10 @@ static void HalUARTInitDMA_UART1(void)
   halDMADesc_t *ch;
   PERCFG |= HAL_UART_PERCFG_BIT_UART1;     // Set UART1 I/O to Alt. 2 location on P1.
   PxSEL_UART1  |= HAL_UART_Px_SEL_UART1;         // Enable Peripheral control of Rx/Tx on Px.
-  UxCSR_UART1 = CSR_MODE_UART1;                  // Mode is UART Mode.
-  UxUCR_UART1 = UCR_FLUSH_UART1;                 // Flush it.
+  UxCSR_UART1 = CSR_MODE;                  // Mode is UART Mode.
+  UxUCR_UART1 = UCR_FLUSH;                 // Flush it.
 
-  P2DIR &= ~P2DIR_PRIPO_UART1;
+  P2DIR &= ~P2DIR_PRIPO;
   P2DIR |= HAL_UART_PRIPO_UART1;
 
   if (DMA_PM)
@@ -336,10 +231,10 @@ static void HalUARTInitDMA_UART1(void)
 
 #if !HAL_UART_TX_BY_ISR
   // Setup Tx by DMA.
-  ch = HAL_DMA_GET_DESC1234( HAL_DMA_CH_TX );
+  ch = HAL_DMA_GET_DESC1234( HAL_DMA_CH_TX_UART1 );
 
   // Abort any pending DMA operations (in case of a soft reset).
-  HAL_DMA_ABORT_CH( HAL_DMA_CH_TX );
+  HAL_DMA_ABORT_CH( HAL_DMA_CH_TX_UART1 );
 
   // The start address of the destination.
   HAL_DMA_SET_DEST( ch, DMA_UxDBUF_UART1 );
@@ -371,10 +266,10 @@ static void HalUARTInitDMA_UART1(void)
 #endif
 
   // Setup Rx by DMA.
-  ch = HAL_DMA_GET_DESC1234( HAL_DMA_CH_RX );
+  ch = HAL_DMA_GET_DESC1234( HAL_DMA_CH_RX_UART1 );
 
   // Abort any pending DMA operations (in case of a soft reset).
-  HAL_DMA_ABORT_CH( HAL_DMA_CH_RX );
+  HAL_DMA_ABORT_CH( HAL_DMA_CH_RX_UART1 );
 
   // The start address of the source.
   HAL_DMA_SET_SOURCE( ch, DMA_UxDBUF_UART1 );
@@ -413,8 +308,8 @@ static void HalUARTInitDMA_UART1(void)
   HAL_DMA_SET_PRIORITY( ch, HAL_DMA_PRI_HIGH);
 
   volatile uint8 dummy = *(volatile uint8 *)DMA_UxDBUF_UART1;  // Clear the DMA Rx trigger.
-  HAL_DMA_CLEAR_IRQ(HAL_DMA_CH_RX);
-  HAL_DMA_ARM_CH(HAL_DMA_CH_RX);
+  HAL_DMA_CLEAR_IRQ(HAL_DMA_CH_RX_UART1);
+  HAL_DMA_ARM_CH(HAL_DMA_CH_RX_UART1);
   (void)memset(dmaCfg.rxBuf, (DMA_PAD_UART1 ^ 0xFF), HAL_UART_DMA_RX_MAX * sizeof(uint16));
 }
 
@@ -468,15 +363,15 @@ static void HalUARTOpenDMA_UART1(halUARTCfg_t *config)
 
   if (DMA_PM || config->flowControl)
   {
-    UxUCR_UART1 = UCR_FLOW_UART1 | UCR_STOP_UART1;      // 8 bits/char; no parity; 1 stop bit; stop bit hi.
+    UxUCR_UART1 = UCR_FLOW | UCR_STOP;      // 8 bits/char; no parity; 1 stop bit; stop bit hi.
     PxSEL_UART1 |= HAL_UART_Px_CTS_UART1;         // Enable Peripheral control of CTS flow control on Px.
   }
   else
   {
-    UxUCR_UART1 = UCR_STOP_UART1;                 // 8 bits/char; no parity; 1 stop bit; stop bit hi.
+    UxUCR_UART1 = UCR_STOP;                 // 8 bits/char; no parity; 1 stop bit; stop bit hi.
   }
 
-  UxCSR_UART1 = (CSR_MODE_UART1 | CSR_RE_UART1);
+  UxCSR_UART1 = (CSR_MODE | CSR_RE);
 
   if (DMA_PM)
   {
@@ -484,7 +379,7 @@ static void HalUARTOpenDMA_UART1(halUARTCfg_t *config)
     PxIF = 0;
     IENx_UART1 |= IEN_BIT_UART1;
   }
-  else if (UxUCR_UART1 & UCR_FLOW_UART1)
+  else if (UxUCR_UART1 & UCR_FLOW)
   {
     // DMA Rx is always on (self-resetting). So flow must be controlled by the S/W polling the
     // circular Rx queue depth. Start by allowing flow.
@@ -525,7 +420,7 @@ static uint16 HalUARTReadDMA_UART1(uint8 *buf, uint16 len)
   /* Update pointers after reading the bytes */
   dmaCfg.rxTail = dmaCfg.rxHead;
 
-  if (!DMA_PM && (UxUCR_UART1 & UCR_FLOW_UART1))
+  if (!DMA_PM && (UxUCR_UART1 & UCR_FLOW))
   {
     HAL_UART_DMA_SET_RDY_OUT_UART1();  // Re-enable the flow asap (i.e. not wait until next uart poll).    
   }
@@ -713,7 +608,7 @@ static void HalUARTPollDMA_UART1(void)
   {
     evt |= HAL_UART_RX_ABOUT_FULL;
 
-    if (!DMA_PM && (UxUCR_UART1 & UCR_FLOW_UART1))
+    if (!DMA_PM && (UxUCR_UART1 & UCR_FLOW))
     {
       HAL_UART_DMA_CLR_RDY_OUT_UART1();  // Disable Rx flow.
     }
@@ -752,7 +647,7 @@ static uint16 HalUARTRxAvailDMA_UART1(void)
   rxIdx_t tail = dmaCfg.rxTail;
 
 #ifndef POWER_SAVING
-  if (!DMA_PM && (UxUCR_UART1 & UCR_FLOW_UART1))
+  if (!DMA_PM && (UxUCR_UART1 & UCR_FLOW))
   {
     HAL_UART_DMA_CLR_RDY_OUT_UART1();  // Stop the inflow for counting the bytes
   }
@@ -772,7 +667,7 @@ static uint16 HalUARTRxAvailDMA_UART1(void)
   } while (cnt  < HAL_UART_DMA_RX_MAX);
 
 #ifndef POWER_SAVING
-  if ( !DMA_PM && (UxUCR_UART1 & UCR_FLOW_UART1) )
+  if ( !DMA_PM && (UxUCR_UART1 & UCR_FLOW) )
   {
     HAL_UART_DMA_SET_RDY_OUT_UART1();  // Re-enable the flow asap
   }
@@ -792,10 +687,10 @@ static uint16 HalUARTRxAvailDMA_UART1(void)
 static uint8 HalUARTBusyDMA_UART1( void )
 {
 #if HAL_UART_TX_BY_ISR
-  return !((!(UxCSR_UART1 & (CSR_ACTIVE_UART1 | CSR_RX_BYTE_UART1))) && (HalUARTRxAvailDMA_UART1() == 0) &&
+  return !((!(UxCSR_UART1 & (CSR_ACTIVE | CSR_RX_BYTE))) && (HalUARTRxAvailDMA_UART1() == 0) &&
            (dmaCfg.txHead == dmaCfg.txTail));
 #else
-  return !((!(UxCSR_UART1 & (CSR_ACTIVE_UART1 | CSR_RX_BYTE_UART1))) && (HalUARTRxAvailDMA_UART1() == 0) &&
+  return !((!(UxCSR_UART1 & (CSR_ACTIVE | CSR_RX_BYTE))) && (HalUARTRxAvailDMA_UART1() == 0) &&
            (dmaCfg.txIdx[0] == 0) && (dmaCfg.txIdx[1] == 0));
 #endif
 }
@@ -818,9 +713,9 @@ static void HalUARTPollTxTrigDMA_UART1(void)
     {
       dmaCfg.txTick = 0;
 
-      if (dmaCfg.txTrig && HAL_DMA_CH_ARMED(HAL_DMA_CH_TX))
+      if (dmaCfg.txTrig && HAL_DMA_CH_ARMED(HAL_DMA_CH_TX_UART1))
       {
-        HAL_DMA_MAN_TRIGGER(HAL_DMA_CH_TX);
+        HAL_DMA_MAN_TRIGGER(HAL_DMA_CH_TX_UART1);
       }
       dmaCfg.txTrig = 0;
     }
@@ -848,13 +743,13 @@ static void HalUARTPollTxTrigDMA_UART1(void)
  *****************************************************************************/
 static void HalUARTArmTxDMA_UART1(void)
 {
-  halDMADesc_t *ch = HAL_DMA_GET_DESC1234(HAL_DMA_CH_TX);
+  halDMADesc_t *ch = HAL_DMA_GET_DESC1234(HAL_DMA_CH_TX_UART1);
   HAL_DMA_SET_SOURCE(ch, dmaCfg.txBuf[dmaCfg.txSel]);
   HAL_DMA_SET_LEN(ch, dmaCfg.txIdx[dmaCfg.txSel]);
 
   dmaCfg.txSel ^= 1;
   dmaCfg.txTrig = 1;
-  HAL_DMA_ARM_CH(HAL_DMA_CH_TX);
+  HAL_DMA_ARM_CH(HAL_DMA_CH_TX_UART1);
  
   /* Time to arm each DMA channel is 9 cycles as per the user's guide */
   asm("nop"); asm("nop"); asm("nop"); asm("nop"); asm("nop");
