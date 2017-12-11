@@ -2870,7 +2870,7 @@ static struct sErrorMessage
     {ERFPROTO, "RF Protocol Error"},               // RF Protocol error (see PN53x manual)
     {EOVHEAT, "Chip Overheating"},                 // Temperature error: the internal temperature sensor has detected overheating, and therefore has automatically switched off the antenna drivers
     {EINBUFOVF, "Internal Buffer overflow."},      // Internal buffer overflow
-    {EINVPARAM, "Invalid Parameter"},              // Invalid parameter (range, format, â€?)
+    {EINVPARAM, "Invalid Parameter"},              // Invalid parameter (range, format, ï¿½?)
     {EOPNOTALL, "Operation Not Allowed"},          // Operation not allowed in this configuration (host controller interface)
     {ECMD, "Command Not Acceptable"},              // Command is not acceptable due to the current context
     {EOVCURRENT, "Over Current"},
@@ -3943,10 +3943,12 @@ bool pn53x_current_target_is(const struct nfc_device *pnd, const nfc_target *pnt
 void *
 pn53x_data_new(struct nfc_device *pnd, const struct pn53x_io *io)
 {
+    /*
     if (pnd->chip_data == NULL)
     {
         return NULL;
     }
+    */
     // Keep I/O functions
     CHIP_DATA(pnd)->io = io;
 

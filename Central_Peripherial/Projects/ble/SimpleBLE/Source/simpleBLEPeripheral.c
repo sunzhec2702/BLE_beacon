@@ -524,7 +524,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
     low_power_state = FALSE; // set false to enable key event.
     g_sleepFlag = TRUE;
-    osal_pwrmgr_device(PWRMGR_BATTERY); //  �Զ�˯��
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //Darren : Need to change.  �Զ�˯��
     osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT_ALL);
     advertise_control(FALSE);
     DEBUG_PRINT("Enter Sleep Mode\r\n");
@@ -700,7 +700,7 @@ static uint8 led_toggle_clean_param()
 {
   if (led_toggling == FALSE)
     return FALSE;
-  osal_pwrmgr_device(PWRMGR_BATTERY);
+  osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //Darren:Need to change.
   led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
   led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
   led_toggle_count = 0;
