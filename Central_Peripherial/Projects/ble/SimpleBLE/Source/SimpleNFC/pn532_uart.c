@@ -288,40 +288,58 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
 }
 */
 
-static task_info task_pn532_wakeup = 
-{
-  0,
-  TASK_NONE,
-};
+const uint8 pn532_wakeup_preamble[] = 
+{0x55,0x55,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0x03,0xfd,0xd4,0x14,0x01,0x17,0x00};
+const uint8 pn532_wakeup_res[] = 
+{0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x02, 0xFE, 0xD5, 0x15, 0x16, 0x00};
 
-int pn532_uart_wakeup(nfc_device *pnd, uint8 cb_event)
+static task_info task_pn532_wakeup = {0,TASK_NONE};
+int pn532_uart_wakeup_res(nfc_device *pnd, uint8 cb_event)
 {
-  if (cb_event != TASK_NONE)
+  // Record who called this function.
+  if (cb_event != TASK_NONE && task_pn532_wakeup.cur_step == 0)
   {
     task_pn532_wakeup.cb_event = cb_event;
   }
-  switch (pn532_wake_up_step)
+
+  switch (task_pn532_wakeup.cur_step)
   {
     case 0:
     // Send and wait for ACK.
-    PN532Transceive(pn532_wakeup_preamble, sizeof(pn532_wakeup_preamble), 0);
+    PN532Transceive(pn532_wakeup_preamble, sizeof(pn532_wakeup_preamble), 1000, TASK_POWER_ON);
     task_pn532_wakeup.cur_step += 1;
     break;
     case 1:
+    uint8 *res = getReceiveByte();
+    uint16 res_num = getReceiveByteNum();
+    if (res_num != sizeof(pn532_wakeup_res))
+    {
+      // ACK Error
+      return -1;
+    }
+    if (memcpy(res, pn532_wakeup_res, sizeof(pn532_wakeup_res)) != 0)
+    {
+      // ACK Error
+      return -1;
+    }
     // ACK received.
     CHIP_DATA(pnd)->power_mode = NORMAL; // PN532 should now be awake
-    if (cb_event != TASK_NONE)
+    if (task_pn532_wakeup.cb_event != TASK_NONE)
     {
-      osal_set_event()
+      osal_set_event(getSimpleBLENFC_Id(), task_pn532_wakeup.cb_event);
     }
     break;
+    default:
+    // Error
+    return -2;
+    break;
   }
-  
-
   return 0;
 }
 
 #define PN532_BUFFER_LEN (PN53x_EXTENDED_FRAME__DATA_MAX_LEN + PN53x_EXTENDED_FRAME__OVERHEAD)
+
+static task_info task_pn532_wakeup = {0,TASK_NONE};
 
 ///*
 //static int

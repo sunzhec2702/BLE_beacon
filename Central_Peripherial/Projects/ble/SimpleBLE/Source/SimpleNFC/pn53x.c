@@ -2870,7 +2870,7 @@ static struct sErrorMessage
     {ERFPROTO, "RF Protocol Error"},               // RF Protocol error (see PN53x manual)
     {EOVHEAT, "Chip Overheating"},                 // Temperature error: the internal temperature sensor has detected overheating, and therefore has automatically switched off the antenna drivers
     {EINBUFOVF, "Internal Buffer overflow."},      // Internal buffer overflow
-    {EINVPARAM, "Invalid Parameter"},              // Invalid parameter (range, format, ï¿½?)
+    {EINVPARAM, "Invalid Parameter"},              // Invalid parameter (range, format, ï¿??)
     {EOPNOTALL, "Operation Not Allowed"},          // Operation not allowed in this configuration (host controller interface)
     {ECMD, "Command Not Acceptable"},              // Command is not acceptable due to the current context
     {EOVCURRENT, "Over Current"},
@@ -3398,12 +3398,10 @@ int pn53x_check_ack_frame(struct nfc_device *pnd, const uint8 *pbtRxFrame, const
     {
         if (0 == memcmp(pbtRxFrame, pn53x_ack_frame, sizeof(pn53x_ack_frame)))
         {
-            //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "PN53x ACKed");
             return NFC_SUCCESS;
         }
     }
     pnd->last_error = NFC_EIO;
-    //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unexpected PN53x reply!");
     return pnd->last_error;
 }
 

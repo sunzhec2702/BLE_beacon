@@ -34,17 +34,12 @@ static struct nfc_device* nfc_dev_ptr = &nfc_device_instance;
 static struct nfc_context* nfc_con_ptr = &nfc_context_instance;
 
 // Create NFC related data structions.
-void nfc_init()
+struct nfc_device* nfc_init()
 {
-    nfc_context_init();
-    nfc_device_init();
+    return nfc_device_init();
 }
 
-void nfc_context_init()
-{
-}
-
-void nfc_device_init()
+struct nfc_device* nfc_device_init()
 {
     pn53x_data_new(nfc_dev_ptr, NULL);
     CHIP_DATA(nfc_dev_ptr)->type = PN532;
@@ -58,4 +53,9 @@ void nfc_device_init()
     }
     
     pn53x_init(nfc_dev_ptr);
+}
+
+struct nfc_device* get_nfc_device_ptr()
+{
+    return nfc_dev_ptr;
 }

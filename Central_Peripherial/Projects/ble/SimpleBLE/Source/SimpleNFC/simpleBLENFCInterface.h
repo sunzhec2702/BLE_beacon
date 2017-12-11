@@ -37,6 +37,7 @@ typedef enum
 
 #define UART_RECEIVE_EVT 0x0001
 #define UART_RECEIVE_TIMEOUT_EVT 0x0002
+#define UART_RECEIVE_TRANS_CB_EVT 0x0004
 
 uint8 getSimpleBLENFC_Id(void);
 uint8* getReceiveByte(void);
