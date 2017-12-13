@@ -269,8 +269,8 @@ typedef enum {
   PTM_ISO14443_4_PICC_ONLY = 0x04
 } pn53x_target_mode;
 
-extern const uint8 pn53x_ack_frame[PN53x_ACK_FRAME__LEN];
-extern const uint8 pn53x_nack_frame[PN53x_ACK_FRAME__LEN];
+extern uint8 pn53x_ack_frame[PN53x_ACK_FRAME__LEN];
+extern uint8 pn53x_nack_frame[PN53x_ACK_FRAME__LEN];
 
 int    pn53x_init(struct nfc_device *pnd);
 int    pn53x_transceive(struct nfc_device *pnd, const uint8 *pbtTx, const size_t szTx, uint8 *pbtRx, const size_t szRxLen, int timeout);

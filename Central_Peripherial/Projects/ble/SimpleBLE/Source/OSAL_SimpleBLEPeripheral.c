@@ -107,7 +107,7 @@ const pTaskEventHandlerFn tasksArr_peripheral[] =
   GAPBondMgr_ProcessEvent,                                          // task 9
   GATTServApp_ProcessEvent,                                         // task 10
   SimpleBLEPeripheral_ProcessEvent,                                 // task 11
-  SimpleBLENFC_ProcessEvent                                         // task 12
+  SimpleBLENFC_ProcessEvent,                                         // task 12
 };
 
 uint8 tasksCnt;

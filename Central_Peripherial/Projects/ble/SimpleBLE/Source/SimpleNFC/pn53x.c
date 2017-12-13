@@ -22,6 +22,8 @@
 
 #include "OSAL.h"
 
+#include "simpleBLENFCInterface.h"
+
 #define LOG_CATEGORY "libnfc.chip.pn53x"
 #define LOG_GROUP NFC_LOG_GROUP_CHIP
 
@@ -52,6 +54,7 @@ bool pn53x_current_target_is(const struct nfc_device *pnd, const nfc_target *pnt
 int pn53x_init(struct nfc_device *pnd)
 {
     int res = 0;
+    /*
     // GetFirmwareVersion command is used to set PN53x chips type (PN531, PN532 or PN533)
     if ((res = pn53x_decode_firmware_version(pnd)) < 0)
     {
@@ -90,7 +93,7 @@ int pn53x_init(struct nfc_device *pnd)
     {
         CHIP_DATA(pnd)->supported_modulation_as_target = (nfc_modulation_type *)pn53x_supported_modulation_as_target;
     }
-
+    */
     // CRC handling should be enabled by default as declared in nfc_device_new
     // which is the case by default for pn53x, so nothing to do here
     // Parity handling should be enabled by default as declared in nfc_device_new
@@ -1107,19 +1110,18 @@ int pn53x_idle(struct nfc_device *pnd)
 
 int pn53x_check_communication(struct nfc_device *pnd)
 {
-    const uint8 abtCmd[] = {Diagnose, 0x00, 'l', 'i', 'b', 'n', 'f', 'c'};
-    const uint8 abtExpectedRx[] = {0x00, 'l', 'i', 'b', 'n', 'f', 'c'};
-    uint8 abtRx[sizeof(abtExpectedRx)];
-    size_t szRx = sizeof(abtRx);
-    int res = 0;
-
-    if ((res = pn53x_transceive(pnd, abtCmd, sizeof(abtCmd), abtRx, szRx, 500)) < 0)
+    int res;
+    res = pn532_uart_wakeup_res(pnd);
+    if (res != 0)
+    {
         return res;
-    szRx = (size_t)res;
-    if ((sizeof(abtExpectedRx) == szRx) && (0 == memcmp(abtRx, abtExpectedRx, sizeof(abtExpectedRx))))
-        return NFC_SUCCESS;
-
-    return NFC_EIO;
+    }
+    res = pn53x_PowerDown(pnd);
+    if (res != 0)
+    {
+        return res;
+    }
+    return 0;
 }
 
 int pn53x_initiator_init(struct nfc_device *pnd)
@@ -2999,7 +3001,7 @@ int pn53x_PowerDown(struct nfc_device *pnd)
 {
     uint8 abtCmd[] = {PowerDown, 0xf0};
     int res;
-    if ((res = pn53x_transceive(pnd, abtCmd, sizeof(abtCmd), NULL, 0, -1)) < 0)
+    if ((res = PN532Transceive(abtCmd, sizeof(abtCmd), 0, false)) != 0)
         return res;
     CHIP_DATA(pnd)->power_mode = LOWVBAT;
     return res;

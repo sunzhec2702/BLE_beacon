@@ -46,8 +46,6 @@
 #include "nfc-internal.h"
 #include "pn53x.h"
 #include "pn53x-internal.h"
-//#include "uart.h"
-
 #include "simpleBLENFCInterface.h"
 
 #include "OSAL.h"
@@ -61,7 +59,9 @@ const struct pn53x_io pn532_uart_io;
 // Prototypes
 int     pn532_uart_ack(nfc_device *pnd);
 int     pn532_uart_wakeup(nfc_device *pnd);
-
+int     pn532_uart_wakeup_res(nfc_device *pnd);
+extern uint8 pn53x_ack_frame[PN53x_ACK_FRAME__LEN];
+extern uint8 pn53x_nack_frame[PN53x_ACK_FRAME__LEN];
 /*
 static size_t
 pn532_uart_scan(const nfc_context *context, nfc_connstring connstrings[], const size_t connstrings_len)
@@ -288,58 +288,39 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
 }
 */
 
-const uint8 pn532_wakeup_preamble[] = 
+uint8 pn532_wakeup_res_preamble[] = 
 {0x55,0x55,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0xff,0x03,0xfd,0xd4,0x14,0x01,0x17,0x00};
-const uint8 pn532_wakeup_res[] = 
+uint8 pn532_wakeup_res[] = 
 {0x00, 0x00, 0xFF, 0x00, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x02, 0xFE, 0xD5, 0x15, 0x16, 0x00};
 
-static task_info task_pn532_wakeup = {0,TASK_NONE};
-int pn532_uart_wakeup_res(nfc_device *pnd, uint8 cb_event)
+int pn532_uart_wakeup_res(nfc_device *pnd)
 {
-  // Record who called this function.
-  if (cb_event != TASK_NONE && task_pn532_wakeup.cur_step == 0)
+  int res_num;
+  uint8 *res;
+  res_num = PN532Transceive(pn532_wakeup_res_preamble, sizeof(pn532_wakeup_res_preamble), 500, false);
+  if (res_num > 0)
   {
-    task_pn532_wakeup.cb_event = cb_event;
-  }
-
-  switch (task_pn532_wakeup.cur_step)
-  {
-    case 0:
-    // Send and wait for ACK.
-    PN532Transceive(pn532_wakeup_preamble, sizeof(pn532_wakeup_preamble), 1000, TASK_POWER_ON);
-    task_pn532_wakeup.cur_step += 1;
-    break;
-    case 1:
-    uint8 *res = getReceiveByte();
-    uint16 res_num = getReceiveByteNum();
-    if (res_num != sizeof(pn532_wakeup_res))
+    res = getReceiveByte();
+    if ((res_num != sizeof(pn532_wakeup_res)) || (memcpy(res, pn532_wakeup_res, sizeof(pn532_wakeup_res)) != 0))
     {
-      // ACK Error
       return -1;
     }
-    if (memcpy(res, pn532_wakeup_res, sizeof(pn532_wakeup_res)) != 0)
-    {
-      // ACK Error
-      return -1;
-    }
-    // ACK received.
-    CHIP_DATA(pnd)->power_mode = NORMAL; // PN532 should now be awake
-    if (task_pn532_wakeup.cb_event != TASK_NONE)
-    {
-      osal_set_event(getSimpleBLENFC_Id(), task_pn532_wakeup.cb_event);
-    }
-    break;
-    default:
-    // Error
-    return -2;
-    break;
+    CHIP_DATA(pnd)->power_mode = NORMAL; // PN532 should now be awake and init
+    return 0;
   }
-  return 0;
+  return -1;
 }
 
 #define PN532_BUFFER_LEN (PN53x_EXTENDED_FRAME__DATA_MAX_LEN + PN53x_EXTENDED_FRAME__OVERHEAD)
 
-static task_info task_pn532_wakeup = {0,TASK_NONE};
+const uint8 pn532_wakeup_preamble[] = 
+{0x55,0x55,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
+int pn532_uart_wakeup(nfc_device *pnd)
+{
+  int res_num;
+  res_num = PN532Transceive(pn532_wakeup_res_preamble, sizeof(pn532_wakeup_res_preamble), 0, false);
+  return 0;
+}
 
 ///*
 //static int
@@ -531,19 +512,19 @@ static task_info task_pn532_wakeup = {0,TASK_NONE};
 //}
 //*/
 
-int
-pn532_uart_ack(nfc_device *pnd)
+int pn532_uart_ack(nfc_device *pnd)
 {
   if (POWERDOWN == CHIP_DATA(pnd)->power_mode) {
     int res = 0;
     if ((res = pn532_uart_wakeup(pnd)) < 0) {
       return res;
     }
+    PN532Transceive(pn53x_ack_frame, sizeof(pn53x_ack_frame), 0, false);
   }
-  //return (uart_send(DRIVER_DATA(pnd)->port, pn53x_ack_frame, sizeof(pn53x_ack_frame),  0));
   return 0;
 }
 
+/*
 static int
 pn532_uart_abort_command(nfc_device *pnd)
 {
@@ -559,11 +540,14 @@ pn532_uart_abort_command(nfc_device *pnd)
   }
   return NFC_SUCCESS;
 }
+*/
 
+/*
 const struct pn53x_io pn532_uart_io = {
   .send       = pn532_uart_send,
   .receive    = pn532_uart_receive,
 };
+*/
 
 const struct nfc_driver pn532_uart_driver = {
   .name                             = PN532_UART_DRIVER_NAME,
@@ -597,8 +581,8 @@ const struct nfc_driver pn532_uart_driver = {
   .get_supported_baud_rate      = pn53x_get_supported_baud_rate,
   .device_get_information_about = pn53x_get_information_about,
 
-  .abort_command  = pn532_uart_abort_command,
-  .idle           = pn53x_idle,
+  .abort_command  = NULL,
+  .idle           = NULL,
   .powerdown      = pn53x_PowerDown,
 };
 

@@ -1,16 +1,10 @@
 #ifndef __SIMPLE_BLE_NFC_INTERFACE_H_
 #define __SIMPLE_BLE_NFC_INTERFACE_H_
 
-#include "simpleble.h"
+#include "../simpleble.h"
 #include "simpleBLEPN532StateMachine.h"
 
 #define MAX_PN532_BUF 32
-
-typede struct
-{
-    uint8 cur_step;
-    uint16 cb_event;
-} task_info;
 
 typedef enum
 {
@@ -23,6 +17,7 @@ typedef enum
 typedef enum 
 {
     TASK_POWER_ON = 0,
+    TASK_POWER_ON_RES,
     TASK_POWER_DOWN,
     TASK_LOW_BATTERY,
     TASK_DIAGNOSE,
@@ -32,6 +27,8 @@ typedef enum
     TASK_READ_REGISTER,
     TASK_WRITE_REGISTER,
     TASK_RF_CONFIGURATION,
+    // High Level
+    TASK_CHECK_COMMU,
     TASK_NONE,
 } PN532_TASK;
 
@@ -46,7 +43,8 @@ uint16 getReceiveByteNum(void);
 uint16 SimpleBLENFC_ProcessEvent(uint8 task_id, uint16 events);
 void receiveUartFromPN532(uint8 *receiveByteBuf, uint16 numByte);
 void sendUartToPN532(uint8 *sendByteBuf, uint16 numByte);
-void PN532Transceive(uint8 *sendByteBuf, uint16 numByte, bool expectData, uint16 timeout, PN532_TASK task_event);
+int PN532Transceive(uint8 *sendByteBuf, uint16 numByte, uint16 timeout, bool build_frame);
+void clear_uart_buffer(void);
 void SimpleBLENFC_Init(uint8 task_id);
 
 #endif

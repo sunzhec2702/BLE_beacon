@@ -46,13 +46,11 @@ struct nfc_device* nfc_device_init()
     CHIP_DATA(nfc_dev_ptr)->power_mode = LOWVBAT;
     CHIP_DATA(nfc_dev_ptr)->timer_correction = 48;
     // DRIVER_DATA(nfc_dev_ptr)->abort_flag = false;
-    // Check communication using "Diagnose" command, with "Communication test" (0x00)
     if (pn53x_check_communication(nfc_dev_ptr) < 0)
     {
-        return;
+        return NULL;
     }
-    
-    pn53x_init(nfc_dev_ptr);
+    return nfc_dev_ptr;
 }
 
 struct nfc_device* get_nfc_device_ptr()
