@@ -259,7 +259,7 @@ void simpleBLE_NPI_init(void)
   else
   {
     NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
-    char WAKE_UP[] = {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x03, 0xfd, 0xd4, 0x14, 0x01, 0x17, 0x00};
+    uint8 WAKE_UP[] = {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x03, 0xfd, 0xd4, 0x14, 0x01, 0x17, 0x00};
     NPI_WriteTransport(WAKE_UP, sizeof(WAKE_UP));
     //NPI_PrintString("Peripheral\r\n");
     //NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallbackUART1);
@@ -324,33 +324,6 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       }
       */
       NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
-      osal_mem_free(buffer);
-    }
-    return;
-  }
-}
-
-//uart �ص�����
-static void simpleBLE_NpiSerialCallbackUART1(uint8 port, uint8 events)
-{
-  (void)port;
-  if (events & (HAL_UART_RX_TIMEOUT | HAL_UART_RX_FULL)) //����������
-  {
-    (void)port;
-    /*uint8*/ uint16 numBytes = 0;
-    uart_sleep_count = 0;
-    numBytes = NPI_RxBufLenPort(HAL_UART_PORT_1);
-    if (numBytes > 0)
-    {
-      uint8 *buffer = osal_mem_alloc(numBytes);
-      NPI_ReadTransportPort(HAL_UART_PORT_1, buffer, numBytes); //�ͷŴ�������
-      /* Darren: Need to handle this.
-      if (FALSE == g_sleepFlag) //discard the data directly.
-      {
-        
-      }
-      */
-      NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes); //�ͷŴ�������
       osal_mem_free(buffer);
     }
     return;
