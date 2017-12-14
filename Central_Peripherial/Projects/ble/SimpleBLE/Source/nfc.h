@@ -130,11 +130,11 @@ NFC_EXPORT int nfc_device_set_property_int(nfc_device *pnd, const nfc_property p
 NFC_EXPORT int nfc_device_set_property_bool(nfc_device *pnd, const nfc_property property, const bool bEnable);
 
 /* Misc. functions */
-NFC_EXPORT void iso14443a_crc(uint8 *pbtData, size_t szLen, uint8 *pbtCrc);
-NFC_EXPORT void iso14443a_crc_append(uint8 *pbtData, size_t szLen);
-NFC_EXPORT void iso14443b_crc(uint8 *pbtData, size_t szLen, uint8 *pbtCrc);
-NFC_EXPORT void iso14443b_crc_append(uint8 *pbtData, size_t szLen);
-NFC_EXPORT uint8 *iso14443a_locate_historical_bytes(uint8 *pbtAts, size_t szAts, size_t *pszTk);
+//NFC_EXPORT void iso14443a_crc(uint8 *pbtData, size_t szLen, uint8 *pbtCrc);
+////NFC_EXPORT void iso14443a_crc_append(uint8 *pbtData, size_t szLen);
+//NFC_EXPORT void iso14443b_crc(uint8 *pbtData, size_t szLen, uint8 *pbtCrc);
+//NFC_EXPORT void iso14443b_crc_append(uint8 *pbtData, size_t szLen);
+// uint8 *iso14443a_locate_historical_bytes(uint8 *pbtAts, size_t szAts, size_t *pszTk);
 
 NFC_EXPORT void nfc_free(void *p);
 NFC_EXPORT const char *nfc_version(void);
@@ -143,7 +143,7 @@ NFC_EXPORT int nfc_device_get_information_about(nfc_device *pnd, char **buf);
 /* String converter functions */
 NFC_EXPORT const char *str_nfc_modulation_type(const nfc_modulation_type nmt);
 NFC_EXPORT const char *str_nfc_baud_rate(const nfc_baud_rate nbr);
-NFC_EXPORT int str_nfc_target(char **buf, const nfc_target *pnt, bool verbose);
+//NFC_EXPORT int str_nfc_target(char **buf, const nfc_target *pnt, bool verbose);
 
 /* Error codes */
 /** @ingroup error

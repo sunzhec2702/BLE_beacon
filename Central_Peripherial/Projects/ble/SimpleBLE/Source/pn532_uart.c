@@ -31,11 +31,11 @@ int     pn532_uart_ack(nfc_device *pnd);
 int     pn532_uart_wakeup(nfc_device *pnd);
 
 #define DRIVER_DATA(pnd) ((struct pn532_uart_data*)(pnd->driver_data))
-
+  /*
 static size_t
 pn532_uart_scan(const nfc_context *context, nfc_connstring connstrings[], const size_t connstrings_len)
 {
-  /*
+
   size_t device_found = 0;
   serial_port sp;
   char **acPorts = uart_list_ports();
@@ -138,9 +138,10 @@ pn532_uart_scan(const nfc_context *context, nfc_connstring connstrings[], const 
   }
   osal_mem_free(acPorts);
   return device_found;
-  */
+
   return 0;
 }
+  */
 
 struct pn532_uart_descriptor {
   char *port;
@@ -176,7 +177,7 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
   if (!pnd) {
     return NULL;
   }
-  snprintf(pnd->name, sizeof(pnd->name), "%s:%s", PN532_UART_DRIVER_NAME, "0");
+  //snprintf(pnd->name, sizeof(pnd->name), "%s:%s", PN532_UART_DRIVER_NAME, "0");
   pnd->driver_data = NULL; //osal_mem_alloc(sizeof(struct pn532_uart_data));
   //DRIVER_DATA(pnd)->port = sp;
 
@@ -432,16 +433,6 @@ pn532_uart_ack(nfc_device *pnd)
 static int
 pn532_uart_abort_command(nfc_device *pnd)
 {
-  if (pnd) {
-#ifndef WIN32
-    close(DRIVER_DATA(pnd)->iAbortFds[0]);
-    if (pipe(DRIVER_DATA(pnd)->iAbortFds) < 0) {
-      return NFC_ESOFT;
-    }
-#else
-    DRIVER_DATA(pnd)->abort_flag = true;
-#endif
-  }
   return NFC_SUCCESS;
 }
 
@@ -453,21 +444,21 @@ const struct pn53x_io pn532_uart_io = {
 const struct nfc_driver pn532_uart_driver = {
   .name                             = PN532_UART_DRIVER_NAME,
   .scan_type                        = INTRUSIVE,
-  .scan                             = pn532_uart_scan,
+  .scan                             = NULL,
   .open                             = pn532_uart_open,
   .close                            = pn532_uart_close,
-  .strerror                         = pn53x_strerror,
+  .strerror                         = NULL,
 
   .initiator_init                   = pn53x_initiator_init,
   .initiator_init_secure_element    = pn532_initiator_init_secure_element,
   .initiator_select_passive_target  = pn53x_initiator_select_passive_target,
-  .initiator_poll_target            = pn53x_initiator_poll_target,
+  .initiator_poll_target            = NULL,
   .initiator_select_dep_target      = pn53x_initiator_select_dep_target,
   .initiator_deselect_target        = pn53x_initiator_deselect_target,
   .initiator_transceive_bytes       = pn53x_initiator_transceive_bytes,
-  .initiator_transceive_bits        = pn53x_initiator_transceive_bits,
-  .initiator_transceive_bytes_timed = pn53x_initiator_transceive_bytes_timed,
-  .initiator_transceive_bits_timed  = pn53x_initiator_transceive_bits_timed,
+  .initiator_transceive_bits        = NULL,
+  .initiator_transceive_bytes_timed = NULL,
+  .initiator_transceive_bits_timed  = NULL,
   .initiator_target_is_present      = pn53x_initiator_target_is_present,
 
   .target_init           = pn53x_target_init,
@@ -480,7 +471,7 @@ const struct nfc_driver pn532_uart_driver = {
   .device_set_property_int      = pn53x_set_property_int,
   .get_supported_modulation     = pn53x_get_supported_modulation,
   .get_supported_baud_rate      = pn53x_get_supported_baud_rate,
-  .device_get_information_about = pn53x_get_information_about,
+  .device_get_information_about = NULL,
 
   .abort_command  = pn532_uart_abort_command,
   .idle           = pn53x_idle,

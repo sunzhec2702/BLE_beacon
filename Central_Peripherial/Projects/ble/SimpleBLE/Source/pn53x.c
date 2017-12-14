@@ -743,16 +743,16 @@ pn53x_decode_firmware_version(struct nfc_device *pnd)
   // Convert firmware info in text, PN531 gives 2 bytes info, but PN532 and PN533 gives 4
   switch (CHIP_DATA(pnd)->type) {
     case PN531:
-      snprintf(CHIP_DATA(pnd)->firmware_text, sizeof(CHIP_DATA(pnd)->firmware_text), "PN531 v%d.%d", abtFw[0], abtFw[1]);
+      //snprintf(CHIP_DATA(pnd)->firmware_text, sizeof(CHIP_DATA(pnd)->firmware_text), "PN531 v%d.%d", abtFw[0], abtFw[1]);
       pnd->btSupportByte = SUPPORT_ISO14443A | SUPPORT_ISO18092;
       break;
     case PN532:
-      snprintf(CHIP_DATA(pnd)->firmware_text, sizeof(CHIP_DATA(pnd)->firmware_text), "PN532 v%d.%d", abtFw[1], abtFw[2]);
+      //snprintf(CHIP_DATA(pnd)->firmware_text, sizeof(CHIP_DATA(pnd)->firmware_text), "PN532 v%d.%d", abtFw[1], abtFw[2]);
       pnd->btSupportByte = abtFw[3];
       break;
     case PN533:
     case RCS360:
-      snprintf(CHIP_DATA(pnd)->firmware_text, sizeof(CHIP_DATA(pnd)->firmware_text), "PN533 v%d.%d", abtFw[1], abtFw[2]);
+      //snprintf(CHIP_DATA(pnd)->firmware_text, sizeof(CHIP_DATA(pnd)->firmware_text), "PN533 v%d.%d", abtFw[1], abtFw[2]);
       pnd->btSupportByte = abtFw[3];
       break;
     case PN53X:
@@ -1162,6 +1162,8 @@ pn53x_initiator_select_passive_target(struct nfc_device *pnd,
   return pn53x_initiator_select_passive_target_ext(pnd, nm, pbtInitData, szInitData, pnt, 0);
 }
 
+
+/*
 int
 pn53x_initiator_poll_target(struct nfc_device *pnd,
                             const nfc_modulation *pnmModulations, const size_t szModulations,
@@ -1246,6 +1248,7 @@ end:
   }
   return NFC_ECHIP;
 }
+*/
 
 int
 pn53x_initiator_select_dep_target(struct nfc_device *pnd,
@@ -1375,7 +1378,7 @@ pn53x_initiator_transceive_bytes(struct nfc_device *pnd, const uint8 *pbtTx, con
   // Copy the data into the command frame
   if (pnd->bEasyFraming) {
     abtCmd[0] = InDataExchange;
-    abtCmd[1] = 1;              /* target number */
+    abtCmd[1] = 1;              // target number
     memcpy(abtCmd + 2, pbtTx, szTx);
     szExtraTxLen = 2;
   } else {
@@ -1491,6 +1494,7 @@ static uint32 __pn53x_get_timer(struct nfc_device *pnd, const uint8 last_cmd_byt
   return u32cycles;
 }
 
+/*
 int
 pn53x_initiator_transceive_bits_timed(struct nfc_device *pnd, const uint8 *pbtTx, const size_t szTxBits,
                                       const uint8 *pbtTxPar, uint8 *pbtRx, uint8 *pbtRxPar, uint32 *cycles)
@@ -1593,7 +1597,9 @@ pn53x_initiator_transceive_bits_timed(struct nfc_device *pnd, const uint8 *pbtTx
 
   return szRxBits;
 }
+*/
 
+/*
 int
 pn53x_initiator_transceive_bytes_timed(struct nfc_device *pnd, const uint8 *pbtTx, const size_t szTx, uint8 *pbtRx, const size_t szRx, uint32 *cycles)
 {
@@ -1717,6 +1723,7 @@ pn53x_initiator_transceive_bytes_timed(struct nfc_device *pnd, const uint8 *pbtT
   }
   return szRxLen;
 }
+*/
 
 int
 pn53x_initiator_deselect_target(struct nfc_device *pnd)
@@ -1793,6 +1800,7 @@ static int pn53x_ISO14443A_4_is_present(struct nfc_device *pnd)
   return ret;
 }
 
+/*
 static int pn53x_ISO14443A_Jewel_is_present(struct nfc_device *pnd)
 {
   int ret;
@@ -1812,7 +1820,9 @@ static int pn53x_ISO14443A_Jewel_is_present(struct nfc_device *pnd)
   }
   return ret;
 }
+*/
 
+/*
 static int pn53x_ISO14443A_MFUL_is_present(struct nfc_device *pnd)
 {
   int ret;
@@ -1837,7 +1847,9 @@ static int pn53x_ISO14443A_MFUL_is_present(struct nfc_device *pnd)
   }
   return ret;
 }
+*/
 
+/*
 static int pn53x_ISO14443A_MFC_is_present(struct nfc_device *pnd)
 {
   int ret;
@@ -1866,6 +1878,7 @@ static int pn53x_ISO14443A_MFC_is_present(struct nfc_device *pnd)
   }
   return ret;
 }
+*/
 
 static int pn53x_DEP_is_present(struct nfc_device *pnd)
 {
@@ -1878,6 +1891,7 @@ static int pn53x_DEP_is_present(struct nfc_device *pnd)
   return ret;
 }
 
+/*
 static int pn53x_Felica_is_present(struct nfc_device *pnd)
 {
   //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "target_is_present(): Ping Felica");
@@ -1897,7 +1911,9 @@ static int pn53x_Felica_is_present(struct nfc_device *pnd)
   }
   return NFC_ETGRELEASED;
 }
+*/
 
+/*
 static int pn53x_ISO14443B_4_is_present(struct nfc_device *pnd)
 {
   int ret;
@@ -1930,7 +1946,9 @@ static int pn53x_ISO14443B_4_is_present(struct nfc_device *pnd)
   }
   return ret;
 }
+*/
 
+/*
 static int pn53x_ISO14443B_I_is_present(struct nfc_device *pnd)
 {
   int ret;
@@ -1959,7 +1977,8 @@ static int pn53x_ISO14443B_I_is_present(struct nfc_device *pnd)
     ret = ret2;
   return ret;
 }
-
+*/
+/*
 static int pn53x_ISO14443B_SR_is_present(struct nfc_device *pnd)
 {
   int ret;
@@ -1982,7 +2001,8 @@ static int pn53x_ISO14443B_SR_is_present(struct nfc_device *pnd)
   }
   return ret;
 }
-
+*/
+/*
 static int pn53x_ISO14443B_CT_is_present(struct nfc_device *pnd)
 {
   int ret;
@@ -2006,6 +2026,7 @@ static int pn53x_ISO14443B_CT_is_present(struct nfc_device *pnd)
   }
   return ret;
 }
+*/
 
 int
 pn53x_initiator_target_is_present(struct nfc_device *pnd, const nfc_target *pnt)
@@ -2027,13 +2048,14 @@ pn53x_initiator_target_is_present(struct nfc_device *pnd, const nfc_target *pnt)
   switch (CHIP_DATA(pnd)->current_target->nm.nmt) {
     case NMT_ISO14443A:
       if (CHIP_DATA(pnd)->current_target->nti.nai.btSak & 0x20) {
-        ret = pn53x_ISO14443A_4_is_present(pnd);
+       // ret = pn53x_ISO14443A_4_is_present(pnd);
       } else if ((CHIP_DATA(pnd)->current_target->nti.nai.abtAtqa[0] == 0x00) &&
                  (CHIP_DATA(pnd)->current_target->nti.nai.abtAtqa[1] == 0x44) &&
                  (CHIP_DATA(pnd)->current_target->nti.nai.btSak == 0x00)) {
-        ret = pn53x_ISO14443A_MFUL_is_present(pnd);
+        // ret = pn53x_ISO14443A_MFUL_is_present(pnd);
       } else if (CHIP_DATA(pnd)->current_target->nti.nai.btSak & 0x08) {
-        ret = pn53x_ISO14443A_MFC_is_present(pnd);
+        //Darren:Need to check;
+        //ret = pn53x_ISO14443A_MFC_is_present(pnd);
       } else {
         //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "target_is_present(): card type A not supported");
         ret = NFC_EDEVNOTSUPP;
@@ -2043,22 +2065,22 @@ pn53x_initiator_target_is_present(struct nfc_device *pnd, const nfc_target *pnt)
       ret = pn53x_DEP_is_present(pnd);
       break;
     case NMT_FELICA:
-      ret = pn53x_Felica_is_present(pnd);
+      //ret = pn53x_Felica_is_present(pnd);
       break;
     case NMT_JEWEL:
-      ret = pn53x_ISO14443A_Jewel_is_present(pnd);
+      //ret = pn53x_ISO14443A_Jewel_is_present(pnd);
       break;
     case NMT_ISO14443B:
-      ret = pn53x_ISO14443B_4_is_present(pnd);
+      //ret = pn53x_ISO14443B_4_is_present(pnd);
       break;
     case NMT_ISO14443BI:
-      ret = pn53x_ISO14443B_I_is_present(pnd);
+      //ret = pn53x_ISO14443B_I_is_present(pnd);
       break;
     case NMT_ISO14443B2SR:
-      ret = pn53x_ISO14443B_SR_is_present(pnd);
+      //ret = pn53x_ISO14443B_SR_is_present(pnd);
       break;
     case NMT_ISO14443B2CT:
-      ret = pn53x_ISO14443B_CT_is_present(pnd);
+      //ret = pn53x_ISO14443B_CT_is_present(pnd);
       break;
     default:
       //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "target_is_present(): card type not supported");
@@ -2138,6 +2160,7 @@ pn53x_target_init(struct nfc_device *pnd, nfc_target *pnt, uint8 *pbtRx, const s
 
   switch (pnt->nm.nmt) {
     case NMT_ISO14443A: {
+      /* Darren:Need to check
       // Set ATQA (SENS_RES)
       abtMifareParams[0] = pnt->nti.nai.abtAtqa[1];
       abtMifareParams[1] = pnt->nti.nai.abtAtqa[0];
@@ -2153,6 +2176,7 @@ pn53x_target_init(struct nfc_device *pnd, nfc_target *pnt, uint8 *pbtRx, const s
 
       // Historical Bytes
       pbtTkt = iso14443a_locate_historical_bytes(pnt->nti.nai.abtAts, pnt->nti.nai.szAtsLen, &szTkt);
+      */
     }
     break;
 
@@ -2532,6 +2556,7 @@ static struct sErrorMessage {
   { ENFCID3, "NFCID3 Mismatch" },
 };
 
+/*
 const char *
 pn53x_strerror(const struct nfc_device *pnd)
 {
@@ -2547,6 +2572,7 @@ pn53x_strerror(const struct nfc_device *pnd)
 
   return pcRes;
 }
+*/
 
 int
 pn53x_RFConfiguration__RF_field(struct nfc_device *pnd, bool bEnable)
@@ -2769,6 +2795,7 @@ pn53x_InRelease(struct nfc_device *pnd, const uint8 ui8Target)
   return (res >= 0) ? NFC_SUCCESS : res;
 }
 
+/*
 int
 pn53x_InAutoPoll(struct nfc_device *pnd,
                  const pn53x_target_type *ppttTargetTypes, const size_t szTargetTypes,
@@ -2799,7 +2826,7 @@ pn53x_InAutoPoll(struct nfc_device *pnd,
     if (szTargetFound > 0) {
       uint8 ln;
       uint8 *pbt = abtRx + 1;
-      /* 1st target */
+      // 1st target 
       // Target type
       pn53x_target_type ptt = *(pbt++);
       pntTargets[0].nm = pn53x_ptt_to_nm(ptt);
@@ -2811,7 +2838,7 @@ pn53x_InAutoPoll(struct nfc_device *pnd,
       pbt += ln;
 
       if (abtRx[0] > 1) {
-        /* 2nd target */
+        // 2nd target 
         // Target type
         ptt = *(pbt++);
         pntTargets[1].nm = pn53x_ptt_to_nm(ptt);
@@ -2823,6 +2850,7 @@ pn53x_InAutoPoll(struct nfc_device *pnd,
   }
   return szTargetFound;
 }
+*/
 
 /**
  * @brief Wrapper for InJumpForDEP command
@@ -3298,6 +3326,7 @@ pn53x_get_supported_baud_rate(nfc_device *pnd, const nfc_modulation_type nmt, co
   return NFC_SUCCESS;
 }
 
+/*
 int
 pn53x_get_information_about(nfc_device *pnd, char **pbuf)
 {
@@ -3456,6 +3485,7 @@ pn53x_get_information_about(nfc_device *pnd, char **pbuf)
 
   return NFC_SUCCESS;
 }
+*/
 
 void *
 pn53x_current_target_new(const struct nfc_device *pnd, const nfc_target *pnt)

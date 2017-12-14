@@ -106,6 +106,7 @@ prepare_initiator_data(const nfc_modulation nm, uint8 **ppbtInitiatorData, size_
   }
 }
 
+/*
 int
 connstring_decode(const nfc_connstring connstring, const char *driver_name, const char *bus_name, char **pparam1, char **pparam2)
 {
@@ -168,4 +169,4 @@ connstring_decode(const nfc_connstring connstring, const char *driver_name, cons
   osal_mem_free(param0);
   return res;
 }
-
+*/

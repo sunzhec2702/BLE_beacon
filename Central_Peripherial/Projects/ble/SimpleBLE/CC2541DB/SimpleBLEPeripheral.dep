@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>1712340879</fileChecksum>
+  <fileChecksum>2134749139</fileChecksum>
   <configuration>
     <name>CC2541</name>
     <outputs>
@@ -247,11 +247,7 @@
       <file>$PROJ_DIR$\..\Source\drivers.h</file>
       <file>$PROJ_DIR$\CC2541\Obj\mirror-subr.r51</file>
       <file>$PROJ_DIR$\CC2541\Obj\mirror-subr.pbi</file>
-      <file>$PROJ_DIR$\CC2541\Obj\target-subr.r51</file>
       <file>$PROJ_DIR$\..\Source\mirror-subr.h</file>
-      <file>$PROJ_DIR$\..\Source\target-subr.h</file>
-      <file>$PROJ_DIR$\CC2541\Obj\target-subr.pbi</file>
-      <file>$PROJ_DIR$\..\Source\target-subr.c</file>
       <file>$PROJ_DIR$\..\Source\mirror-subr.c</file>
     </outputs>
     <file>
@@ -880,13 +876,13 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 125</file>
+          <file> 125 127</file>
         </tool>
       </outputs>
       <inputs>
         <tool>
           <name>XLINK</name>
-          <file> 159 69 226 31 9 96 128 149 141 137 123 118 80 166 122 174 113 126 146 86 72 130 59 173 239 227 228 230 235 115 76 158 98 97 143 132 119 91 64 102 172 95 234 229 160 105 129 153 176 87 241 152</file>
+          <file> 159 69 226 31 9 96 128 149 141 137 123 118 80 166 122 174 113 126 146 86 72 130 59 173 239 227 228 230 235 115 76 158 98 97 143 132 119 91 64 102 172 95 234 229 160 105 129 153 176 87 152</file>
         </tool>
       </inputs>
     </file>
@@ -987,7 +983,7 @@
       <outputs>
         <tool>
           <name>XLINK</name>
-          <file> 85 125</file>
+          <file> 85 125 127</file>
         </tool>
       </outputs>
     </file>
@@ -1213,11 +1209,11 @@
       <inputs>
         <tool>
           <name>ICC8051</name>
-          <file> 108 104 193 7 75 114 111 170 236 60 214 237 208 211 243 238 68 138 145 185 107 168 213</file>
+          <file> 108 104 193 7 75 114 111 170 236 60 214 237 208 211 238 68 138 145 185 107 168 213</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 7 75 114 111 170 236 60 214 237 208 211 243 238 68 138 145 185 107 168 213</file>
+          <file> 7 75 114 111 170 236 60 214 237 208 211 238 68 138 145 185 107 168 213</file>
         </tool>
       </inputs>
     </file>
@@ -1236,11 +1232,11 @@
       <inputs>
         <tool>
           <name>ICC8051</name>
-          <file> 108 104 193 7 75 114 111 170 60 214 237 208 236 211 206 216 242 68 138 145 185 107 168</file>
+          <file> 108 104 193 7 75 114 111 170 60 214 237 208 236 211 206 216 241 68 138 145 185 107 168</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 7 75 114 111 170 60 214 237 208 236 211 206 216 242 68 138 145 185 107 168</file>
+          <file> 7 75 114 111 170 60 214 237 208 236 211 206 216 241 68 138 145 185 107 168</file>
         </tool>
       </inputs>
     </file>
@@ -1337,29 +1333,6 @@
       </inputs>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\Source\target-subr.c</name>
-      <outputs>
-        <tool>
-          <name>ICC8051</name>
-          <file> 241</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 244</file>
-        </tool>
-      </outputs>
-      <inputs>
-        <tool>
-          <name>ICC8051</name>
-          <file> 108 104 193 7 214 237 208 236 111 75 114 243</file>
-        </tool>
-        <tool>
-          <name>BICOMP</name>
-          <file> 7 214 237 208 236 111 75 114 243</file>
-        </tool>
-      </inputs>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\Source\mirror-subr.c</name>
       <outputs>
         <tool>
@@ -1374,18 +1347,14 @@
       <inputs>
         <tool>
           <name>ICC8051</name>
-          <file> 108 104 193 7 75 114 111 242 208 236 237</file>
+          <file> 108 104 193 7 75 114 111 241 208 236 237</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 7 75 114 111 242 208 236 237</file>
+          <file> 7 75 114 111 241 208 236 237</file>
         </tool>
       </inputs>
     </file>
-    <forcedrebuild>
-      <name>[MULTI_TOOL]</name>
-      <tool>XLINK</tool>
-    </forcedrebuild>
     <forcedrebuild>
       <name>$PROJ_DIR$\..\..\Profiles\OAD\oad_target.c</name>
       <tool>ICC8051</tool>

@@ -6,7 +6,7 @@
 #include "nfc.h"
 
 #include "nfc-internal.h"
-#include "target-subr.h"
+//#include "target-subr.h"
 #include "drivers.h"
 
 #include "OSAL.h"
@@ -544,6 +544,7 @@ nfc_initiator_transceive_bytes(nfc_device *pnd, const uint8 *pbtTx, const size_t
  * require to violate the ISO14443-A standard by sending incorrect parity and
  * CRC bytes. Using this feature you are able to simulate these frames.
  */
+/*
 int
 nfc_initiator_transceive_bits(nfc_device *pnd,
                               const uint8 *pbtTx, const size_t szTxBits, const uint8 *pbtTxPar,
@@ -553,7 +554,7 @@ nfc_initiator_transceive_bits(nfc_device *pnd,
   (void)szRx;
   HAL(initiator_transceive_bits, pnd, pbtTx, szTxBits, pbtTxPar, pbtRx, pbtRxPar);
 }
-
+*/
 /** @ingroup initiator
  * @brief Send data to target then retrieve data from target
  * @return Returns received bytes count on success, otherwise returns libnfc's error code.
@@ -580,6 +581,7 @@ nfc_initiator_transceive_bits(nfc_device *pnd,
  * @warning The configuration option \a NP_EASY_FRAMING must be set to \c false.
  * @warning The configuration option \a NP_HANDLE_PARITY must be set to \c true (the default value).
  */
+/*
 int
 nfc_initiator_transceive_bytes_timed(nfc_device *pnd,
                                      const uint8 *pbtTx, const size_t szTx,
@@ -588,7 +590,7 @@ nfc_initiator_transceive_bytes_timed(nfc_device *pnd,
 {
   HAL(initiator_transceive_bytes_timed, pnd, pbtTx, szTx, pbtRx, szRx, cycles);
 }
-
+*/
 /** @ingroup initiator
  * @brief Check target presence
  * @return Returns 0 on success, otherwise returns libnfc's error code.
@@ -863,11 +865,13 @@ nfc_strerror(const nfc_device *pnd)
  * @param pcStrErrBuf a string that contains the last error.
  * @param szBufLen size of buffer
  */
+/*
 int
 nfc_strerror_r(const nfc_device *pnd, char *pcStrErrBuf, size_t szBufLen)
 {
   return (snprintf(pcStrErrBuf, szBufLen, "%s", nfc_strerror(pnd)) < 0) ? -1 : 0;
 }
+*/
 
 /** @ingroup error
  * @brief Display the last error occured on a nfc_device
@@ -1061,6 +1065,7 @@ str_nfc_modulation_type(const nfc_modulation_type nmt)
  *
  * @warning *buf must be freed using nfc_free()
 */
+/*
 int
 str_nfc_target(char **buf, const nfc_target *pnt, bool verbose)
 {
@@ -1071,3 +1076,4 @@ str_nfc_target(char **buf, const nfc_target *pnt, bool verbose)
   snprint_nfc_target(*buf, 4096, pnt, verbose);
   return strlen(*buf);
 }
+*/
