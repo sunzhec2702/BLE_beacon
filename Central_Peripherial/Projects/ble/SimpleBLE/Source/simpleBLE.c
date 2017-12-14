@@ -26,6 +26,8 @@
 #include "string.h"
 #include "math.h"
 
+#include "ble_uart.h"
+
 SYS_CONFIG sys_config;
 bool g_sleepFlag = FALSE;    //˯�߱�־
 uint8 uart_sleep_count = 0; // ˯�߼�����
@@ -37,7 +39,7 @@ BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd = BLE_CENTRAL_CONNECT_CMD_NULL;
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events);
 
 
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ ������ ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times)
 {
   while (times--)
@@ -71,8 +73,8 @@ uint32 str2Num(uint8 *numStr, uint8 iLength)
 
   /* 
           Ϊ����򵥣���ȷ��������ַ����������ֵ�
-          ����£��˴�δ����飬����Ҫ���
-          numStr[i] - '0'�Ƿ���[0, 9]���������
+          ����£��˴�δ����飬����Ҫ���?
+          numStr[i] - '0'�Ƿ���[0, 9]���������?
     */
   for (; i < iLength && numStr[i] != '\0'; ++i)
     rtnInt = rtnInt * 10 + (numStr[i] - '0');
@@ -119,7 +121,7 @@ void simpleBLE_WriteAllDataToFlash()
   osal_snv_write(0x80, sizeof(SYS_CONFIG), &sys_config);
 }
 
-// ��ȡ�Զ���� nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash()
 {
   int8 ret8 = osal_snv_read(0x80, sizeof(SYS_CONFIG), &sys_config);
@@ -147,11 +149,11 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ��������ǿ��
     sys_config.txPower = 0;                  //  �����ź�ǿ��
   }
-  GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //�������Ϣ
+  GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
   simpleBLE_WriteAllDataToFlash();
 }
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?
 void PrintAllPara(void)
 {
   char strTemp[32];
@@ -288,7 +290,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���
+  P0DIR |= 0x60; // P0.6����Ϊ���?
   P0_6 = onoff;
 }
 
@@ -323,7 +325,9 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       {
       }
       */
-      NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
+      // Directly send to interface 
+      ble_uart_interrupt(buffer, numBytes);
+      // NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
       osal_mem_free(buffer);
     }
     return;

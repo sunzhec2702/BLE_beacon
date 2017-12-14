@@ -3,6 +3,7 @@
 
 #ifdef __cplusplus
 #include "npi.h"
+#include "comdef.h"
 extern "C"
 {
 #endif
@@ -307,8 +308,6 @@ void simpleBLE_performPeriodicTask( void );
 //uart 回调函数
 static void simpleBLE_NpiSerialCallback( uint8 port, uint8 events );
 
-static void simpleBLE_NpiSerialCallbackUART1(uint8 port, uint8 events);
-
 // AT 命令处理 函数
 bool simpleBLE_AT_CMD_Handle(uint8 *pBuffer, uint16 length);
 // MT 命令处理 函数
@@ -322,6 +321,13 @@ extern bool g_sleepFlag;    //睡眠标志
 extern uint8 uart_sleep_count; // 睡眠计数器
 extern bool g_rssi_flag;       //是否开启测距
 #endif
+
+
+
+/* NFC related macro define */
+
+
+
 
 #ifdef __cplusplus
 }
