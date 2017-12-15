@@ -123,10 +123,17 @@ extern "C"
 #define LED3_POLARITY                ACTIVE_HIGH
 
 #elif (TARGET_BOARD == PRODUCT_BOARD)
+#if defined (NFC_BOARD_VERSION)
+#define LED1_BV                        BV(0)
+#define LED1_SBIT                      P1_0
+#define LED1_DDR                       P1DIR
+#define LED1_POLARITY                  ACTIVE_LOW
+#else
 #define LED1_BV                        BV(4)
 #define LED1_SBIT                      P1_4
 #define LED1_DDR                       P1DIR
 #define LED1_POLARITY                  ACTIVE_HIGH
+#endif
 #endif
 
 /* Push Button Configuration */
