@@ -1413,6 +1413,7 @@ pn53x_initiator_transceive_bytes(struct nfc_device *pnd, const uint8 *pbtTx, con
   return szRxLen;
 }
 
+/*
 static void __pn53x_init_timer(struct nfc_device *pnd, const uint32 max_cycles)
 {
 // The prescaler will dictate what will be the precision and
@@ -1493,6 +1494,7 @@ static uint32 __pn53x_get_timer(struct nfc_device *pnd, const uint8 last_cmd_byt
   }
   return u32cycles;
 }
+*/
 
 /*
 int
@@ -2248,6 +2250,7 @@ pn53x_target_init(struct nfc_device *pnd, nfc_target *pnt, uint8 *pbtRx, const s
 
   bool targetActivated = false;
   size_t szRx;
+  //Darren: Need to remove this.
   while (!targetActivated) {
     uint8 btActivatedMode;
 
@@ -3586,5 +3589,5 @@ pn53x_data_free(struct nfc_device *pnd)
   if (CHIP_DATA(pnd)->supported_modulation_as_initiator) {
     osal_mem_free(CHIP_DATA(pnd)->supported_modulation_as_initiator);
   }
-  osal_mem_free(pnd->chip_data);
+  //osal_mem_free(pnd->chip_data); // It is NULL
 }

@@ -10,7 +10,8 @@ static bool waitingRx = FALSE;
 // �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
 static int ble_uart_waiting_receive_timeout(int times)
 {
-    while (times--)
+    int time_left = times;
+    while (time_left >= 0)
     {
         if (waitingRx == FALSE)
         {
@@ -21,6 +22,10 @@ static int ble_uart_waiting_receive_timeout(int times)
         {
             asm("nop");
         }
+        if (times > 0)
+        {
+            time_left -= 1;
+        }
     }
     return -1;
 }
@@ -29,7 +34,7 @@ int ble_uart_receive(uint8 *pbtRx, const size_t szRx, void *abort_p, int timeout
 {
     (void)abort_p;
     int retry = 1;
-    while(retry > 0)
+    while (retry > 0)
     {
         int ret = ble_uart_waiting_receive_timeout(timeout);
         if (ret == 0)
@@ -41,6 +46,7 @@ int ble_uart_receive(uint8 *pbtRx, const size_t szRx, void *abort_p, int timeout
         {
             return -1;
         }
+        retry--;
     }
     return 0;
 }
@@ -63,6 +69,6 @@ int ble_uart_interrupt(uint8 *bleRx, uint16 bleRxNum)
 
 void ble_uart_flush_input(bool wait)
 {
-    (void) wait;
+    (void)wait;
     U0UCR = 0x80;
 }
