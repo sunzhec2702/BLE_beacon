@@ -15,7 +15,7 @@ void nfcAppInit(uint8 task_id)
     pnd = nfc_open(context, NULL);
     // We should not close, or we will lose the pnd pointer.
     //nfc_close(pnd);
-    nfcWorkAsTarget(0);
+    osal_set_event(nfcAppID, NFC_START_EVT);
 }
 
 void nfcWorkAsInitiator(uint16 timeout)
@@ -107,9 +107,65 @@ void nfcWorkAsTarget(uint16 timeout)
 
 void nfcWorkAsCard()
 {
+    // Example of a Mifare Classic Mini
+    // Note that crypto1 is not implemented in this example
+    nfc_target nt = {
+        .nm = {
+            .nmt = NMT_ISO14443A,
+            .nbr = NBR_UNDEFINED,
+        },
+        .nti = {
+            .nai = {
+                .abtAtqa = {0x00, 0x04},
+                .abtUid = {0x08, 0xab, 0xcd, 0xef},
+                .btSak = 0x09,
+                .szUidLen = 4,
+                .szAtsLen = 0,
+            },
+        },
+    };
+    //printf("%s will emulate this ISO14443-A tag:\n", argv[0]);
+    //print_nfc_target(&nt, true);
+
+    // Switch off NP_EASY_FRAMING if target is not ISO14443-4
+    if (nfc_device_set_property_bool(pnd, NP_EASY_FRAMING, (nt.nti.nai.btSak & SAK_ISO14443_4_COMPLIANT)) < 0)
+    {
+        // Nothing device
+        //nfc_perror(pnd, "nfc_target_emulate_tag");
+        //nfc_close(pnd);
+        //nfc_exit(context);
+        //exit(EXIT_FAILURE);
+    }
+    //printf("NFC device (configured as target) is now emulating the tag, please touch it with a second NFC device (initiator)\n");
+    // Need to debug. Use the IRQ for data read instead of waiting reading.
+    if (!nfc_target_emulate_tag(pnd, &nt))
+    {
+        nfc_perror(pnd, "nfc_target_emulate_tag");
+        nfc_close(pnd);
+        nfc_exit(context);
+        exit(EXIT_FAILURE);
+    }
 }
 
 uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
 {
+    (void)task_id;
+    if (events & NFC_START_EVT)
+    {
+        // DO nothing.
+        return events ^ NFC_START_EVT;
+    }
+    if (events & NFC_START_INITIATOR)
+    {
+        return events ^ NFC_START_INITIATOR;
+    }
+    if (events & NFC_START_TARGET)
+    {
+        return events ^ NFC_START_TARGET;
+    }
+    if (events & NFC_START_CARD)
+    {
+        return events ^ NFC_START_CARD;
+    }
     return 0;
 }
