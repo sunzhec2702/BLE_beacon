@@ -6,6 +6,12 @@
 static uint8 nfcAppID;
 static nfc_device *pnd;
 static nfc_context *context;
+static bool enterDEP = FALSE;
+
+uint8 getNFCAppID()
+{
+    return nfcAppID;
+}
 
 void nfcAppInit(uint8 task_id)
 {
@@ -147,6 +153,16 @@ void nfcWorkAsCard()
     }
 }
 
+void startDEPEvent()
+{
+    osal_set_event(nfcAppID, NFC_START_DEP);
+}
+
+void stopDEPEvent()
+{
+    osal_set_event(nfcAppID, NFC_STOP_DEP);
+}
+
 uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
 {
     (void)task_id;
@@ -157,15 +173,35 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
     }
     if (events & NFC_START_INITIATOR)
     {
+        if (enterDEP == TRUE)
+        {
+            osal_start_timerEx(nfcAppID, NFC_START_TARGET, 200);
+        }
         return events ^ NFC_START_INITIATOR;
     }
     if (events & NFC_START_TARGET)
     {
+        if (enterDEP == TRUE)
+        {
+            osal_start_timerEx(nfcAppID, NFC_START_INITIATOR, 200);
+        }
         return events ^ NFC_START_TARGET;
     }
     if (events & NFC_START_CARD)
     {
         return events ^ NFC_START_CARD;
+    }
+    if (events & NFC_START_DEP)
+    {
+        enterDEP = TRUE;
+        osal_set_event(nfcAppID, NFC_START_INITIATOR);
+        return events ^ NFC_START_DEP;
+    }
+    if (events & NFC_STOP_DEP)
+    {
+        enterDEP = FALSE;
+        osal_stop_timerEx(nfcAppID, NFC_START_INITIATOR|NFC_START_TARGET);
+        return events ^ NFC_STOP_DEP;
     }
     return 0;
 }
