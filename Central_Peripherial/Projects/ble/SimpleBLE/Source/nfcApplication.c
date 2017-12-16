@@ -194,7 +194,15 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
     if (events & NFC_START_DEP)
     {
         enterDEP = TRUE;
-        osal_set_event(nfcAppID, NFC_START_INITIATOR);
+        uint8 randomRole = osal_rand() & 0x0001;
+        if (randomRole == 0x1)
+        {
+            osal_set_event(nfcAppID, NFC_START_INITIATOR);
+        }
+        else
+        {
+            osal_set_event(nfcAppID, NFC_START_TARGET);
+        }
         return events ^ NFC_START_DEP;
     }
     if (events & NFC_STOP_DEP)
