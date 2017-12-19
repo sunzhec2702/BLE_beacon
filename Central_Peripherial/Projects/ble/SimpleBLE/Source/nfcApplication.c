@@ -2,6 +2,11 @@
 #include "nfc.h"
 
 #define DEFAULT_TARGET_ROLE_TIMEOUT 2000
+#define MAX_FRAME_LEN (264)
+#define SAK_ISO14443_4_COMPLIANT 0x20
+
+static uint8 abtRx[MAX_FRAME_LEN];
+static int szRx;
 
 static uint8 nfcAppID;
 static nfc_device *pnd;
@@ -27,8 +32,8 @@ void nfcAppInit(uint8 task_id)
 void nfcWorkAsInitiator(uint16 timeout)
 {
     nfc_target nt;
-    uint8_t abtRx[MAX_FRAME_LEN];
-    uint8_t abtTx[] = "Hello World!";
+    uint8 abtRx[MAX_FRAME_LEN];
+    uint8 abtTx[] = "Hello World!";
     if (nfc_initiator_init(pnd) < 0)
     {
         nfc_close(pnd);
@@ -146,10 +151,10 @@ void nfcWorkAsCard()
     // Need to debug. Use the IRQ for data read instead of waiting reading.
     if (!nfc_target_emulate_tag(pnd, &nt))
     {
-        nfc_perror(pnd, "nfc_target_emulate_tag");
-        nfc_close(pnd);
-        nfc_exit(context);
-        exit(EXIT_FAILURE);
+        //nfc_perror(pnd, "nfc_target_emulate_tag");
+        //nfc_close(pnd);
+        //nfc_exit(context);
+        //exit(EXIT_FAILURE);
     }
 }
 

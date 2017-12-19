@@ -111,10 +111,17 @@
 #define HAL_KEY_CPU_PORT_2_IF P2IF
 
 /* SW_6 is at P0.1 */
+#ifdef NFC_BOARD_VERSION
+#define HAL_KEY_SW_6_PORT   P1
+#define HAL_KEY_SW_6_BIT    BV(4)
+#define HAL_KEY_SW_6_SEL    P1SEL
+#define HAL_KEY_SW_6_DIR    P1DIR
+#else
 #define HAL_KEY_SW_6_PORT   P0
 #define HAL_KEY_SW_6_BIT    BV(1)
 #define HAL_KEY_SW_6_SEL    P0SEL
 #define HAL_KEY_SW_6_DIR    P0DIR
+#endif
 
 #if (TARGET_BOARD == DEVLOP_BOARD)
 /* SW_7(uart_rx) is at P0.2 */
@@ -125,15 +132,26 @@
 #endif
 
 /* edge interrupt */
-#define HAL_KEY_SW_6_EDGEBIT  BV(0)
-#define HAL_KEY_SW_6_EDGE     HAL_KEY_FALLING_EDGE
+#ifdef NFC_BOARD_VERSION
+  #define HAL_KEY_SW_6_EDGEBIT  BV(2)
+  #define HAL_KEY_SW_6_EDGE     HAL_KEY_FALLING_EDGE
+  /* SW_6 interrupts */
+  #define HAL_KEY_SW_6_IEN      IEN2  /* CPU interrupt mask register */
+  #define HAL_KEY_SW_6_IENBIT   BV(5) /* Mask bit for all of Port_1 */
+  #define HAL_KEY_SW_6_ICTL     P1IEN /* Port Interrupt Control register */
+  #define HAL_KEY_SW_6_ICTLBIT  BV(4) /* P1IEN - P1.4 enable/disable bit */
+  #define HAL_KEY_SW_6_PXIFG    P1IFG /* Interrupt flag at source */
+#else
+  #define HAL_KEY_SW_6_EDGEBIT  BV(0)
+  #define HAL_KEY_SW_6_EDGE     HAL_KEY_FALLING_EDGE
+  /* SW_6 interrupts */
+  #define HAL_KEY_SW_6_IEN      IEN1  /* CPU interrupt mask register */
+  #define HAL_KEY_SW_6_IENBIT   BV(5) /* Mask bit for all of Port_0 */
+  #define HAL_KEY_SW_6_ICTL     P0IEN /* Port Interrupt Control register */
+  #define HAL_KEY_SW_6_ICTLBIT  BV(1) /* P0IEN - P0.1 enable/disable bit */
+  #define HAL_KEY_SW_6_PXIFG    P0IFG /* Interrupt flag at source */
+#endif
 
-/* SW_6 interrupts */
-#define HAL_KEY_SW_6_IEN      IEN1  /* CPU interrupt mask register */
-#define HAL_KEY_SW_6_IENBIT   BV(5) /* Mask bit for all of Port_0 */
-#define HAL_KEY_SW_6_ICTL     P0IEN /* Port Interrupt Control register */
-#define HAL_KEY_SW_6_ICTLBIT  BV(1) /* P0IEN - P0.1 enable/disable bit */
-#define HAL_KEY_SW_6_PXIFG    P0IFG /* Interrupt flag at source */
 
 #if (TARGET_BOARD == DEVELOP_BOARD)
 /* SW_7 interrupts */
