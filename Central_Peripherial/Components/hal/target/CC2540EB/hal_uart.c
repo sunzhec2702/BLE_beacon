@@ -71,7 +71,6 @@ void HalUARTIsrDMA(void);
 
 #if HAL_UART_DMA
 #include "_hal_uart_dma.c"
-#include "_hal_uart_dma_uart1.c"
 #endif
 #if HAL_UART_ISR
 #include "_hal_uart_isr.c"
@@ -96,7 +95,9 @@ void HalUARTInit(void)
 {
 #if HAL_UART_DMA
   HalUARTInitDMA();
-  //HalUARTInitDMA_UART1();
+#endif
+#if HAL_UART_ISR
+  HalUARTInitISR();
 #endif
 }
 
@@ -114,7 +115,6 @@ uint8 HalUARTOpen(uint8 port, halUARTCfg_t *config)
 {
 #if (HAL_UART_DMA == 1)
   if (port == HAL_UART_PORT_0)  HalUARTOpenDMA(config);
-  if (port == HAL_UART_PORT_1)  HalUARTOpenDMA_UART1(config);
 #endif
 #if (HAL_UART_DMA == 2)
   if (port == HAL_UART_PORT_1)  HalUARTOpenDMA(config);
@@ -158,7 +158,6 @@ uint16 HalUARTRead(uint8 port, uint8 *buf, uint16 len)
 {
 #if (HAL_UART_DMA == 1)
   if (port == HAL_UART_PORT_0)  return HalUARTReadDMA(buf, len);
-  if (port == HAL_UART_PORT_1)  return HalUARTReadDMA_UART1(buf, len);
 #endif
 #if (HAL_UART_DMA == 2)
   if (port == HAL_UART_PORT_1)  return HalUARTReadDMA(buf, len);
@@ -204,7 +203,6 @@ uint16 HalUARTWrite(uint8 port, uint8 *buf, uint16 len)
 {
 #if (HAL_UART_DMA == 1)
   if (port == HAL_UART_PORT_0)  return HalUARTWriteDMA(buf, len);
-  if (port == HAL_UART_PORT_1)  return HalUARTWriteDMA_UART1(buf, len);
 #endif
 #if (HAL_UART_DMA == 2)
   if (port == HAL_UART_PORT_1)  return HalUARTWriteDMA(buf, len);
@@ -317,7 +315,6 @@ uint16 Hal_UART_RxBufLen( uint8 port )
 {
 #if (HAL_UART_DMA == 1)
   if (port == HAL_UART_PORT_0)  return HalUARTRxAvailDMA();
-  if (port == HAL_UART_PORT_1)  return HalUARTRxAvailDMA_UART1();
 #endif
 #if (HAL_UART_DMA == 2)
   if (port == HAL_UART_PORT_1)  return HalUARTRxAvailDMA();

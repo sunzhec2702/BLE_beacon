@@ -23,7 +23,7 @@ void nfcAppInit(uint8 task_id)
     nfcAppID = task_id;
     // Just init and
     nfc_init(&context);
-    pnd = nfc_open(context, NULL);
+    //pnd = nfc_open(context, NULL);
     // We should not close, or we will lose the pnd pointer.
     //nfc_close(pnd);
     osal_set_event(nfcAppID, NFC_START_EVT);

@@ -171,7 +171,7 @@ static nfc_device *
 pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
 {
   nfc_device *pnd = NULL;
-
+  NPI_PrintString("DEBUG1\r\n");
   // We have a connection
   pnd = nfc_device_new(context, connstring);
   if (!pnd) {
@@ -180,6 +180,7 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
   //snprintf(pnd->name, sizeof(pnd->name), "%s:%s", PN532_UART_DRIVER_NAME, "0");
   pnd->driver_data = NULL; //osal_mem_alloc(sizeof(struct pn532_uart_data));
   //DRIVER_DATA(pnd)->port = sp;
+  NPI_PrintString("DEBUG2\r\n");
 
   // Alloc and init chip's data
   if (pn53x_data_new(pnd, &pn532_uart_io) == NULL) {
@@ -194,6 +195,7 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
   // empirical tuning
   CHIP_DATA(pnd)->timer_correction = 48;
   pnd->driver = &pn532_uart_driver;
+  NPI_PrintString("DEBUG3\r\n");
 
 /*
 #ifndef WIN32
@@ -208,7 +210,7 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
   DRIVER_DATA(pnd)->abort_flag = false;
 #endif
 */
-
+  NPI_PrintString("DEBUG4\r\n");
   // Check communication using "Diagnose" command, with "Communication test" (0x00)
   if (pn53x_check_communication(pnd) < 0) {
     pn532_uart_close(pnd);
@@ -244,7 +246,8 @@ pn532_uart_send(nfc_device *pnd, const uint8 *pbtData, const size_t szData, int 
         return res;
       }
       // According to PN532 application note, C106 appendix: to go out Low Vbat mode and enter in normal mode we need to send a SAMConfiguration command
-      if ((res = pn532_SAMConfiguration(pnd, PSM_NORMAL, 1000)) < 0) {
+      // Darren : Do we need to wait inifiect?
+      if ((res = pn532_SAMConfiguration(pnd, PSM_NORMAL, 0)) < 0) {
         return res;
       }
     }

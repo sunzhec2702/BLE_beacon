@@ -444,7 +444,7 @@ st( \
     #else
       #define HAL_UART_DMA  1
     #endif
-  #endif
+  #endif  
   #ifndef HAL_UART_ISR
     #define HAL_UART_ISR  0
   #endif

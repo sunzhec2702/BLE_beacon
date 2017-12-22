@@ -12,7 +12,19 @@ extern "C"
 #define DEVELOP_BOARD 0
 #define PRODUCT_BOARD 1
 
-#define NFC_BOARD_VERSION 0x1 //BLE+NFC
+//#define NFC_DEBUG_MODE 1 // UART: CC2541 -> NP532 -> PC
+
+//#define NFC_BOARD_VERSION 0x1 //BLE+NFC
+
+
+//DEBUG RELATED MACRO.
+#define DEBUG_NFC_UART_MAX_TIMEOUT_ENABLE 1
+#define DEBUG_NFC_UART_MAX_TIMEOUT        5000     
+#define DEBUG_NFC_UART_FAKE_RESPOND    0
+#define DEBUG_WAIT_FOR_RX_NUM          1
+
+
+//DEBUG RELATED MACRO DONE.
 
 #define TARGET_BOARD PRODUCT_BOARD
 
@@ -309,6 +321,8 @@ void simpleBLE_performPeriodicTask( void );
 
 //uart 回调函数
 static void simpleBLE_NpiSerialCallback( uint8 port, uint8 events );
+static void simpleBLE_NpiSerialCallback1(uint8 port, uint8 events);
+
 
 // AT 命令处理 函数
 bool simpleBLE_AT_CMD_Handle(uint8 *pBuffer, uint16 length);

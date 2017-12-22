@@ -110,7 +110,7 @@
    // configure UART
    uartConfig.configured           = TRUE;
    uartConfig.baudRate             = NPI_UART_BR;
-   uartConfig.flowControl          = NPI_UART_FC;
+   uartConfig.flowControl          = FALSE;
    uartConfig.flowControlThreshold = NPI_UART_FC_THRESHOLD;
    uartConfig.rx.maxBufSize        = NPI_UART_RX_BUF_SIZE;
    uartConfig.tx.maxBufSize        = NPI_UART_TX_BUF_SIZE;

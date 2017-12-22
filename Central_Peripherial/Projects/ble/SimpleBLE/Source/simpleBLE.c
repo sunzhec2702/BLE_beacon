@@ -261,14 +261,10 @@ void simpleBLE_NPI_init(void)
   else
   {
     NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
+    NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallback1);
     uint8 WAKE_UP[] = {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x03, 0xfd, 0xd4, 0x14, 0x01, 0x17, 0x00};
-    NPI_WriteTransport(WAKE_UP, sizeof(WAKE_UP));
-    //NPI_PrintString("Peripheral\r\n");
-    //NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallbackUART1);
-    //NPI_PrintStringPort(HAL_UART_PORT_1, "Peripheral1\r\n");
-    //NPI_PrintStringPort(HAL_UART_PORT_1, "Peripheral2\r\n");
-    //NPI_PrintStringPort(HAL_UART_PORT_1, "Peripheral3\r\n");
-    //NPI_PrintStringPort(HAL_UART_PORT_1, "Peripheral4\r\n");
+    NPI_WriteTransportPort(HAL_UART_PORT_1, WAKE_UP, sizeof(WAKE_UP));
+    NPI_WriteTransportPort(HAL_UART_PORT_0, WAKE_UP, sizeof(WAKE_UP));
   }
 }
 
@@ -307,12 +303,38 @@ void simpleBLE_performPeriodicTask(void)
 }
 
 //uart �ص�����
+static void simpleBLE_NpiSerialCallback1(uint8 port, uint8 events)
+{
+  (void)port;
+  if (events & (HAL_UART_RX_TIMEOUT | HAL_UART_RX_FULL)) //����������
+  {
+    /*uint8*/ uint16 numBytes = 0;
+    numBytes = NPI_RxBufLenPort(HAL_UART_PORT_1);
+    if (numBytes > 0)
+    {
+      uint8 *buffer = osal_mem_alloc(numBytes);
+      NPI_ReadTransportPort(HAL_UART_PORT_1, buffer, numBytes); //�ͷŴ�������
+      /* Darren:Handle this sleep issue.
+      if (FALSE == g_sleepFlag) //discard the data directly.
+      {
+      }
+      */
+      // Directly send to interface 
+      // Print to UART0
+      NPI_WriteTransport(buffer, numBytes);
+      ble_uart_interrupt(buffer, numBytes);
+      osal_mem_free(buffer);
+    }
+    return;
+  }
+}
+
+//uart �ص�����
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
 {
   (void)port;
   if (events & (HAL_UART_RX_TIMEOUT | HAL_UART_RX_FULL)) //����������
   {
-    (void)port;
     /*uint8*/ uint16 numBytes = 0;
     uart_sleep_count = 0;
     numBytes = NPI_RxBufLen();
@@ -326,8 +348,8 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       }
       */
       // Directly send to interface 
-      ble_uart_interrupt(buffer, numBytes);
-      // NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
+      // ble_uart_interrupt(buffer, numBytes);
+      NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
       osal_mem_free(buffer);
     }
     return;

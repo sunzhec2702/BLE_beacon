@@ -11,6 +11,16 @@ static bool waitingRx = FALSE;
 static int ble_uart_waiting_receive_timeout(int times)
 {
     int time_left = times;
+    
+    #if (DEBUG_NFC_UART_MAX_TIMEOUT_ENABLE == 1)
+        static uint16 maxWaittime = DEBUG_NFC_UART_MAX_TIMEOUT;
+        if (time_left == 0)
+        {
+            time_left = maxWaittime;
+            times = maxWaittime;
+        }
+    #endif
+
     while (time_left >= 0)
     {
         if (waitingRx == FALSE)
@@ -22,11 +32,18 @@ static int ble_uart_waiting_receive_timeout(int times)
         {
             asm("nop");
         }
-        if (times > 0)
+        // times == 0 means wait forever.
+        if (times == 0)
         {
-            time_left -= 1;
+            continue;
         }
+        time_left--;
     }
+    #if (DEBUG_NFC_UART_FAKE_RESPOND == 1 || DEBUG_NFC_UART_MAX_TIMEOUT_ENABLE == 1)
+    {
+        return 0;
+    }
+    #endif
     return -1;
 }
 
@@ -34,21 +51,33 @@ int ble_uart_receive(uint8 *pbtRx, const size_t szRx, void *abort_p, int timeout
 {
     (void)abort_p;
     int retry = 1;
-    while (retry > 0)
-    {
-        int ret = ble_uart_waiting_receive_timeout(timeout);
-        if (ret == 0)
+    #if (DEBUG_WAIT_FOR_RX_NUM == 1)
+        while(rxNum < szRx)
         {
-            memcpy(pbtRx, rxBuffer, rxNum);
-            return 0;
+            waitingRx = TRUE;
+            int ret = ble_uart_waiting_receive_timeout(timeout);
+            if (ret != 0)
+                return -1;
         }
-        else
+        memcpy(pbtRx, rxBuffer, rxNum);
+        return 0;
+    #else
+        while (retry > 0)
         {
-            return -1;
+            int ret = ble_uart_waiting_receive_timeout(timeout);
+            if (ret == 0)
+            {
+                memcpy(pbtRx, rxBuffer, rxNum);
+                return 0;
+            }
+            else
+            {
+                return -1;
+            }
+            retry--;
         }
-        retry--;
-    }
-    return 0;
+        return 0;
+    #endif
 }
 
 int ble_uart_send(const uint8 *pbtTx, const size_t szTx, int timeout)
@@ -57,18 +86,25 @@ int ble_uart_send(const uint8 *pbtTx, const size_t szTx, int timeout)
     rxNum = 0;
     (void)timeout;
     waitingRx = TRUE;
-    NPI_WriteTransport(pbtTx, szTx);
+    //HACK send to UART0
+    NPI_WriteTransportPort(pbtTx, szTx);
+    NPI_WriteTransportPort(HAL_UART_PORT_1, pbtTx, szTx);
 }
 
 int ble_uart_interrupt(uint8 *bleRx, uint16 bleRxNum)
 {
+    if (waitingRx == FALSE)
+    {
+        return -1;
+    }
     memcpy(&rxBuffer[rxNum], bleRx, bleRxNum);
     rxNum += bleRxNum;
     waitingRx = FALSE;
+    return 0;
 }
 
 void ble_uart_flush_input(bool wait)
 {
     (void)wait;
-    U0UCR = 0x80;
+    //U0UCR = 0x80;
 }
