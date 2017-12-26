@@ -60,6 +60,7 @@ typedef enum
 #define DEBUG_VALUE(x,y,z) {}
 #endif
 
+#define NFC_UART_DEBUG NPI_WriteTransport
 
 // 主机从机事件共用定义
 #define START_DEVICE_EVT                               0x0001//启动设备

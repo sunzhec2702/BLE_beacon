@@ -122,10 +122,10 @@ typedef void (*npiCBack_t) ( uint8 port, uint8 event );
 extern void   NPI_InitTransport( uint8 port, npiCBack_t npiCBack );
 extern void   NPI_InitTransportEx( npiCBack_t npiCBack, uint8 baudrate);
 extern uint16 NPI_ReadTransport( uint8 *buf, uint16 len );
-extern uint16 NPI_WriteTransport( uint8 *, uint16 );
+extern uint16 NPI_WriteTransport( uint8 *buf, uint16 len);
 
 extern uint16 NPI_ReadTransportPort( uint8 port, uint8 *buf, uint16 len );
-extern uint16 NPI_WriteTransportPort( uint8 port, uint8 *, uint16 );
+extern uint16 NPI_WriteTransportPort( uint8 port, uint8 *buf, uint16 len );
 
 extern uint16 NPI_RxBufLen( void );
 extern uint16 NPI_RxBufLenPort( uint8 port );

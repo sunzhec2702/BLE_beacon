@@ -1,11 +1,15 @@
 #include "ble_uart.h"
 #include "simpleble.h"
 #include "stdio.h"
+#include "npi.h"
 #include "_hal_uart_dma_common.h"
 
 static uint8 rxBuffer[64];
 static uint16 rxNum = 0;
 static bool waitingRx = FALSE;
+
+static uint8 SBYTE[2] = {0xDE, 0xAD};
+static uint8 RBYTE[2] = {0xBE, 0xAF};
 
 // �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
 static int ble_uart_waiting_receive_timeout(int times)
@@ -87,12 +91,15 @@ int ble_uart_send(const uint8 *pbtTx, const size_t szTx, int timeout)
     (void)timeout;
     waitingRx = TRUE;
     //HACK send to UART0
-    NPI_WriteTransportPort(pbtTx, szTx);
-    NPI_WriteTransportPort(HAL_UART_PORT_1, pbtTx, szTx);
+    //NPI_WriteTransport(SBYTE, 2);
+    NFC_UART_DEBUG( (uint8*) pbtTx, (uint16) szTx);
+    NPI_WriteTransportPort(HAL_UART_PORT_1, (uint8*) pbtTx, (uint16) szTx);
+    return 0;
 }
 
 int ble_uart_interrupt(uint8 *bleRx, uint16 bleRxNum)
 {
+    NFC_UART_DEBUG((uint8*) bleRx, bleRxNum);
     if (waitingRx == FALSE)
     {
         return -1;

@@ -321,7 +321,6 @@ static void simpleBLE_NpiSerialCallback1(uint8 port, uint8 events)
       */
       // Directly send to interface 
       // Print to UART0
-      NPI_WriteTransport(buffer, numBytes);
       ble_uart_interrupt(buffer, numBytes);
       osal_mem_free(buffer);
     }
