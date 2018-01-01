@@ -40,19 +40,9 @@ nfc_context_new(void)
   if (!res) {
     return NULL;
   }
-
   // Set default context values
   res->allow_autoscan = true;
   res->allow_intrusive_scan = false;
-  res->log_level = 1;
-
-  // Clear user defined devices array
-  for (int i = 0; i < MAX_USER_DEFINED_DEVICES; i++) {
-    strcpy(res->user_defined_devices[i].name, "");
-    strcpy(res->user_defined_devices[i].connstring, "");
-    res->user_defined_devices[i].optional = false;
-  }
-  res->user_defined_device_count = 0;
   return res;
 }
 

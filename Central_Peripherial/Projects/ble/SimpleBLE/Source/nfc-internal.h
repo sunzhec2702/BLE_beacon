@@ -144,9 +144,6 @@ struct nfc_user_defined_device {
 struct nfc_context {
   bool allow_autoscan;
   bool allow_intrusive_scan;
-  uint32  log_level;
-  struct nfc_user_defined_device user_defined_devices[MAX_USER_DEFINED_DEVICES];
-  unsigned int user_defined_device_count;
 };
 
 nfc_context *nfc_context_new(void);
@@ -163,9 +160,9 @@ struct nfc_device {
   void *chip_data;
 
   /** Device name string, including device wrapper firmware */
-  char    name[DEVICE_NAME_LENGTH];
+  // char    name[DEVICE_NAME_LENGTH];
   /** Device connection string */
-  nfc_connstring connstring;
+  // nfc_connstring connstring;
   /** Is the CRC automaticly added, checked and removed from the frames */
   bool    bCrc;
   /** Does the chip handle parity bits, all parities are handled as data */

@@ -21,12 +21,9 @@ uint8 getNFCAppID()
 void nfcAppInit(uint8 task_id)
 {
     nfcAppID = task_id;
-    // Just init and
+    // Just init, no return value.
     nfc_init(&context);
-    //pnd = nfc_open(context, NULL);
-    // We should not close, or we will lose the pnd pointer.
-    //nfc_close(pnd);
-    osal_set_event(nfcAppID, NFC_START_EVT);
+    osal_start_timerEx(nfcAppID, NFC_START_EVT, 1000);
 }
 
 void nfcWorkAsInitiator(uint16 timeout)
@@ -173,7 +170,8 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
     (void)task_id;
     if (events & NFC_START_EVT)
     {
-        // DO nothing.
+        // Here we open the NFC.
+        pnd = nfc_open(context, NULL);
         return events ^ NFC_START_EVT;
     }
     if (events & NFC_START_INITIATOR)

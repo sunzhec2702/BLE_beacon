@@ -30,7 +30,6 @@ nfc_device * nfc_device_new(const nfc_context *context, const nfc_connstring con
   res->bInfiniteSelect = false;
   res->bAutoIso14443_4 = false;
   res->last_error  = 0;
-  //memcpy(res->connstring, connstring, sizeof(res->connstring));
   res->driver_data = NULL;
   res->chip_data   = NULL;
 

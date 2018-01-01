@@ -54,7 +54,7 @@ void nfc_init(nfc_context **context)
 {
   *context = nfc_context_new();
   if (!*context) {
-    //perror("osal_mem_alloc");
+    NFC_UART_DEBUG_STRING("osal_mem_alloc fail\r\n");
     return;
   }
   if (!nfc_drivers)
@@ -908,7 +908,8 @@ nfc_device_get_last_error(const nfc_device *pnd)
 const char *
 nfc_device_get_name(nfc_device *pnd)
 {
-  return pnd->name;
+  return NULL;
+  //return pnd->name;
 }
 
 /** @ingroup data
@@ -920,7 +921,8 @@ nfc_device_get_name(nfc_device *pnd)
 const char *
 nfc_device_get_connstring(nfc_device *pnd)
 {
-  return pnd->connstring;
+  return NULL;
+  //return pnd->connstring;
 }
 
 /** @ingroup data

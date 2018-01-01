@@ -21,7 +21,7 @@ extern "C"
 #define DEBUG_NFC_UART_MAX_TIMEOUT_ENABLE 1
 #define DEBUG_NFC_UART_MAX_TIMEOUT        5000     
 #define DEBUG_NFC_UART_FAKE_RESPOND    0
-#define DEBUG_WAIT_FOR_RX_NUM          1
+#define DEBUG_WAIT_FOR_RX_NUM          0
 
 
 //DEBUG RELATED MACRO DONE.
@@ -61,6 +61,8 @@ typedef enum
 #endif
 
 #define NFC_UART_DEBUG NPI_WriteTransport
+#define NFC_UART_DEBUG_STRING NPI_PrintString
+#define NFC_UART_DEBUG_VALUE NPI_PrintValue
 
 // 主机从机事件共用定义
 #define START_DEVICE_EVT                               0x0001//启动设备

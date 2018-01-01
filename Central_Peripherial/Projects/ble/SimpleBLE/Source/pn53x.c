@@ -139,24 +139,21 @@ pn53x_transceive(struct nfc_device *pnd, const uint8 *pbtTx, const size_t szTx, 
   } else {
     //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "Invalid timeout value: %d", timeout);
   }
-  NPI_PrintString("DEBUG7\r\n");
 
   uint8  abtRx[PN53x_EXTENDED_FRAME__DATA_MAX_LEN];
   size_t  szRx = sizeof(abtRx);
-
   // Check if receiving buffers are available, if not, replace them
   if (szRxLen == 0 || !pbtRx) {
+    //NFC_UART_DEBUG_STRING("szRxLen == 0 \r\n");
     pbtRx = abtRx;
   } else {
     szRx = szRxLen;
   }
-  NPI_PrintString("DEBUG8\r\n");
 
   // Call the send/receice callback functions of the current driver
   if ((res = CHIP_DATA(pnd)->io->send(pnd, pbtTx, szTx, timeout)) < 0) {
     return res;
   }
-  NPI_PrintString("DEBUG9\r\n");
 
   // Command is sent, we store the command
   CHIP_DATA(pnd)->last_command = pbtTx[0];
@@ -165,12 +162,10 @@ pn53x_transceive(struct nfc_device *pnd, const uint8 *pbtTx, const size_t szTx, 
   if ((CHIP_DATA(pnd)->type == PN532) && (TgInitAsTarget == pbtTx[0])) {  // PN532 automatically goes into PowerDown mode when TgInitAsTarget command will be sent
     CHIP_DATA(pnd)->power_mode = POWERDOWN;
   }
-  NPI_PrintString("DEBUG10\r\n");
 
   if ((res = CHIP_DATA(pnd)->io->receive(pnd, pbtRx, szRx, timeout)) < 0) {
     return res;
   }
-  NPI_PrintString("DEBUG11\r\n");
 
   if ((CHIP_DATA(pnd)->type == PN532) && (TgInitAsTarget == pbtTx[0])) { // PN532 automatically wakeup on external RF field
     CHIP_DATA(pnd)->power_mode = NORMAL; // When TgInitAsTarget reply that means an external RF have waken up the chip
@@ -225,7 +220,6 @@ pn53x_transceive(struct nfc_device *pnd, const uint8 *pbtTx, const size_t szTx, 
     default:
       CHIP_DATA(pnd)->last_status_byte = 0;
   }
-  NPI_PrintString("DEBUG12\r\n");
 
   while (mi) {
     int res2;
@@ -247,7 +241,6 @@ pn53x_transceive(struct nfc_device *pnd, const uint8 *pbtTx, const size_t szTx, 
     pbtRx[0] = abtRx2[0];
     res += res2 - 1;
   }
-  NPI_PrintString("DEBUG13\r\n");
 
   szRx = (size_t) res;
 
@@ -298,7 +291,6 @@ pn53x_transceive(struct nfc_device *pnd, const uint8 *pbtTx, const size_t szTx, 
       res = NFC_ECHIP;
       break;
   };
-  NPI_PrintString("DEBUG14\r\n");
 
   if (res < 0) {
     pnd->last_error = res;
@@ -997,13 +989,11 @@ pn53x_check_communication(struct nfc_device *pnd)
   uint8 abtRx[sizeof(abtExpectedRx)];
   size_t szRx = sizeof(abtRx);
   int res = 0;
-  NPI_PrintString("DEBUG5\r\n");
   if ((res = pn53x_transceive(pnd, abtCmd, sizeof(abtCmd), abtRx, szRx, 500)) < 0)
     return res;
   szRx = (size_t) res;
   if ((sizeof(abtExpectedRx) == szRx) && (0 == memcmp(abtRx, abtExpectedRx, sizeof(abtExpectedRx))))
     return NFC_SUCCESS;
-  NPI_PrintString("DEBUG16\r\n");
 
   return NFC_EIO;
 }

@@ -14,5 +14,6 @@ int ble_uart_send(const uint8 *pbtTx, const size_t szTx, int timeout);
 
 int ble_uart_interrupt(uint8 *bleRx, uint16 bleRxNum);
 void ble_uart_flush_input(bool wait);
+static void SleepWaitUart(uint16 duration);
 
 #endif
