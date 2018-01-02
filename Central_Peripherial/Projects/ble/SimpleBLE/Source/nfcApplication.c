@@ -108,8 +108,8 @@ void nfcWorkAsTarget(uint16 timeout)
     // 2000 is the timeout
     if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), timeout)) < 0)
     {
-        nfc_close(pnd);
-        nfc_exit(context);
+        //nfc_close(pnd);
+        //nfc_exit(context);
     }
 }
 
@@ -176,6 +176,7 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
         {
             NFC_UART_DEBUG_STRING("NFC_INIT_DONE\r\n");
         }
+        nfcWorkAsTarget(0);
         return events ^ NFC_START_EVT;
     }
     if (events & NFC_START_INITIATOR)
