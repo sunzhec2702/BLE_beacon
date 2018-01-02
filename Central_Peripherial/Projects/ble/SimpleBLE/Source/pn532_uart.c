@@ -213,7 +213,11 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
     return NULL;
   }
 
-  pn53x_init(pnd);
+  if (pn53x_init(pnd) < 0)
+  {
+    pn532_uart_close(pnd);
+    return NULL;
+  }
   return pnd;
 }
 
@@ -222,7 +226,7 @@ pn532_uart_wakeup(nfc_device *pnd)
 {
   /* High Speed Unit (HSU) wake up consist to send 0x55 and wait a "long" delay for PN532 being wakeup. */
   const uint8 pn532_wakeup_preamble[] = { 0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-  int res = ble_uart_send(pn532_wakeup_preamble, sizeof(pn532_wakeup_preamble), 0);
+  int res = ble_uart_poll_send(pn532_wakeup_preamble, sizeof(pn532_wakeup_preamble), 0);
   CHIP_DATA(pnd)->power_mode = NORMAL; // PN532 should now be awake
   return res;
 }
@@ -267,7 +271,7 @@ pn532_uart_send(nfc_device *pnd, const uint8 *pbtData, const size_t szData, int 
     return pnd->last_error;
   }
 
-  res = ble_uart_send(abtFrame, szFrame, timeout);
+  res = ble_uart_poll_send(abtFrame, szFrame, timeout);
   if (res != 0) {
     //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to transmit data. (TX)");
     pnd->last_error = res;
@@ -275,7 +279,7 @@ pn532_uart_send(nfc_device *pnd, const uint8 *pbtData, const size_t szData, int 
   }
 
   uint8 abtRxBuf[PN53x_ACK_FRAME__LEN];
-  res = ble_uart_receive(abtRxBuf, sizeof(abtRxBuf), 0, timeout);
+  res = ble_uart_poll_receive(abtRxBuf, sizeof(abtRxBuf), 0, timeout);
   if (res != 0) {
     //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%s", "Unable to read ACK");
     pnd->last_error = res;
@@ -303,7 +307,7 @@ pn532_uart_receive(nfc_device *pnd, uint8 *pbtData, const size_t szDataLen, int 
   abort_p = (void *) & (DRIVER_DATA(pnd)->abort_flag);
 #endif
 
-  pnd->last_error = ble_uart_receive(abtRxBuf, 5, abort_p, timeout);
+  pnd->last_error = ble_uart_poll_receive(abtRxBuf, 5, abort_p, timeout);
 
   if (abort_p && (NFC_EOPABORTED == pnd->last_error)) {
     pn532_uart_ack(pnd);
@@ -323,13 +327,13 @@ pn532_uart_receive(nfc_device *pnd, uint8 *pbtData, const size_t szDataLen, int 
 
   if ((0x01 == abtRxBuf[3]) && (0xff == abtRxBuf[4])) {
     // Error frame
-    ble_uart_receive(abtRxBuf, 3, 0, timeout);
+    ble_uart_poll_receive(abtRxBuf, 3, 0, timeout);
     //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Application level error detected");
     pnd->last_error = NFC_EIO;
     goto error;
   } else if ((0xff == abtRxBuf[3]) && (0xff == abtRxBuf[4])) {
     // Extended frame
-    pnd->last_error = ble_uart_receive(abtRxBuf, 3, 0, timeout);
+    pnd->last_error = ble_uart_poll_receive(abtRxBuf, 3, 0, timeout);
     if (pnd->last_error != 0) {
       //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to receive data. (RX)");
       goto error;
@@ -361,7 +365,7 @@ pn532_uart_receive(nfc_device *pnd, uint8 *pbtData, const size_t szDataLen, int 
   }
 
   // TFI + PD0 (CC+1)
-  pnd->last_error = ble_uart_receive(abtRxBuf, 2, 0, timeout);
+  pnd->last_error = ble_uart_poll_receive(abtRxBuf, 2, 0, timeout);
   if (pnd->last_error != 0) {
     //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to receive data. (RX)");
     goto error;
@@ -380,14 +384,14 @@ pn532_uart_receive(nfc_device *pnd, uint8 *pbtData, const size_t szDataLen, int 
   }
 
   if (len) {
-    pnd->last_error = ble_uart_receive(pbtData, len, 0, timeout);
+    pnd->last_error = ble_uart_poll_receive(pbtData, len, 0, timeout);
     if (pnd->last_error != 0) {
       //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to receive data. (RX)");
       goto error;
     }
   }
 
-  pnd->last_error = ble_uart_receive(abtRxBuf, 2, 0, timeout);
+  pnd->last_error = ble_uart_poll_receive(abtRxBuf, 2, 0, timeout);
   if (pnd->last_error != 0) {
     //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to receive data. (RX)");
     goto error;
@@ -426,7 +430,7 @@ pn532_uart_ack(nfc_device *pnd)
       return res;
     }
   }
-  return (ble_uart_send(pn53x_ack_frame, sizeof(pn53x_ack_frame),  0));
+  return (ble_uart_poll_send(pn53x_ack_frame, sizeof(pn53x_ack_frame),  0));
 }
 
 static int

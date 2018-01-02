@@ -261,7 +261,8 @@ void simpleBLE_NPI_init(void)
   else
   {
     NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
-    NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallback1);
+    ble_uart_poll_init();
+    //NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallback1);
     //uint8 WAKE_UP[] = {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x03, 0xfd, 0xd4, 0x14, 0x01, 0x17, 0x00};
     //NPI_WriteTransportPort(HAL_UART_PORT_1, WAKE_UP, sizeof(WAKE_UP));
     //NPI_WriteTransportPort(HAL_UART_PORT_0, WAKE_UP, sizeof(WAKE_UP));

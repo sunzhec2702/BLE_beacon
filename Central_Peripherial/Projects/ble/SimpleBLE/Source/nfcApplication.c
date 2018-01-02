@@ -172,6 +172,10 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
     {
         // Here we open the NFC.
         pnd = nfc_open(context, NULL);
+        if (pnd != NULL)
+        {
+            NFC_UART_DEBUG_STRING("NFC_INIT_DONE\r\n");
+        }
         return events ^ NFC_START_EVT;
     }
     if (events & NFC_START_INITIATOR)

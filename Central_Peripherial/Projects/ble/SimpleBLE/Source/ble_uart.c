@@ -3,6 +3,7 @@
 #include "stdio.h"
 #include "npi.h"
 #include "_hal_uart_dma_common.h"
+//#include "ble_uart_poll_def.h"
 
 static uint8 rxBuffer[64];
 static uint16 rxNum = 0;
@@ -10,6 +11,7 @@ static bool waitingRx = FALSE;
 
 #define MAX_TIMEOUT 10000
 
+static uint8 uartRxBuf[30];
 
 int ble_uart_poll_init()
 {
@@ -29,78 +31,114 @@ int ble_uart_poll_init()
     * on the transmitter must be connected to the RS/RTS (Ready-To-Send) pin on the
     * receiver.
     */
-#if (chip==2541 || chip==2543 || chip==2545)
     // Configure USART0 for Alternative 1 => Port P0 (PERCFG.U0CFG = 0).
-    PERCFG = (PERCFG & ~PERCFG_U0CFG) | PERCFG_U0CFG_ALT1;    
-#endif
-        
-#if (chip==2541)
+    PERCFG |= 0x02; //UART1, Alternative 2.
     // Give priority to USART 0 over Timer 1 for port 0 pins.
-    P2DIR &= P2DIR_PRIP0_USART0;
-#elif (chip==2543 || chip==2545)
-    // Give priority to USART 0 over Timer 1 for port 0 pins.
-    PPRI &= ~PPRI_PRI0P0;
-#endif
-
-#if (chip==2541 || chip==2543 || chip==2545)
+    P2DIR &= ~0xC0;
+    P2DIR |= (0x01 << 6);
     // Set pins 2, 3 and 5 as peripheral I/O and pin 4 as GPIO output.
-    P0SEL |= BIT5 | BIT4 | BIT3 | BIT2;
-#elif (chip==2544)
-    // Set pins 1, 2 and 3 as peripheral I/O and pin 0 as GPIO output.
-    P0SEL0 = 0x11;        // Map P0_0 and P0_1 as UASRT0. 
-    P0SEL1 = 0x11;        // Map P0_3 and P0_2 as UASRT0. 
-#endif
-     
-#if (chip==2541 || chip==2543 || chip==2545)
-    // Initialize P0_1 for SRF05EB S1 button.
-    P0SEL &= ~BIT1;           // Function as General Purpose I/O.
-    P0DIR &= ~BIT1;           // Input.
-#elif (chip==2544)
-    // Initialize P0_1 for SRF05EB S1 button.
-    P0SEL0 &= ~P0SEL0_SELP0_1;// Function as General Purpose I/O.
-    PDIR &= ~PDIR_DIRP0_1;    // Input.
-#endif
-  
+    P1SEL |= 0xC0;
+ 
     /***************************************************************************
     * Configure UART
     *
     */
-  
     // Initialise bitrate = 57.6 kbps.
-    U0BAUD = UART_BAUD_M;
-    U0GCR = (U0GCR & ~U0GCR_BAUD_E) | UART_BAUD_E;
+    U1BAUD = 216;
+    U1GCR = (U1GCR & ~0x1F) | 11;
 
     // Initialise UART protocol (start/stop bit, data bits, parity, etc.):
     // USART mode = UART (U0CSR.MODE = 1)
-    U0CSR |= U0CSR_MODE;
+    U1CSR |= 0x80;
 
     // Start bit level = low => Idle level = high  (U0UCR.START = 0).
-    U0UCR &= ~U0UCR_START;
+    U1UCR &= ~0x01;
 
     // Stop bit level = high (U0UCR.STOP = 1).
-    U0UCR |= U0UCR_STOP;
+    U1UCR |= 0x02;
 
     // Number of stop bits = 1 (U0UCR.SPB = 0).
-    U0UCR &= ~U0UCR_SPB;
+    U1UCR &= ~0x04;
 
     // Parity = disabled (U0UCR.PARITY = 0).
-    U0UCR &= ~U0UCR_PARITY;
+    U1UCR &= ~0x08;
 
     // 9-bit data enable = 8 bits transfer (U0UCR.BIT9 = 0).
-    U0UCR &= ~U0UCR_BIT9;
+    U1UCR &= ~0x10;
 
     // Level of bit 9 = 0 (U0UCR.D9 = 0), used when U0UCR.BIT9 = 1.
     // Level of bit 9 = 1 (U0UCR.D9 = 1), used when U0UCR.BIT9 = 1.
     // Parity = Even (U0UCR.D9 = 0), used when U0UCR.PARITY = 1.
     // Parity = Odd (U0UCR.D9 = 1), used when U0UCR.PARITY = 1.
-    U0UCR &= ~U0UCR_D9;
+    U1UCR &= ~0x20;
 
     // Flow control = disabled (U0UCR.FLOW = 0).
-    U0UCR &= ~U0UCR_FLOW;
+    U1UCR &= ~0x40;
 
     // Bit order = LSB first (U0GCR.ORDER = 0).
-    U0GCR &= ~U0GCR_ORDER;
+    U1GCR &= ~0x20;
 
+    // Enable receive.
+    U1CSR |= 0x40;
+
+    // Clear any pending RX
+    U1CSR &= ~0x04;
+/*
+    uint8 debug_uart[] = {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x03, 0xfd, 0xd4, 0x14, 0x01, 0x17, 0x00};
+    ble_uart_poll_send(debug_uart, sizeof(debug_uart), 0);
+    ble_uart_poll_receive(uartRxBuf, 15, NULL, 0);
+*/
+    return 0;
+}
+
+int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *abort_p, int timeout)
+{
+    (void) abort_p;
+    uint16 uartRxIndex;
+
+    // Enable UART0 RX (U0CSR.RE = 1).
+    U1CSR |= 0x40;
+
+    // Clear any pending RX interrupt request (set U0CSR.RX_BYTE = 0).
+    // Darren
+    // U1CSR &= ~0x04;
+
+    // Loop: receive each UART0 sample from the UART0 RX line.
+    for (uartRxIndex = 0; uartRxIndex < uartRxBufLength; uartRxIndex++)
+    {
+        // Wait until data received (U0CSR.RX_BYTE = 1).
+        while( !(U1CSR & 0x04) );
+
+        // Read UART0 RX buffer.
+        uartRxBuf[uartRxIndex] = U1DBUF;
+    }
+    //uint8 debugReceive[] = {0xBB, 0xAA};
+    //NFC_UART_DEBUG(debugReceive, sizeof(debugReceive));
+    NFC_UART_DEBUG(uartRxBuf, (uint16)uartRxBufLength);
+    //NFC_UART_DEBUG(debugReceive, sizeof(debugReceive));
+    return 0;
+}
+
+int ble_uart_poll_send(const uint8* uartTxBuf, const size_t uartTxBufLength, int timeout)
+{
+    (void) timeout;
+    uint16 uartTxIndex;
+
+    // Clear any pending TX interrupt request (set U0CSR.TX_BYTE = 0).
+    U1CSR &= ~0x02;
+
+    // Loop: send each UART0 sample on the UART0 TX line.
+    for (uartTxIndex = 0; uartTxIndex < uartTxBufLength; uartTxIndex++)
+    {
+        U1DBUF = uartTxBuf[uartTxIndex];
+        while(! (U1CSR & 0x02) );
+        U1CSR &= ~0x02;
+    }
+    uint8 debugSend[] = {0xDD, 0xCC};
+    NFC_UART_DEBUG(debugSend, sizeof(debugSend));
+    NFC_UART_DEBUG((uint8 *)uartTxBuf, (uint16)uartTxBufLength);
+    //NFC_UART_DEBUG(debugSend, sizeof(debugSend));
+    return 0;
 }
 
 int ble_uart_receive(uint8 *pbtRx, const size_t szRx, void *abort_p, int timeout)
