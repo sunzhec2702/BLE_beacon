@@ -3,11 +3,13 @@
 #include "stdio.h"
 #include "npi.h"
 #include "_hal_uart_dma_common.h"
+#include "nfcApplication.h"
 //#include "ble_uart_poll_def.h"
 
 static uint8 rxBuffer[64];
 static uint16 rxNum = 0;
 static bool waitingRx = FALSE;
+static bool receiveTimeout = FALSE;
 
 #define MAX_TIMEOUT 10000
 
@@ -91,11 +93,18 @@ int ble_uart_poll_init()
     return 0;
 }
 
+void ble_uart_poll_receive_timeout_callback()
+{
+    receiveTimeout = TRUE;
+}
+
 int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *abort_p, int timeout)
 {
     (void) abort_p;
+    volatile uint32 calCnt = 0x16E360 * timeout;
     uint16 uartRxIndex;
-
+    
+    //osal_start_timerEx(getNFCAppID(), NFC_UART_RECEIVE_TIMEOUT_EVT, 2000);
     // Enable UART0 RX (U0CSR.RE = 1).
     U1CSR |= 0x40;
 
@@ -107,14 +116,21 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
     for (uartRxIndex = 0; uartRxIndex < uartRxBufLength; uartRxIndex++)
     {
         // Wait until data received (U0CSR.RX_BYTE = 1).
-        while( !(U1CSR & 0x04) );
-
+        while( !(U1CSR & 0x04) && (calCnt > 0 || timeout <= 0) )
+        {
+            calCnt--;
+        }
         // Read UART0 RX buffer.
         uartRxBuf[uartRxIndex] = U1DBUF;
+        if (calCnt == 0 && timeout > 0)
+        {
+          return -1;
+        }
     }
     //uint8 debugReceive[] = {0xBB, 0xAA};
     //NFC_UART_DEBUG(debugReceive, sizeof(debugReceive));
     NFC_UART_DEBUG(uartRxBuf, (uint16)uartRxBufLength);
+    //osal_stop_timerEx(getNFCAppID(), NFC_UART_RECEIVE_TIMEOUT_EVT);
     //NFC_UART_DEBUG(debugReceive, sizeof(debugReceive));
     return 0;
 }
@@ -123,7 +139,8 @@ int ble_uart_poll_send(const uint8* uartTxBuf, const size_t uartTxBufLength, int
 {
     (void) timeout;
     uint16 uartTxIndex;
-
+    
+    receiveTimeout = FALSE;
     // Clear any pending TX interrupt request (set U0CSR.TX_BYTE = 0).
     U1CSR &= ~0x02;
 

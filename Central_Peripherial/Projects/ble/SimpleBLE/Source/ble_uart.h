@@ -18,6 +18,7 @@ static void SleepWaitUart(uint16 duration);
 
 
 int ble_uart_poll_init(void);
+void ble_uart_poll_receive_timeout_callback(void);
 int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *abort_p, int timeout);
 int ble_uart_poll_send(const uint8* uartTxBuf, const size_t uartTxBufLength, int timeout);
 

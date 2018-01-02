@@ -10,6 +10,7 @@
 #define NFC_START_CARD      0x0008
 #define NFC_START_DEP       0x0010
 #define NFC_STOP_DEP        0x0020
+#define NFC_UART_RECEIVE_TIMEOUT_EVT 0x0040
 
 
 

@@ -229,5 +229,11 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
         osal_stop_timerEx(nfcAppID, NFC_START_INITIATOR|NFC_START_TARGET);
         return events ^ NFC_STOP_DEP;
     }
+
+    if (events & NFC_UART_RECEIVE_TIMEOUT_EVT)
+    {
+
+        return events ^ NFC_UART_RECEIVE_TIMEOUT_EVT;
+    }
     return 0;
 }
