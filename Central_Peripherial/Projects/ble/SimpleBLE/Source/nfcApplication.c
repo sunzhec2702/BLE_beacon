@@ -111,6 +111,16 @@ void nfcWorkAsTarget(uint16 timeout)
         //nfc_close(pnd);
         //nfc_exit(context);
     }
+
+    if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), 0)) < 0)
+    {
+        //nfc_perror(pnd, "nfc_target_receive_bytes");
+        //nfc_close(pnd);
+        //nfc_exit(context);
+        //exit(EXIT_FAILURE);
+    }
+    abtRx[(size_t)szRx] = '\0';
+    NFC_UART_DEBUG(abtRx, szRx + 1);
 }
 
 void nfcWorkAsCard()
