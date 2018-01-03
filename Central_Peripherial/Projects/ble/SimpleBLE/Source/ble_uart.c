@@ -101,7 +101,7 @@ void ble_uart_poll_receive_timeout_callback()
 int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *abort_p, int timeout)
 {
     (void) abort_p;
-    volatile uint32 calCnt = 0x16E360 * timeout;
+    volatile uint32 calCnt = 0x5DC * timeout; // 0x5DC is 1 ms
     uint16 uartRxIndex;
     
     //osal_start_timerEx(getNFCAppID(), NFC_UART_RECEIVE_TIMEOUT_EVT, 2000);
