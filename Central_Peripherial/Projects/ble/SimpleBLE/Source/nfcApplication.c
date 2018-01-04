@@ -111,16 +111,19 @@ void nfcWorkAsTarget(uint16 timeout)
         //nfc_close(pnd);
         //nfc_exit(context);
     }
-
-    if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), 0)) < 0)
+    else
     {
-        //nfc_perror(pnd, "nfc_target_receive_bytes");
-        //nfc_close(pnd);
-        //nfc_exit(context);
-        //exit(EXIT_FAILURE);
+        if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), 0)) < 0)
+        {
+            //nfc_perror(pnd, "nfc_target_receive_bytes");
+            //nfc_close(pnd);
+            //nfc_exit(context);
+            //exit(EXIT_FAILURE);
+        }
+        abtRx[(size_t)szRx] = '\0';
+        NFC_UART_DEBUG(abtRx, szRx + 1);
     }
-    abtRx[(size_t)szRx] = '\0';
-    NFC_UART_DEBUG(abtRx, szRx + 1);
+
 }
 
 void nfcWorkAsCard()
@@ -186,7 +189,7 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
         {
             NFC_UART_DEBUG_STRING("NFC_INIT_DONE\r\n");
         }
-        nfcWorkAsTarget(0);
+        nfcWorkAsTarget(5000);
         return events ^ NFC_START_EVT;
     }
     if (events & NFC_START_INITIATOR)
@@ -232,7 +235,7 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
 
     if (events & NFC_UART_RECEIVE_TIMEOUT_EVT)
     {
-
+        
         return events ^ NFC_UART_RECEIVE_TIMEOUT_EVT;
     }
     return 0;

@@ -8,11 +8,7 @@
 
 static uint8 rxBuffer[64];
 static uint16 rxNum = 0;
-static bool waitingRx = FALSE;
-static bool receiveTimeout = FALSE;
-
-#define MAX_TIMEOUT 10000
-
+static int32 calCnt = 0;
 static uint8 uartRxBuf[30];
 
 int ble_uart_poll_init()
@@ -93,17 +89,19 @@ int ble_uart_poll_init()
     return 0;
 }
 
-void ble_uart_poll_receive_timeout_callback()
-{
-    receiveTimeout = TRUE;
-}
-
 int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *abort_p, int timeout)
 {
     (void) abort_p;
-    volatile uint32 calCnt = 0x5DC * timeout; // 0x5DC is 1 ms
+    calCnt = 300 * timeout ; // 0x5DC is 1 ms
     uint16 uartRxIndex;
     
+    if (timeout < 2000)
+        timeout = 0;    
+       
+    if (timeout >= 4000)
+    {
+      calCnt = 769000;
+    }
     //osal_start_timerEx(getNFCAppID(), NFC_UART_RECEIVE_TIMEOUT_EVT, 2000);
     // Enable UART0 RX (U0CSR.RE = 1).
     U1CSR |= 0x40;
@@ -118,12 +116,14 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
         // Wait until data received (U0CSR.RX_BYTE = 1).
         while( !(U1CSR & 0x04) && (calCnt > 0 || timeout <= 0) )
         {
+            //SleepWaitUart(1);
             calCnt--;
         }
         // Read UART0 RX buffer.
         uartRxBuf[uartRxIndex] = U1DBUF;
-        if (calCnt == 0 && timeout > 0)
+        if (calCnt <= 0 && timeout > 0)
         {
+          //NFC_UART_DEBUG_VALUE("timeout = ", timeout, 10);
           return -1;
         }
     }
@@ -140,7 +140,6 @@ int ble_uart_poll_send(const uint8* uartTxBuf, const size_t uartTxBufLength, int
     (void) timeout;
     uint16 uartTxIndex;
     
-    receiveTimeout = FALSE;
     // Clear any pending TX interrupt request (set U0CSR.TX_BYTE = 0).
     U1CSR &= ~0x02;
 
@@ -190,6 +189,7 @@ int ble_uart_receive(uint8 *pbtRx, const size_t szRx, void *abort_p, int timeout
   */
 }
 
+/*
 int ble_uart_send(const uint8 *pbtTx, const size_t szTx, int timeout)
 {
     memset(rxBuffer, 0, sizeof(rxBuffer));
@@ -220,6 +220,7 @@ int ble_uart_interrupt(uint8 *bleRx, uint16 bleRxNum)
     waitingRx = FALSE;
     return 0;
 }
+*/
 
 void ble_uart_flush_input(bool wait)
 {

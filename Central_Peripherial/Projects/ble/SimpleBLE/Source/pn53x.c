@@ -989,7 +989,7 @@ pn53x_check_communication(struct nfc_device *pnd)
   uint8 abtRx[sizeof(abtExpectedRx)];
   size_t szRx = sizeof(abtRx);
   int res = 0;
-  if ((res = pn53x_transceive(pnd, abtCmd, sizeof(abtCmd), abtRx, szRx, 500)) < 0)
+  if ((res = pn53x_transceive(pnd, abtCmd, sizeof(abtCmd), abtRx, szRx, 0)) < 0)
     return res;
   szRx = (size_t) res;
   if ((sizeof(abtExpectedRx) == szRx) && (0 == memcmp(abtRx, abtExpectedRx, sizeof(abtExpectedRx))))
@@ -2537,7 +2537,7 @@ static struct sErrorMessage {
   { ERFPROTO, "RF Protocol Error" },    // RF Protocol error (see PN53x manual)
   { EOVHEAT, "Chip Overheating" },    // Temperature error: the internal temperature sensor has detected overheating, and therefore has automatically switched off the antenna drivers
   { EINBUFOVF, "Internal Buffer overflow."},  // Internal buffer overflow
-  { EINVPARAM, "Invalid Parameter"},    // Invalid parameter (range, format, â€?)
+  { EINVPARAM, "Invalid Parameter"},    // Invalid parameter (range, format, ï¿½?)
   { EOPNOTALL, "Operation Not Allowed" }, // Operation not allowed in this configuration (host controller interface)
   { ECMD, "Command Not Acceptable" },   // Command is not acceptable due to the current context
   { EOVCURRENT, "Over Current"  },
