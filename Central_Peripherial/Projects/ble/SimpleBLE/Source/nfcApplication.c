@@ -76,6 +76,7 @@ void nfcWorkAsInitiator(uint16 timeout)
 
 void nfcWorkAsTarget(uint16 timeout)
 {
+    uint8  abtTx[] = "Hello Mars!";
     nfc_target nt = {
         .nm = {
             .nmt = NMT_DEP,
@@ -122,6 +123,14 @@ void nfcWorkAsTarget(uint16 timeout)
         }
         abtRx[(size_t)szRx] = '\0';
         NFC_UART_DEBUG(abtRx, szRx + 1);
+        if (nfc_target_send_bytes(pnd, abtTx, sizeof(abtTx), 0) < 0)
+        {
+            //nfc_perror(pnd, "nfc_target_send_bytes");
+            //nfc_close(pnd);
+            //nfc_exit(context);
+            //exit(EXIT_FAILURE);
+        }
+        NFC_UART_DEBUG_STRING("Data sent.\r\n");
     }
 
 }
@@ -190,6 +199,7 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
             NFC_UART_DEBUG_STRING("NFC_INIT_DONE\r\n");
         }
         nfcWorkAsTarget(5000);
+        //nfcWorkAsInitiator(5000);
         return events ^ NFC_START_EVT;
     }
     if (events & NFC_START_INITIATOR)
