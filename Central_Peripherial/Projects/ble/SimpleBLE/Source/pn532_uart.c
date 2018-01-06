@@ -152,17 +152,6 @@ static void
 pn532_uart_close(nfc_device *pnd)
 {
   pn53x_idle(pnd);
-/*
-  // Release UART port
-  uart_close(DRIVER_DATA(pnd)->port);
-
-#ifndef WIN32
-  // Release file descriptors used for abort mecanism
-  close(DRIVER_DATA(pnd)->iAbortFds[0]);
-  close(DRIVER_DATA(pnd)->iAbortFds[1]);
-#endif
-*/
-
   pn53x_data_free(pnd);
   nfc_device_free(pnd);
 }

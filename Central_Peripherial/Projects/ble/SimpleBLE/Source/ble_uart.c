@@ -134,7 +134,7 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
     }
     //uint8 debugReceive[] = {0xBB, 0xAA};
     //NFC_UART_DEBUG(debugReceive, sizeof(debugReceive));
-    NFC_UART_DEBUG(uartRxBuf, (uint16)uartRxBufLength);
+    //NFC_UART_DEBUG(uartRxBuf, (uint16)uartRxBufLength);
     //osal_stop_timerEx(getNFCAppID(), NFC_UART_RECEIVE_TIMEOUT_EVT);
     //NFC_UART_DEBUG(debugReceive, sizeof(debugReceive));
     return 0;
@@ -156,8 +156,8 @@ int ble_uart_poll_send(const uint8* uartTxBuf, const size_t uartTxBufLength, int
         U1CSR &= ~0x02;
     }
     uint8 debugSend[] = {0xDD, 0xCC};
-    NFC_UART_DEBUG(debugSend, sizeof(debugSend));
-    NFC_UART_DEBUG((uint8 *)uartTxBuf, (uint16)uartTxBufLength);
+    //NFC_UART_DEBUG(debugSend, sizeof(debugSend));
+    //NFC_UART_DEBUG((uint8 *)uartTxBuf, (uint16)uartTxBufLength);
     //NFC_UART_DEBUG(debugSend, sizeof(debugSend));
     return 0;
 }

@@ -44,20 +44,23 @@ int nfcWorkAsInitiator(uint16 timeout)
     }
     if (nfc_initiator_select_dep_target(pnd, NDM_PASSIVE, NBR_212, NULL, &nt, timeout) < 0)
     {
+        NFC_UART_DEBUG_STRING("INITIATOR_SELECT_TARGET_TIMEOUT\r\n");
         return -1;
-        // osal_set_event(nfcAppID, NFC_START_TARGET);
-        // nfcWorkAsTarget(5000);
     }
     else
     {
         int res;
         if ((res = nfc_initiator_transceive_bytes(pnd, abtTx, sizeof(abtTx), abtRx, sizeof(abtRx), 0)) < 0)
         {
+            NFC_UART_DEBUG_STRING("INITIATOR_TRANSCEIVE_BYTES_FAILED\r\n");
             return -1;
         }
         abtRx[res] = 0;
+        NFC_UART_DEBUG(abtRx, res+1);
+        NFC_UART_DEBUG_STRING("\r\n");
         if (nfc_initiator_deselect_target(pnd) < 0)
         {
+            NFC_UART_DEBUG_STRING("INITIATOR_DESELECT_TARGET_FAILED\r\n");
             //return -1;
         }
     }
@@ -94,21 +97,21 @@ int nfcWorkAsTarget(uint16 timeout)
 
     if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), timeout)) < 0)
     {
-        // Timeout
-        //nfcWorkAsInitiator(5000);
-        // osal_set_event(nfcAppID, NFC_START_INITIATOR);
+        NFC_UART_DEBUG_STRING("TARGET_INIT_TIMEOUT\r\n");
         return -1;
     }
     else
     {
         if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), 0)) < 0)
         {
+            NFC_UART_DEBUG_STRING("TARGET_RECEIVE_BYTES_FAILED\r\n");
             return -1;
         }
         abtRx[(size_t)szRx] = '\0';
         NFC_UART_DEBUG(abtRx, szRx + 1);
         if (nfc_target_send_bytes(pnd, abtTx, sizeof(abtTx), 0) < 0)
         {
+            NFC_UART_DEBUG_STRING("TARGET_RECEIVE_SEND_FAILED\r\n");
             return -1;
         }
         NFC_UART_DEBUG_STRING("Data sent.\r\n");
@@ -161,12 +164,26 @@ int nfcWorkAsCard()
 
 void startDEPEvent()
 {
+    // Here we open the NFC.
+    pnd = nfc_open(context, NULL);
+    if (pnd != NULL)
+    {
+        NFC_UART_DEBUG_STRING("NFC_OPEN_DONE\r\n");
+    }
+    else
+    {
+        NFC_UART_DEBUG_STRING("NFC_OPEN_FAILED\r\n");
+    }
     osal_set_event(nfcAppID, NFC_START_DEP);
 }
 
 void stopDEPEvent()
 {
     osal_set_event(nfcAppID, NFC_STOP_DEP);
+    if (pnd != NULL)
+    {
+        nfc_close(pnd);
+    }
 }
 
 uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
@@ -174,14 +191,7 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
     (void)task_id;
     if (events & NFC_START_EVT)
     {
-        // Here we open the NFC.
-        pnd = nfc_open(context, NULL);
-        if (pnd != NULL)
-        {
-            NFC_UART_DEBUG_STRING("NFC_INIT_DONE\r\n");
-        }
         startDEPEvent();
-        //nfcWorkAsInitiator(DEFAULT_TIMEOUT_INITATOR);
         return events ^ NFC_START_EVT;
     }
     if (events & NFC_START_INITIATOR)
