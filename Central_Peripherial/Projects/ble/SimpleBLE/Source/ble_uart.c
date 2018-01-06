@@ -96,7 +96,9 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
     uint16 uartRxIndex;
     
     if (timeout < 2000)
-        timeout = 0;    
+    {
+        calCnt = 769000 >> 2;
+    }
     else if (timeout >= 2000 && timeout <= 5000)
     {
         calCnt = 769000 >> 2;
