@@ -21,8 +21,8 @@ uint8 getNFCAppID(void);
 void startDEPEvent(void);
 void stopDEPEvent(void);
 
-void nfcWorkAsInitiator(uint16 timeout);
-void nfcWorkAsTarget(uint16 timeout);
-void nfcWorkAsCard(void);
+int nfcWorkAsInitiator(uint16 timeout);
+int nfcWorkAsTarget(uint16 timeout);
+int nfcWorkAsCard(void);
 
 #endif

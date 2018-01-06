@@ -97,10 +97,13 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
     
     if (timeout < 2000)
         timeout = 0;    
-       
-    if (timeout >= 4000)
+    else if (timeout >= 2000 && timeout <= 5000)
     {
-      calCnt = 769000 >> 2;
+        calCnt = 769000 >> 2;
+    }
+    if (timeout >= 8000)
+    {
+        calCnt = 769000;
     }
     //osal_start_timerEx(getNFCAppID(), NFC_UART_RECEIVE_TIMEOUT_EVT, 2000);
     // Enable UART0 RX (U0CSR.RE = 1).
