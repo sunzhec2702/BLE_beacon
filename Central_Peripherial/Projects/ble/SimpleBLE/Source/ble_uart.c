@@ -6,10 +6,8 @@
 #include "nfcApplication.h"
 //#include "ble_uart_poll_def.h"
 
-static uint8 rxBuffer[64];
 static uint16 rxNum = 0;
 static int32 calCnt = 0;
-static uint8 uartRxBuf[30];
 
 int ble_uart_poll_init()
 {
@@ -94,7 +92,7 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
     (void) abort_p;
     calCnt = 300 * timeout ; // 0x5DC is 1 ms
     uint16 uartRxIndex;
-    
+    int32 calCntReal = 0;
     if (timeout < 2000)
     {
         calCnt = 769000 >> 2;
@@ -107,6 +105,7 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
     {
         calCnt = 769000;
     }
+    calCntReal = calCnt;
     //osal_start_timerEx(getNFCAppID(), NFC_UART_RECEIVE_TIMEOUT_EVT, 2000);
     // Enable UART0 RX (U0CSR.RE = 1).
     U1CSR |= 0x40;
@@ -119,18 +118,19 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
     for (uartRxIndex = 0; uartRxIndex < uartRxBufLength; uartRxIndex++)
     {
         // Wait until data received (U0CSR.RX_BYTE = 1).
-        while( !(U1CSR & 0x04) && (calCnt > 0 || timeout <= 0) )
+        while( !(U1CSR & 0x04) && (calCntReal > 0 || timeout <= 0) )
         {
             //SleepWaitUart(1);
-            calCnt--;
+            calCntReal--;
         }
         // Read UART0 RX buffer.
         uartRxBuf[uartRxIndex] = U1DBUF;
-        if (calCnt <= 0 && timeout > 0)
+        if (calCntReal <= 0 && timeout > 0)
         {
           //NFC_UART_DEBUG_VALUE("timeout = ", timeout, 10);
           return -1;
         }
+        calCntReal = calCnt;
     }
     //uint8 debugReceive[] = {0xBB, 0xAA};
     //NFC_UART_DEBUG(debugReceive, sizeof(debugReceive));
