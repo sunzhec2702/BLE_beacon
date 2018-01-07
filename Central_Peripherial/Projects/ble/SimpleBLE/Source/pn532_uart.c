@@ -235,7 +235,7 @@ pn532_uart_send(nfc_device *pnd, const uint8 *pbtData, const size_t szData, int 
         return res;
       }
       // According to PN532 application note, C106 appendix: to go out Low Vbat mode and enter in normal mode we need to send a SAMConfiguration command
-      // Darren : Do we need to wait inifiect?
+      // Darren : Do we need to wait inifiect? Change this.
       if ((res = pn532_SAMConfiguration(pnd, PSM_NORMAL, 0)) < 0) {
         return res;
       }

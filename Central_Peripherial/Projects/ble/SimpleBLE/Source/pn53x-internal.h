@@ -87,11 +87,11 @@
 // The TFI is considered part of the overhead
 // Darren:Reduce...
 //#  define PN53x_NORMAL_FRAME__DATA_MAX_LEN              254
-#  define PN53x_NORMAL_FRAME__DATA_MAX_LEN              47
+#  define PN53x_NORMAL_FRAME__DATA_MAX_LEN              43
 #  define PN53x_NORMAL_FRAME__OVERHEAD                  8
 // Darren:Reduce...
 //#  define PN53x_EXTENDED_FRAME__DATA_MAX_LEN            264
-#  define PN53x_EXTENDED_FRAME__DATA_MAX_LEN            36
+#  define PN53x_EXTENDED_FRAME__DATA_MAX_LEN            32
 
 #  define PN53x_EXTENDED_FRAME__OVERHEAD                11
 #  define PN53x_ACK_FRAME__LEN                          6

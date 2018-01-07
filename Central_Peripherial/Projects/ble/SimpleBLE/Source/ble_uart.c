@@ -99,11 +99,11 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
     }
     else if (timeout >= 2000 && timeout <= 5000)
     {
-        calCnt = 769000 >> 2;
+        calCnt = 769000 >> 3;
     }
     if (timeout >= 8000)
     {
-        calCnt = 769000;
+        calCnt = 769000 >> 2;
     }
     calCntReal = calCnt;
     //osal_start_timerEx(getNFCAppID(), NFC_UART_RECEIVE_TIMEOUT_EVT, 2000);
@@ -128,7 +128,7 @@ int ble_uart_poll_receive(uint8* uartRxBuf, const size_t uartRxBufLength, void *
         if (calCntReal <= 0 && timeout > 0)
         {
           //NFC_UART_DEBUG_VALUE("timeout = ", timeout, 10);
-          return -1;
+          return -6;
         }
         calCntReal = calCnt;
     }
