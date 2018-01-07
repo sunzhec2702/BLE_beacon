@@ -1,5 +1,6 @@
 #include "nfcApplication.h"
 #include "nfc.h"
+#include "pn532_uart.h"
 
 #define DEFAULT_TARGET_ROLE_TIMEOUT 2000
 #define MAX_FRAME_LEN (264)
@@ -173,6 +174,7 @@ void startDEPEvent()
 {
     if (pnd != NULL)
     {
+        pn532_uart_wakeup(pnd);
         NFC_UART_DEBUG_STRING("NFC_OPEN_DONE\r\n");
     }
     else
