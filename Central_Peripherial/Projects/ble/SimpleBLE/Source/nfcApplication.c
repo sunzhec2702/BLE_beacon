@@ -29,6 +29,7 @@ void nfcAppInit(uint8 task_id)
     nfcAppID = task_id;
     // Just init, no return value.
     nfc_init(&context);
+    pnd = nfc_open(context, NULL);
     osal_start_timerEx(nfcAppID, NFC_START_EVT, 1000);
 }
 
@@ -165,7 +166,6 @@ int nfcWorkAsCard()
 void startDEPEvent()
 {
     // Here we open the NFC.
-    pnd = nfc_open(context, NULL);
     if (pnd != NULL)
     {
         NFC_UART_DEBUG_STRING("NFC_OPEN_DONE\r\n");
@@ -180,10 +180,7 @@ void startDEPEvent()
 void stopDEPEvent()
 {
     osal_set_event(nfcAppID, NFC_STOP_DEP);
-    if (pnd != NULL)
-    {
-        nfc_close(pnd);
-    }
+    //nfc_close(pnd);
 }
 
 uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
@@ -191,7 +188,7 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
     (void)task_id;
     if (events & NFC_START_EVT)
     {
-        startDEPEvent();
+        //startDEPEvent();
         return events ^ NFC_START_EVT;
     }
     if (events & NFC_START_INITIATOR)
