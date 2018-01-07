@@ -182,10 +182,14 @@ void startDEPEvent()
     osal_set_event(nfcAppID, NFC_START_DEP);
 }
 
-void stopDEPEvent()
+void stopDEPEvent(uint8 success)
 {
+    if (success == FALSE)
+    {
+        //nfc_close(pnd);
+        //nfc_exit(context);
+    }
     osal_set_event(nfcAppID, NFC_STOP_DEP);
-    //nfc_close(pnd);
 }
 
 uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
@@ -207,7 +211,11 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
             }
             if (depTimes <= 0)
             {
-                stopDEPEvent();
+                stopDEPEvent(FALSE);
+            }
+            else
+            {
+                stopDEPEvent(TRUE);
             }
         }
         return events ^ NFC_START_INITIATOR;
@@ -223,7 +231,11 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
             }
             if (depTimes <= 0)
             {
-                stopDEPEvent();
+                stopDEPEvent(FALSE);
+            }
+            else
+            {
+                stopDEPEvent(TRUE);
             }
         }
         return events ^ NFC_START_TARGET;

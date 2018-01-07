@@ -19,7 +19,7 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events);
 
 uint8 getNFCAppID(void);
 void startDEPEvent(void);
-void stopDEPEvent(void);
+void stopDEPEvent(uint8 success);
 
 int nfcWorkAsInitiator(uint16 timeout);
 int nfcWorkAsTarget(uint16 timeout);

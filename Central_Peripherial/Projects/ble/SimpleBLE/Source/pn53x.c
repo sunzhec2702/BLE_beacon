@@ -3588,5 +3588,5 @@ pn53x_data_free(struct nfc_device *pnd)
   if (CHIP_DATA(pnd)->supported_modulation_as_initiator) {
     osal_mem_free(CHIP_DATA(pnd)->supported_modulation_as_initiator);
   }
-  //osal_mem_free(pnd->chip_data); // It is NULL
+  osal_mem_free(pnd->chip_data); // It is NULL
 }

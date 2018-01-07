@@ -40,7 +40,8 @@ void
 nfc_device_free(nfc_device *dev)
 {
   if (dev) {
-    //osal_mem_free(dev->driver_data);
+    if (dev->driver_data)
+      osal_mem_free(dev->driver_data);
     osal_mem_free(dev);
   }
 }
