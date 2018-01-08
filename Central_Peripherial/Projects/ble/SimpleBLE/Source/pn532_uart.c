@@ -163,6 +163,7 @@ pn532_uart_open(const nfc_context *context, const nfc_connstring connstring)
   // We have a connection
   pnd = nfc_device_new(context, connstring);
   if (!pnd) {
+    NFC_UART_DEBUG_STRING("device alloc failed\r\n");
     return NULL;
   }
   //snprintf(pnd->name, sizeof(pnd->name), "%s:%s", PN532_UART_DRIVER_NAME, "0");

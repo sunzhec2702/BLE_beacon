@@ -50,15 +50,15 @@ int nfcWorkAsInitiator(uint16 timeout)
         //nfc_close(pnd);
         return -1;
     }
-    if (nfc_initiator_select_dep_target(pnd, NDM_PASSIVE, NBR_212, NULL, &nt, timeout) < 0)
+    if ((szRx = nfc_initiator_select_dep_target(pnd, NDM_PASSIVE, NBR_212, NULL, &nt, timeout)) < 0)
     {
-        NFC_UART_DEBUG_STRING("Initiator: timeout\r\n");
+        NFC_UART_DEBUG_VALUE("Initiator: timeout: ", szRx, 10);
         return -1;
     }
     else
     {
         int res;
-        if ((res = nfc_initiator_transceive_bytes(pnd, abtTx, sizeof(abtTx), abtRx, sizeof(abtRx), 0)) < 0)
+        if ((res = nfc_initiator_transceive_bytes(pnd, abtTx, sizeof(abtTx), abtRx, sizeof(abtRx), timeout)) < 0)
         {
             NFC_UART_DEBUG_STRING("Initiator: transceive fail\r\n");
             return -1;
@@ -106,12 +106,12 @@ int nfcWorkAsTarget(uint16 timeout)
 
     if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), timeout)) < 0)
     {
-        NFC_UART_DEBUG_STRING("Target: timeout\r\n");
+        NFC_UART_DEBUG_VALUE("Target: timeout: ", szRx, 10);
         return -1;
     }
     else
     {
-        if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), 0)) < 0)
+        if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), timeout)) < 0)
         {
             NFC_UART_DEBUG_STRING("Target: receive fail\r\n");
             return -1;
@@ -172,9 +172,15 @@ int nfcWorkAsCard()
 
 void startDEPEvent()
 {
+    if (pnd == NULL)
+    {
+        nfc_init(&context);
+        pnd = nfc_open(context, NULL);
+    }
+
     if (pnd != NULL)
     {
-        pn532_uart_wakeup(pnd);
+        //pn532_uart_wakeup(pnd);
         NFC_UART_DEBUG_STRING("NFC_OPEN_DONE\r\n");
     }
     else
@@ -188,8 +194,14 @@ void stopDEPEvent(uint8 success)
 {
     if (success == FALSE)
     {
-        //nfc_close(pnd);
-        //nfc_exit(context);
+        if (pnd != NULL)
+        {
+            pn53x_PowerDown(pnd);
+        }
+        nfc_close(pnd);
+        nfc_exit(context);
+        pnd = NULL;
+        context = NULL;
     }
     osal_set_event(nfcAppID, NFC_STOP_DEP);
 }
@@ -215,10 +227,6 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
             {
                 stopDEPEvent(FALSE);
             }
-            else
-            {
-                stopDEPEvent(TRUE);
-            }
         }
         return events ^ NFC_START_INITIATOR;
     }
@@ -234,10 +242,6 @@ uint16 nfcAppProcessEvent(uint8 task_id, uint16 events)
             if (depTimes <= 0)
             {
                 stopDEPEvent(FALSE);
-            }
-            else
-            {
-                stopDEPEvent(TRUE);
             }
         }
         return events ^ NFC_START_TARGET;

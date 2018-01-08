@@ -54,7 +54,7 @@ void nfc_init(nfc_context **context)
 {
   *context = nfc_context_new();
   if (!*context) {
-    NFC_UART_DEBUG_STRING("osal_mem_alloc fail\r\n");
+    NFC_UART_DEBUG_STRING("context: alloc fail\r\n");
     return;
   }
   if (!nfc_drivers)
