@@ -85,9 +85,6 @@ extern uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events );
 void PeripherialPerformPeriodicTask(uint16 event_id);
 void change_advertise_data(uint8 key_pressed);
 
-void nfcResultCallback(uint8 success);
-void nfcStartFeature(void);
-
 /*********************************************************************
 *********************************************************************/
 

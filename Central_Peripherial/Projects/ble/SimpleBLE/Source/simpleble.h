@@ -40,6 +40,13 @@ typedef enum
     BLE_ROLE_CENTRAL = 1,           //������ɫ    
 }BLE_ROLE;
 
+typedef enum
+{
+    BLE_STATUS_ON_ADV = 0,
+    BLE_STATUS_ON_SCAN,
+    BLE_STATUS_OFF,
+}BLE_STATUS;
+
 #ifdef DEBUG_BOARD
 #define HAL_LCD TRUE
 #define HAL_UART TRUE
@@ -214,19 +221,7 @@ extern BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd ;
 // ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�
 typedef struct 
 {
-    /*
-    ������
-    0---------9600 
-    1---------19200 
-    2---------38400 
-    3---------57600 
-    4---------115200
-    */
-    uint8 baudrate;                 //������ �� Ŀǰ֧�ֵ��б�����
-    uint8 parity;                   //У��λ    
-    uint8 stopbit;                  //ֹͣλ
-    // �豸���ƣ�� 11 λ���ֻ���ĸ�����л��ߺ��»��ߣ��������������ַ�    
-    uint8 name[12];                 
+    BLE_STATUS status;
     BLE_ROLE role;                  //����ģʽ  0: �ӻ�   1: ����
     uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���12λ �ַ���ʾ
     int8 rssi;                              //  RSSI �ź�ֵ

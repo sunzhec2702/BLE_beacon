@@ -907,8 +907,6 @@ static void change_advertise_data(uint8 key_pressed)
         advertise_control(TRUE);
       }
       rapid_processing = FALSE;
-      // Need to enable nfc feature.
-      nfcStartFeature();
     }
   }
 }
@@ -999,26 +997,6 @@ static void advertise_control(bool enable)
   return;
 }
 //#endif
-
-//NFC related functions
- void nfcResultCallback(uint8 success)
- {
-   osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //Darren
-   if (success == TRUE)
-   {
-     NFC_UART_DEBUG_STRING("Success result\r\n");
-   }
-   else
-   {
-     NFC_UART_DEBUG_STRING("Fail result\r\n");
-   }
- }
- 
- void nfcStartFeature()
- {
-   osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
-   startDEPEvent();
- } 
 
 /*********************************************************************
 *********************************************************************/

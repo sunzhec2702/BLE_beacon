@@ -84,7 +84,6 @@
 
 /* Application */
 #include "simpleBLEPeripheral.h"
-#include "nfcApplication.h"
 
 /*********************************************************************
  * GLOBAL VARIABLES
@@ -106,7 +105,7 @@ const pTaskEventHandlerFn tasksArr_peripheral[] =
   GAPRole_ProcessEvent,                                             // task 8
   GAPBondMgr_ProcessEvent,                                          // task 9
   GATTServApp_ProcessEvent,                                         // task 10
-  nfcAppProcessEvent,                                               // task 11
+  //nfcAppProcessEvent,                                               // task 11
   SimpleBLEPeripheral_ProcessEvent,                                 // task 12
 };
 
@@ -171,7 +170,7 @@ void osalInitPeripheralTasks( void )
   GATTServApp_Init( taskID++ );
 
   /* Application */
-  nfcAppInit( taskID++ );
+  //nfcAppInit( taskID++ );
   SimpleBLEPeripheral_Init( taskID );
 }
 

@@ -26,8 +26,6 @@
 #include "string.h"
 #include "math.h"
 
-#include "ble_uart.h"
-
 SYS_CONFIG sys_config;
 bool g_sleepFlag = FALSE;    //˯�߱�־
 uint8 uart_sleep_count = 0; // ˯�߼�����
@@ -39,7 +37,7 @@ BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd = BLE_CENTRAL_CONNECT_CMD_NULL;
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events);
 
 
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times)
 {
   while (times--)
@@ -73,8 +71,8 @@ uint32 str2Num(uint8 *numStr, uint8 iLength)
 
   /* 
           Ϊ����򵥣���ȷ��������ַ����������ֵ�
-          ����£��˴�δ����飬����Ҫ���?
-          numStr[i] - '0'�Ƿ���[0, 9]���������?
+          ����£��˴�δ����飬����Ҫ���?
+          numStr[i] - '0'�Ƿ���[0, 9]���������?
     */
   for (; i < iLength && numStr[i] != '\0'; ++i)
     rtnInt = rtnInt * 10 + (numStr[i] - '0');
@@ -121,7 +119,7 @@ void simpleBLE_WriteAllDataToFlash()
   osal_snv_write(0x80, sizeof(SYS_CONFIG), &sys_config);
 }
 
-// ��ȡ�Զ����? nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash()
 {
   int8 ret8 = osal_snv_read(0x80, sizeof(SYS_CONFIG), &sys_config);
@@ -133,47 +131,24 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
 {
   if (flag == PARA_ALL_FACTORY)
   {
-    //sys_config.baudrate = HAL_UART_BR_9600;
-    sys_config.baudrate = HAL_UART_BR_115200;
-    sys_config.parity = 0;
-    sys_config.stopbit = 0;
-
-    sprintf((char *)sys_config.name, DEV_NAME_DEFAULT); //�豸����
-
-    sys_config.role = BLE_ROLE_PERIPHERAL; //����ģʽ, Ĭ�ϴӻ�
-    //sys_config.role = BLE_ROLE_CENTRAL;
-
-    osal_memset(sys_config.mac_addr, 0, sizeof(sys_config.mac_addr));
-
+    sys_config.status = BLE_STATUS_OFF;
+    sys_config.role = BLE_ROLE_CENTRAL; //����ģʽ, Ĭ�ϴӻ�
     sys_config.rssi = 0; //  RSSI �ź�ֵ
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ��������ǿ��
     sys_config.txPower = 0;                  //  �����ź�ǿ��
   }
-  GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
+  GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
   simpleBLE_WriteAllDataToFlash();
 }
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?
 void PrintAllPara(void)
 {
   char strTemp[32];
-
-  sprintf(strTemp, "sys_config.baudrate = %d\r\n", sys_config.baudrate);
+  sprintf(strTemp, "sys_config.status = %d\r\n", sys_config.status);
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
   simpleBLE_Delay_1ms(100);
-
-  sprintf(strTemp, "sys_config.parity = %d\r\n", sys_config.parity);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
-  sprintf(strTemp, "sys_config.stopbit = %d\r\n", sys_config.stopbit);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
-  sprintf(strTemp, "sys_config.name = %s\r\n", sys_config.name);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
+  
   sprintf(strTemp, "sys_config.role = %d\r\n", sys_config.role);
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
   simpleBLE_Delay_1ms(100);
@@ -224,27 +199,18 @@ void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
 // 0 ��peripheral���豸�� 1: ��Ϊ central
 bool Check_startup_peripheral_or_central(void)
 {
-  /*
-    P0SEL &= ~0x02;     //����P0.1Ϊ��ͨIO��  
-    P0DIR &= ~0x02;     //��������P0.1���ϣ���P0.1Ϊ����ģʽ 
-    P0INP &= ~0x02;     //��P0.1��������
-
-    if(0 == P0_1)// �а�������
-    {
-        // 10ms ȥ���� 
-        simpleBLE_Delay_1ms(10);
-        if(0 == P0_1)// �а�������
-        {
-            return true;
-        }
-    }
-    */
-  if (PRESET_ROLE == BLE_ROLE_CENTRAL)
+  switch (sys_config.status)
+  {
+    case BLE_STATUS_OFF:
     return true;
-  else if (PRESET_ROLE == BLE_ROLE_PERIPHERAL)
+    break;
+    case BLE_STATUS_ON_ADV:
     return false;
-  else
-    return false;
+    break;
+    case BLE_STATUS_ON_SCAN:
+    return true;
+    break;
+  }
 }
 
 // ���п� uart ��ʼ��
@@ -261,7 +227,7 @@ void simpleBLE_NPI_init(void)
   else
   {
     NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
-    ble_uart_poll_init();
+    //ble_uart_poll_init();
     //NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallback1);
     //uint8 WAKE_UP[] = {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x03, 0xfd, 0xd4, 0x14, 0x01, 0x17, 0x00};
     //NPI_WriteTransportPort(HAL_UART_PORT_1, WAKE_UP, sizeof(WAKE_UP));
@@ -287,46 +253,20 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���?
+  P0DIR |= 0x60; // P0.6����Ϊ���?
   P0_6 = onoff;
 }
 
 // ��ȡ�豸����
 uint8 *simpleBle_GetAttDeviceName()
 {
-  return sys_config.name;
+  return "DarrenBLE";
 }
 
 // ��ʱ������ʱִ�к����� ��������led��״̬----Ҳ��������һ����ʱ������
 void simpleBLE_performPeriodicTask(void)
 {
   return;
-}
-
-//uart �ص�����
-static void simpleBLE_NpiSerialCallback1(uint8 port, uint8 events)
-{
-  (void)port;
-  if (events & (HAL_UART_RX_TIMEOUT | HAL_UART_RX_FULL)) //����������
-  {
-    /*uint8*/ uint16 numBytes = 0;
-    numBytes = NPI_RxBufLenPort(HAL_UART_PORT_1);
-    if (numBytes > 0)
-    {
-      uint8 *buffer = osal_mem_alloc(numBytes);
-      NPI_ReadTransportPort(HAL_UART_PORT_1, buffer, numBytes); //�ͷŴ�������
-      /* Darren:Handle this sleep issue.
-      if (FALSE == g_sleepFlag) //discard the data directly.
-      {
-      }
-      */
-      // Directly send to interface 
-      // Print to UART0
-      ble_uart_interrupt(buffer, numBytes);
-      osal_mem_free(buffer);
-    }
-    return;
-  }
 }
 
 //uart �ص�����
@@ -350,7 +290,7 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       // Directly send to interface 
       // ble_uart_interrupt(buffer, numBytes);
       NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
-      NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes);
+      //NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes);
       osal_mem_free(buffer);
     }
     return;

@@ -79,7 +79,7 @@
 #define DEFAULT_MAX_SCAN_RES  40//8
 
 // Scan duration in ms
-#define DEFAULT_SCAN_DURATION 500 //4000  Ä¬ÈÏÉ¨ÃèÊ±¼ä ms
+#define DEFAULT_SCAN_DURATION 500 //4000  Ä¬ï¿½ï¿½É¨ï¿½ï¿½Ê±ï¿½ï¿½ ms
 
 // Discovey mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE DEVDISC_MODE_ALL
@@ -103,10 +103,10 @@
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
 
 // Minimum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  Á¬½Ó¼ä¸ôÓëÊý¾Ý·¢ËÍÁ¿ÓÐ¹Ø£¬ Á¬½Ó¼ä¸ôÔ½¶Ì£¬ µ¥Î»Ê±¼äÄÚ¾ÍÄÜ·¢ËÍÔ½¶àµÄÊý¾Ý
+#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹Ø£ï¿½ ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ô½ï¿½Ì£ï¿½ ï¿½ï¿½Î»Ê±ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½Ü·ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 // Maximum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  Á¬½Ó¼ä¸ôÓëÊý¾Ý·¢ËÍÁ¿ÓÐ¹Ø£¬ Á¬½Ó¼ä¸ôÔ½¶Ì£¬ µ¥Î»Ê±¼äÄÚ¾ÍÄÜ·¢ËÍÔ½¶àµÄÊý¾Ý
+#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¹Ø£ï¿½ ï¿½ï¿½ï¿½Ó¼ï¿½ï¿½Ô½ï¿½Ì£ï¿½ ï¿½ï¿½Î»Ê±ï¿½ï¿½ï¿½Ú¾ï¿½ï¿½Ü·ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_UPDATE_SLAVE_LATENCY 0
@@ -192,7 +192,7 @@ static uint16 simpleBLESvcEndHdl = 0;
 uint16 simpleBLECharHdl = 0;
 uint16 simpleBLECharHd6 = 0;
 bool simpleBLEChar6DoWrite = TRUE;
-bool simpleBLECentralCanSend = FALSE; //  Ö÷»ú¿É·¢ËÍÊý¾Ý
+bool simpleBLECentralCanSend = FALSE; //  ï¿½ï¿½ï¿½ï¿½ï¿½É·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 extern bool timerIsOn; //
 
@@ -280,9 +280,9 @@ void SimpleBLECentral_Init(uint8 task_id)
     //uint8 bonding = DEFAULT_BONDING_MODE;
 
     /*
-    bonding¾ÍÊÇ°ÑÅä¶ÔÐÅÏ¢¼ÇÂ¼ÏÂÀ´, ÏÂ´Î¾Í²»ÓÃÅä¶ÔÁË. ²»bondingÏÂ´Î¾Í»¹µÃÅä¶Ô.    
-    ËùÒÔÎÒÃÇ´Ó»úÕâÀï°Ñ bonding = FALSE µÄºó¹û¾ÍÊÇ£¬ Ö÷Éè±¸Ã¿´ÎÁ¬½Ó¶¼±ØÐëÊäÈëÃÜÂë
-    ¶ø°Ñ  bonding = TRUE ºó£¬ Ö÷Éè±¸Ö»ÐèµÚÒ»´ÎÁ¬½ÓÊ±ÊäÈëÃÜÂë£¬ ºóÃæ¶Ï¿ªºó¶¼²»ÐèÒªÔÙ´ÎÊäÈëÃÜÂë¼´¿ÉÁ¬½Ó
+    bondingï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½, ï¿½Â´Î¾Í²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½bondingï¿½Â´Î¾Í»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.    
+    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´Ó»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ bonding = FALSE ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ ï¿½ï¿½ï¿½è±¸Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    ï¿½ï¿½ï¿½ï¿½  bonding = TRUE ï¿½ï¿½ ï¿½ï¿½ï¿½è±¸Ö»ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ï¿½ó¶¼²ï¿½ï¿½ï¿½Òªï¿½Ù´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë¼´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -371,7 +371,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     // Start scanning directly.
     simpleBLEStartScan();
 
-    // ÑÓÊ±400msºó»½ÐÑ£¬ ²»È»»á¼ÌÐøË¯Ãß£¬Ô­Òò²»Ã÷
+    // ï¿½ï¿½Ê±400msï¿½ï¿½ï¿½Ñ£ï¿½ ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½Ë¯ï¿½ß£ï¿½Ô­ï¿½ï¿½ï¿½ï¿½
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
     return (events ^ START_DEVICE_EVT);
   }
@@ -379,7 +379,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
   if (events & SBP_WAKE_EVT)
   {
     g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  ²»Ë¯Ãß£¬¹¦ºÄºÜ¸ßµÄ
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  ï¿½ï¿½Ë¯ï¿½ß£ï¿½ï¿½ï¿½ï¿½ÄºÜ¸ßµï¿½
     return (events ^ SBP_WAKE_EVT);
   }
 
@@ -413,7 +413,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
   {
     uint16 totalbytes = qq_total();
     uint8 numBytes;
-    // ¶Á  RdLen ¸ö×Ö½ÚÊý¾Ýµ½ »º³åÇø RdBuf£¬ ·µ»Ø¶ÁÈ¡µ½µÄÓÐÐ§Êý¾Ý³¤¶È
+    // ï¿½ï¿½  RdLen ï¿½ï¿½ï¿½Ö½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ RdBufï¿½ï¿½ ï¿½ï¿½ï¿½Ø¶ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½Ý³ï¿½ï¿½ï¿½
     if (totalbytes > 0 && simpleBLEChar6DoWrite)
     {
       attWriteReq_t AttReq;
@@ -587,7 +587,7 @@ static void simpleBLECentralProcessGATTMsg(gattMsgEvent_t *pMsg)
     {
       // After a succesful write, display the value that was written and increment value
       //LCD_WRITE_STRING_VALUE( "Write sent:", simpleBLECharVal++, 10, HAL_LCD_LINE_1 );
-      // Õâ¸ö±äÁ¿ÓÃÓÚ±íÃ÷ÉÏÒ»´ÎÐ´Êý¾Ýµ½´Ó»úÒÑ¾­³É¹¦£¬ ¿ÉÓÃÓÚÅÐ¶ÏÐ´Êý¾ÝÊ±µÄÅÐ¶Ï£¬ ÒÔÈ·±£Êý¾ÝµÄÍêÕûÐÔ
+      // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú±ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½Ð´ï¿½ï¿½ï¿½Ýµï¿½ï¿½Ó»ï¿½ï¿½Ñ¾ï¿½ï¿½É¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½Ð´ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ð¶Ï£ï¿½ ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       simpleBLEChar6DoWrite = TRUE;
     }
 
@@ -622,7 +622,7 @@ static void simpleBLECentralRssiCB(uint16 connHandle, int8 rssi)
   return;
 }
 
-// ÏÔÊ¾ÏÂÒ»¸ö´ÓÉè±¸µÄµØÖ·  nextFalg=trueÔòÏÔÊ¾ÏÂÒ»¸öµØÖ·£¬·ñÔòÏÔÊ¾µ±Ç°µØÖ·
+// ï¿½ï¿½Ê¾ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½Äµï¿½Ö·  nextFalg=trueï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ç°ï¿½ï¿½Ö·
 void simpleBLECentraDisplaNextPeriAddr(bool nextFalg)
 {
   return;
@@ -710,7 +710,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     simpleBLECentralCanSend = FALSE;
     LCD_WRITE_STRING("Disconnected", HAL_LCD_LINE_1);
     LCD_WRITE_STRING_VALUE("Reason:", pEvent->linkTerminate.reason, 10, HAL_LCD_LINE_2);
-    //ÕâÀïÁ¬½ÓÊ§°Üºó£¬ ¿ÉÒÔ³¢ÊÔÖ´ÐÐÖØÆô»òÕß¼ÌÐøÉ¨Ãè´Ó»ú
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê§ï¿½Üºï¿½ ï¿½ï¿½ï¿½Ô³ï¿½ï¿½ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½É¨ï¿½ï¿½Ó»ï¿½
     simpleBLEScanning = 0;
     simpleBLEStartScan();
   }
@@ -721,7 +721,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     LCD_WRITE_STRING("Param Update", HAL_LCD_LINE_1);
     osal_start_timerEx(simpleBLETaskId, SBP_CONNECT_EVT, 1000);
     g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  ²»Ë¯Ãß£¬¹¦ºÄºÜ¸ßµÄ
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  ï¿½ï¿½Ë¯ï¿½ß£ï¿½ï¿½ï¿½ï¿½ÄºÜ¸ßµï¿½
   }
   break;
 
@@ -825,7 +825,7 @@ static void simpleBLEGATTDiscoveryEvent(gattMsgEvent_t *pMsg)
       simpleBLESvcStartHdl = ATT_ATTR_HANDLE(pMsg->msg.findByTypeValueRsp.pHandlesInfo, 0);
       simpleBLESvcEndHdl = ATT_GRP_END_HANDLE(pMsg->msg.findByTypeValueRsp.pHandlesInfo, 0);
 
-      //°ÑÃ¿Ò»¸öhandleµÄÖµ¶¼´òÓ¡³öÀ´
+      //ï¿½ï¿½Ã¿Ò»ï¿½ï¿½handleï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½
       //LCD_WRITE_STRING_VALUE( "StartHdl=", simpleBLESvcStartHdl, 10, HAL_LCD_LINE_1 );
       //LCD_WRITE_STRING_VALUE( "EndHdl=", simpleBLESvcEndHdl, 10, HAL_LCD_LINE_1 );
       //simpleBLECharHd6 = simpleBLESvcStartHdl;
