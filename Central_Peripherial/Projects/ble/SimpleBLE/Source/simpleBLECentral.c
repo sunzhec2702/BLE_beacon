@@ -375,6 +375,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
   {
     // record current status;
     currentBLEStatus = sys_config.status;
+    set_target_status_to_off();
     // Start the Device
     VOID GAPCentralRole_StartDevice((gapCentralRoleCB_t *)&simpleBLERoleCB);
     // Register with bond manager after starting device
@@ -386,8 +387,9 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_WAKE_EVT)
   {
+    DEBUG_PRINT("Central WAKE\r\n");
     g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_BATTERY);
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //Darren
     simpleBLEStartScan();
     return (events ^ SBP_WAKE_EVT);
   }
@@ -516,6 +518,11 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     return (events ^ SBP_SCAN_ADV_TRANS_EVT);
   }
 
+  if (events & SBP_KEY_CNT_EVT)
+  {
+    key_cnt_evt_callback();
+    return (events ^ SBP_KEY_CNT_EVT);
+  }
   // Discard unknown events
   return 0;
 }
@@ -557,7 +564,8 @@ static void simpleBLECentral_ProcessOSALMsg(osal_event_hdr_t *pMsg)
  */
 static void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys)
 {
-  HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
+  key_press_handler(keys);
+  //HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
   //TODO: Handle power on or handle press issue.
 }
 
@@ -671,6 +679,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
   case GAP_DEVICE_INFO_EVENT:
   {
+    DEBUG_PRINT("DEVICE_INFO\r\n");
     if(simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
     {
       if (simpleBLEFilterIsSmart(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
@@ -716,52 +725,22 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     }
   }
   break;
-      /*
-      static dev_adv_ret_t dev_ret;
-      osal_memset(&dev_ret, 0x00, sizeof(dev_adv_ret_t));
-      dev_ret.magic[0] = 0xDE;
-      dev_ret.magic[1] = 0xAD;
-      dev_ret.magic[2] = 0xBE;
-      dev_ret.magic[3] = 0xAF;
-      dev_ret.addrType = pEvent->deviceInfo.addrType;
-      dev_ret.rssi = pEvent->deviceInfo.rssi;
-      dev_ret.dataLen = pEvent->deviceInfo.dataLen;
-      osal_revmemcpy(dev_ret.addr, pEvent->deviceInfo.addr, B_ADDR_LEN);
-      osal_memcpy(dev_ret.data, pEvent->deviceInfo.pEvtData, dev_ret.dataLen);
-      NPI_WriteTransport((unsigned char*) &dev_ret, sizeof(dev_adv_ret_t));
-
-      #ifdef DEBUG_BOARD
-      DEBUG_PRINT((unsigned char*)bdAddr2Str(pEvent->deviceInfo.addr));
-      DEBUG_PRINT(" - ");
-      NPI_PrintValue("RSSI: ", pEvent->deviceInfo.rssi, 10);
-      DEBUG_PRINT(" - ");
-      NPI_PrintValue("DataLen: ", pEvent->deviceInfo.dataLen, 10);
-      if (simpleBLEFilterSelfBeacon(dev_ret.data, dev_ret.dataLen) == TRUE)
-      {
-        DEBUG_PRINT(" - ");
-        DEBUG_PRINT(" TRUE ");
-        if (dev_ret.data[27] == 0x80)
-        {
-          DEBUG_PRINT(" - ");
-          DEBUG_PRINT(" PRESSED ");
-        }
-      }
-      DEBUG_PRINT("\r\n");
-      #endif
-      */
-
 
   case GAP_DEVICE_DISCOVERY_EVENT:
   {
     // discovery complete, keep scanning.
+    DEBUG_PRINT("Discovery_event\r\n");
     simpleBLEScanning = FALSE;
     scanTimeLeft--;
     if (currentBLEStatus == BLE_STATUS_ON_SCAN && scanTimeLeft == 0)
     {
+      DEBUG_PRINT("ON_SCAN, TimeLeft 0\r\n");
       osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
     }
     else if (currentBLEStatus == BLE_STATUS_OFF && scanTimeLeft == 0)
     {
+      DEBUG_PRINT("OFF, TimeLeft 0\r\n");
+      scanTimeLeft = DEFAULT_SCAN_TIME;
       osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, SBP_PERIODIC_OFF_SCAN_PERIOD);
     }
     else
@@ -1006,5 +985,40 @@ static BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen)
 
 void central_key_press_process_callback(uint8 key_cnt_number)
 {
+  if (currentBLEStatus == BLE_STATUS_OFF)
+  {
+    DEBUG_PRINT("STATUS_OFF, ignore key\r\n");
+    return;
+  }
+
+  if (key_cnt_number == 0)
+  {
+    return;
+  }
+
+  DEBUG_PRINT("ON_SCAN, KEY CALLBACK\r\n");
+  if (key_cnt_number >= 2)
+  {
+    DEBUG_PRINT("Timer is reset\r\n");
+    /*
+      wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+      // reset wake_up_left
+      advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+      */
+    // LED blink twice
+    led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
+  }
+  else if (key_cnt_number == 1)
+  {
+    // Blink once
+    led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
+    /*
+#if (POWER_OFF_SUPPORT == TRUE)
+      key_cnt_number = 0;
+      osal_set_event(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
+#endif
+      */
+  }
+  osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
   return;
 }

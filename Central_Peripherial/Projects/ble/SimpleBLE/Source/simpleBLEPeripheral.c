@@ -443,6 +443,8 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & START_DEVICE_EVT)
   {
+    sys_config.status = BLE_STATUS_OFF;
+    simpleBLE_WriteAllDataToFlash();
     // Start the Device
     VOID GAPRole_StartDevice(NULL);
     // Start Bond Manager
@@ -468,6 +470,13 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     // Per Min Event
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_MIN_EVT, SBP_PERIODIC_PER_MIN_PERIOD);
     
+    if (sys_config.key_pressed_in_scan == TRUE)
+    {
+      sys_config.key_pressed_in_scan = FALSE;
+      simpleBLE_WriteAllDataToFlash();
+      change_advertise_data(TRUE);
+    }
+
     // We don't need to blink anymore. Slience power on.
     // led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
     return (events ^ SBP_WAKE_EVT);

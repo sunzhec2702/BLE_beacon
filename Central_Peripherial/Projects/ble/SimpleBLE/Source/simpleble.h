@@ -4,6 +4,8 @@
 #ifdef __cplusplus
 #include "npi.h"
 #include "comdef.h"
+#include "simpleBLECentralPeripheralCommon.h"
+
 extern "C"
 {
 #endif
@@ -113,15 +115,16 @@ typedef enum
 #define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
 #define SLOW_ADVERTISING_INTERVAL (1600*2) // 2s
 #define SBP_PERIODIC_ADVERT_CHG_PERIOD                  2000 // 2s
-#define SBP_PERIODIC_OFF_SCAN_PERIOD                    3600000 // one hour
 
 // How often to perform periodic event
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
 
 #ifdef DEBUG_BOARD
 #define SBP_PERIODIC_PER_MIN_PERIOD                     5000    // 5s
-#define DEFAULT_WAKE_TIME_MINS                          30      //
+#define DEFAULT_WAKE_TIME_MINS                          10      //
 #define SCAN_ADV_TRANS_MIN_PERIOD                       5 // 10mins
+#define SBP_PERIODIC_OFF_SCAN_PERIOD                    20000 // one hour
+
 #define DEFAULT_WAKE_TIME_HOURS                         (5) // 5 mins
 #define BUTTON_WAKE_TIME_HOURS                          (2) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
@@ -129,6 +132,8 @@ typedef enum
 #define SBP_PERIODIC_PER_MIN_PERIOD                     60000    // 1 min
 #define DEFAULT_WAKE_TIME_MINS                          30        // 30mins
 #define SCAN_ADV_TRANS_MIN_PERIOD                       10 // 10mins
+#define SBP_PERIODIC_OFF_SCAN_PERIOD                    3600000 // one hour
+
 #define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
 #define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days

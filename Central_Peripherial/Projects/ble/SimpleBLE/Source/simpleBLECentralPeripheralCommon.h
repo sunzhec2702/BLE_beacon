@@ -3,5 +3,7 @@
 
 #include "simpleble.h"
 
+void set_target_status_to_off(void);
+
 
 #endif
