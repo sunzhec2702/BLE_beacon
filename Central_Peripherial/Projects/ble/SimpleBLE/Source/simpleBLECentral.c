@@ -103,10 +103,10 @@
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
 
 // Minimum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ���Ӽ�������ݷ������йأ� ���Ӽ��Խ�̣� ��λʱ���ھ��ܷ���Խ�������
+#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
 
 // Maximum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ���Ӽ�������ݷ������йأ� ���Ӽ��Խ�̣� ��λʱ���ھ��ܷ���Խ�������
+#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_UPDATE_SLAVE_LATENCY 0
@@ -134,6 +134,9 @@
 
 // TRUE to filter discovery results on desired service UUID
 #define DEFAULT_DEV_DISC_BY_SVC_UUID TRUE
+
+// Darren Scan Macros
+#define DEFAULT_SCAN_TIME  (5000 / DEFAULT_SCAN_DURATION)
 
 // Discovery states
 enum
@@ -195,6 +198,9 @@ bool simpleBLEChar6DoWrite = TRUE;
 bool simpleBLECentralCanSend = FALSE; //  �����ɷ�������
 
 extern bool timerIsOn; //
+
+static BLE_STATUS currentBLEStatus;
+static uint8 scanTimeLeft = DEFAULT_SCAN_TIME;
 
 // Value to write
 //static uint8 simpleBLECharVal = 0;
@@ -280,9 +286,9 @@ void SimpleBLECentral_Init(uint8 task_id)
     //uint8 bonding = DEFAULT_BONDING_MODE;
 
     /*
-    bonding���ǰ������Ϣ��¼����, �´ξͲ��������. ��bonding�´ξͻ������.    
-    �������Ǵӻ������ bonding = FALSE �ĺ�����ǣ� ���豸ÿ�����Ӷ�������������
-    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ�������룬 ����Ͽ��󶼲���Ҫ�ٴ��������뼴������
+    bonding���ǰ�������?��¼����, �´ξͲ��������?. ��bonding�´ξͻ������?.    
+    �������Ǵӻ������? bonding = FALSE �ĺ�����ǣ�? ���豸ÿ�����Ӷ�������������
+    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������? ����Ͽ��󶼲����?�ٴ��������뼴������
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -361,17 +367,13 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & START_DEVICE_EVT)
   {
+    // record current status;
+    currentBLEStatus = sys_config.status;
     // Start the Device
     VOID GAPCentralRole_StartDevice((gapCentralRoleCB_t *)&simpleBLERoleCB);
-
     // Register with bond manager after starting device
     GAPBondMgr_Register((gapBondCBs_t *)&simpleBLEBondCB);
-
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT, SBP_PERIODIC_EVT_PERIOD);
-    // Start scanning directly.
-    simpleBLEStartScan();
-
-    // ��ʱ400ms���ѣ� ��Ȼ�����˯�ߣ�ԭ����
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
     return (events ^ START_DEVICE_EVT);
   }
@@ -379,7 +381,8 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
   if (events & SBP_WAKE_EVT)
   {
     g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  ��˯�ߣ����ĺܸߵ�
+    osal_pwrmgr_device(PWRMGR_BATTERY);
+    simpleBLEStartScan();
     return (events ^ SBP_WAKE_EVT);
   }
 
@@ -496,6 +499,17 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     simpleBLECentralStartDiscovery();
     return (events ^ START_DISCOVERY_EVT);
   }
+
+  if (events & SBP_SCAN_ADV_TRANS_EVT)
+  {
+    if (currentBLEStatus == BLE_STATUS_ON_SCAN)
+    {
+      sys_config.status = BLE_STATUS_ON_ADV;
+      simpleBLE_SaveAndReset();
+    }
+    return (events ^ SBP_SCAN_ADV_TRANS_EVT);
+  }
+
   // Discard unknown events
   return 0;
 }
@@ -538,6 +552,40 @@ static void simpleBLECentral_ProcessOSALMsg(osal_event_hdr_t *pMsg)
 static void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys)
 {
   HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
+  if (currentBLEStatus == BLE_STATUS_ON_SCAN)
+  {
+    sys_config.key_pressed_in_scan = TRUE;
+    osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
+  }
+
+  if (keys & HAL_KEY_SW_6)
+  {
+    if (low_power_state == TRUE)
+    {
+      DEBUG_PRINT("Handle Keys, Low Power Mode\r\n");
+      return;
+    }
+
+    if (key_processing == FALSE)
+    {
+      if (key_pressed_count == 0)
+      {
+        if (wake_up_hours_remain <= RESET_WAKE_TIME_HOURS_THRES)
+        {
+          wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
+          advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+        }
+        if (g_long_press_flag == FALSE)
+        {
+          osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
+        }
+      }
+      key_pressed_count++;
+    }
+    key_pressed = !key_pressed;
+  }
+
+  //TODO: Handle power on or handle press issue.
 }
 
 /*********************************************************************
@@ -587,7 +635,7 @@ static void simpleBLECentralProcessGATTMsg(gattMsgEvent_t *pMsg)
     {
       // After a succesful write, display the value that was written and increment value
       //LCD_WRITE_STRING_VALUE( "Write sent:", simpleBLECharVal++, 10, HAL_LCD_LINE_1 );
-      // ����������ڱ�����һ��д���ݵ��ӻ��Ѿ��ɹ��� �������ж�д����ʱ���жϣ� ��ȷ�����ݵ�������
+      // ����������ڱ�����һ��д���ݵ��ӻ��Ѿ��ɹ���? �������ж�д����ʱ���жϣ� ��ȷ�����ݵ�������
       simpleBLEChar6DoWrite = TRUE;
     }
 
@@ -652,6 +700,50 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
   {
     if(simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
     {
+      if (simpleBLEFilterIsSmart(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
+      {
+        // Our adv content. do further process.
+        if (currentBLEStatus == BLE_STATUS_ON_SCAN)
+        {
+          if (simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_STATION_ADV)
+          {
+            uint16 advStationIndex = pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_1] << 8 + pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_2];
+            if (sys_config.stationIndex < advStationIndex)
+            {
+              sys_config.stationIndex = advStationIndex;
+            }
+            sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
+          }
+          else if (simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_BEACON)
+          {
+            uint16 advStationIndex = pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_1] << 8 + pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_2];
+            if (sys_config.stationIndex < advStationIndex)
+            {
+              sys_config.stationIndex = advStationIndex;
+              sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
+            }
+          }
+        }
+        else if (currentBLEStatus == BLE_STATUS_OFF)
+        {
+          if (simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_STATION_ADV)
+          {
+            BLE_STATION_CMD cmd = pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX];
+            if (cmd == BLE_POWER_ON)
+            {
+              uint16 advStationIndex = pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_1] << 8 + pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_2];
+              sys_config.stationIndex = advStationIndex;
+              sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
+              sys_config.status = BLE_STATUS_ON_ADV;
+              simpleBLE_SaveAndReset();
+            }
+          }
+        }
+      }
+    }
+  }
+  break;
+      /*
       static dev_adv_ret_t dev_ret;
       osal_memset(&dev_ret, 0x00, sizeof(dev_adv_ret_t));
       dev_ret.magic[0] = 0xDE;
@@ -683,16 +775,26 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
       }
       DEBUG_PRINT("\r\n");
       #endif
-    }
+      */
 
-  }
-  break;
 
   case GAP_DEVICE_DISCOVERY_EVENT:
   {
     // discovery complete, keep scanning.
     simpleBLEScanning = FALSE;
-    simpleBLEStartScan();
+    scanTimeLeft--;
+    if (currentBLEStatus == BLE_STATUS_ON_SCAN && scanTimeLeft == 0)
+    {
+      osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
+    }
+    else if (currentBLEStatus == BLE_STATUS_OFF && scanTimeLeft == 0)
+    {
+      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, SBP_PERIODIC_OFF_SCAN_PERIOD);
+    }
+    else
+    {
+      simpleBLEStartScan();
+    }
   }
   break;
 
@@ -710,7 +812,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     simpleBLECentralCanSend = FALSE;
     LCD_WRITE_STRING("Disconnected", HAL_LCD_LINE_1);
     LCD_WRITE_STRING_VALUE("Reason:", pEvent->linkTerminate.reason, 10, HAL_LCD_LINE_2);
-    //��������ʧ�ܺ� ���Գ���ִ��������߼���ɨ��ӻ�
+    //��������ʧ�ܺ� ���Գ���ִ��������߼����?��ӻ�?
     simpleBLEScanning = 0;
     simpleBLEStartScan();
   }
@@ -878,7 +980,6 @@ static void simpleBLEGATTDiscoveryEvent(gattMsgEvent_t *pMsg)
   }
 }
 
-#define BEACON_START_INDEX 5
 static uint8 beacon_id[] = 
 {
   0x4C, // 5
@@ -887,12 +988,44 @@ static uint8 beacon_id[] =
   0x15 // 8
 };
 
+static uint8 isSmart[] =
+{
+  0x49,
+  0x53,
+  0x53,
+  0x4D,
+  0x41,
+  0x52,
+  0x54,
+  0x00
+};
+
 // Filter if it is a beacon.
 static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)
 {
+  VOID dataLen;
   if ((osal_memcmp(beacon_id, &data[BEACON_START_INDEX], sizeof(beacon_id)) == TRUE))
   {
     return TRUE;
   }
   return FALSE;
+}
+
+// Filter if it is a beacon.
+static bool simpleBLEFilterIsSmart(uint8 *data, uint8 dataLen)
+{
+  VOID dataLen;
+  if ((osal_memcmp(isSmart, &data[BEACON_ISSMART_INDEX], sizeof(isSmart)) == TRUE))
+  {
+    return TRUE;
+  }
+  return FALSE;
+}
+
+// Filter if it is a beacon.
+static BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen)
+{
+  VOID dataLen;
+  BLE_DEVICE_TYPE deviceType = data[BEACON_ISSMART_INDEX];
+  return deviceType;
 }

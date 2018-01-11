@@ -49,6 +49,8 @@
 #include "math.h"
 #include "amomcu_buffer.h"
 
+#include "simpleBLELED.h"
+#include "simpleBLEKey.h"
 /*********************************************************************
  * MACROS
  */
@@ -63,16 +65,16 @@
 #define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_GENERAL
 
 // Minimum connection interval (units of 1.25ms, 80=100ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ���Ӽ�������ݷ������йأ�?? ���Ӽ��Խ�̣�?? ��λʱ���ھ��ܷ���Խ�������??
 
 // Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ���Ӽ�������ݷ������йأ�?? ���Ӽ��Խ�̣�?? ��λʱ���ھ��ܷ���Խ�������??
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_DESIRED_SLAVE_LATENCY 0
 
 // Supervision timeout value (units of 10ms, 1000=10s) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -����ԭ��Ͽ����Ӻ�?��ʱ�����¹㲥��ʱ��:  100 = 1s
+#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -����ԭ��Ͽ����Ӻ�??��ʱ�����¹㲥��ʱ��:  100 = 1s
 
 // Whether to enable automatic parameter update request when a connection is formed
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
@@ -166,8 +168,42 @@ static uint8 advertData_iBeacon[] =
   0x15, // 8
   /*Device UUID (16 Bytes)*/
   0x49, 0x53, 0x53, 0x4D, 0x41, 0x52, 0x54, 0x00, // ISSMART    8 bytes.
-  0x00, 0x00, 0x01, // Device Type     3 bytes.
+  0x00, 0x00, BLE_BEACON, // 17, 18,19 Device Type 3 bytes. //beacon.
   MAJOR_HW_VERSION, // 0x00
+  MAJOR_SW_VERSION, // 0x02
+  MINOR_SW_VERSION, // 0x01
+  /*Specific Data*/
+  0x00, // 23
+  0x00, // 24, Station Index
+  /*Major Value (2 Bytes)*/
+  0x00, // 25 for min left
+  0x00, // 26 for index 
+  /*Minor Value (2 Bytes)*/
+  0x00, 0x00, // 27-28 // 27 FlagByte. bit7 rapid bit6 low_bat
+  /*Measured Power*/
+  0xCD //29
+};
+
+static uint8 advertData_Station[] =
+{
+  // Flags; this sets the device to use limited discoverable
+  // mode (advertises for 30 seconds at a time) instead of general
+  // discoverable mode (advertises indefinitely)
+  0x02, // length of this data, 0
+  GAP_ADTYPE_FLAGS, // 1
+  DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED, // 2
+  // in this peripheral
+  0x1A, // length of this data 26byte, 3
+  GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
+  /*Apple Pre-Amble*/
+  0x4C, // 5
+  0x00, // 6
+  0x02, // 7
+  0x15, // 8
+  /*Device UUID (16 Bytes)*/
+  0x49, 0x53, 0x53, 0x4D, 0x41, 0x52, 0x54, 0x00, // ISSMART    8 bytes.
+  0x00, BLE_POWER_ON, BLE_STATION_ADV, // 17,18,19 Device Type 3 bytes. // Station.
+  MAJOR_HW_VERSION, // 20 0x00
   MAJOR_SW_VERSION, // 0x02
   MINOR_SW_VERSION, // 0x01
   /*Specific Data*/
@@ -182,20 +218,10 @@ static uint8 advertData_iBeacon[] =
   0xCD //29
 };
 
-// LED related.
-static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
-static uint8 led_toggle_status = FALSE;
-static uint8 led_toggle_count = 0;
-static uint8 led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
-static uint8 led_toggling = FALSE;
-static uint16 led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
-static uint16 led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
 // Default WAKEUP period
 static uint8 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
 static uint8 battery_voltage = 0;
-// Key related
-static uint8 key_pressed_count = 0;
-static uint8 key_processing = FALSE;
+
 //first boot up
 static bool first_boot = TRUE;
 // Low power status
@@ -207,6 +233,7 @@ static uint8 key_long_press_cnt = 0;
 static uint8 sleep_toggle_cnt = 0;
 static bool rapid_processing = FALSE;
 
+static uint8 minsRunning = 0;
 #ifdef DEBUG_BOARD
 static bool debug_low_power = FALSE;
 #endif
@@ -216,8 +243,7 @@ static bool debug_low_power = FALSE;
  */
 static void simpleBLEPeripheral_ProcessOSALMsg(osal_event_hdr_t *pMsg);
 static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg);
-static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_off, uint32 toggle_target_cnt, uint16 delay);
-static uint8 led_toggle_clean_param(void);
+
 static bool check_low_battery(void);
 static void enter_low_battery_mode(void);
 static bool check_keys_pressed(uint8 keys);
@@ -226,8 +252,8 @@ static void advertise_control(bool enable);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
-  BOND_PAIR_STATUS_PAIRING, //δ���?
-  BOND_PAIR_STATUS_PAIRED,  //�����?
+  BOND_PAIR_STATUS_PAIRING, //δ���??
+  BOND_PAIR_STATUS_PAIRED,  //�����??
 } BOND_PAIR_STATUS;
 
 void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs);
@@ -305,7 +331,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 
   {
     // ����rssi ������������
-    uint16 rssi_read_rate_1ms = 500; //һ�����?2��
+    uint16 rssi_read_rate_1ms = 500; //һ�����??2��
     GAPRole_SetParameter(GAPROLE_RSSI_READ_RATE, sizeof(uint16), &rssi_read_rate_1ms);
   }
 
@@ -324,12 +350,12 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     uint32 passkey = 0; // passkey "000000"
     uint8 pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
     uint8 mitm = TRUE;
-    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //��ʾ���룬 �Ա�����������Ե�����?
+    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //��ʾ���룬 �Ա�����������Ե�����??
 
     /*
-    bonding���ǰ�������?��¼����, �´ξͲ��������?. ��bonding�´ξͻ������?.    
-    �������Ǵӻ������? bonding = FALSE �ĺ�����ǣ�? ���豸ÿ�����Ӷ�������������
-    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������? ����Ͽ��󶼲����?�ٴ��������뼴������
+    bonding���ǰ�������?��¼����, �´ξͲ��������??. ��bonding�´ξͻ������??.    
+    �������Ǵӻ������?? bonding = FALSE �ĺ�����ǣ�?? ���豸ÿ�����Ӷ�������������
+    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������?? ����Ͽ��󶼲����?�ٴ��������뼴������
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -370,7 +396,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // VOID SimpleProfile_RegisterAppCBs(&simpleBLEPeripheral_SimpleProfileCBs);
 
   // ��Ҫ�رյ�CLK�Զ���Ƶ���ڳ�ʼ���м���HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT )?  // �������ᵼ��Ƶ���Զ��л���DMA�����ܵ�Ӱ�죬С��Χ������
-  // ��������رգ�? ����뽵�͹��ģ�? ���Ӧ���?����ģ�? ����ì����
+  // ��������رգ�?? ����뽵�͹��ģ�?? ���Ӧ���?����ģ�?? ����ì����
   HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT);
   //HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT );
 
@@ -423,20 +449,24 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_WAKE_EVT)
   {
-    // osal_pwrmgr_device(PWRMGR_BATTERY); //  ��˯�ߣ����ĺܸߵ�
+    osal_pwrmgr_device(PWRMGR_BATTERY);
     if (check_low_battery() == TRUE)
     {
       enter_low_battery_mode();
       return (events ^ SBP_WAKE_EVT);
     }
     g_sleepFlag = FALSE;
+    // Update the advertise data.
     init_ibeacon_advertise(TRUE);
     // Start advertising
     advertise_control(TRUE);
+    // Index event
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
-    osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
-    // LED
-    led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
+    // Per Min Event
+    osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_MIN_EVT, SBP_PERIODIC_PER_MIN_PERIOD);
+    
+    // We don't need to blink anymore. Slience power on.
+    // led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
     return (events ^ SBP_WAKE_EVT);
   }
 
@@ -447,26 +477,22 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     {
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
     }
-
     // Perform periodic application task
     PeripherialPerformPeriodicTask(SBP_PERIODIC_INDEX_EVT);
-
     return (events ^ SBP_PERIODIC_INDEX_EVT);
   }
 
-  if (events & SBP_PERIODIC_PER_HOUR_EVT)
+  if (events & SBP_PERIODIC_PER_MIN_EVT)
   {
-    DEBUG_PRINT("SBP_PERIODIC_PER_HOUR_EVT\r\n");
+    DEBUG_PRINT("SBP_PERIODIC_PER_MIN_EVT\r\n");
     // Restart timer
-    if (SBP_PERIODIC_PER_HOUR_PERIOD)
+    if (SBP_PERIODIC_PER_MIN_PERIOD)
     {
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_MIN_EVT, SBP_PERIODIC_PER_MIN_PERIOD);
     }
-
     // Perform periodic application task
-    PeripherialPerformPeriodicTask(SBP_PERIODIC_PER_HOUR_EVT);
-
-    return (events ^ SBP_PERIODIC_PER_HOUR_EVT);
+    PeripherialPerformPeriodicTask(SBP_PERIODIC_PER_MIN_EVT);
+    return (events ^ SBP_PERIODIC_PER_MIN_EVT);
   }
 
   if (events & SBP_PERIODIC_BUTTON_LED_EVT)
@@ -514,6 +540,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   
   if (events & SBP_SLEEP_EVT)
   {
+    /*
     DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
     low_power_state = FALSE; // set false to enable key event.
     g_sleepFlag = TRUE;
@@ -522,6 +549,9 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     advertise_control(FALSE);
     DEBUG_PRINT("Enter Sleep Mode\r\n");
     simpleBLE_Delay_1ms(1);
+    */
+    sys_config.status = BLE_STATUS_OFF;
+    simpleBLE_SaveAndReset();
     return (events ^ SBP_SLEEP_EVT);
   }
 
@@ -537,80 +567,13 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_PERIODIC_LED_EVT)
   {
-    if (++led_toggle_count <= led_toggle_cnt_target)
-    {
-      osal_pwrmgr_device(PWRMGR_ALWAYS_ON); // Make sure the LED can on correctly.
-      HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
-      if (led_toggle_status == FALSE)
-      {
-        led_toggle_status = TRUE;
-        osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_on);
-      }
-      else if (led_toggle_status == TRUE)
-      {
-        led_toggle_status = FALSE;
-        osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_off);
-      }
-    }
-    else
-    {
-      led_toggle_status = FALSE;
-      HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
-      osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
-      led_toggle_clean_param();
-      if (low_power_state == TRUE)
-      {
-        osal_set_event(simpleBLETaskId, SBP_SLEEP_EVT);
-        low_power_state = FALSE;
-      }
-      if (g_long_press_flag == TRUE)
-      {
-        key_pressed_count = 0;
-        osal_start_timerEx(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT, PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_1);
-      }
-    }
+    led_event_callback();
     return (events ^ SBP_PERIODIC_LED_EVT);
   }
 
   if (events & SBP_KEY_CNT_EVT)
   {
-    if (key_pressed_count == 0)
-      return (events ^ SBP_KEY_CNT_EVT);
-
-    if (g_sleepFlag == TRUE)
-    {
-      if (key_pressed_count == 1)
-      {
-        first_boot = TRUE;
-      }
-      osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);        
-    }
-    else if (g_sleepFlag == FALSE)
-    {
-      if (key_pressed_count >= 2)
-      {
-        DEBUG_PRINT("Timer is reset\r\n");
-        wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-        // reset wake_up_left
-        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
-        // LED blink twice
-        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
-      }
-      else if (key_pressed_count == 1)
-      {
-        // Blink once
-        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
-        #if (POWER_OFF_SUPPORT == TRUE)
-        key_pressed_count = 0;
-        osal_set_event(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
-        #endif
-      }
-      // Change the advertise date anyway.
-      change_advertise_data(TRUE);
-    }
-    // Reset Key event.
-    key_pressed_count = 0;
-    key_processing = FALSE;
+    key_cnt_evt_callback();
     return (events ^ SBP_KEY_CNT_EVT);
   }
 
@@ -619,40 +582,11 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     sys_config.status = BLE_STATUS_ON_SCAN;
     sys_config.stationIndex = advertData_iBeacon[ADV_STATION_INDEX_1] << 8 + advertData_iBeacon[ADV_STATION_INDEX_2];
     sys_config.minLeft = advertData_iBeacon[ADV_MIN_LEFT_BYTE];
-    simpleBLE_WriteAllDataToFlash();
-    HAL_SYSTEM_RESET();
+    simpleBLE_SaveAndReset();
     return (events ^ SBP_SCAN_ADV_TRANS_EVT);
   }
   // Discard unknown events
   return 0;
-}
-
-
-static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_off, uint32 toggle_target_cnt, uint16 delay)
-{
-  if (led_toggling == TRUE)
-    return FALSE;
-  osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
-  led_toggle_status = FALSE;
-  led_toggling = TRUE;
-  led_toggle_period_on = toggle_period_on;
-  led_toggle_period_off = toggle_period_off;
-  led_toggle_count = 0;
-  led_toggle_cnt_target = toggle_target_cnt;
-  osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, delay);
-  return TRUE;
-}
-static uint8 led_toggle_clean_param()
-{
-  if (led_toggling == FALSE)
-    return FALSE;
-  osal_pwrmgr_device(PWRMGR_BATTERY);
-  led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
-  led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
-  led_toggle_count = 0;
-  led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
-  led_toggling = FALSE;
-  return TRUE;
 }
 
 /*********************************************************************
@@ -768,7 +702,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
     }
     break;
-  case SBP_PERIODIC_PER_HOUR_EVT:
+  case SBP_PERIODIC_PER_MIN_EVT:
     if (g_sleepFlag == TRUE)
     {
       DEBUG_PRINT("sleep already, stop the per hour timer\r\n");
@@ -776,20 +710,18 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     }
     else
     {
-      DEBUG_PRINT("This is a per hour event\r\n");
-      if (check_low_battery() == TRUE)
+      DEBUG_PRINT("This is a per min event\r\n");
+      sys_config.minLeft--;
+      minsRunning++;
+      if (minsRunning == SCAN_ADV_TRANS_MIN_PERIOD) //TODO: Need a macro.
       {
-        enter_low_battery_mode();
+        osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
       }
-      else
+      advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
+      if (sys_config.minLeft == 0)
       {
-        wake_up_hours_remain--;
-        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
-        if (wake_up_hours_remain == 0)
-        {
-          DEBUG_PRINT("Enter Sleep mode\r\n");
-          osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
-        }
+        DEBUG_PRINT("Enter Sleep mode\r\n");
+        osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
       }
     }
     break;
@@ -889,6 +821,11 @@ static bool check_low_battery()
 
 static void enter_low_battery_mode()
 {
+  // Low Battery Mode. Enter OFF mode.
+  /*
+  sys_config.status = BLE_STATUS_OFF;
+  simpleBLE_SaveAndReset();
+  */
   DEBUG_PRINT("Enter Low Battery Mode\r\n");
   low_power_state = TRUE;
   advertData_iBeacon[ADV_FLAG_BYTE] |= 0x40;

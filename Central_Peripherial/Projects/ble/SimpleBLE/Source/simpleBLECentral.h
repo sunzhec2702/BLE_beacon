@@ -48,6 +48,7 @@
 
 #ifndef SIMPLEBLECENTRAL_H
 #define SIMPLEBLECENTRAL_H
+#include "simpleble.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -55,6 +56,7 @@ extern "C"
 #endif
 
 #define MAX_ADV_SIZE  31
+
 typedef struct
 {
   uint8 magic[4];
@@ -95,6 +97,8 @@ extern void SimpleBLECentral_Init( uint8 task_id );
 extern uint16 SimpleBLECentral_ProcessEvent( uint8 task_id, uint16 events );
 void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys);
 bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen);
+bool simpleBLEFilterIsSmart(uint8 *data, uint8 dataLen);
+BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen);
 /*********************************************************************
 *********************************************************************/
 

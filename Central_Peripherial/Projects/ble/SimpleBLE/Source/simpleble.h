@@ -45,7 +45,21 @@ typedef enum
     BLE_STATUS_ON_ADV = 0,
     BLE_STATUS_ON_SCAN,
     BLE_STATUS_OFF,
-}BLE_STATUS;
+} BLE_STATUS;
+
+typedef enum
+{
+  BLE_BEACON = 1,
+  BLE_STATION_ADV,
+  BLE_STATION_SCAN,
+} BLE_DEVICE_TYPE;
+
+typedef enum
+{
+  BLE_POWER_ON = 1,
+  BLE_POWER_OFF,
+} BLE_STATION_CMD;
+
 
 #ifdef DEBUG_BOARD
 #define HAL_LCD TRUE
@@ -84,7 +98,8 @@ typedef enum
 #define START_DISCOVERY_EVT                            0x0200//���ִ��豸
 
 #define SBP_PERIODIC_BUTTON_LED_EVT                    0x0400
-#define SBP_PERIODIC_PER_HOUR_EVT                      0x0800
+//#define SBP_PERIODIC_PER_HOUR_EVT                      0x0800
+#define SBP_PERIODIC_PER_MIN_EVT                       0x0800
 #define SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE            0x1000
 #define SBP_PERIODIC_CHN_ADVERT_EVT_PRESS              0x2000
 #define SBP_PERIODIC_INDEX_EVT                         0x4000//ϵͳ��ѯ��ʱ��
@@ -98,17 +113,20 @@ typedef enum
 #define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
 #define SLOW_ADVERTISING_INTERVAL (1600*2) // 2s
 #define SBP_PERIODIC_ADVERT_CHG_PERIOD                  2000 // 2s
+#define SBP_PERIODIC_OFF_SCAN_PERIOD                    3600000 // one hour
 
 // How often to perform periodic event
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
 
 #ifdef DEBUG_BOARD
-#define SBP_PERIODIC_PER_HOUR_PERIOD                    60000    // 1 min
+//#define SBP_PERIODIC_PER_HOUR_PERIOD                    60000    // 1 min
+#define SBP_PERIODIC_PER_MIN_PERIOD                    60000    // 1 min
 #define DEFAULT_WAKE_TIME_HOURS                         (5) // 5 mins
 #define BUTTON_WAKE_TIME_HOURS                          (2) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #else
-#define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   // 1 hour
+#define SBP_PERIODIC_PER_MIN_PERIOD                    60000    // 1 min
+//#define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   // 1 hour
 #define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
 #define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
@@ -141,7 +159,16 @@ typedef enum
 #define BATTERY_LOW_THRESHOLD_SLEEP                           27 //2.7V
 #define BATTERY_LOW_THRESHOLD                                 20 //2V
 #define ENABLE_DISABLE_PERIOD 500
+#define SCAN_ADV_TRANS_MIN_PERIOD                             10 // 10mins
 
+#define DEFAULT_WAKE_TIME_MINS                                30
+
+
+#define BEACON_START_INDEX 5
+#define BEACON_ISSMART_INDEX 9
+
+#define ADV_STATION_CMD_INDEX 18
+#define BEACON_DEVICE_TYPE_INDEX 19
 
 #define ADV_STATION_INDEX_1 23
 #define ADV_STATION_INDEX_2 24
@@ -154,7 +181,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
-//#define RELEASE_VER                      //����汾������
+//#define RELEASE_VER                      //����汾������?
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x03
@@ -175,7 +202,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// ϵͳ��ʱ�����ʱ��
+// ϵͳ��ʱ�����ʱ��?
 #define SBP_PERIODIC_EVT_PERIOD                   100//������100ms
 
 //����¼�Ĵӻ���ַ
@@ -184,11 +211,11 @@ typedef enum
 //mac��ַ���ַ����� (һ���ֽڵ��������ַ�)
 #define MAC_ADDR_CHAR_LEN                          12//mac��ַ���ַ����� (һ���ֽڵ��������ַ�)
 
-// �������û���������Ϣ��ӻ���Ϣ
+// �������û���������Ϣ��ӻ����?
 typedef enum
 {
     PARA_ALL_FACTORY = 0,           //ȫ���ָ���������
-    PARA_PARI_FACTORY = 1,          //�����Ϣ�ָ���������-�൱����������Ϣ��ӻ���Ϣ
+    PARA_PARI_FACTORY = 1,          //������?�ָ���������-�൱����������Ϣ��ӻ����?
 }PARA_SET_FACTORY;
 
 // Ӧ�ó���״̬
@@ -214,25 +241,26 @@ typedef enum
 typedef enum
 {
   BLE_CENTRAL_CONNECT_CMD_NULL,              //���� AT ��������  ��
-  BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ�ַ
+  BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ��?
   BLE_CENTRAL_CONNECT_CMD_CON,               //���� AT ��������  ����ָ����ַ
-  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����
-  BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ�ַ
+  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����?
+  BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ��?
 }BLE_CENTRAL_CONNECT_CMD;
 extern BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd ;
 
 // ����ϵͳ�ṹ������ �ýṹ���ڿ���ʱ��nv flash �ж�ȡ�� �������޸�ʱ�� ��Ҫд��nv flash
-// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�
+// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�?
 typedef struct 
 {
     BLE_STATUS status;
     BLE_ROLE role;                  //����ģʽ  0: �ӻ�   1: ����
-    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���12λ �ַ���ʾ
+    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���?12λ �ַ���ʾ
     int8 rssi;                              //  RSSI �ź�ֵ
     uint8 rxGain;                           //  ��������ǿ��
     uint8 txPower;                          //  �����ź�ǿ��
     uint16 stationIndex;
     uint8 minLeft;
+    uint8 key_pressed_in_scan;
 } SYS_CONFIG;
 extern SYS_CONFIG sys_config;
 
@@ -273,7 +301,7 @@ extern bool simpleBLECentralCanSend;
 extern bool simpleBLEChar6DoWrite;
 
 #if 1
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ ������ ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times);
 
 // �ַ����Ա�
@@ -284,17 +312,19 @@ uint32 str2Num(uint8* numStr, uint8 iLength);
 
 char *bdAddr2Str( uint8 *pAddr );
 
+void simpleBLE_SaveAndReset(void);
+
 // �����������ݵ�nv flash
 void simpleBLE_WriteAllDataToFlash();
 
-// ��ȡ�Զ���� nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash();
 
 //flag: PARA_ALL_FACTORY:  ȫ���ָ���������
 //flag: PARA_PARI_FACTORY: ��������Ϣ
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag); 
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?
 void PrintAllPara(void);
 
 // �����豸��ɫ
