@@ -131,11 +131,13 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
 {
   if (flag == PARA_ALL_FACTORY)
   {
-    sys_config.status = BLE_STATUS_OFF;
+    sys_config.status = BLE_STATUS_ON_ADV;
     sys_config.role = BLE_ROLE_CENTRAL; //����ģʽ, Ĭ�ϴӻ�
     sys_config.rssi = 0; //  RSSI �ź�ֵ
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ��������ǿ��
     sys_config.txPower = 0;                  //  �����ź�ǿ��
+    sys_config.stationIndex = 0;
+    sys_config.minLeft = 30;
   }
   GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
   simpleBLE_WriteAllDataToFlash();

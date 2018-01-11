@@ -28,7 +28,7 @@ extern "C"
 
 #define TARGET_BOARD PRODUCT_BOARD
 
-#define POWER_OFF_SUPPORT TRUE
+#define POWER_OFF_SUPPORT FALSE
 //#define DEBUG_BOARD 1
 
 #define PRESET_ROLE BLE_ROLE_PERIPHERAL
@@ -89,7 +89,8 @@ typedef enum
 #define SBP_PERIODIC_CHN_ADVERT_EVT_PRESS              0x2000
 #define SBP_PERIODIC_INDEX_EVT                         0x4000//ϵͳ��ѯ��ʱ��
 
-#define SBP_KEY_LONG_PRESSED_EVT                       0x0004
+//#define SBP_KEY_LONG_PRESSED_EVT                       0x0004
+#define SBP_SCAN_ADV_TRANS_EVT                         0x0004
 
 #define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
@@ -141,7 +142,10 @@ typedef enum
 #define BATTERY_LOW_THRESHOLD                                 20 //2V
 #define ENABLE_DISABLE_PERIOD 500
 
-#define ADV_HOUR_LEFT_BYTE 25
+
+#define ADV_STATION_INDEX_1 23
+#define ADV_STATION_INDEX_2 24
+#define ADV_MIN_LEFT_BYTE 25
 #define ADV_INDEX_BYTE 26
 #define ADV_FLAG_BYTE 27
 #define ADV_BAT_BYTE 28
@@ -154,7 +158,7 @@ typedef enum
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x03
-#define MAJOR_SW_VERSION   0x01
+#define MAJOR_SW_VERSION   0x02
 #if (POWER_OFF_SUPPORT == TRUE)
 #define MIDDLE_SW_VERSION  0x01
 #elif (POWER_OFF_SUPPORT == FALSE)
@@ -227,6 +231,8 @@ typedef struct
     int8 rssi;                              //  RSSI �ź�ֵ
     uint8 rxGain;                           //  ��������ǿ��
     uint8 txPower;                          //  �����ź�ǿ��
+    uint16 stationIndex;
+    uint8 minLeft;
 } SYS_CONFIG;
 extern SYS_CONFIG sys_config;
 
