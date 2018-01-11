@@ -403,6 +403,9 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // �źŷ���ǿ��
   HCI_EXT_SetTxPowerCmd(3 - sys_config.txPower);
 
+  // Init Peripheral Function.
+  set_key_press_process_callback(peripheral_key_press_process_callback);
+  
   // Setup a delayed profile startup
   osal_set_event(simpleBLETaskId, START_DEVICE_EVT);
 }
@@ -632,6 +635,8 @@ static void simpleBLEPeripheral_ProcessOSALMsg(osal_event_hdr_t *pMsg)
  */
 static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
 {
+  key_press_handler(keys);
+  /*
   if (keys & HAL_KEY_SW_6)
   {
     if (low_power_state == TRUE)
@@ -669,6 +674,55 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
     debug_low_power = FALSE;
   }
   #endif
+  */
+}
+
+void peripheral_key_press_process_callback(uint8 key_cnt_number)
+{
+  if (key_cnt_number == 0)
+  {
+    if (wake_up_hours_remain <= RESET_WAKE_TIME_HOURS_THRES)
+    {
+      wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
+      advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+    }
+    return;
+  }
+
+  if (g_sleepFlag == TRUE)
+  {
+    if (key_cnt_number == 1)
+    {
+      first_boot = TRUE;
+    }
+    osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
+  }
+  else if (g_sleepFlag == FALSE)
+  {
+    if (key_cnt_number >= 2)
+    {
+      DEBUG_PRINT("Timer is reset\r\n");
+      wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+      // reset wake_up_left
+      advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+      // LED blink twice
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
+    }
+    else if (key_cnt_number == 1)
+    {
+      // Blink once
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
+      /*
+#if (POWER_OFF_SUPPORT == TRUE)
+      key_cnt_number = 0;
+      osal_set_event(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
+#endif
+      */
+    }
+    // Change the advertise date anyway.
+    change_advertise_data(TRUE);
+  }
+  return;
 }
 //#endif // #if defined( CC2540_MINIDK )
 
