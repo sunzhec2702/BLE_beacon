@@ -219,6 +219,9 @@ bool Check_startup_peripheral_or_central(void)
     case BLE_STATUS_ON_SCAN:
     return true;
     break;
+    default:
+      return true;
+      break;
   }
 }
 

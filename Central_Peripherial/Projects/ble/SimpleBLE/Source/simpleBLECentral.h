@@ -27,7 +27,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED ï¿½AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -49,6 +49,7 @@
 #ifndef SIMPLEBLECENTRAL_H
 #define SIMPLEBLECENTRAL_H
 #include "simpleble.h"
+#include "bcomdef.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -98,6 +99,9 @@ extern uint16 SimpleBLECentral_ProcessEvent( uint8 task_id, uint16 events );
 void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys);
 bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen);
 bool simpleBLEFilterIsSmart(uint8 *data, uint8 dataLen);
+
+void central_key_press_process_callback(uint8 key_cnt_number);
+
 BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen);
 /*********************************************************************
 *********************************************************************/

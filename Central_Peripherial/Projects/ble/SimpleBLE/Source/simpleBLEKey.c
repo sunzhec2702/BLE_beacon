@@ -1,11 +1,15 @@
 #include "simpleBLEKey.h"
 #include "simpleBLEPeripheral.h"
 #include "simpleBLECentral.h"
-
+#include "hal_key.h"
+#include "OSAL.h"
+#include "OSAL_PwrMgr.h"
 
 // Key related
 static uint8 key_pressed_count = 0;
 static uint8 key_processing = FALSE;
+static bool g_long_press_flag = FALSE;
+static bool key_pressed = FALSE;
 
 static key_event_process_callback process_callback = NULL;
 
@@ -32,12 +36,6 @@ void key_press_handler(uint8 keys)
 {
     if (keys & HAL_KEY_SW_6)
     {
-        if (low_power_state == TRUE)
-        {
-            DEBUG_PRINT("Handle Keys, Low Power Mode\r\n");
-            return;
-        }
-
         if (key_processing == FALSE)
         {
             if (key_pressed_count == 0)
@@ -55,16 +53,5 @@ void key_press_handler(uint8 keys)
         }
         key_pressed = !key_pressed;
     }
-
-#ifdef DEBUG_BOARD
-    if (keys & HAL_KEY_SW_1)
-    {
-        debug_low_power = TRUE;
-    }
-    if (keys & HAL_KEY_SW_3)
-    {
-        debug_low_power = FALSE;
-    }
-#endif
 }
 

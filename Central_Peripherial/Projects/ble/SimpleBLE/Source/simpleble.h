@@ -29,7 +29,7 @@ extern "C"
 #define TARGET_BOARD PRODUCT_BOARD
 
 #define POWER_OFF_SUPPORT FALSE
-//#define DEBUG_BOARD 1
+#define DEBUG_BOARD 1
 
 #define PRESET_ROLE BLE_ROLE_PERIPHERAL
 
@@ -119,14 +119,16 @@ typedef enum
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
 
 #ifdef DEBUG_BOARD
-//#define SBP_PERIODIC_PER_HOUR_PERIOD                    60000    // 1 min
-#define SBP_PERIODIC_PER_MIN_PERIOD                    60000    // 1 min
+#define SBP_PERIODIC_PER_MIN_PERIOD                     5000    // 5s
+#define DEFAULT_WAKE_TIME_MINS                          30      //
+#define SCAN_ADV_TRANS_MIN_PERIOD                       5 // 10mins
 #define DEFAULT_WAKE_TIME_HOURS                         (5) // 5 mins
 #define BUTTON_WAKE_TIME_HOURS                          (2) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #else
-#define SBP_PERIODIC_PER_MIN_PERIOD                    60000    // 1 min
-//#define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   // 1 hour
+#define SBP_PERIODIC_PER_MIN_PERIOD                     60000    // 1 min
+#define DEFAULT_WAKE_TIME_MINS                          30        // 30mins
+#define SCAN_ADV_TRANS_MIN_PERIOD                       10 // 10mins
 #define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
 #define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
@@ -159,9 +161,6 @@ typedef enum
 #define BATTERY_LOW_THRESHOLD_SLEEP                           27 //2.7V
 #define BATTERY_LOW_THRESHOLD                                 20 //2V
 #define ENABLE_DISABLE_PERIOD 500
-#define SCAN_ADV_TRANS_MIN_PERIOD                             10 // 10mins
-
-#define DEFAULT_WAKE_TIME_MINS                                30
 
 
 #define BEACON_START_INDEX 5
@@ -181,7 +180,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
-//#define RELEASE_VER                      //����汾������?
+//#define RELEASE_VER                      //����汾������?
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x03
@@ -202,7 +201,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// ϵͳ��ʱ�����ʱ��?
+// ϵͳ��ʱ�����ʱ��?
 #define SBP_PERIODIC_EVT_PERIOD                   100//������100ms
 
 //����¼�Ĵӻ���ַ
@@ -211,11 +210,11 @@ typedef enum
 //mac��ַ���ַ����� (һ���ֽڵ��������ַ�)
 #define MAC_ADDR_CHAR_LEN                          12//mac��ַ���ַ����� (һ���ֽڵ��������ַ�)
 
-// �������û���������Ϣ��ӻ����?
+// �������û���������Ϣ��ӻ����?
 typedef enum
 {
     PARA_ALL_FACTORY = 0,           //ȫ���ָ���������
-    PARA_PARI_FACTORY = 1,          //������?�ָ���������-�൱����������Ϣ��ӻ����?
+    PARA_PARI_FACTORY = 1,          //������?�ָ���������-�൱����������Ϣ��ӻ����?
 }PARA_SET_FACTORY;
 
 // Ӧ�ó���״̬
@@ -241,20 +240,20 @@ typedef enum
 typedef enum
 {
   BLE_CENTRAL_CONNECT_CMD_NULL,              //���� AT ��������  ��
-  BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ��?
+  BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ��?
   BLE_CENTRAL_CONNECT_CMD_CON,               //���� AT ��������  ����ָ����ַ
-  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����?
-  BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ��?
+  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����?
+  BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ��?
 }BLE_CENTRAL_CONNECT_CMD;
 extern BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd ;
 
 // ����ϵͳ�ṹ������ �ýṹ���ڿ���ʱ��nv flash �ж�ȡ�� �������޸�ʱ�� ��Ҫд��nv flash
-// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�?
+// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�?
 typedef struct 
 {
     BLE_STATUS status;
     BLE_ROLE role;                  //����ģʽ  0: �ӻ�   1: ����
-    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���?12λ �ַ���ʾ
+    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���?12λ �ַ���ʾ
     int8 rssi;                              //  RSSI �ź�ֵ
     uint8 rxGain;                           //  ��������ǿ��
     uint8 txPower;                          //  �����ź�ǿ��
@@ -301,7 +300,7 @@ extern bool simpleBLECentralCanSend;
 extern bool simpleBLEChar6DoWrite;
 
 #if 1
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times);
 
 // �ַ����Ա�
@@ -317,14 +316,14 @@ void simpleBLE_SaveAndReset(void);
 // �����������ݵ�nv flash
 void simpleBLE_WriteAllDataToFlash();
 
-// ��ȡ�Զ����? nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash();
 
 //flag: PARA_ALL_FACTORY:  ȫ���ָ���������
 //flag: PARA_PARI_FACTORY: ��������Ϣ
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag); 
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?
 void PrintAllPara(void);
 
 // �����豸��ɫ

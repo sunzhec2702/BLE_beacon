@@ -64,6 +64,9 @@
 #include "string.h"
 #include "amomcu_buffer.h"
 
+#include "simpleBLEKey.h"
+#include "simpleBLELED.h"
+
 /*********************************************************************
  * MACROS
  */
@@ -103,10 +106,10 @@
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
 
 // Minimum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
+#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
 
 // Maximum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
+#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_UPDATE_SLAVE_LATENCY 0
@@ -286,9 +289,9 @@ void SimpleBLECentral_Init(uint8 task_id)
     //uint8 bonding = DEFAULT_BONDING_MODE;
 
     /*
-    bonding���ǰ�������?��¼����, �´ξͲ��������?. ��bonding�´ξͻ������?.    
-    �������Ǵӻ������? bonding = FALSE �ĺ�����ǣ�? ���豸ÿ�����Ӷ�������������
-    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������? ����Ͽ��󶼲����?�ٴ��������뼴������
+    bonding���ǰ�������?��¼����, �´ξͲ��������?. ��bonding�´ξͻ������?.    
+    �������Ǵӻ������? bonding = FALSE �ĺ�����ǣ�? ���豸ÿ�����Ӷ�������������
+    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������? ����Ͽ��󶼲����?�ٴ��������뼴������
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -315,6 +318,9 @@ void SimpleBLECentral_Init(uint8 task_id)
   RegisterForKeys(simpleBLETaskId);
   //HalLedSet(HAL_LED_3, HAL_LED_MODE_ON );
   // Setup a delayed profile startup
+
+  set_key_press_process_callback(central_key_press_process_callback);
+
   osal_set_event(simpleBLETaskId, START_DEVICE_EVT);
 }
 
@@ -552,39 +558,6 @@ static void simpleBLECentral_ProcessOSALMsg(osal_event_hdr_t *pMsg)
 static void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys)
 {
   HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
-  if (currentBLEStatus == BLE_STATUS_ON_SCAN)
-  {
-    sys_config.key_pressed_in_scan = TRUE;
-    osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
-  }
-
-  if (keys & HAL_KEY_SW_6)
-  {
-    if (low_power_state == TRUE)
-    {
-      DEBUG_PRINT("Handle Keys, Low Power Mode\r\n");
-      return;
-    }
-
-    if (key_processing == FALSE)
-    {
-      if (key_pressed_count == 0)
-      {
-        if (wake_up_hours_remain <= RESET_WAKE_TIME_HOURS_THRES)
-        {
-          wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
-          advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
-        }
-        if (g_long_press_flag == FALSE)
-        {
-          osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
-        }
-      }
-      key_pressed_count++;
-    }
-    key_pressed = !key_pressed;
-  }
-
   //TODO: Handle power on or handle press issue.
 }
 
@@ -635,7 +608,7 @@ static void simpleBLECentralProcessGATTMsg(gattMsgEvent_t *pMsg)
     {
       // After a succesful write, display the value that was written and increment value
       //LCD_WRITE_STRING_VALUE( "Write sent:", simpleBLECharVal++, 10, HAL_LCD_LINE_1 );
-      // ����������ڱ�����һ��д���ݵ��ӻ��Ѿ��ɹ���? �������ж�д����ʱ���жϣ� ��ȷ�����ݵ�������
+      // ����������ڱ�����һ��д���ݵ��ӻ��Ѿ��ɹ���? �������ж�д����ʱ���жϣ� ��ȷ�����ݵ�������
       simpleBLEChar6DoWrite = TRUE;
     }
 
@@ -812,7 +785,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     simpleBLECentralCanSend = FALSE;
     LCD_WRITE_STRING("Disconnected", HAL_LCD_LINE_1);
     LCD_WRITE_STRING_VALUE("Reason:", pEvent->linkTerminate.reason, 10, HAL_LCD_LINE_2);
-    //��������ʧ�ܺ� ���Գ���ִ��������߼����?��ӻ�?
+    //��������ʧ�ܺ� ���Գ���ִ��������߼����?��ӻ�?
     simpleBLEScanning = 0;
     simpleBLEStartScan();
   }
@@ -1028,4 +1001,10 @@ static BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen)
   VOID dataLen;
   BLE_DEVICE_TYPE deviceType = data[BEACON_ISSMART_INDEX];
   return deviceType;
+}
+
+
+void central_key_press_process_callback(uint8 key_cnt_number)
+{
+  return;
 }
