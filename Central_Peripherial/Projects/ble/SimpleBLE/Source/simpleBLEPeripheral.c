@@ -65,16 +65,16 @@
 #define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_GENERAL
 
 // Minimum connection interval (units of 1.25ms, 80=100ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ���Ӽ�������ݷ������йأ�?? ���Ӽ��Խ�̣�?? ��λʱ���ھ��ܷ���Խ�������??
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ���Ӽ�������ݷ������йأ�??? ���Ӽ��Խ�̣�??? ��λʱ���ھ��ܷ���Խ�������???
 
 // Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ���Ӽ�������ݷ������йأ�?? ���Ӽ��Խ�̣�?? ��λʱ���ھ��ܷ���Խ�������??
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ���Ӽ�������ݷ������йأ�??? ���Ӽ��Խ�̣�??? ��λʱ���ھ��ܷ���Խ�������???
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_DESIRED_SLAVE_LATENCY 0
 
 // Supervision timeout value (units of 10ms, 1000=10s) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -����ԭ��Ͽ����Ӻ�??��ʱ�����¹㲥��ʱ��:  100 = 1s
+#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -����ԭ��Ͽ����Ӻ�???��ʱ�����¹㲥��ʱ��:  100 = 1s
 
 // Whether to enable automatic parameter update request when a connection is formed
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
@@ -168,10 +168,23 @@ static uint8 advertData_iBeacon[] =
   0x15, // 8
   /*Device UUID (16 Bytes)*/
   0x49, 0x53, 0x53, 0x4D, 0x41, 0x52, 0x54, 0x00, // ISSMART    8 bytes.
-  0x00, 0x00, BLE_BEACON, // 17, 18,19 Device Type 3 bytes. //beacon.
+  0x00, 0x00, // 17, 18, reserved. Maybe CRC
+  
+  #if (PRESET_ROLE == BLE_ROLE_STATION_ADV)
+  BLE_STATION_ADV, // check the role.
+  #else
+  BLE_BEACON, // 19 Device Type 3 bytes.
+  #endif
+
+  #if (PRESET_ROLE == BLE_ROLE_STATION_ADV)
+  BLE_POWER_ON,
+  SCAN_ADV_TRANS_MIN_PERIOD,
+  DEFAULT_WAKE_TIME_MINS,
+  #else
   MAJOR_HW_VERSION, // 0x00
   MAJOR_SW_VERSION, // 0x02
   MINOR_SW_VERSION, // 0x01
+  #endif
   /*Specific Data*/
   0x00, // 23
   0x00, // 24, Station Index
@@ -179,43 +192,15 @@ static uint8 advertData_iBeacon[] =
   0x00, // 25 for min left
   0x00, // 26 for index 
   /*Minor Value (2 Bytes)*/
-  0x00, 0x00, // 27-28 // 27 FlagByte. bit7 rapid bit6 low_bat
-  /*Measured Power*/
-  0xCD //29
-};
+  0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
+  0x00, // 28 Battery Value
 
-static uint8 advertData_Station[] =
-{
-  // Flags; this sets the device to use limited discoverable
-  // mode (advertises for 30 seconds at a time) instead of general
-  // discoverable mode (advertises indefinitely)
-  0x02, // length of this data, 0
-  GAP_ADTYPE_FLAGS, // 1
-  DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED, // 2
-  // in this peripheral
-  0x1A, // length of this data 26byte, 3
-  GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
-  /*Apple Pre-Amble*/
-  0x4C, // 5
-  0x00, // 6
-  0x02, // 7
-  0x15, // 8
-  /*Device UUID (16 Bytes)*/
-  0x49, 0x53, 0x53, 0x4D, 0x41, 0x52, 0x54, 0x00, // ISSMART    8 bytes.
-  0x00, BLE_POWER_ON, BLE_STATION_ADV, // 17,18,19 Device Type 3 bytes. // Station.
-  MAJOR_HW_VERSION, // 20 0x00
-  MAJOR_SW_VERSION, // 0x02
-  MINOR_SW_VERSION, // 0x01
-  /*Specific Data*/
-  0x00, // 23
-  0x00, // 24, Station Index
-  /*Major Value (2 Bytes)*/
-  0x00, // 25 for min left
-  0x00, // 26 for index 
-  /*Minor Value (2 Bytes)*/
-  0x00, 0x00, // 27-28
+  #if (PRESET_ROLE == BLE_ROLE_STATION_ADV)
+  SBP_PERIODIC_OFF_SCAN_PERIOD,
+  #else
   /*Measured Power*/
   0xCD //29
+  #endif
 };
 
 static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
@@ -252,8 +237,8 @@ static void advertise_control(bool enable);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
-  BOND_PAIR_STATUS_PAIRING, //δ���??
-  BOND_PAIR_STATUS_PAIRED,  //�����??
+  BOND_PAIR_STATUS_PAIRING, //δ���???
+  BOND_PAIR_STATUS_PAIRED,  //�����???
 } BOND_PAIR_STATUS;
 
 void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs);
@@ -331,7 +316,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 
   {
     // ����rssi ������������
-    uint16 rssi_read_rate_1ms = 500; //һ�����??2��
+    uint16 rssi_read_rate_1ms = 500; //һ�����???2��
     GAPRole_SetParameter(GAPROLE_RSSI_READ_RATE, sizeof(uint16), &rssi_read_rate_1ms);
   }
 
@@ -350,12 +335,12 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     uint32 passkey = 0; // passkey "000000"
     uint8 pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
     uint8 mitm = TRUE;
-    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //��ʾ���룬 �Ա�����������Ե�����??
+    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //��ʾ���룬 �Ա�����������Ե�����???
 
     /*
-    bonding���ǰ�������?��¼����, �´ξͲ��������??. ��bonding�´ξͻ������??.    
-    �������Ǵӻ������?? bonding = FALSE �ĺ�����ǣ�?? ���豸ÿ�����Ӷ�������������
-    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������?? ����Ͽ��󶼲����?�ٴ��������뼴������
+    bonding���ǰ�������?��¼����, �´ξͲ��������???. ��bonding�´ξͻ������???.    
+    �������Ǵӻ������??? bonding = FALSE �ĺ�����ǣ�??? ���豸ÿ�����Ӷ�������������
+    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������??? ����Ͽ��󶼲����?�ٴ��������뼴������
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -396,7 +381,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // VOID SimpleProfile_RegisterAppCBs(&simpleBLEPeripheral_SimpleProfileCBs);
 
   // ��Ҫ�رյ�CLK�Զ���Ƶ���ڳ�ʼ���м���HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT )?  // �������ᵼ��Ƶ���Զ��л���DMA�����ܵ�Ӱ�죬С��Χ������
-  // ��������رգ�?? ����뽵�͹��ģ�?? ���Ӧ���?����ģ�?? ����ì����
+  // ��������رգ�??? ����뽵�͹��ģ�??? ���Ӧ���?����ģ�??? ����ì����
   HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT);
   //HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT );
 
@@ -680,6 +665,11 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     }
     break;
   case SBP_PERIODIC_PER_MIN_EVT:
+    #if (PRESET_ROLE == BLE_ROLE_STATION_ADV)
+      // Ignore per min evt.
+      return;
+    #endif
+
     if (g_sleepFlag == TRUE)
     {
       DEBUG_PRINT("sleep already, stop the per hour timer\r\n");
@@ -833,11 +823,19 @@ static bool check_keys_pressed(uint8 keys)
 }
 
 static void init_ibeacon_advertise(bool reset_index)
-{  // Update the simpleBLE status.
+{ 
+
+  #if (PRESET_ROLE == BLE_STATION_ADV)
+  advertData_iBeacon[ADV_STATION_CMD_INDEX] = sys_config.stationAdvCmd;
+  advertData_iBeacon[ADV_STATION_SCAN_INTERVAL_INDEX] = sys_config.powerOnScanInterval;
+  advertData_iBeacon[ADV_STATION_WAKE_MINS_INDEX] = sys_config.powerOnPeriod;
+  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX] = sys_config.powerOffScanInterval;
+  #endif
+  // Update the simpleBLE status. Common Config
   advertData_iBeacon[ADV_STATION_INDEX_1] = (sys_config.stationIndex >> 8) & 0xFF;
   advertData_iBeacon[ADV_STATION_INDEX_2] = (sys_config.stationIndex & 0xFF);
+  // Beacon config.
   advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
-
   advertData_iBeacon[ADV_BAT_BYTE] = battery_voltage & 0xFF;
   advertData_iBeacon[ADV_FLAG_BYTE] = 0x00;
   if (reset_index == TRUE)
@@ -926,3 +924,27 @@ void peripheral_key_press_process_callback(uint8 key_cnt_number)
   }
   return;
 }
+
+#if (PRESET_ROLE == BLE_ROLE_STATION_ADV)
+void serialConfigAdvCallback(uint8 *data, uint16 dataLen)
+{
+  if (dataLen != sizeof(StationConfig) && memcpy(magicSerial, data, sizeof(magicSerial)) == 0)
+  {
+    DEBUG_PRINT("Config Size error\r\n");
+    DEBUG_PRINT("input: ", dataLen, 10);
+    DEBUG_PRINT("expect: ", sizeof(StationConfig), 10);
+    return;
+  }
+  DEBUG_PRINT("Ready to config station adv\r\n");
+  StationConfig *config = (StationConfig*) data;
+  // Do we need to store these information. We need to config them every time.
+  sys_config.stationAdvCmd = config->cmd;
+  sys_config.powerOnScanInterval = config->powerOnScanInterval;
+  sys_config.powerOffScanInterval = config->powerOffScanInterval;
+  sys_config.powerOnPeriod = config->powerOnPeriod;
+  sys_config.stationIndex = config->stationIndex;
+  simpleBLE_WriteAllDataToFlash();
+  // Save all the config data to flash.
+  init_ibeacon_advertise(TRUE);
+}
+#endif

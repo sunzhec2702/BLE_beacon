@@ -33,20 +33,22 @@ extern "C"
 #define POWER_OFF_SUPPORT FALSE
 #define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_ROLE_PERIPHERAL
+#define PRESET_ROLE BLE_ROLE_STATION_ADV
 
 // ��ǰ��Ƭ�����еĽ�ɫ
 typedef enum
 {
     BLE_ROLE_PERIPHERAL = 0,        //�ӻ���ɫ
-    BLE_ROLE_CENTRAL = 1,           //������ɫ    
-}BLE_ROLE;
+    BLE_ROLE_CENTRAL = 1,           //������ɫ
+    BLE_ROLE_STATION_ADV = 2,
+} BLE_ROLE;
 
 typedef enum
 {
     BLE_STATUS_ON_ADV = 0,
     BLE_STATUS_ON_SCAN,
     BLE_STATUS_OFF,
+    BLE_STATUS_FAST_OFF,
 } BLE_STATUS;
 
 typedef enum
@@ -168,11 +170,16 @@ typedef enum
 #define ENABLE_DISABLE_PERIOD 500
 
 
+
+
+// Adv index
 #define BEACON_START_INDEX 5
 #define BEACON_ISSMART_INDEX 9
 
-#define ADV_STATION_CMD_INDEX 18
 #define BEACON_DEVICE_TYPE_INDEX 19
+#define ADV_STATION_CMD_INDEX 20
+#define ADV_STATION_SCAN_INTERVAL_INDEX 21
+#define ADV_STATION_WAKE_MINS_INDEX 22
 
 #define ADV_STATION_INDEX_1 23
 #define ADV_STATION_INDEX_2 24
@@ -180,12 +187,12 @@ typedef enum
 #define ADV_INDEX_BYTE 26
 #define ADV_FLAG_BYTE 27
 #define ADV_BAT_BYTE 28
-
+#define ADV_STATION_OFF_SCAN_INTERVAL_INDEX 29
 
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
-//#define RELEASE_VER                      //����汾������?
+//#define RELEASE_VER                      //����汾������??
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x03
@@ -206,7 +213,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// ϵͳ��ʱ�����ʱ��?
+// ϵͳ��ʱ�����ʱ��??
 #define SBP_PERIODIC_EVT_PERIOD                   100//������100ms
 
 //����¼�Ĵӻ���ַ
@@ -247,24 +254,29 @@ typedef enum
   BLE_CENTRAL_CONNECT_CMD_NULL,              //���� AT ��������  ��
   BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ��?
   BLE_CENTRAL_CONNECT_CMD_CON,               //���� AT ��������  ����ָ����ַ
-  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����?
+  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����??
   BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ��?
 }BLE_CENTRAL_CONNECT_CMD;
 extern BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd ;
 
 // ����ϵͳ�ṹ������ �ýṹ���ڿ���ʱ��nv flash �ж�ȡ�� �������޸�ʱ�� ��Ҫд��nv flash
-// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�?
+// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�??
 typedef struct 
 {
     BLE_STATUS status;
     BLE_ROLE role;                  //����ģʽ  0: �ӻ�   1: ����
-    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���?12λ �ַ���ʾ
+    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���??12λ �ַ���ʾ
     int8 rssi;                              //  RSSI �ź�ֵ
     uint8 rxGain;                           //  ��������ǿ��
     uint8 txPower;                          //  �����ź�ǿ��
     uint16 stationIndex;
     uint8 minLeft;
     uint8 key_pressed_in_scan;
+    // Values got from station adv.
+    uint8 stationAdvCmd;
+    uint8 powerOnScanInterval; // ON_SCAN/ON_ADV trans interval. default 10 mins.
+    uint8 powerOnPeriod; // Without new adv data, how long will it last in ON status. default 30 mins.
+    uint8 powerOffScanInterval; // The scan interval in OFF mode, default 1 hour
 } SYS_CONFIG;
 extern SYS_CONFIG sys_config;
 
@@ -305,7 +317,7 @@ extern bool simpleBLECentralCanSend;
 extern bool simpleBLEChar6DoWrite;
 
 #if 1
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������?? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times);
 
 // �ַ����Ա�
@@ -321,14 +333,14 @@ void simpleBLE_SaveAndReset(void);
 // �����������ݵ�nv flash
 void simpleBLE_WriteAllDataToFlash();
 
-// ��ȡ�Զ����? nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����?? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash();
 
 //flag: PARA_ALL_FACTORY:  ȫ���ָ���������
 //flag: PARA_PARI_FACTORY: ��������Ϣ
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag); 
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���??
 void PrintAllPara(void);
 
 // �����豸��ɫ
@@ -374,6 +386,20 @@ void SimpleBLE_DisplayTestKeyValue();
 extern bool g_sleepFlag;    //˯�߱�־
 extern uint8 uart_sleep_count; // ˯�߼�����
 extern bool g_rssi_flag;       //�Ƿ�����
+
+
+static uint8 magicSerial[2] = {0xDE, 0xAD};
+// station adv related data struction.
+typedef struct
+{
+  uint8 magic[2];
+  uint8 cmd;          // POWER ON/POWER OFF.
+  uint8 powerOnScanInterval; // ON_SCAN/ON_ADV trans interval.
+  uint8 powerOnPeriod; // Without new adv data, how long will it last in ON status.
+  uint8 powerOffScanInterval; // The scan interval in OFF mode, default 1 hour
+  uint16 stationIndex; // 
+} StationConfig;
+
 #endif
 
 

@@ -145,6 +145,10 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.stationIndex = 0;
     sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
     sys_config.key_pressed_in_scan = FALSE;
+    // Station ADV configured.
+    sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;
+    sys_config.powerOnPeriod = DEFAULT_WAKE_TIME_MINS;
+    sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD; // The scan interval in OFF mode, default 1 hour
   }
   GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
   simpleBLE_WriteAllDataToFlash();
@@ -208,17 +212,19 @@ void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
 // 0 ��peripheral���豸�� 1: ��Ϊ central
 bool Check_startup_peripheral_or_central(void)
 {
+#if (PRESET_ROLE == BLE_ROLE_STATION_ADV)
+  return true;
+#endif
   switch (sys_config.status)
   {
+    case BLE_STATUS_FAST_OFF:
     case BLE_STATUS_OFF:
-    return true;
-    break;
-    case BLE_STATUS_ON_ADV:
-    return false;
-    break;
     case BLE_STATUS_ON_SCAN:
-    return true;
-    break;
+      return true;
+      break;
+    case BLE_STATUS_ON_ADV:
+      return false;
+      break;
     default:
       return true;
       break;
