@@ -88,7 +88,7 @@ void change_advertise_data(uint8 key_pressed);
 void peripheral_key_press_process_callback(uint8 key_cnt_number);
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-void serialConfigAdvCallback(uint8 *data, uint16 dataLen);
+bool serialConfigAdvCallback(uint8 *data, uint16 dataLen);
 #endif
 /*********************************************************************
 *********************************************************************/

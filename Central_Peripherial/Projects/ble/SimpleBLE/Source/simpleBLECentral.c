@@ -523,6 +523,12 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     key_cnt_evt_callback();
     return (events ^ SBP_KEY_CNT_EVT);
   }
+
+  if (events & SBP_PERIODIC_LED_EVT)
+  {
+    led_event_callback();
+    return (events ^ SBP_PERIODIC_LED_EVT);
+  }
   // Discard unknown events
   return 0;
 }
@@ -698,29 +704,26 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
               sys_config.stationIndex = 0;
               sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
               sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-              sys_config.powerOffScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX];
-
+              sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
+              
               sys_config.status = BLE_STATUS_OFF;
               simpleBLE_SaveAndReset();
             }
             else if (cmd == BLE_CMD_POWER_ON)
             {
               DEBUG_VALUE("current stationIndex: ", sys_config.stationIndex, 10);
-              if (sys_config.stationIndex < advStationIndex)
-              {
-                sys_config.stationIndex = advStationIndex;
-                sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
-                sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-                sys_config.powerOffScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX];
-                #ifdef DEBUG_BOARD
-                DEBUG_VALUE("CMD: ", pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX], 10);
-                DEBUG_VALUE("StationIndexUpdate to ", advStationIndex, 10);
-                DEBUG_VALUE("MinLeft : ", sys_config.minLeft, 10);
-                DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
-                DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
-                DEBUG_VALUE("powerOffScanInterval", sys_config.powerOffScanInterval, 10);
-                #endif
-              }
+              sys_config.stationIndex = advStationIndex;
+              sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
+              sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
+              sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
+              #ifdef DEBUG_BOARD
+              DEBUG_VALUE("CMD: ", pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX], 10);
+              DEBUG_VALUE("StationIndexUpdate to ", advStationIndex, 10);
+              DEBUG_VALUE("MinLeft : ", sys_config.minLeft, 10);
+              DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
+              DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
+              DEBUG_VALUE("powerOffScanInterval", sys_config.powerOffScanInterval, 10);
+              #endif
               sys_config.minLeft = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
             }
           }
@@ -750,7 +753,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
               sys_config.minLeft = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
               sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
               sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-              sys_config.powerOffScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX];
+              sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
 
               sys_config.status = BLE_STATUS_ON_ADV;
 
@@ -769,8 +772,18 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
               sys_config.stationIndex = 0;
               sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
               sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-              sys_config.powerOffScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX];
+              sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
               sys_config.status = BLE_STATUS_OFF;
+              simpleBLE_WriteAllDataToFlash();
+            }
+            else if (cmd == BLE_CMD_LED_BLINK)
+            {
+              sys_config.stationIndex = 0;
+              sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
+              sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
+              sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
+              sys_config.status = BLE_STATUS_OFF;
+              led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, 0);
             }
           }
         }
@@ -792,7 +805,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     {
       DEBUG_PRINT("OFF, TimeLeft 0\r\n");
       scanTimeLeft = DEFAULT_SCAN_TIME;
-      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, (sys_config.powerOffScanInterval * SBP_PERIODIC_PER_MIN_PERIOD));
+      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, (sys_config.powerOffScanInterval * 1000));
     }
     else
     {
@@ -995,8 +1008,6 @@ static uint8 isSmart[] =
 {
   0x53,
   0x4D,
-  0x41,
-  0x52,
   0x54,
 };
 

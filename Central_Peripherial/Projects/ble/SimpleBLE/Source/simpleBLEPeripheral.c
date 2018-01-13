@@ -167,7 +167,9 @@ static uint8 advertData_iBeacon[] =
   0x02, // 7
   0x15, // 8
   /*Device UUID (16 Bytes)*/
-  0x53, 0x4D, 0x41, 0x52, 0x54,  // ISSMART    5 bytes.
+  0x53, 0x4D, 0x54, // SMT 3 Bytes.
+  0x00, // 12 reserved
+  0x00, // 13 reserved.
   MAJOR_HW_VERSION, MAJOR_SW_VERSION, MINOR_SW_VERSION, // 14, 15, 16, HW/SW version
   
   #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
@@ -178,8 +180,8 @@ static uint8 advertData_iBeacon[] =
   BLE_CMD_POWER_ON, //18
   SCAN_ADV_TRANS_MIN_PERIOD, //19
   DEFAULT_WAKE_TIME_MINS, //20
-  SBP_PERIODIC_OFF_SCAN_PERIOD_MIN, //21
-  0x00, //22, reserved.
+  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1, //21
+  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2, //22
 
   /*Specific Data*/
   0x00, // 23
@@ -692,7 +694,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       }
       minsRunning++;
       DEBUG_VALUE("minsRunning:", minsRunning, 10);
-      if (minsRunning == SCAN_ADV_TRANS_MIN_PERIOD)
+      if (minsRunning == sys_config.powerOnScanInterval)
       {
         DEBUG_PRINT("minsRunning Event: change to Central\r\n");
         osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
@@ -832,7 +834,9 @@ static void init_ibeacon_advertise(bool reset_index)
   advertData_iBeacon[ADV_STATION_CMD_INDEX] = sys_config.stationAdvCmd;
   advertData_iBeacon[ADV_STATION_ON_SCAN_INTERVAL_INDEX] = sys_config.powerOnScanInterval;
   advertData_iBeacon[ADV_STATION_POWER_ON_PERIOD_INDEX] = sys_config.powerOnPeriod;
-  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX] = sys_config.powerOffScanInterval;
+  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] = (sys_config.powerOffScanInterval >> 8) & 0xFF;
+  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2] = (sys_config.powerOffScanInterval & 0xFF);
+
   #endif
   // Update the simpleBLE status. Common Config
   advertData_iBeacon[ADV_STATION_INDEX_1] = (sys_config.stationIndex >> 8) & 0xFF;
@@ -933,7 +937,7 @@ static uint8* stationConfig = NULL;
 static uint16 configDataLen = 0;
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-void serialConfigAdvCallback(uint8 *data, uint16 dataLen)
+bool serialConfigAdvCallback(uint8 *data, uint16 dataLen)
 {
   DEBUG_VALUE("Got dataLen : ", dataLen, 10);
   uint16 index = 0;
@@ -1018,12 +1022,15 @@ void serialConfigAdvCallback(uint8 *data, uint16 dataLen)
   simpleBLE_WriteAllDataToFlash();
   // Save all the config data to flash.
   init_ibeacon_advertise(TRUE);
+  osal_mem_free(stationConfig);
+  configDataLen = 0;
+  return TRUE;
 config_error:
   if (stationConfig != NULL)
   {
     osal_mem_free(stationConfig);
     configDataLen = 0;
   }
-  return;
+  return FALSE;
 }
 #endif

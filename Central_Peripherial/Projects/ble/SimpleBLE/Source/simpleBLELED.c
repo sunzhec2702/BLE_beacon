@@ -52,9 +52,9 @@ uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_off, ui
 {
   if (led_toggling == TRUE)
     return FALSE;
+  led_toggling = TRUE;
   osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
   led_toggle_status = FALSE;
-  led_toggling = TRUE;
   led_toggle_period_on = toggle_period_on;
   led_toggle_period_off = toggle_period_off;
   led_toggle_count = 0;

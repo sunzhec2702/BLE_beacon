@@ -292,7 +292,7 @@ void simpleBLE_performPeriodicTask(void)
   return;
 }
 
-//uart �ص�����
+//uart
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
 {
   (void)port;
@@ -313,7 +313,8 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       // Directly send to interface 
       // ble_uart_interrupt(buffer, numBytes);
       #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-      serialConfigAdvCallback(buffer, numBytes);
+      if (serialConfigAdvCallback(buffer, numBytes) == TRUE)
+      NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
       #endif
       NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
       //NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes);
