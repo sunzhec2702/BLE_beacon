@@ -33,14 +33,17 @@ extern "C"
 #define POWER_OFF_SUPPORT FALSE
 #define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_ROLE_STATION_ADV
+#define PRESET_ROLE BLE_PRE_ROLE_PERIPHERAL
 
+#define BLE_PRE_ROLE_PERIPHERAL 0
+#define BLE_PRE_ROLE_CENTRAL 1
+#define BLE_PRE_ROLE_STATION_ADV 2
 // ��ǰ��Ƭ�����еĽ�ɫ
 typedef enum
 {
     BLE_ROLE_PERIPHERAL = 0,        //�ӻ���ɫ
-    BLE_ROLE_CENTRAL = 1,           //������ɫ
-    BLE_ROLE_STATION_ADV = 2,
+    BLE_ROLE_CENTRAL,           //������ɫ
+    BLE_ROLE_STATION_ADV,
 } BLE_ROLE;
 
 typedef enum
@@ -55,7 +58,6 @@ typedef enum
 {
   BLE_BEACON = 1,
   BLE_STATION_ADV,
-  BLE_STATION_SCAN,
 } BLE_DEVICE_TYPE;
 
 typedef enum
@@ -69,10 +71,11 @@ typedef enum
 #define HAL_LCD TRUE
 #define HAL_UART TRUE
 #define LCD_TO_UART TRUE
+#define DEBUG_BYTES(x, y) NPI_WriteTransport(x, y)
 #define DEBUG_PRINT(x) NPI_PrintString(x)
 #define DEBUG_VALUE(x,y,z) {NPI_PrintValue(x, y, z);NPI_PrintString("\r\n");}
 #else // PRODUCT_BOARD
-  #if (PRESET_ROLE == BLE_ROLE_CENTRAL)
+  #if (PRESET_ROLE == BLE_PRE_ROLE_CENTRAL)
     #define HAL_LCD FALSE
     #define HAL_UART TRUE
     #define LCD_TO_UART TRUE
@@ -81,6 +84,7 @@ typedef enum
     #define HAL_UART TRUE
     #define LCD_TO_UART FALSE
   #endif // CENTRAL
+#define DEBUG_BYTES(x, y) {}
 #define DEBUG_PRINT(x) {}
 #define DEBUG_VALUE(x,y,z) {}
 #endif
@@ -192,7 +196,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
-//#define RELEASE_VER                      //����汾������??
+//#define RELEASE_VER                      //����汾������??
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x03
@@ -213,7 +217,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// ϵͳ��ʱ�����ʱ��??
+// ϵͳ��ʱ�����ʱ��??
 #define SBP_PERIODIC_EVT_PERIOD                   100//������100ms
 
 //����¼�Ĵӻ���ַ
@@ -254,18 +258,18 @@ typedef enum
   BLE_CENTRAL_CONNECT_CMD_NULL,              //���� AT ��������  ��
   BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ��?
   BLE_CENTRAL_CONNECT_CMD_CON,               //���� AT ��������  ����ָ����ַ
-  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����??
+  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����??
   BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ��?
 }BLE_CENTRAL_CONNECT_CMD;
 extern BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd ;
 
 // ����ϵͳ�ṹ������ �ýṹ���ڿ���ʱ��nv flash �ж�ȡ�� �������޸�ʱ�� ��Ҫд��nv flash
-// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�??
+// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�??
 typedef struct 
 {
     BLE_STATUS status;
     BLE_ROLE role;                  //����ģʽ  0: �ӻ�   1: ����
-    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���??12λ �ַ���ʾ
+    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���??12λ �ַ���ʾ
     int8 rssi;                              //  RSSI �ź�ֵ
     uint8 rxGain;                           //  ��������ǿ��
     uint8 txPower;                          //  �����ź�ǿ��
@@ -317,7 +321,7 @@ extern bool simpleBLECentralCanSend;
 extern bool simpleBLEChar6DoWrite;
 
 #if 1
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������?? ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������?? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times);
 
 // �ַ����Ա�
@@ -333,14 +337,14 @@ void simpleBLE_SaveAndReset(void);
 // �����������ݵ�nv flash
 void simpleBLE_WriteAllDataToFlash();
 
-// ��ȡ�Զ����?? nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����?? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash();
 
 //flag: PARA_ALL_FACTORY:  ȫ���ָ���������
 //flag: PARA_PARI_FACTORY: ��������Ϣ
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag); 
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���??
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���??
 void PrintAllPara(void);
 
 // �����豸��ɫ

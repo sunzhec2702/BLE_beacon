@@ -26,6 +26,10 @@
 #include "string.h"
 #include "math.h"
 
+#if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
+#include "simpleBLEPeripheral.h"
+#endif
+
 SYS_CONFIG sys_config;
 bool g_sleepFlag = FALSE;    //˯�߱�־
 uint8 uart_sleep_count = 0; // ˯�߼�����
@@ -37,7 +41,7 @@ BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd = BLE_CENTRAL_CONNECT_CMD_NULL;
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events);
 
 
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������?? ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������?? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times)
 {
   while (times--)
@@ -71,8 +75,8 @@ uint32 str2Num(uint8 *numStr, uint8 iLength)
 
   /* 
           Ϊ����򵥣���ȷ��������ַ����������ֵ�
-          ����£��˴�δ����飬����Ҫ���??
-          numStr[i] - '0'�Ƿ���[0, 9]���������??
+          ����£��˴�δ����飬����Ҫ���??
+          numStr[i] - '0'�Ƿ���[0, 9]���������??
     */
   for (; i < iLength && numStr[i] != '\0'; ++i)
     rtnInt = rtnInt * 10 + (numStr[i] - '0');
@@ -125,7 +129,7 @@ void simpleBLE_WriteAllDataToFlash()
   osal_snv_write(0x80, sizeof(SYS_CONFIG), &sys_config);
 }
 
-// ��ȡ�Զ����?? nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����?? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash()
 {
   int8 ret8 = osal_snv_read(0x80, sizeof(SYS_CONFIG), &sys_config);
@@ -138,7 +142,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
   if (flag == PARA_ALL_FACTORY)
   {
     sys_config.status = BLE_STATUS_ON_ADV;
-    sys_config.role = BLE_ROLE_CENTRAL; //����ģʽ, Ĭ�ϴӻ�
+    sys_config.role = BLE_ROLE_PERIPHERAL; //����ģʽ, Ĭ�ϴӻ�
     sys_config.rssi = 0; //  RSSI �ź�ֵ
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ��������ǿ��
     sys_config.txPower = 0;                  //  �����ź�ǿ��
@@ -154,7 +158,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
   simpleBLE_WriteAllDataToFlash();
 }
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���??
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���??
 void PrintAllPara(void)
 {
   char strTemp[32];
@@ -212,8 +216,8 @@ void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
 // 0 ��peripheral���豸�� 1: ��Ϊ central
 bool Check_startup_peripheral_or_central(void)
 {
-#if (PRESET_ROLE == BLE_ROLE_STATION_ADV)
-  return true;
+#if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
+  return false;
 #endif
   switch (sys_config.status)
   {
@@ -271,7 +275,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���??
+  P0DIR |= 0x60; // P0.6����Ϊ���??
   P0_6 = onoff;
 }
 
@@ -307,6 +311,9 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       */
       // Directly send to interface 
       // ble_uart_interrupt(buffer, numBytes);
+      #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
+      serialConfigAdvCallback(buffer, numBytes);
+      #endif
       NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
       //NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes);
       osal_mem_free(buffer);

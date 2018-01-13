@@ -679,7 +679,6 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
   case GAP_DEVICE_INFO_EVENT:
   {
-    DEBUG_PRINT("DEVICE_INFO\r\n");
     if(simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
     {
       if (simpleBLEFilterIsSmart(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
@@ -728,8 +727,6 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
 
   case GAP_DEVICE_DISCOVERY_EVENT:
   {
-    // discovery complete, keep scanning.
-    DEBUG_PRINT("Discovery_event\r\n");
     simpleBLEScanning = FALSE;
     scanTimeLeft--;
     if (currentBLEStatus == BLE_STATUS_ON_SCAN && scanTimeLeft == 0)
@@ -955,7 +952,6 @@ static uint8 isSmart[] =
 // Filter if it is a beacon.
 static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)
 {
-  VOID dataLen;
   if ((osal_memcmp(beacon_id, &data[BEACON_START_INDEX], sizeof(beacon_id)) == TRUE))
   {
     return TRUE;
@@ -966,7 +962,6 @@ static bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen)
 // Filter if it is a beacon.
 static bool simpleBLEFilterIsSmart(uint8 *data, uint8 dataLen)
 {
-  VOID dataLen;
   if ((osal_memcmp(isSmart, &data[BEACON_ISSMART_INDEX], sizeof(isSmart)) == TRUE))
   {
     return TRUE;
@@ -978,7 +973,7 @@ static bool simpleBLEFilterIsSmart(uint8 *data, uint8 dataLen)
 static BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen)
 {
   VOID dataLen;
-  BLE_DEVICE_TYPE deviceType = data[BEACON_ISSMART_INDEX];
+  BLE_DEVICE_TYPE deviceType = data[BEACON_DEVICE_TYPE_INDEX];
   return deviceType;
 }
 
