@@ -33,7 +33,7 @@ extern "C"
 #define POWER_OFF_SUPPORT FALSE
 #define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_PRE_ROLE_PERIPHERAL
+#define PRESET_ROLE BLE_PRE_ROLE_STATION_ADV
 
 #define BLE_PRE_ROLE_PERIPHERAL 0
 #define BLE_PRE_ROLE_CENTRAL 1
@@ -62,8 +62,8 @@ typedef enum
 
 typedef enum
 {
-  BLE_POWER_ON = 1,
-  BLE_POWER_OFF,
+  BLE_CMD_POWER_ON = 1,
+  BLE_CMD_POWER_OFF,
 } BLE_STATION_CMD;
 
 
@@ -129,7 +129,8 @@ typedef enum
 #define SBP_PERIODIC_PER_MIN_PERIOD                     5000    // 5s
 #define DEFAULT_WAKE_TIME_MINS                          10      //
 #define SCAN_ADV_TRANS_MIN_PERIOD                       5 // 10mins
-#define SBP_PERIODIC_OFF_SCAN_PERIOD                    20000 // one hour
+#define SBP_PERIODIC_OFF_SCAN_PERIOD_MIN                1
+#define SBP_PERIODIC_OFF_SCAN_PERIOD                    (SBP_PERIODIC_OFF_SCAN_PERIOD_MIN * 60 * 1000) // one hour
 
 #define DEFAULT_WAKE_TIME_HOURS                         (5) // 5 mins
 #define BUTTON_WAKE_TIME_HOURS                          (2) // 2 days
@@ -138,7 +139,8 @@ typedef enum
 #define SBP_PERIODIC_PER_MIN_PERIOD                     60000    // 1 min
 #define DEFAULT_WAKE_TIME_MINS                          30        // 30mins
 #define SCAN_ADV_TRANS_MIN_PERIOD                       10 // 10mins
-#define SBP_PERIODIC_OFF_SCAN_PERIOD                    3600000 // one hour
+#define SBP_PERIODIC_OFF_SCAN_PERIOD_MIN                60
+#define SBP_PERIODIC_OFF_SCAN_PERIOD                    (SBP_PERIODIC_OFF_SCAN_PERIOD_MIN * 60 * 1000) // one hour
 
 #define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
 #define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
@@ -180,10 +182,11 @@ typedef enum
 #define BEACON_START_INDEX 5
 #define BEACON_ISSMART_INDEX 9
 
-#define BEACON_DEVICE_TYPE_INDEX 19
-#define ADV_STATION_CMD_INDEX 20
-#define ADV_STATION_SCAN_INTERVAL_INDEX 21
-#define ADV_STATION_WAKE_MINS_INDEX 22
+#define BEACON_DEVICE_TYPE_INDEX 17
+#define ADV_STATION_CMD_INDEX 18
+#define ADV_STATION_ON_SCAN_INTERVAL_INDEX 19
+#define ADV_STATION_POWER_ON_PERIOD_INDEX 20
+#define ADV_STATION_OFF_SCAN_INTERVAL_INDEX 21
 
 #define ADV_STATION_INDEX_1 23
 #define ADV_STATION_INDEX_2 24
@@ -191,7 +194,7 @@ typedef enum
 #define ADV_INDEX_BYTE 26
 #define ADV_FLAG_BYTE 27
 #define ADV_BAT_BYTE 28
-#define ADV_STATION_OFF_SCAN_INTERVAL_INDEX 29
+
 
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
@@ -396,12 +399,13 @@ static uint8 magicSerial[2] = {0xDE, 0xAD};
 // station adv related data struction.
 typedef struct
 {
-  uint8 magic[2];
+  uint8 magic1[2];
   uint8 cmd;          // POWER ON/POWER OFF.
   uint8 powerOnScanInterval; // ON_SCAN/ON_ADV trans interval.
   uint8 powerOnPeriod; // Without new adv data, how long will it last in ON status.
   uint8 powerOffScanInterval; // The scan interval in OFF mode, default 1 hour
   uint16 stationIndex; // 
+  uint8 magic2[2];
 } StationConfig;
 
 #endif

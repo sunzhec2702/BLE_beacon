@@ -167,24 +167,20 @@ static uint8 advertData_iBeacon[] =
   0x02, // 7
   0x15, // 8
   /*Device UUID (16 Bytes)*/
-  0x49, 0x53, 0x53, 0x4D, 0x41, 0x52, 0x54, 0x00, // ISSMART    8 bytes.
-  0x00, 0x00, // 17, 18, reserved. Maybe CRC
+  0x53, 0x4D, 0x41, 0x52, 0x54,  // ISSMART    5 bytes.
+  MAJOR_HW_VERSION, MAJOR_SW_VERSION, MINOR_SW_VERSION, // 14, 15, 16, HW/SW version
   
   #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-  BLE_STATION_ADV, // check the role.
+  BLE_STATION_ADV, // 17 check the role.
   #else
-  BLE_BEACON, // 19 Device Type 3 bytes.
+  BLE_BEACON, // 17 Device Type 3 bytes.
   #endif
+  BLE_CMD_POWER_ON, //18
+  SCAN_ADV_TRANS_MIN_PERIOD, //19
+  DEFAULT_WAKE_TIME_MINS, //20
+  SBP_PERIODIC_OFF_SCAN_PERIOD_MIN, //21
+  0x00, //22, reserved.
 
-  #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-  BLE_POWER_ON,
-  SCAN_ADV_TRANS_MIN_PERIOD,
-  DEFAULT_WAKE_TIME_MINS,
-  #else
-  MAJOR_HW_VERSION, // 0x00
-  MAJOR_SW_VERSION, // 0x02
-  MINOR_SW_VERSION, // 0x01
-  #endif
   /*Specific Data*/
   0x00, // 23
   0x00, // 24, Station Index
@@ -195,11 +191,7 @@ static uint8 advertData_iBeacon[] =
   0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
   0x00, // 28 Battery Value
 
-  #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-  SBP_PERIODIC_OFF_SCAN_PERIOD,
-  #else
   0xCD //29  /*Measured Power*/
-  #endif
 };
 
 static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
@@ -582,7 +574,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   if (events & SBP_SCAN_ADV_TRANS_EVT)
   {
     sys_config.status = BLE_STATUS_ON_SCAN;
-    sys_config.stationIndex = advertData_iBeacon[ADV_STATION_INDEX_1] << 8 + advertData_iBeacon[ADV_STATION_INDEX_2];
+    sys_config.stationIndex = (advertData_iBeacon[ADV_STATION_INDEX_1] << 8) + advertData_iBeacon[ADV_STATION_INDEX_2];
     sys_config.minLeft = advertData_iBeacon[ADV_MIN_LEFT_BYTE];
     simpleBLE_SaveAndReset();
     return (events ^ SBP_SCAN_ADV_TRANS_EVT);
@@ -675,7 +667,9 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       sys_config.stationIndex++;
       advertData_iBeacon[ADV_STATION_INDEX_1] = (sys_config.stationIndex >> 8) & 0xFF;
       advertData_iBeacon[ADV_STATION_INDEX_2] = (sys_config.stationIndex & 0xFF);
+      GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
       osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
+      DEBUG_VALUE("stationIndex: ", sys_config.stationIndex, 10);
       return;
     #endif
 
@@ -836,8 +830,8 @@ static void init_ibeacon_advertise(bool reset_index)
 
   #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
   advertData_iBeacon[ADV_STATION_CMD_INDEX] = sys_config.stationAdvCmd;
-  advertData_iBeacon[ADV_STATION_SCAN_INTERVAL_INDEX] = sys_config.powerOnScanInterval;
-  advertData_iBeacon[ADV_STATION_WAKE_MINS_INDEX] = sys_config.powerOnPeriod;
+  advertData_iBeacon[ADV_STATION_ON_SCAN_INTERVAL_INDEX] = sys_config.powerOnScanInterval;
+  advertData_iBeacon[ADV_STATION_POWER_ON_PERIOD_INDEX] = sys_config.powerOnPeriod;
   advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX] = sys_config.powerOffScanInterval;
   #endif
   // Update the simpleBLE status. Common Config
@@ -851,6 +845,7 @@ static void init_ibeacon_advertise(bool reset_index)
   {
     advertData_iBeacon[ADV_INDEX_BYTE] = 0x00;
   }
+  GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
 }
 
 static void advertise_control(bool enable)
@@ -934,26 +929,101 @@ void peripheral_key_press_process_callback(uint8 key_cnt_number)
   return;
 }
 
+static uint8* stationConfig = NULL;
+static uint16 configDataLen = 0;
+
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
 void serialConfigAdvCallback(uint8 *data, uint16 dataLen)
 {
-  if (dataLen != sizeof(StationConfig) && memcpy(magicSerial, data, sizeof(magicSerial)) == 0)
+  DEBUG_VALUE("Got dataLen : ", dataLen, 10);
+  uint16 index = 0;
+  if (configDataLen == 0 || stationConfig == NULL)
   {
-    DEBUG_PRINT("Config Size error\r\n");
-    DEBUG_VALUE("input: ", dataLen, 10);
-    DEBUG_VALUE("expect: ", sizeof(StationConfig), 10);
+    stationConfig = osal_mem_alloc(sizeof(StationConfig));
+    configDataLen = 0;
+  }
+
+  for (index = 0; index < dataLen; index++)
+  {
+    switch (configDataLen)
+    {
+      case 0:
+      if (data[index] == 0xDE)
+      {
+        stationConfig[configDataLen++] = 0xDE;
+      }
+      else
+      {
+        goto config_error;
+      }
+      break;
+      case 1:
+      if (data[index] == 0xAD)
+      {
+        stationConfig[configDataLen++] == 0xAD;
+      }
+      else
+      {
+        goto config_error;
+      }
+      break;
+      case sizeof(StationConfig) - 2:
+      if (data[index] == 0xBE)
+      {
+        stationConfig[configDataLen++] = 0xBE;
+      }
+      else
+      {
+        goto config_error;
+      }
+      break;
+      case sizeof(StationConfig) - 1:
+      if (data[index] == 0xEF)
+      {
+        stationConfig[configDataLen++] = 0xEF;
+      }
+      else
+      {
+        goto config_error;
+      }
+      break;
+      default:
+      stationConfig[configDataLen++] = data[index];
+      break;
+    }
+  }
+  if (configDataLen < sizeof(StationConfig))
+  {
     return;
   }
+  // Config Station.
+  /*
+  if (osal_memcmp(magicSerial, &stationConfig, sizeof(magicSerial)) == FALSE)
+  {
+    goto config_error;
+  }
+  */
   DEBUG_PRINT("Ready to config station adv\r\n");
-  StationConfig *config = (StationConfig*) data;
   // Do we need to store these information. We need to config them every time.
-  sys_config.stationAdvCmd = config->cmd;
-  sys_config.powerOnScanInterval = config->powerOnScanInterval;
-  sys_config.powerOffScanInterval = config->powerOffScanInterval;
-  sys_config.powerOnPeriod = config->powerOnPeriod;
-  sys_config.stationIndex = config->stationIndex;
+  sys_config.stationAdvCmd = ((StationConfig*)stationConfig)->cmd;
+  sys_config.powerOnScanInterval = ((StationConfig*)stationConfig)->powerOnScanInterval;
+  sys_config.powerOffScanInterval = ((StationConfig*)stationConfig)->powerOffScanInterval;
+  sys_config.powerOnPeriod = ((StationConfig*)stationConfig)->powerOnPeriod;
+  sys_config.stationIndex = ((StationConfig*)stationConfig)->stationIndex;
+  DEBUG_VALUE("CMD: ", sys_config.stationAdvCmd, 10);
+  DEBUG_VALUE("StationIndex = ", sys_config.stationIndex, 10);
+  DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
+  DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
+  DEBUG_VALUE("powerOffScanInterval", sys_config.powerOffScanInterval, 10);
   simpleBLE_WriteAllDataToFlash();
   // Save all the config data to flash.
   init_ibeacon_advertise(TRUE);
+config_error:
+  if (stationConfig != NULL)
+  {
+    osal_mem_free(stationConfig);
+    configDataLen = 0;
+  }
+  return;
 }
 #endif

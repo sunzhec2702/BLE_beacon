@@ -150,9 +150,10 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
     sys_config.key_pressed_in_scan = FALSE;
     // Station ADV configured.
+    sys_config.stationAdvCmd = BLE_CMD_POWER_ON;
     sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;
     sys_config.powerOnPeriod = DEFAULT_WAKE_TIME_MINS;
-    sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD; // The scan interval in OFF mode, default 1 hour
+    sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD_MIN; // The scan interval in OFF mode, default 1 hour
   }
   GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
   simpleBLE_WriteAllDataToFlash();
