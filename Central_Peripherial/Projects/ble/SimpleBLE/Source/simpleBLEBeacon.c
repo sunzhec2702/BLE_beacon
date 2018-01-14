@@ -23,10 +23,10 @@ uint8 advertData_iBeacon[] =
 
   BLE_CMD_POWER_ON, //18
 
-  SCAN_ADV_TRANS_MIN_PERIOD, //19
-  DEFAULT_WAKE_TIME_MINS, //20
-  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1, //21
-  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2, //22
+  SCAN_ADV_TRANS_MIN_PERIOD, //19 How often the beacon will scan for the station in power on mode.
+  DEFAULT_WAKE_TIME_MINS, //20 The period which the device keeps poweron even without scanning any data.
+  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1, //21 How often the beacon will scan for the station in power off mode.
+  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2, //22 The Data will be ((SEC_1 << 8) + SEC_2)
 
   /*Specific Data*/
   0x00, // 23

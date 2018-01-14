@@ -237,6 +237,17 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
             case BLE_SERIAL_GET_ADV_INTERVAL:
             sendWithFrameBuffer((uint8 *)&sys_config.stationAdvInterval, 1);
             break;
+            case BLE_SERIAL_GET_MAC:
+            uint8 *mac_addr = (uint8*)osal_mem_alloc(MAC_ADDR_CHAR_LEN);
+            if (mac_addr == NULL)
+            {
+                return FALSE;
+            }
+            GAPRole_GetParameter(GAPROLE_BD_ADDR, mac_addr);
+            osal_revmemcpy(sys_config.mac_addr, mac_addr, MAC_ADDR_CHAR_LEN);
+            sendWithFrameBuffer(sys_config.mac_addr, MAC_ADDR_CHAR_LEN);
+            osal_mem_free(mac_addr);
+            return TRUE;
             default:
             return FALSE;
         }
