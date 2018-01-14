@@ -33,40 +33,33 @@ extern "C"
 #define POWER_OFF_SUPPORT FALSE
 #define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_PRE_ROLE_PERIPHERAL
+#define PRESET_ROLE BLE_PRE_ROLE_STATION
+
+#define BLE_PRE_ROLE_STATION 0
+#define BLE_PRE_ROLE_BEACON 1
 
 #define BLE_PRE_ROLE_PERIPHERAL 0
 #define BLE_PRE_ROLE_CENTRAL 1
 #define BLE_PRE_ROLE_STATION_ADV 2
-// ��ǰ��Ƭ�����еĽ�ɫ
-typedef enum
-{
-    BLE_ROLE_PERIPHERAL = 0,        //�ӻ���ɫ
-    BLE_ROLE_CENTRAL,           //������ɫ
-    BLE_ROLE_STATION_ADV,
-} BLE_ROLE;
+
+
+#if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+#include "simpleBLEStation.h"
+#elif (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
+#include "simpleBLEBeacon.h"
+#endif
 
 typedef enum
 {
-    BLE_STATUS_ON_ADV = 0,
-    BLE_STATUS_ON_SCAN,
-    BLE_STATUS_OFF,
-    BLE_STATUS_FAST_OFF,
-} BLE_STATUS;
+  BLE_ROLE_PERIPHERAL = 0,
+  BLE_ROLE_CENTRAL,
+} BLE_ROLE;
 
 typedef enum
 {
   BLE_BEACON = 1,
   BLE_STATION_ADV,
 } BLE_DEVICE_TYPE;
-
-typedef enum
-{
-  BLE_CMD_POWER_ON = 1,
-  BLE_CMD_POWER_OFF,
-  BLE_CMD_LED_BLINK,
-} BLE_STATION_CMD;
-
 
 #ifdef DEBUG_BOARD
 #define HAL_LCD TRUE
@@ -401,19 +394,6 @@ void SimpleBLE_DisplayTestKeyValue();
 extern bool g_sleepFlag;    //˯�߱�־
 extern uint8 uart_sleep_count; // ˯�߼�����
 extern bool g_rssi_flag;       //�Ƿ�����
-
-
-// station adv related data struction.
-typedef struct
-{
-  uint8 magic1[2];    // 0xDE,0xAD
-  uint8 cmd;          // POWER ON/POWER OFF.
-  uint8 powerOnScanInterval; // ON_SCAN/ON_ADV trans interval.
-  uint8 powerOnPeriod; // Without new adv data, how long will it last in ON status.
-  uint16 powerOffScanInterval; // The scan interval in OFF mode, default 1 hour
-  uint16 stationIndex; // 
-  uint8 magic2[2];    // 0xBE, 0xEF
-} StationConfig;
 
 #endif
 

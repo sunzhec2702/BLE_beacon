@@ -26,8 +26,10 @@
 #include "string.h"
 #include "math.h"
 
-#if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-#include "simpleBLEPeripheral.h"
+#if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+#include "simpleBLEStation.h"
+#elif (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
+#include "simpleBLEBeacon.h"
 #endif
 
 SYS_CONFIG sys_config;
@@ -141,7 +143,12 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
 {
   if (flag == PARA_ALL_FACTORY)
   {
+    #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+    sys_config.status = BLE_STATUS_STATION_SCAN;
+    #elif (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     sys_config.status = BLE_STATUS_ON_ADV;
+    #endif
+
     sys_config.role = BLE_ROLE_PERIPHERAL; //����ģʽ, Ĭ�ϴӻ�
     sys_config.rssi = 0; //  RSSI �ź�ֵ
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ��������ǿ��
@@ -150,7 +157,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
     sys_config.key_pressed_in_scan = FALSE;
     // Station ADV configured.
-    sys_config.stationAdvCmd = BLE_CMD_POWER_ON;
+    // sys_config.stationAdvCmd = BLE_CMD_POWER_ON;
     sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;
     sys_config.powerOnPeriod = DEFAULT_WAKE_TIME_MINS;
     sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD_MIN; // The scan interval in OFF mode, default 1 hour
@@ -217,12 +224,9 @@ void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
 // 0 ��peripheral���豸�� 1: ��Ϊ central
 bool Check_startup_peripheral_or_central(void)
 {
-#if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-  return false;
-#endif
+#if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
   switch (sys_config.status)
   {
-    case BLE_STATUS_FAST_OFF:
     case BLE_STATUS_OFF:
     case BLE_STATUS_ON_SCAN:
       return true;
@@ -234,6 +238,17 @@ bool Check_startup_peripheral_or_central(void)
       return true;
       break;
   }
+#elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+  switch (sys_config.status)
+  {
+    case BLE_STATUS_STATION_SCAN:
+      return true;
+    case BLE_STATUS_STATION_ADV:
+      return false;
+    default:
+      return true;
+  }
+#endif
 }
 
 // ���п� uart ��ʼ��
@@ -310,14 +325,10 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       {
       }
       */
-      // Directly send to interface 
-      // ble_uart_interrupt(buffer, numBytes);
-      #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-      if (serialConfigAdvCallback(buffer, numBytes) == TRUE)
-      NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
+      #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+      serialConfigParser(buffer, numBytes);
       #endif
-      NPI_WriteTransport(buffer, numBytes); //�ͷŴ�������
-      //NPI_WriteTransportPort(HAL_UART_PORT_1, buffer, numBytes);
+      DEBUG_BYTES(buffer, numBytes); //�ͷŴ�������
       osal_mem_free(buffer);
     }
     return;
