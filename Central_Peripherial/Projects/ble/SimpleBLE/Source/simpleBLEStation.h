@@ -22,6 +22,14 @@ typedef enum
 
 typedef enum
 {
+    BLE_SERIAL_GET_ROLE = 0, // STATION_SCAN <--> STATION_ADV
+    BLE_SERIAL_GET_ADV_DATA, // CHANGE ADV DATA.
+    BLE_SERIAL_GET_ADV_INTERVAL, // CHANGE ADV INTERVAL.
+    BLE_SERIAL_GET_NUM,
+} BLE_SERIAL_GET_INFO_TYPE;
+
+typedef enum
+{
     BLE_SERIAL_CONFIG_SUCCESS = 0,
     BLE_SERIAL_CONFIG_CONTINUE,
     BLE_SERIAL_CONFIG_FAILED,
@@ -35,6 +43,8 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent);
 bool scan_discovery_callback(void);
 void key_press_callback(uint8 key_cnt_number);
 void serialConfigSendAck(BLE_SERIAL_CONFIG_STATUS status);
+
+void sendWithFrameBuffer(uint8 *data, uint16 dataLen);
 
 #endif
 

@@ -103,6 +103,8 @@ bool simpleBLEFilterIsSmart(uint8 *data, uint8 dataLen);
 void central_key_press_process_callback(uint8 key_cnt_number);
 
 BLE_STATUS getCurrentBLEStatus(void);
+uint8 getScanTimeLeft(void);
+void resetScanTimeLeft(void);
 
 BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen);
 bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen);

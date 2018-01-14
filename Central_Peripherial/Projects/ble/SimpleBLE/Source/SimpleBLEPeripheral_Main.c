@@ -55,9 +55,6 @@ int main(void)
   }
 
   /* Initialize LL */
-
-  // 根据S1 按键判断启动从设备或者主设备，
-  // 如果启动期间 S1 按键按下，P0_1==0, 则启动主机
   if (false == Check_startup_peripheral_or_central())
   {
     sys_config.role = BLE_ROLE_PERIPHERAL;
@@ -69,7 +66,6 @@ int main(void)
     simpleBLE_WriteAllDataToFlash();
   }
 
-  // 启动串口
   #if (HAL_UART == TRUE)
   simpleBLE_NPI_init();
   #endif

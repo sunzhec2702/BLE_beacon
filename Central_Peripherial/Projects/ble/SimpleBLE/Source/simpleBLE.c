@@ -148,16 +148,16 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     #elif (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     sys_config.status = BLE_STATUS_ON_ADV;
     #endif
+    sys_config.role = BLE_ROLE_NUMBER;
+    sys_config.rssi = 0;
+    sys_config.rxGain = HCI_EXT_RX_GAIN_STD;
+    sys_config.txPower = 0;
 
-    sys_config.role = BLE_ROLE_PERIPHERAL; //����ģʽ, Ĭ�ϴӻ�
-    sys_config.rssi = 0; //  RSSI �ź�ֵ
-    sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ��������ǿ��
-    sys_config.txPower = 0;                  //  �����ź�ǿ��
+    sys_config.stationAdvInterval = SBP_STATION_ADV_INTERVAL;
+    // PRE_ROLE_BEACON used.
     sys_config.stationIndex = 0;
     sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
     sys_config.key_pressed_in_scan = FALSE;
-    // Station ADV configured.
-    // sys_config.stationAdvCmd = BLE_CMD_POWER_ON;
     sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;
     sys_config.powerOnPeriod = DEFAULT_WAKE_TIME_MINS;
     sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD_MIN; // The scan interval in OFF mode, default 1 hour
@@ -214,14 +214,11 @@ bool simpleBLE_IfConnected()
   }
 }
 
-// ���Ӵӻ���ַ�� ע�⣬ ��Ҫ���ӳɹ��� �����Ӹõ�ַ
 void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
 {
   return;
 }
 
-// �а������£�����Ϊ������ ����Ĭ����Ϊ�ӻ�
-// 0 ��peripheral���豸�� 1: ��Ϊ central
 bool Check_startup_peripheral_or_central(void)
 {
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
@@ -325,10 +322,11 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
       {
       }
       */
+      DEBUG_BYTES(buffer, numBytes); //�ͷŴ�������
       #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
       serialConfigParser(buffer, numBytes);
       #endif
-      DEBUG_BYTES(buffer, numBytes); //�ͷŴ�������
+
       osal_mem_free(buffer);
     }
     return;

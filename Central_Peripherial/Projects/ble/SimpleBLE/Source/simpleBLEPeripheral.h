@@ -84,7 +84,7 @@ extern void SimpleBLEPeripheral_Init( uint8 task_id );
 extern uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events );
 void PeripherialPerformPeriodicTask(uint16 event_id);
 void change_advertise_data(uint8 key_pressed);
-
+void advertise_control(bool enable);
 void peripheral_key_press_process_callback(uint8 key_cnt_number);
 
 /*********************************************************************

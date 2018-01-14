@@ -148,57 +148,7 @@ static uint8 scanRspData[] =
         0 // 0dBm
 };
 
-#if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-// GAP - Advertisement data (max size = 31 bytes, though this is
-// best kept short to conserve power while advertisting)
-uint8 advertData_iBeacon[] =
-{
-  // Flags; this sets the device to use limited discoverable
-  // mode (advertises for 30 seconds at a time) instead of general
-  // discoverable mode (advertises indefinitely)
-  0x02, // length of this data, 0
-  GAP_ADTYPE_FLAGS, // 1
-  DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED, // 2
-  // in this peripheral
-  0x1A, // length of this data 26byte, 3
-  GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
-  /*Apple Pre-Amble*/
-  0x4C, // 5
-  0x00, // 6
-  0x02, // 7
-  0x15, // 8
-  /*Device UUID (16 Bytes)*/
-  0x53, 0x4D, 0x54, // SMT 3 Bytes.
-  0x00, // 12 reserved
-  0x00, // 13 reserved.
-  MAJOR_HW_VERSION, MAJOR_SW_VERSION, MINOR_SW_VERSION, // 14, 15, 16, HW/SW version
-  
-  #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-  BLE_STATION_ADV, // 17 check the role.
-  #else
-  BLE_BEACON, // 17 Device Type 3 bytes.
-  #endif
-  BLE_CMD_POWER_ON, //18
-  SCAN_ADV_TRANS_MIN_PERIOD, //19
-  DEFAULT_WAKE_TIME_MINS, //20
-  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1, //21
-  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2, //22
-
-  /*Specific Data*/
-  0x00, // 23
-  0x00, // 24, Station Index
-  /*Major Value (2 Bytes)*/
-  0x00, // 25 for min left
-  0x00, // 26 for index 
-  /*Minor Value (2 Bytes)*/
-  0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
-  0x00, // 28 Battery Value
-
-  0xCD //29  /*Measured Power*/
-};
-#elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
-uint8 advertData_iBeacon[] = {0};
-#endif
+extern uint8 advertData_iBeacon[30];
 
 static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
 
@@ -215,7 +165,10 @@ static bool low_power_state = FALSE;
 //static uint8 sleep_toggle_cnt = 0;
 static bool rapid_processing = FALSE;
 
+#if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
 static uint8 minsRunning = 0;
+#endif
+
 #ifdef DEBUG_BOARD
 static bool debug_low_power = FALSE;
 #endif
@@ -230,7 +183,6 @@ static bool check_low_battery(void);
 static void enter_low_battery_mode(void);
 static bool check_keys_pressed(uint8 keys);
 static void init_ibeacon_advertise(bool reset_index);
-static void advertise_control(bool enable);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
@@ -276,7 +228,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // Setup the GAP Peripheral Role Profile
   {
     // Change the ibeacon adverdata of wake up hours remain.
-    advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
+    // advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
 
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
@@ -319,8 +271,8 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 
   // Set advertising interval
   {
-    #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-    advInt = RAPID_ADVERTISING_INTERVAL;
+    #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+    advInt = ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval);
     #else
     advInt = SLOW_ADVERTISING_INTERVAL;
     #endif
@@ -452,22 +404,31 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     g_sleepFlag = FALSE;
     // Update the advertise data.
     init_ibeacon_advertise(TRUE);
+    #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+    if (sys_config.stationAdvInterval == 0xFF)
+      advertise_control(FALSE);
+    else
+      advertise_control(TRUE);
+    #elif (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     // Start advertising
     advertise_control(TRUE);
+    #endif
     // Index event
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
+
+    #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     // Per Min Event
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_MIN_EVT, SBP_PERIODIC_PER_MIN_PERIOD);
-    
     if (sys_config.key_pressed_in_scan == TRUE)
     {
       sys_config.key_pressed_in_scan = FALSE;
       simpleBLE_WriteAllDataToFlash();
       change_advertise_data(TRUE);
     }
+    #endif
 
-    #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
+    #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+      //led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
     #endif
     // We don't need to blink anymore. Slience power on.
     // led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
@@ -663,25 +624,17 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
   {
   case SBP_PERIODIC_INDEX_EVT:
     {
+      #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
       if (rapid_processing == FALSE)
       {
         advertData_iBeacon[ADV_INDEX_BYTE] += 1;
       }
       GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
+      #endif
     }
     break;
   case SBP_PERIODIC_PER_MIN_EVT:
-    #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-      // Increase the station index every minute.
-      sys_config.stationIndex++;
-      advertData_iBeacon[ADV_STATION_INDEX_1] = (sys_config.stationIndex >> 8) & 0xFF;
-      advertData_iBeacon[ADV_STATION_INDEX_2] = (sys_config.stationIndex & 0xFF);
-      GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
-      osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
-      DEBUG_VALUE("stationIndex: ", sys_config.stationIndex, 10);
-      return;
-    #endif
-
+    #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     if (g_sleepFlag == TRUE)
     {
       DEBUG_PRINT("sleep already, stop the per hour timer\r\n");
@@ -707,6 +660,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
         osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
       }
     }
+    #endif
     break;
   case SBP_PERIODIC_BUTTON_LED_EVT:
     HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
@@ -789,8 +743,12 @@ static bool check_low_battery()
   battery_voltage = adc_read * 3 * 125 / 511 / 10;
   DEBUG_VALUE("adc value : ", adc_read, 10);
   DEBUG_VALUE("Battery Value : ", battery_voltage * 10, 10);
+  
+  #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
   // Update the advertise data.
   advertData_iBeacon[ADV_BAT_BYTE] = battery_voltage & 0xFF;
+  #endif
+
   if (g_sleepFlag == TRUE && battery_voltage < BATTERY_LOW_THRESHOLD_SLEEP)
   {
     return TRUE;
@@ -835,16 +793,8 @@ static bool check_keys_pressed(uint8 keys)
 }
 
 static void init_ibeacon_advertise(bool reset_index)
-{ 
-
-  #if (PRESET_ROLE == BLE_PRE_ROLE_STATION_ADV)
-  advertData_iBeacon[ADV_STATION_CMD_INDEX] = sys_config.stationAdvCmd;
-  advertData_iBeacon[ADV_STATION_ON_SCAN_INTERVAL_INDEX] = sys_config.powerOnScanInterval;
-  advertData_iBeacon[ADV_STATION_POWER_ON_PERIOD_INDEX] = sys_config.powerOnPeriod;
-  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] = (sys_config.powerOffScanInterval >> 8) & 0xFF;
-  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2] = (sys_config.powerOffScanInterval & 0xFF);
-
-  #endif
+{
+  #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
   // Update the simpleBLE status. Common Config
   advertData_iBeacon[ADV_STATION_INDEX_1] = (sys_config.stationIndex >> 8) & 0xFF;
   advertData_iBeacon[ADV_STATION_INDEX_2] = (sys_config.stationIndex & 0xFF);
@@ -856,10 +806,11 @@ static void init_ibeacon_advertise(bool reset_index)
   {
     advertData_iBeacon[ADV_INDEX_BYTE] = 0x00;
   }
+  #endif
   GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
 }
 
-static void advertise_control(bool enable)
+void advertise_control(bool enable)
 {
   // status check.
   if (enable == TRUE && g_sleepFlag == TRUE)
@@ -867,7 +818,6 @@ static void advertise_control(bool enable)
     DEBUG_PRINT("enable TRUE, g_sleepFlag TRUE");
     return;
   }
-
   uint8 initial_advertising_enable = enable;
   if (enable == TRUE)
   {
@@ -889,19 +839,11 @@ void peripheral_key_press_process_callback(uint8 key_cnt_number)
     DEBUG_PRINT("Handle Keys, Low Power Mode\r\n");
     return;
   }
-
+  #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
   if (key_cnt_number == 0)
   {
-    /*
-    if (wake_up_hours_remain <= RESET_WAKE_TIME_HOURS_THRES)
-    {
-      wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
-      advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
-    }
-    */
     return;
   }
-
   if (g_sleepFlag == TRUE)
   {
     if (key_cnt_number == 1)
@@ -915,11 +857,6 @@ void peripheral_key_press_process_callback(uint8 key_cnt_number)
     if (key_cnt_number >= 2)
     {
       DEBUG_PRINT("Timer is reset\r\n");
-      /*
-      wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-      // reset wake_up_left
-      advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
-      */
       // LED blink twice
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
     }
@@ -937,5 +874,6 @@ void peripheral_key_press_process_callback(uint8 key_cnt_number)
     // Change the advertise date anyway.
     change_advertise_data(TRUE);
   }
+  #endif
   return;
 }

@@ -209,6 +209,16 @@ BLE_STATUS getCurrentBLEStatus()
 {
   return currentBLEStatus;
 }
+
+uint8 getScanTimeLeft()
+{
+  return scanTimeLeft;
+}
+
+void resetScanTimeLeft()
+{
+  scanTimeLeft = DEFAULT_SCAN_TIME;
+}
 // Value to write
 //static uint8 simpleBLECharVal = 0;
 
@@ -322,9 +332,7 @@ void SimpleBLECentral_Init(uint8 task_id)
   RegisterForKeys(simpleBLETaskId);
   //HalLedSet(HAL_LED_3, HAL_LED_MODE_ON );
   // Setup a delayed profile startup
-
   set_key_press_process_callback(central_key_press_process_callback);
-
   osal_set_event(simpleBLETaskId, START_DEVICE_EVT);
 }
 
@@ -379,7 +387,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
   {
     // record current status;
     currentBLEStatus = sys_config.status;
-    // TODO:Darren
+    // Only Beacon needs this.
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     set_target_status_to_off();
     #endif
@@ -396,7 +404,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
   {
     DEBUG_PRINT("Central WAKE\r\n");
     g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //Darren
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //TODO: Darren: Needs to change this to battery.
     simpleBLEStartScan();
     return (events ^ SBP_WAKE_EVT);
   }
@@ -697,23 +705,11 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     simpleBLEScanning = FALSE;
     scanTimeLeft--;
     scan_discovery_callback();
-    /*
-    if (currentBLEStatus == BLE_STATUS_ON_SCAN && scanTimeLeft == 0)
+    if(scanTimeLeft > 0)
     {
-      DEBUG_PRINT("ON_SCAN, TimeLeft 0\r\n");
-      osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
+        simpleBLEStartScan();
     }
-    else if (currentBLEStatus == BLE_STATUS_OFF && scanTimeLeft == 0)
-    {
-      DEBUG_PRINT("OFF, TimeLeft 0\r\n");
-      scanTimeLeft = DEFAULT_SCAN_TIME;
-      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, (sys_config.powerOffScanInterval * 1000));
-    }
-    else
-    {
-      simpleBLEStartScan();
-    }
-    */
+      
   }
   break;
 
@@ -938,7 +934,7 @@ bool simpleBLEFilterIsSmart(uint8 *data, uint8 dataLen)
 BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen)
 {
   VOID dataLen;
-  BLE_DEVICE_TYPE deviceType = data[BEACON_DEVICE_TYPE_INDEX];
+  BLE_DEVICE_TYPE deviceType = (BLE_DEVICE_TYPE)data[BEACON_DEVICE_TYPE_INDEX];
   return deviceType;
 }
 

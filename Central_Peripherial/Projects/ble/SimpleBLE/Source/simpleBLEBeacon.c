@@ -2,8 +2,50 @@
 #include "simpleBLECentral.h"
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-extern uint8 advertData_iBeacon[];
+uint8 advertData_iBeacon[] =
+{
+  0x02, // length of this data, 0
+  GAP_ADTYPE_FLAGS, // 1
+  GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED, // 2
+  0x1A, // length of this data 26byte, 3
+  GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
+  /*Apple Pre-Amble*/
+  0x4C, // 5
+  0x00, // 6
+  0x02, // 7
+  0x15, // 8
+  /*Device UUID (16 Bytes)*/
+  0x53, 0x4D, 0x54, // SMT 3 Bytes.
+  0x00, // 12 reserved
+  0x00, // 13 reserved.
+  MAJOR_HW_VERSION, MAJOR_SW_VERSION, MINOR_SW_VERSION, // 14, 15, 16, HW/SW version
+  BLE_BEACON, // 17 Device Type 3 bytes.
+
+  BLE_CMD_POWER_ON, //18
+
+  SCAN_ADV_TRANS_MIN_PERIOD, //19
+  DEFAULT_WAKE_TIME_MINS, //20
+  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1, //21
+  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2, //22
+
+  /*Specific Data*/
+  0x00, // 23
+  0x00, // 24, Station Index
+  /*Major Value (2 Bytes)*/
+  0x00, // 25 for min left
+  0x00, // 26 for index 
+  /*Minor Value (2 Bytes)*/
+  0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
+  0x00, // 28 Battery Value
+
+  0xCD //29  /*Measured Power*/
+};
+
+
+
 extern SYS_CONFIG sys_config;
+extern uint8 simpleBLETaskId;
+
 void scan_adv_event_callback(uint8 role)
 {
     if (role == BLE_ROLE_CENTRAL)
@@ -133,7 +175,22 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
 
 bool scan_discovery_callback(void)
 {
-    return FALSE;
+    if (getCurrentBLEStatus() == BLE_STATUS_ON_SCAN && getScanTimeLeft() == 0)
+    {
+      DEBUG_PRINT("ON_SCAN, TimeLeft 0\r\n");
+      osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
+    }
+    else if (getCurrentBLEStatus() == BLE_STATUS_OFF && getScanTimeLeft() == 0)
+    {
+      DEBUG_PRINT("OFF, TimeLeft 0\r\n");
+      resetScanTimeLeft();
+      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, (sys_config.powerOffScanInterval * 1000));
+    }
+    else
+    {
+      simpleBLEStartScan();
+    }
+    return TRUE;
 }
 
 void key_press_callback(uint8 key_cnt_number)

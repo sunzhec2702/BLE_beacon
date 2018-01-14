@@ -38,11 +38,6 @@ extern "C"
 #define BLE_PRE_ROLE_STATION 0
 #define BLE_PRE_ROLE_BEACON 1
 
-#define BLE_PRE_ROLE_PERIPHERAL 0
-#define BLE_PRE_ROLE_CENTRAL 1
-#define BLE_PRE_ROLE_STATION_ADV 2
-
-
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
 #include "simpleBLEStation.h"
 #elif (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
@@ -53,6 +48,7 @@ typedef enum
 {
   BLE_ROLE_PERIPHERAL = 0,
   BLE_ROLE_CENTRAL,
+  BLE_ROLE_NUMBER,
 } BLE_ROLE;
 
 typedef enum
@@ -83,6 +79,9 @@ typedef enum
 #define DEBUG_VALUE(x,y,z) {}
 #endif
 
+#define ADV_INTERVAL_x00MS_TO_TICK(x) (x * 160)
+
+
 #define NFC_UART_DEBUG NPI_WriteTransport
 #define NFC_UART_DEBUG_STRING NPI_PrintString
 #define NFC_UART_DEBUG_VALUE NPI_PrintValue
@@ -112,6 +111,7 @@ typedef enum
 #define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
+#define SBP_STATION_ADV_INTERVAL   (20) // 2s
 #define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
 #define SLOW_ADVERTISING_INTERVAL (1600*2) // 2s
 #define SBP_PERIODIC_ADVERT_CHG_PERIOD                  2000 // 2s
@@ -280,6 +280,8 @@ typedef struct
     uint16 stationIndex;
     uint8 minLeft;
     uint8 key_pressed_in_scan;
+    
+    uint8 stationAdvInterval;
     // Values got from station adv.
     uint8 stationAdvCmd;
     uint8 powerOnScanInterval; // ON_SCAN/ON_ADV trans interval. default 10 mins.

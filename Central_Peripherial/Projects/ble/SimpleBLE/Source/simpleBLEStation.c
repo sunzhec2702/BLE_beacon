@@ -1,11 +1,54 @@
 #include "simpleBLEStation.h"
+#include "simpleBLEPeripheral.h"
 #include "simpleBLECentral.h"
+#include "npi.h"
+
+#if defined(PLUS_BROADCASTER)
+#include "peripheralBroadcaster.h"
+#else
+#include "peripheral.h"
+#endif
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+uint8 advertData_iBeacon[] = 
+{
+  0x02, // length of this data, 0
+  GAP_ADTYPE_FLAGS, // 1
+  GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED, // 2
+  0x1A, // length of this data 26byte, 3
+  GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
+  /*Apple Pre-Amble*/
+  0x4C, // 5
+  0x00, // 6
+  0x02, // 7
+  0x15, // 8
+  /*Device UUID (16 Bytes)*/
+  0x53, 0x4D, 0x54, // SMT 3 Bytes.
+  0x00, // 12 reserved
+  0x00, // 13 reserved.
+  MAJOR_HW_VERSION, MAJOR_SW_VERSION, MINOR_SW_VERSION, // 14, 15, 16, HW/SW version
+  BLE_STATION_ADV, // 17 Device Type 3 bytes.
+  0x00, //18
+  0x00, //19
+  0x00, //20
+  0x00, //21
+  0x00, //22
+  /*Specific Data*/
+  0x00, // 23
+  0x00, // 24, Station Index
+  /*Major Value (2 Bytes)*/
+  0x00, // 25 for min left
+  0x00, // 26 for index 
+  /*Minor Value (2 Bytes)*/
+  0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
+  0x00, // 28 Battery Value
+  0xCD //29  /*Measured Power*/
+};
+
 #define PREDATASIZE 4
-#define STATION_ADV_SCAN_INTERVAL   5000
+#define STATION_ADV_SCAN_INTERVAL   2000
 
-
+extern uint8 advertData_iBeacon[];
 extern SYS_CONFIG sys_config;
 extern uint8 simpleBLETaskId;
 
@@ -16,12 +59,13 @@ static uint16 cmdDataLen = 0;
 static uint16 receiveCmdDataLen = 0;
 static BLE_SERIAL_CONFIG_CMD_TYPE configCmdType = BLE_SERIAL_CONFIG_CMD_NUM;
 
+// Command Format
+// 0xDE, 0xAD, CMD_TYPE, DATA_LEN, DATA, 0xBE, 0xEF.
 static uint8 startFrame[] = {0xDE, 0xAD};
 static uint8 endFrame[] = {0xBE, 0xEF};
 
 BLE_SERIAL_CONFIG_STATUS serialConfigParser(uint8 *data, uint16 dataLen)
 {
-    DEBUG_VALUE("Got dataLen : ", dataLen, 10);
     uint16 index = 0;
     BLE_SERIAL_CONFIG_STATUS status = BLE_SERIAL_CONFIG_SUCCESS;
     for (index = 0; index < dataLen; index++)
@@ -62,7 +106,7 @@ BLE_SERIAL_CONFIG_STATUS serialConfigParser(uint8 *data, uint16 dataLen)
             }
             configDataLen++;
         }
-        else if (PREDATASIZE + cmdDataLen)
+        else if (configDataLen == (PREDATASIZE + cmdDataLen))
         {
             if (data[index] != endFrame[0])
             {
@@ -70,7 +114,7 @@ BLE_SERIAL_CONFIG_STATUS serialConfigParser(uint8 *data, uint16 dataLen)
             }
             configDataLen++;
         }
-        else if (PREDATASIZE + cmdDataLen + 1)
+        else if (configDataLen == (PREDATASIZE + cmdDataLen + 1))
         {
             if (data[index] != endFrame[1])
             {
@@ -81,6 +125,7 @@ BLE_SERIAL_CONFIG_STATUS serialConfigParser(uint8 *data, uint16 dataLen)
             {
                 goto config_error;
             }
+            DEBUG_PRINT("Config Success\r\n");
             goto config_success;
         }
         else
@@ -92,6 +137,7 @@ BLE_SERIAL_CONFIG_STATUS serialConfigParser(uint8 *data, uint16 dataLen)
 return BLE_SERIAL_CONFIG_CONTINUE;
 
 config_error:
+    DEBUG_PRINT("Config Error\r\n");
     status = BLE_SERIAL_CONFIG_FAILED;
 config_success:
     if (stationConfig != NULL)
@@ -110,6 +156,7 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
 {
     switch (configCmdType)
     {
+        // Reboot to change to role.
         case BLE_SERIAL_CONFIG_CMD_ROLE_CHANGE:
         if (configLen != 1 || config[0] >= BLE_STATUS_STATION_STATUS_NUM)
         {
@@ -125,14 +172,75 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
             }
             break;
             case BLE_STATUS_STATION_ADV:
+            if (sys_config.status == BLE_STATUS_STATION_SCAN)
+            {
+                osal_start_timerEx(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT, STATION_ADV_SCAN_INTERVAL);
+                return TRUE;
+            }
             break;
         }
         break;
+        // Change the advertise data.
         case BLE_SERIAL_CONFIG_CMD_ADV_DATA:
+        if (configLen != sizeof(advertData_iBeacon) || sys_config.status == BLE_STATUS_STATION_SCAN)
+        {
+            return FALSE;
+        }
+        osal_memcpy(advertData_iBeacon, config, sizeof(advertData_iBeacon));
+        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
+        return TRUE;
         break;
+
+        // Change the advertise interval
         case BLE_SERIAL_CONFIG_CMD_ADV_INTERVAL:
+        if (configLen != 1 || sys_config.status == BLE_STATUS_STATION_SCAN)
+        {
+            return FALSE;
+        }
+        sys_config.stationAdvInterval = config[0];
+        simpleBLE_WriteAllDataToFlash();
+        if (sys_config.stationAdvInterval == 0xFF)
+        {
+            advertise_control(FALSE);
+            return TRUE;
+        }
+        uint8 initial_advertising_enable;
+        GAPRole_GetParameter(GAPROLE_ADVERT_ENABLED, &initial_advertising_enable);
+        if (initial_advertising_enable == TRUE)
+        {
+            advertise_control(FALSE);
+            simpleBLE_Delay_1ms(500);
+        }
+        {
+            GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
+            GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
+            GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
+            GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
+        }
+        advertise_control(TRUE);
+        return TRUE;
         break;
         case BLE_SERIAL_CONFIG_CMD_GET_STATUS:
+        if (configLen != 1)
+        {
+            return FALSE;
+        }
+        BLE_SERIAL_GET_INFO_TYPE get_type = config[0];
+        switch (get_type)
+        {
+            case BLE_SERIAL_GET_ROLE:
+            sendWithFrameBuffer((uint8 *)&sys_config.status, 1);
+            break;
+            case BLE_SERIAL_GET_ADV_DATA:
+            sendWithFrameBuffer(advertData_iBeacon, sizeof(advertData_iBeacon));
+            break;
+            case BLE_SERIAL_GET_ADV_INTERVAL:
+            sendWithFrameBuffer((uint8 *)&sys_config.stationAdvInterval, 1);
+            break;
+            default:
+            return FALSE;
+        }
+        return TRUE;
         break;
         default:
         break;
@@ -153,8 +261,8 @@ void scan_adv_event_callback(uint8 role)
     simpleBLE_SaveAndReset();
 }
 
-static uint8 ACK_SUCCESS[] = {0xFF, 0x00, 0xFF};
-static uint8 ACK_FAILED[] = {0x00, 0xFF, 0x00};
+static uint8 ACK_SUCCESS[] = {0xAB, 0xCD, 0xEF};
+static uint8 ACK_FAILED[] = {0xFF, 0xFF, 0xFF};
 
 void serialConfigSendAck(BLE_SERIAL_CONFIG_STATUS status)
 {
@@ -174,7 +282,16 @@ void serialConfigSendAck(BLE_SERIAL_CONFIG_STATUS status)
 
 void sendWithFrameBuffer(uint8 *data, uint16 dataLen)
 {
-
+    uint8 *res = (uint8 *)osal_mem_alloc(PREDATASIZE + dataLen);
+    if (res == NULL)
+    {
+        DEBUG_PRINT("FrameBuffer alloc failed\r\n");
+    }
+    osal_memcpy(res, startFrame, sizeof(startFrame));
+    osal_memcpy(&res[sizeof(startFrame)], data, dataLen);
+    osal_memcpy(&res[sizeof(startFrame) + dataLen], endFrame, sizeof(endFrame));
+    NPI_WriteTransport(res, PREDATASIZE + dataLen);
+    osal_mem_free(res);
 }
 
 void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
@@ -217,7 +334,8 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
 
 bool scan_discovery_callback()
 {
-  return FALSE;
+  resetScanTimeLeft();
+  return TRUE;
 }
 
 
