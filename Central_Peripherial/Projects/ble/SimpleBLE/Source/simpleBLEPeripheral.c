@@ -381,7 +381,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & START_DEVICE_EVT)
   {
-    //TODO: Darren
+    // Only BEACON needs the set the target to off.
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     set_target_status_to_off();
     #endif
@@ -395,7 +395,11 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_WAKE_EVT)
   {
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); // Darren:
+    #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
+    osal_pwrmgr_device(PWRMGR_BATTERY);
+    #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+    osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
+    #endif
     if (check_low_battery() == TRUE)
     {
       enter_low_battery_mode();
@@ -732,7 +736,6 @@ static bool check_low_battery()
   if (debug_low_power == TRUE)
     return TRUE;
   #endif
-
   uint32 adc_read = 0;
   for (uint8 i = 0; i < 16; i++)
   {
@@ -856,7 +859,6 @@ void peripheral_key_press_process_callback(uint8 key_cnt_number)
   {
     if (key_cnt_number >= 2)
     {
-      DEBUG_PRINT("Timer is reset\r\n");
       // LED blink twice
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
     }
@@ -864,12 +866,6 @@ void peripheral_key_press_process_callback(uint8 key_cnt_number)
     {
       // Blink once
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
-      /*
-#if (POWER_OFF_SUPPORT == TRUE)
-      key_cnt_number = 0;
-      osal_set_event(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
-#endif
-      */
     }
     // Change the advertise date anyway.
     change_advertise_data(TRUE);

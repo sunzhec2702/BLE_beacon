@@ -21,7 +21,7 @@ typedef enum
 void scan_adv_event_callback(uint8 role);
 void scan_device_info_callback(gapCentralRoleEvent_t *pEvent);
 bool scan_discovery_callback(void);
-void key_press_callback(uint8 key_cnt_number);
+void key_press_callback_central(uint8 key_cnt_number);
 #endif
 
 #endif

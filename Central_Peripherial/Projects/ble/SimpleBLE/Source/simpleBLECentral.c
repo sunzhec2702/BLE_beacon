@@ -402,9 +402,12 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_WAKE_EVT)
   {
-    DEBUG_PRINT("Central WAKE\r\n");
     g_sleepFlag = FALSE;
+    #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
+    osal_pwrmgr_device(PWRMGR_BATTERY);
+    #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
     osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //TODO: Darren: Needs to change this to battery.
+    #endif
     simpleBLEStartScan();
     return (events ^ SBP_WAKE_EVT);
   }
@@ -492,7 +495,6 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     {
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_EVT, SBP_PERIODIC_EVT_PERIOD);
     }
-
     // Perform periodic application task
     simpleBLE_performPeriodicTask();
 
@@ -502,7 +504,6 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
       {
         simpleBLERssi = TRUE;
         GAPCentralRole_StartRssi(simpleBLEConnHandle, DEFAULT_RSSI_PERIOD);
-        //LCD_WRITE_STRING( "RSSI Start...", HAL_LCD_LINE_1 );
       }
     }
     else
@@ -510,7 +511,6 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
       if (simpleBLERssi)
       {
         GAPCentralRole_CancelRssi(simpleBLEConnHandle);
-        //LCD_WRITE_STRING( "RSSI Cancelled", HAL_LCD_LINE_1 );
       }
     }
 
@@ -582,8 +582,6 @@ static void simpleBLECentral_ProcessOSALMsg(osal_event_hdr_t *pMsg)
 static void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys)
 {
   key_press_handler(keys);
-  //HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
-  //TODO: Handle power on or handle press issue.
 }
 
 /*********************************************************************
@@ -693,7 +691,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     LCD_WRITE_STRING(bdAddr2Str(pEvent->initDone.devAddr), HAL_LCD_LINE_2);
   }
   break;
-
+ 
   case GAP_DEVICE_INFO_EVENT:
   {
     scan_device_info_callback(pEvent);
@@ -709,7 +707,6 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     {
         simpleBLEStartScan();
     }
-      
   }
   break;
 
@@ -940,6 +937,6 @@ BLE_DEVICE_TYPE simpleBLEFilterDeviceType(uint8 *data, uint8 dataLen)
 
 void central_key_press_process_callback(uint8 key_cnt_number)
 {
-  key_press_callback(key_cnt_number);
+  key_press_callback_central(key_cnt_number);
   return;
 }

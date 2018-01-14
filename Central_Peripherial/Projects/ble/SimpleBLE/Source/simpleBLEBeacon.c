@@ -193,7 +193,7 @@ bool scan_discovery_callback(void)
     return TRUE;
 }
 
-void key_press_callback(uint8 key_cnt_number)
+void key_press_callback_central(uint8 key_cnt_number)
 {
     if (getCurrentBLEStatus() == BLE_STATUS_OFF)
     {
@@ -210,11 +210,6 @@ void key_press_callback(uint8 key_cnt_number)
     if (key_cnt_number >= 2)
     {
         DEBUG_PRINT("Timer is reset\r\n");
-        /*
-      wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-      // reset wake_up_left
-      advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
-      */
         // LED blink twice
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
     }
@@ -222,13 +217,8 @@ void key_press_callback(uint8 key_cnt_number)
     {
         // Blink once
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
-        /*
-#if (POWER_OFF_SUPPORT == TRUE)
-      key_cnt_number = 0;
-      osal_set_event(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT);
-#endif
-      */
     }
+    sys_config.key_pressed_in_scan = TRUE;
     osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
     return;
 }
