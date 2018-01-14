@@ -307,7 +307,9 @@ void sendWithFrameBuffer(uint8 *data, uint16 dataLen)
 
 void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
 {
-  if (simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
+  if (simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE &&
+        simpleBLEFilterIsSmart(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE &&
+        simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_BEACON)
   {
     static dev_adv_ret_t dev_ret;
     osal_memset(&dev_ret, 0x00, sizeof(dev_adv_ret_t));

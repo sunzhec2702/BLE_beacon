@@ -1,0 +1,103 @@
+给CC2541基站通过串口发送command的命令结构
+
+0xDE 0xAD //包头
+0x(Command Type)
+0x (Command Length)
+0x (Data)
+0xBE 0xEF //包尾
+
+
+收到配置信息之后，基站会发送ACK
+ACK_SUCCESS[] = {0xAB, 0xCD, 0xEF};
+ACK_FAILED[] = {0xFF, 0xFF, 0xFF};
+
+typedef enum
+{
+    BLE_SERIAL_CONFIG_CMD_ROLE_CHANGE = 0, // STATION_SCAN <--> STATION_ADV 基站发送、基站接收，数据长度1
+    BLE_SERIAL_CONFIG_CMD_ADV_DATA, // CHANGE ADV DATA. 变广播包内容，数据长度必须为30
+    BLE_SERIAL_CONFIG_CMD_ADV_INTERVAL, // CHANGE ADV INTERVAL. 基站发送广播的间隔，数据长度1，单位100ms
+    BLE_SERIAL_CONFIG_CMD_GET_STATUS, // GET CURRENT CONFIG. 获取当前配置，数据长度1.
+    BLE_SERIAL_CONFIG_CMD_NUM,
+} BLE_SERIAL_CONFIG_CMD_TYPE;
+
+配置广播内容、配置广播间隔必须在 基站角色为发送广播。
+
+typedef enum
+{
+    BLE_STATUS_STATION_SCAN = 0,
+    BLE_STATUS_STATION_ADV,
+    BLE_STATUS_STATION_STATUS_NUM,
+} BLE_STATUS;
+基站角色的定义，0为基站接收，1位基站发送。
+
+typedef enum
+{
+    BLE_SERIAL_GET_ROLE = 0, // 获取当前的角色，发送还是接收
+    BLE_SERIAL_GET_ADV_DATA, // 获取当前的广播内容
+    BLE_SERIAL_GET_ADV_INTERVAL, //或者当前广播间隔
+	BLE_SERIAL_GET_MAC,
+    BLE_SERIAL_GET_NUM,
+} BLE_SERIAL_GET_INFO_TYPE;
+
+基站接收到“发送当前配置”的命令之后，会把数据也按照 0xDE 0xAD DATA 0xBE 0xEF的格式回复。
+
+Example
+//让基站进入发送广播角色
+DE AD 00 01 01 BE EF
+
+//更改基站发送广播的内容
+DE AD 01 1E 02 01 06 1A FF 4C 00 02 15 53 4D 54 12 13 14 15 16 17 18 19 20 21 22 23 24 FF FF FF FF CD BE EF
+
+// Change Interval to 500ms
+DE AD 02 01 05 BE EF
+
+// 获取当前基站角色
+DE AD 03 01 00 BE EF
+>>0xDE 0xAD 0x01 0xBE 0xEF
+// 获取当前基站MAC
+DE AD 03 01 03 BE EF
+>>0xDE 0xAD 0x08 0x00 0x0D 0x00 0x0F 0x00 0xC8 0xFD 0x19 0x9C 0xD6 0x54 0xBE 0xEF
+
+基站广播包的定义：
+uint8 advertData_iBeacon[] =
+{
+  0x02, // length of this data, 0
+  GAP_ADTYPE_FLAGS, // 1
+  GAP_ADTYPE_FLAGS_GENERAL | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED, // 2
+  0x1A, // length of this data 26byte, 3
+  GAP_ADTYPE_MANUFACTURER_SPECIFIC, // 4
+  /*Apple Pre-Amble*/
+  0x4C, // 5
+  0x00, // 6
+  0x02, // 7
+  0x15, // 8
+  /*Device UUID (16 Bytes)*/
+  0x53, 0x4D, 0x54, // SMT 3 Bytes.
+  0x00, // 12 reserved
+  0x00, // 13 reserved.
+  MAJOR_HW_VERSION, MAJOR_SW_VERSION, MINOR_SW_VERSION, // 14, 15, 16, HW/SW version
+  BLE_STATION_ADV, // 17 用来判断广播是来自其他beacon还是基站，基站是02
+
+  //上面的字节都可以不动。
+  BLE_CMD_POWER_ON, //18 发给Beacon的命令，开机01、关机02、闪灯03 
+
+  SCAN_ADV_TRANS_MIN_PERIOD, // 19 beacon在开机状态下，多久分钟扫描一次其他广播。
+  DEFAULT_WAKE_TIME_MINS, //20  收到不任何广播信息之后，beacon多久分钟后关机。
+  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1, //21 关机情况下，beacon多少秒扫描一次其他广播。
+  SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2, //22 秒数是 ((SEC_1 << 8) + SEC_2)
+
+  0x00, // 23, 基站MAC地址的第一字节
+  0x00, // 24, 基站MAC地址的最后一个字节，用来做校验。
+
+  //以下的字节可以暂时不用。保持就好。
+  /*Major Value (2 Bytes)*/
+  0x00, // 25 for min left
+  0x00, // 26 for index 
+  /*Minor Value (2 Bytes)*/
+  0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
+  0x00, // 28 Battery Value
+
+  0xCD //29  /*Measured Power*/
+};
+
+
