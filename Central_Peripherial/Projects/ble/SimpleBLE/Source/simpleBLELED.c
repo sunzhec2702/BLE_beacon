@@ -14,6 +14,11 @@ static uint8 led_toggling = FALSE;
 static uint16 led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
 static uint16 led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
 
+uint8 get_led_toggle_status()
+{
+  return led_toggle_status;
+}
+
 void led_event_callback()
 {
   if (++led_toggle_count <= led_toggle_cnt_target)

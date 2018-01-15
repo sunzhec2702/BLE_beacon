@@ -52,8 +52,15 @@ void scan_adv_event_callback(uint8 role)
     {
         if (getCurrentBLEStatus() == BLE_STATUS_ON_SCAN)
         {
-            sys_config.status = BLE_STATUS_ON_ADV;
-            simpleBLE_SaveAndReset();
+            if (get_led_toggle_status() == TRUE)
+            {
+                osal_start_timerEx(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD_ON + PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF);
+            }
+            else
+            {
+                sys_config.status = BLE_STATUS_ON_ADV;
+                simpleBLE_SaveAndReset();
+            }
         }
     }
     else if (role == BLE_ROLE_PERIPHERAL)
@@ -178,7 +185,10 @@ bool scan_discovery_callback(void)
     if (getCurrentBLEStatus() == BLE_STATUS_ON_SCAN && getScanTimeLeft() == 0)
     {
       DEBUG_PRINT("ON_SCAN, TimeLeft 0\r\n");
-      osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
+      if (sys_config.key_pressed_in_scan == TRUE)
+        osal_set_event()
+      else
+        osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
     }
     else if (getCurrentBLEStatus() == BLE_STATUS_OFF && getScanTimeLeft() == 0)
     {
@@ -209,7 +219,6 @@ void key_press_callback_central(uint8 key_cnt_number)
     DEBUG_PRINT("ON_SCAN, KEY CALLBACK\r\n");
     if (key_cnt_number >= 2)
     {
-        DEBUG_PRINT("Timer is reset\r\n");
         // LED blink twice
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
     }
@@ -219,7 +228,8 @@ void key_press_callback_central(uint8 key_cnt_number)
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, BUTTON_LED_DELAY);
     }
     sys_config.key_pressed_in_scan = TRUE;
-    osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
+    // After scan finish, the beacon will trigger SCAN_ADV_TRANS automatically.
+    //osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
     return;
 }
 #endif
