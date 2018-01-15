@@ -663,7 +663,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
         if (rapid_processing == TRUE)
         {
           DEBUG_PRINT("minsRunning Event: In rapid processing, change to Central later\r\n");
-          osal_start_timerEx(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT, SBP_PERIODIC_ADVERT_CHG_PERIOD)
+          osal_start_timerEx(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT, SBP_PERIODIC_ADVERT_CHG_PERIOD);
         }
         else
         {

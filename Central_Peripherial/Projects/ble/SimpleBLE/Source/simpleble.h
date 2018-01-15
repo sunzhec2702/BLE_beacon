@@ -33,7 +33,7 @@ extern "C"
 #define POWER_OFF_SUPPORT FALSE
 #define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_PRE_ROLE_STATION
+#define PRESET_ROLE BLE_PRE_ROLE_BEACON
 
 #define BLE_PRE_ROLE_STATION 0
 #define BLE_PRE_ROLE_BEACON 1
@@ -120,6 +120,7 @@ typedef enum
 #define SBP_PERIODIC_INDEX_EVT_PERIOD                   1000 // 1s
 
 #ifdef DEBUG_BOARD
+/*
 #define SBP_PERIODIC_PER_MIN_PERIOD                     5000    // 5s
 #define DEFAULT_WAKE_TIME_MINS                          10      //
 #define SCAN_ADV_TRANS_MIN_PERIOD                       5 // 10mins
@@ -131,6 +132,20 @@ typedef enum
 #define DEFAULT_WAKE_TIME_HOURS                         (5) // 5 mins
 #define BUTTON_WAKE_TIME_HOURS                          (2) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
+*/
+
+/*********************** DEBUG_BOARD but normal period ********************************/
+#define SBP_PERIODIC_PER_MIN_PERIOD                     60000    // 1 min
+#define DEFAULT_WAKE_TIME_MINS                          30        // 30mins
+#define SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1              0x0E //
+#define SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2              0x10 // total 3600s, 1 hour
+#define SCAN_ADV_TRANS_MIN_PERIOD                       10 // 10mins
+#define SBP_PERIODIC_OFF_SCAN_PERIOD_MIN                60
+#define SBP_PERIODIC_OFF_SCAN_PERIOD                    (SBP_PERIODIC_OFF_SCAN_PERIOD_MIN * 60 * 1000) // one hour
+#define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
+#define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
+#define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
+/*********************** DEBUG_BOARD but normal period ********************************/
 #else
 #define SBP_PERIODIC_PER_MIN_PERIOD                     60000    // 1 min
 #define DEFAULT_WAKE_TIME_MINS                          30        // 30mins

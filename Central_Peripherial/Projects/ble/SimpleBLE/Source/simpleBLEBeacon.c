@@ -1,5 +1,7 @@
 #include "simpleBLEBeacon.h"
 #include "simpleBLECentral.h"
+#include "npi.h"
+#include "simpleBLELED.h"
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
 uint8 advertData_iBeacon[] =
@@ -185,10 +187,7 @@ bool scan_discovery_callback(void)
     if (getCurrentBLEStatus() == BLE_STATUS_ON_SCAN && getScanTimeLeft() == 0)
     {
       DEBUG_PRINT("ON_SCAN, TimeLeft 0\r\n");
-      if (sys_config.key_pressed_in_scan == TRUE)
-        osal_set_event()
-      else
-        osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
+      osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
     }
     else if (getCurrentBLEStatus() == BLE_STATUS_OFF && getScanTimeLeft() == 0)
     {

@@ -354,7 +354,7 @@ bool scan_discovery_callback()
 
 void key_press_callback_central(uint8 key_cnt_number)
 {
-  VOID key_cnt_evt_callback;
+  VOID key_cnt_number;
   return;
 }
 
