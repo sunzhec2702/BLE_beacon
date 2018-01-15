@@ -13,6 +13,9 @@ static bool key_pressed = FALSE;
 
 static key_event_process_callback process_callback = NULL;
 
+// Key event process:  key_interrupt -> key_event_handler -> osal key_event message -> key_press_process_callback.
+// Peripheral and Centeral has their own callback.
+
 void set_key_press_process_callback(key_event_process_callback callback)
 {
     process_callback = callback;

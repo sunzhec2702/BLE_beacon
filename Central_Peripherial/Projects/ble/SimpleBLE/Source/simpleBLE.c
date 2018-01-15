@@ -33,17 +33,15 @@
 #endif
 
 SYS_CONFIG sys_config;
-bool g_sleepFlag = FALSE;    //˯�߱�־
-uint8 uart_sleep_count = 0; // ˯�߼�����
-bool g_rssi_flag = false; //�Ƿ�����
-extern gaprole_States_t gapProfileState; // �ӻ�����״̬
+bool g_sleepFlag = FALSE;
+uint8 uart_sleep_count = 0;
+bool g_rssi_flag = false;
+extern gaprole_States_t gapProfileState;
 // Connection handle
 extern uint16 gapConnHandle;
 BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd = BLE_CENTRAL_CONNECT_CMD_NULL;
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events);
 
-
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������?? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times)
 {
   while (times--)
@@ -56,7 +54,6 @@ void simpleBLE_Delay_1ms(int times)
   }
 }
 
-// �ַ����Ա�
 uint8 str_cmp(uint8 *p1, uint8 *p2, uint8 len)
 {
   uint8 i = 0;
@@ -69,17 +66,10 @@ uint8 str_cmp(uint8 *p1, uint8 *p2, uint8 len)
   return 1;
 }
 
-// �ַ���ת����
 uint32 str2Num(uint8 *numStr, uint8 iLength)
 {
   uint8 i = 0;
   int32 rtnInt = 0;
-
-  /* 
-          Ϊ����򵥣���ȷ��������ַ����������ֵ�
-          ����£��˴�δ����飬����Ҫ���??
-          numStr[i] - '0'�Ƿ���[0, 9]���������??
-    */
   for (; i < iLength && numStr[i] != '\0'; ++i)
     rtnInt = rtnInt * 10 + (numStr[i] - '0');
 
@@ -125,20 +115,16 @@ void simpleBLE_SaveAndReset()
   HAL_SYSTEM_RESET();
 }
 
-// �����������ݵ�nv flash
 void simpleBLE_WriteAllDataToFlash()
-{ // д���в���
+{
   osal_snv_write(0x80, sizeof(SYS_CONFIG), &sys_config);
 }
 
-// ��ȡ�Զ����?? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash()
 {
   int8 ret8 = osal_snv_read(0x80, sizeof(SYS_CONFIG), &sys_config);
 }
 
-//flag: PARA_ALL_FACTORY:  ȫ���ָ���������
-//flag: PARA_PARI_FACTORY: ��������Ϣ
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
 {
   if (flag == PARA_ALL_FACTORY)
@@ -166,7 +152,6 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
   simpleBLE_WriteAllDataToFlash();
 }
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���??
 void PrintAllPara(void)
 {
   char strTemp[32];
@@ -192,16 +177,12 @@ void PrintAllPara(void)
 
 }
 
-// �����豸��ɫ
-//����ģʽ  0: �ӻ�   1: ����
+// BLE_ROLE_PERIPHERAL = 0,  BLE_ROLE_CENTRAL = 1
 BLE_ROLE GetBleRole()
 {
   return sys_config.role;
 }
 
-// �ж������Ƿ�������
-// 0: δ������
-// 1: ��������
 bool simpleBLE_IfConnected()
 {
   if (GetBleRole() == BLE_ROLE_CENTRAL) //����
@@ -248,7 +229,6 @@ bool Check_startup_peripheral_or_central(void)
 #endif
 }
 
-// ���п� uart ��ʼ��
 void simpleBLE_NPI_init(void)
 {
   
@@ -257,16 +237,10 @@ void simpleBLE_NPI_init(void)
   {
     NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
     NPI_WriteTransportPort(HAL_UART_PORT_0, "Central\r\n", 21);
-    
   }
   else
   {
     NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
-    //ble_uart_poll_init();
-    //NPI_InitTransport(HAL_UART_PORT_1, simpleBLE_NpiSerialCallback1);
-    //uint8 WAKE_UP[] = {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xff, 0x03, 0xfd, 0xd4, 0x14, 0x01, 0x17, 0x00};
-    //NPI_WriteTransportPort(HAL_UART_PORT_1, WAKE_UP, sizeof(WAKE_UP));
-    //NPI_WriteTransportPort(HAL_UART_PORT_0, WAKE_UP, sizeof(WAKE_UP));
   }
 }
 
@@ -288,7 +262,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���??
+  P0DIR |= 0x60; // P0.6����Ϊ���???
   P0_6 = onoff;
 }
 
