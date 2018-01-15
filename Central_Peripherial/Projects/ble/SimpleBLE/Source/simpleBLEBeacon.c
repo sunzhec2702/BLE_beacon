@@ -48,6 +48,7 @@ uint8 advertData_iBeacon[] =
 extern SYS_CONFIG sys_config;
 extern uint8 simpleBLETaskId;
 
+// Only be used in OFF STATUS
 void scan_adv_event_callback(uint8 role)
 {
     if (role == BLE_ROLE_CENTRAL)
@@ -74,6 +75,22 @@ void scan_adv_event_callback(uint8 role)
     }
 }
 
+static void retrive_info_from_station_adv(uint8 *pEvtData)
+{
+    sys_config.stationIndex = (pEvtData[ADV_STATION_INDEX_1] << 8) + pEvtData[ADV_STATION_INDEX_2];
+    sys_config.powerOnPeriod = pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
+    sys_config.powerOnScanInterval = pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
+    sys_config.powerOffScanInterval = (pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
+}
+
+// Filter the MAC Check
+static bool simpleBLEStationMacCheck(uint8 *pEvtData, uint8 *addr)
+{
+    if (pEvtData[ADV_STATION_MAC_LAST_BYTE] == addr[0] && pEvtData[ADV_STATION_MAC_FIRST_BYTE] == addr[B_ADDR_LEN-1])
+        return TRUE;
+    return FALSE;
+}
+
 void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
 {
     if (simpleBLEFilterSelfBeacon(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == TRUE)
@@ -84,43 +101,34 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
             // Our adv content. do further process.
             if (getCurrentBLEStatus() == BLE_STATUS_ON_SCAN)
             {
-                if (simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_STATION_ADV)
+                if (simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_STATION_ADV && simpleBLEStationMacCheck(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.addr) == TRUE)
                 {
                     DEBUG_PRINT("Station ADV\r\n");
-                    uint16 advStationIndex = (pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_2];
+                    DEBUG_VALUE("CMD: ", pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX], 10);
+                    DEBUG_VALUE("StationIndex will update to ", advStationIndex, 10);
+                    DEBUG_VALUE("MinLeft : ", sys_config.minLeft, 10);
+                    DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
+                    DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
+                    DEBUG_VALUE("powerOffScanInterval", sys_config.powerOffScanInterval, 10);
                     uint8 cmd = pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX];
                     if (cmd == BLE_CMD_POWER_OFF)
                     {
                         DEBUG_PRINT("POWER_OFF\r\n");
+                        retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData);
                         sys_config.stationIndex = 0;
-                        sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
-                        sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-                        sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
-
                         sys_config.status = BLE_STATUS_OFF;
                         simpleBLE_SaveAndReset();
                     }
                     else if (cmd == BLE_CMD_POWER_ON)
                     {
                         DEBUG_VALUE("current stationIndex: ", sys_config.stationIndex, 10);
-                        sys_config.stationIndex = advStationIndex;
-                        sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
-                        sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-                        sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
-#ifdef DEBUG_BOARD
-                        DEBUG_VALUE("CMD: ", pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX], 10);
-                        DEBUG_VALUE("StationIndexUpdate to ", advStationIndex, 10);
-                        DEBUG_VALUE("MinLeft : ", sys_config.minLeft, 10);
-                        DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
-                        DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
-                        DEBUG_VALUE("powerOffScanInterval", sys_config.powerOffScanInterval, 10);
-#endif
+                        retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData);
                         sys_config.minLeft = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
                     }
                 }
                 else if (simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_BEACON)
                 {
-                    DEBUG_PRINT("Beacon\r\n");
+                    DEBUG_PRINT("Beacon ADV\r\n");
                     uint16 advStationIndex = (pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_2];
                     if (sys_config.stationIndex < advStationIndex)
                     {
@@ -133,46 +141,34 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
             }
             else if (getCurrentBLEStatus() == BLE_STATUS_OFF)
             {
-                if (simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_STATION_ADV)
+                if (simpleBLEFilterDeviceType(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen) == BLE_STATION_ADV && simpleBLEStationMacCheck(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.addr) == TRUE)
                 {
                     DEBUG_PRINT("OFF: Station ADV\r\n");
+                    DEBUG_VALUE("CMD: ", cmd, 10);
+                    DEBUG_VALUE("StationIndex = ", advStationIndex, 10);
+                    DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
+                    DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
+                    DEBUG_VALUE("powerOffScanInterval", sys_config.powerOffScanInterval, 10);
+                    DEBUG_VALUE("MinLeft : ", sys_config.minLeft, 10);
                     BLE_STATION_CMD cmd = pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX];
                     if (cmd == BLE_CMD_POWER_ON)
                     {
-                        uint16 advStationIndex = (pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_2];
-                        sys_config.stationIndex = advStationIndex;
+                        retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData);
                         sys_config.minLeft = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
-                        sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
-                        sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-                        sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
-
                         sys_config.status = BLE_STATUS_ON_ADV;
-
-#ifdef DEBUG_BOARD
-                        DEBUG_VALUE("powerOffScanInterval", sys_config.powerOffScanInterval, 10);
-                        DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
-                        DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
-                        DEBUG_VALUE("CMD: ", cmd, 10);
-                        DEBUG_VALUE("StationIndex = ", advStationIndex, 10);
-                        DEBUG_VALUE("MinLeft : ", sys_config.minLeft, 10);
-#endif
                         simpleBLE_SaveAndReset();
                     }
                     else if (cmd == BLE_CMD_POWER_OFF)
                     {
+                        retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData);
                         sys_config.stationIndex = 0;
-                        sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
-                        sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-                        sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
                         sys_config.status = BLE_STATUS_OFF;
                         simpleBLE_WriteAllDataToFlash();
                     }
                     else if (cmd == BLE_CMD_LED_BLINK)
                     {
+                        retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData);
                         sys_config.stationIndex = 0;
-                        sys_config.powerOnPeriod = pEvent->deviceInfo.pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
-                        sys_config.powerOnScanInterval = pEvent->deviceInfo.pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-                        sys_config.powerOffScanInterval = (pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
                         sys_config.status = BLE_STATUS_OFF;
                         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, 0);
                     }

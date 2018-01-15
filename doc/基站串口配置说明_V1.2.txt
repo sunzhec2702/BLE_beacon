@@ -1,3 +1,8 @@
+Update Note
+1.2
+更改了广播包内容，12/13 Byte用来放基站的MAC地址首尾字节。原本的23/24字节是station Index
+
+
 给CC2541基站通过串口发送command的命令结构
 
 0xDE 0xAD //包头
@@ -73,8 +78,8 @@ uint8 advertData_iBeacon[] =
   0x15, // 8
   /*Device UUID (16 Bytes)*/
   0x53, 0x4D, 0x54, // SMT 3 Bytes.
-  0x00, // 12 reserved
-  0x00, // 13 reserved.
+  0x00, // 12 StationMAC地址的最后一个字节
+  0x00, // 13 StationMAC地址的第一个字节
   MAJOR_HW_VERSION, MAJOR_SW_VERSION, MINOR_SW_VERSION, // 14, 15, 16, HW/SW version
   BLE_STATION_ADV, // 17 用来判断广播是来自其他beacon还是基站，基站是02
 
@@ -86,8 +91,8 @@ uint8 advertData_iBeacon[] =
   SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1, //21 关机情况下，beacon多少秒扫描一次其他广播。
   SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2, //22 秒数是 ((SEC_1 << 8) + SEC_2)
 
-  0x00, // 23, 基站MAC地址的第一字节
-  0x00, // 24, 基站MAC地址的最后一个字节，用来做校验。
+  0x00, // 23, StationIndex1
+  0x00, // 24, StationIndex2 最终数值是 ((StationIndex1 << 8) + StationIndex2)，这个就是后面每分钟增长一次的index。
 
   //以下的字节可以暂时不用。保持就好。
   /*Major Value (2 Bytes)*/

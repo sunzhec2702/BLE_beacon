@@ -19,9 +19,11 @@ typedef enum
 } BLE_STATION_CMD;
 
 void scan_adv_event_callback(uint8 role);
+static void retrive_info_from_station_adv(uint8 *pEvtData);
 void scan_device_info_callback(gapCentralRoleEvent_t *pEvent);
 bool scan_discovery_callback(void);
 void key_press_callback_central(uint8 key_cnt_number);
+static bool simpleBLEStationMacCheck(uint8 *pEvtData, uint8 *addr);
 #endif
 
 #endif
