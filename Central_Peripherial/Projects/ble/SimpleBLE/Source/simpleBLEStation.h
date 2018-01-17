@@ -4,6 +4,14 @@
 #include "central.h"
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+typedef struct
+{
+    uint8 stationRole;
+    uint8 stationAdvInterval;
+    uint8 macAddr[B_ADDR_LEN];
+    uint8 stationAdvData[ADVERTISE_SIZE];
+} StationInfo;
+
 typedef enum
 {
     BLE_STATUS_STATION_SCAN = 0,
@@ -46,6 +54,7 @@ void key_press_callback_central(uint8 key_cnt_number);
 void serialConfigSendAck(BLE_SERIAL_CONFIG_STATUS status);
 
 void sendWithFrameBuffer(uint8 *data, uint16 dataLen);
+void sendStationInfo(void);
 
 #endif
 

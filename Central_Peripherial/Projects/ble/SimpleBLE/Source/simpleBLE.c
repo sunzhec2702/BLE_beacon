@@ -141,7 +141,9 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
 
     sys_config.stationAdvInterval = SBP_STATION_ADV_INTERVAL;
     // PRE_ROLE_BEACON used.
+    sys_config.bootup_blink = TRUE;
     sys_config.stationIndex = 0;
+    sys_config.beaconIndex = 0;
     sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
     sys_config.key_pressed_in_scan = FALSE;
     sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;

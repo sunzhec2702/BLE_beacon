@@ -3,6 +3,7 @@
 
 #include "simpleble.h"
 
+void set_beacon_status(BLE_STATUS current_status, BLE_STATUS target_status, bool reset);
 void set_target_status_to_off(void);
 
 

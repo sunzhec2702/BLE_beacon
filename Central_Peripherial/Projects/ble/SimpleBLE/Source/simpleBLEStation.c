@@ -10,7 +10,7 @@
 #endif
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
-uint8 advertData_iBeacon[] = 
+uint8 advertData_iBeacon[ADVERTISE_SIZE] = 
 {
   0x02, // length of this data, 0
   GAP_ADTYPE_FLAGS, // 1
@@ -238,7 +238,7 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
             sendWithFrameBuffer((uint8 *)&sys_config.stationAdvInterval, 1);
             break;
             case BLE_SERIAL_GET_MAC:
-            uint8 *mac_addr = (uint8*)osal_mem_alloc(MAC_ADDR_CHAR_LEN);
+            uint8 *mac_addr = (uint8*)osal_mem_alloc(B_ADDR_LEN);
             if (mac_addr == NULL)
             {
                 return FALSE;
@@ -293,16 +293,10 @@ void serialConfigSendAck(BLE_SERIAL_CONFIG_STATUS status)
 
 void sendWithFrameBuffer(uint8 *data, uint16 dataLen)
 {
-    uint8 *res = (uint8 *)osal_mem_alloc(PREDATASIZE + dataLen);
-    if (res == NULL)
-    {
-        DEBUG_PRINT("FrameBuffer alloc failed\r\n");
-    }
-    osal_memcpy(res, startFrame, sizeof(startFrame));
-    osal_memcpy(&res[sizeof(startFrame)], data, dataLen);
-    osal_memcpy(&res[sizeof(startFrame) + dataLen], endFrame, sizeof(endFrame));
-    NPI_WriteTransport(res, PREDATASIZE + dataLen);
-    osal_mem_free(res);
+    NPI_WriteTransport(startFrame, sizeof(startFrame));
+    NPI_WriteTransport(data, dataLen);
+    NPI_WriteTransport(endFrame, sizeof(endFrame));
+    return;
 }
 
 void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
@@ -356,6 +350,25 @@ void key_press_callback_central(uint8 key_cnt_number)
 {
   VOID key_cnt_number;
   return;
+}
+
+void sendStationInfo()
+{
+    StationInfo *info = osal_mem_alloc(sizeof(StationInfo));
+    if (info == NULL)
+    {
+        serialConfigSendAck(BLE_SERIAL_CONFIG_FAILED);
+        return;
+    }
+    info->stationRole = sys_config.status;
+    info->stationAdvInterval = sys_config.stationAdvInterval;
+    GAPRole_GetParameter(GAPROLE_BD_ADDR, info->macAddr);
+    osal_revmemcpy(sys_config.mac_addr, info->macAddr, B_ADDR_LEN);
+    osal_memcpy(info->macAddr, sys_config.mac_addr, B_ADDR_LEN);
+    osal_memcpy(info->stationAdvData, advertData_iBeacon, ADVERTISE_SIZE);
+    sendWithFrameBuffer((uint8*)info, sizeof(StationInfo));
+    osal_mem_free(info);
+    return;
 }
 
 #endif

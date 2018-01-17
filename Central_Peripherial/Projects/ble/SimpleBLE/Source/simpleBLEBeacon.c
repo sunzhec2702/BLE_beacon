@@ -4,7 +4,7 @@
 #include "simpleBLELED.h"
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-uint8 advertData_iBeacon[] =
+uint8 advertData_iBeacon[ADVERTISE_SIZE] =
 {
   0x02, // length of this data, 0
   GAP_ADTYPE_FLAGS, // 1
@@ -202,7 +202,7 @@ void key_press_callback_central(uint8 key_cnt_number)
 {
     if (getCurrentBLEStatus() == BLE_STATUS_OFF)
     {
-        DEBUG_PRINT("STATUS_OFF, ignore key\r\n");
+        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
         return;
     }
 
