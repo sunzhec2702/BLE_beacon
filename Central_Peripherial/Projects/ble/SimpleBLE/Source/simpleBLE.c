@@ -132,7 +132,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
     sys_config.status = BLE_STATUS_STATION_SCAN;
     #elif (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-    sys_config.status = BLE_STATUS_ON_ADV;
+    sys_config.status = BLE_STATUS_ON_SCAN;
     #endif
     sys_config.role = BLE_ROLE_NUMBER;
     sys_config.rssi = 0;
@@ -266,7 +266,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���???
+  P0DIR |= 0x60; // P0.6����Ϊ���????
   P0_6 = onoff;
 }
 

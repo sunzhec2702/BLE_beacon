@@ -24,7 +24,7 @@ uint8 advertData_iBeacon[ADVERTISE_SIZE] =
   0x15, // 8
   /*Device UUID (16 Bytes)*/
   0x53, 0x4D, 0x54, // SMT 3 Bytes.
-  0x00, // 12 reserved
+  0x00, // 12 Station CRC Check.
   0x00, // 13 reserved.
   MAJOR_HW_VERSION, MAJOR_SW_VERSION, MINOR_SW_VERSION, // 14, 15, 16, HW/SW version
   BLE_STATION_ADV, // 17 Device Type 3 bytes.
@@ -37,11 +37,11 @@ uint8 advertData_iBeacon[ADVERTISE_SIZE] =
   0x00, // 23
   0x00, // 24, Station Index
   /*Major Value (2 Bytes)*/
-  0x00, // 25 for min left
-  0x00, // 26 for index 
+  0x00, //
+  0x00, //
   /*Minor Value (2 Bytes)*/
-  0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
-  0x00, // 28 Battery Value
+  0x00, //
+  0x00, //
   0xCD //29  /*Measured Power*/
 };
 

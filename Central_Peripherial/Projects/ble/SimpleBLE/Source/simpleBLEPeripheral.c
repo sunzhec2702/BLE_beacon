@@ -154,7 +154,7 @@ static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
 
 // Default WAKEUP period
 //static uint8 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
-static uint8 battery_voltage = 0;
+//static uint8 battery_voltage = 0;
 
 //first boot up
 static bool first_boot = TRUE;
@@ -383,12 +383,12 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   {
     // Only BEACON needs the set the target to off.
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-    set_target_status_to_off();
+    reset_to_no_battery_status();
     #endif
-
     // Start the Device
     VOID GAPRole_StartDevice(NULL);
     // Start Bond Manager
+    updateSysConfigMac();
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
     return (events ^ START_DEVICE_EVT);
   }
@@ -400,14 +400,19 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
     osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
     #endif
+
+    #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     if (check_low_battery() == TRUE)
     {
       enter_low_battery_mode();
       return (events ^ SBP_WAKE_EVT);
     }
+    #endif
+
     g_sleepFlag = FALSE;
     // Update the advertise data.
     init_ibeacon_advertise(TRUE);
+
     #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
     if (sys_config.stationAdvInterval == 0xFF)
       advertise_control(FALSE);
@@ -417,10 +422,11 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     // Start advertising
     advertise_control(TRUE);
     #endif
-    // Index event
-    osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
+
 
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
+    // Index event
+    osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
     // Per Min Event
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_MIN_EVT, SBP_PERIODIC_PER_MIN_PERIOD);
     if (sys_config.key_pressed_in_scan == TRUE)
@@ -429,13 +435,13 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       simpleBLE_WriteAllDataToFlash();
       change_advertise_data(TRUE);
     }
+    if (sys_config.bootup_blink == TRUE)
+    {
+      // Blink twice after 650ms
+      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
+    }
     #endif
 
-    #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
-      //led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
-    #endif
-    // We don't need to blink anymore. Slience power on.
-    // led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
     return (events ^ SBP_WAKE_EVT);
   }
 
@@ -477,7 +483,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     {
       key_led_count = BUTTON_LED_TOGGLE_COUNT;
     }
-
     return (events ^ SBP_PERIODIC_BUTTON_LED_EVT);
   }
 
@@ -519,10 +524,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     DEBUG_PRINT("Enter Sleep Mode\r\n");
     simpleBLE_Delay_1ms(1);
     */
-#if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-    sys_config.status = BLE_STATUS_OFF;
-    simpleBLE_SaveAndReset();
-#endif
+    DEBUG_PRINT("SLEEP EVT, should not be here\r\n")
     return (events ^ SBP_SLEEP_EVT);
   }
 
@@ -652,8 +654,8 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
       if (sys_config.minLeft == 0)
       {
-        DEBUG_PRINT("Enter Sleep mode\r\n");
-        osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
+        DEBUG_PRINT("Enter OFF_SCAN Status\r\n");
+        set_beacon_status(BLE_STATUS_ON_ADV, BLE_STATUS_OFF, TRUE);
         return;
       }
       minsRunning++;
@@ -746,7 +748,7 @@ static void init_ibeacon_advertise(bool reset_index)
   advertData_iBeacon[ADV_STATION_INDEX_2] = (sys_config.stationIndex & 0xFF);
   // Beacon config.
   advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
-  advertData_iBeacon[ADV_BAT_BYTE] = battery_voltage & 0xFF;
+  advertData_iBeacon[ADV_BAT_BYTE] = read_battery_value() & 0xFF;
   advertData_iBeacon[ADV_FLAG_BYTE] = 0x00;
   if (reset_index == TRUE)
   {
