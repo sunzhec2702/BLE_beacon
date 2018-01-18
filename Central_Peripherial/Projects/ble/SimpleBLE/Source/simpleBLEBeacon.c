@@ -192,6 +192,7 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                     sys_config.stationIndex = advStationIndex;
                     // Reset the wake time left mins.
                     sys_config.minLeft = sys_config.powerOnPeriod;
+                    sys_config.powerOffScanInterval = SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_MS;
                 }
             }
         }
@@ -394,7 +395,7 @@ void enter_low_battery_mode()
   }
   else if (sys_config.role == BLE_ROLE_CENTRAL)
   {
-      return;
+    return;
   }
   // LED Blinking.
   led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);

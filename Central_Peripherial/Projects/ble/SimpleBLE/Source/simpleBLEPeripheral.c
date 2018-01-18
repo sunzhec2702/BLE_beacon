@@ -157,7 +157,8 @@ static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
 //static uint8 battery_voltage = 0;
 
 //first boot up
-static bool first_boot = TRUE;
+static bool first_boot = FALSE;
+
 // Low power status
 static bool low_power_state = FALSE;
 
@@ -381,6 +382,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & START_DEVICE_EVT)
   {
+    first_boot = sys_config.bootup_blink;
     // Only BEACON needs the set the target to off.
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     reset_to_no_battery_status();
@@ -400,15 +402,15 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
     osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
     #endif
-
+    
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-    if (check_low_battery() == TRUE)
+    if ((check_low_battery(NULL) == TRUE) && (first_boot == TRUE))
     {
       enter_low_battery_mode();
       return (events ^ SBP_WAKE_EVT);
     }
     #endif
-
+    
     g_sleepFlag = FALSE;
     // Update the advertise data.
     init_ibeacon_advertise(TRUE);
@@ -435,7 +437,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       simpleBLE_WriteAllDataToFlash();
       change_advertise_data(TRUE);
     }
-    if (sys_config.bootup_blink == TRUE)
+    if (first_boot == TRUE)
     {
       // Blink twice after 650ms
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);

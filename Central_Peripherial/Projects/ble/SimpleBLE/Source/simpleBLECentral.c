@@ -205,6 +205,8 @@ extern bool timerIsOn; //
 static BLE_STATUS currentBLEStatus;
 static uint8 scanTimeLeft = DEFAULT_SCAN_TIME;
 
+static uint8 first_boot = FALSE;
+
 BLE_STATUS getCurrentBLEStatus()
 {
   return currentBLEStatus;
@@ -385,6 +387,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & START_DEVICE_EVT)
   {
+    first_boot = sys_config.bootup_blink;
     // record current status;
     currentBLEStatus = sys_config.status;
     // Only Beacon needs this.
@@ -417,6 +420,15 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
     osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //TODO: Darren: Needs to change this to battery.
     #endif
+    
+    #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
+    if ((check_low_battery(NULL) == TRUE) && (first_boot == TRUE))
+    {
+      enter_low_battery_mode();
+      return (events ^ SBP_WAKE_EVT);
+    }
+    #endif
+
     simpleBLEStartScan();
     return (events ^ SBP_WAKE_EVT);
   }
