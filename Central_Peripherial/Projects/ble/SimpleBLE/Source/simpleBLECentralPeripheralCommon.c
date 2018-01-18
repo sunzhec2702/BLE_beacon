@@ -6,6 +6,18 @@ extern SYS_CONFIG sys_config;
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
 void set_beacon_status(BLE_STATUS current_status, BLE_STATUS target_status, bool reset)
 {
+    switch (target_status)
+    {
+      case BLE_STATUS_OFF:
+      
+      break;
+      case BLE_STATUS_ON_ADV:
+      break;
+      case BLE_STATUS_ON_SCAN:
+      break;
+      default:
+      break;
+    }
     sys_config.status = target_status;
     if (reset == TRUE)
     {

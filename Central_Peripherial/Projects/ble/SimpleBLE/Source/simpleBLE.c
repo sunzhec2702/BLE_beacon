@@ -139,6 +139,8 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD;
     sys_config.txPower = 0;
 
+    sys_config.led_blink_on_boot = TRUE;
+
     sys_config.stationAdvInterval = SBP_STATION_ADV_INTERVAL;
     // PRE_ROLE_BEACON used.
     sys_config.bootup_blink = TRUE;
@@ -264,7 +266,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���???
+  P0DIR |= 0x60; // P0.6����Ϊ���???
   P0_6 = onoff;
 }
 
