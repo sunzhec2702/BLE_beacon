@@ -3,6 +3,6 @@
 
 #include "simpleble.h"
 void updateSysConfigMac(void);
-
+bool check_keys_pressed(uint8 keys);
 
 #endif

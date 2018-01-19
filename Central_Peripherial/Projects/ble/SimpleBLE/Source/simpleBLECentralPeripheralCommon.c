@@ -1,19 +1,20 @@
 #include "simpleBLECentralPeripheralCommon.h"
 #include "simpleble.h"
 #include "npi.h"
+#include "hal_key.h"
+#include "broadcaster.h"
 
 extern SYS_CONFIG sys_config;
 
+#define HAL_KEY_SW_6_PORT   P0
+#define HAL_KEY_SW_6_BIT    BV(1)
+
 void updateSysConfigMac()
 {
-  uint8 *mac_addr = (uint8*)osal_mem_alloc(B_ADDR_LEN);
-  if (mac_addr == NULL)
-  {
-      return FALSE;
-  }
+  uint8 mac_addr[B_ADDR_LEN] = {0};
   GAPRole_GetParameter(GAPROLE_BD_ADDR, mac_addr);
-  osal_revmemcpy(sys_config.mac_addr, mac_addr, MAC_ADDR_CHAR_LEN);
-  osal_mem_free(mac_addr);
+  GAPRole_GetParameter(GAPROLE_BD_ADDR, mac_addr);
+  osal_revmemcpy(sys_config.mac_addr, mac_addr, B_ADDR_LEN);
 }
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)

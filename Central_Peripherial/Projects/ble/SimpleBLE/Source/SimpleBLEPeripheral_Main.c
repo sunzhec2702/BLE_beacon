@@ -55,7 +55,7 @@ int main(void)
   }
 
   /* Initialize LL */
-  if (false == Check_startup_peripheral_or_central())
+  if (FALSE == Check_startup_peripheral_or_central())
   {
     sys_config.role = BLE_ROLE_PERIPHERAL;
     simpleBLE_WriteAllDataToFlash();

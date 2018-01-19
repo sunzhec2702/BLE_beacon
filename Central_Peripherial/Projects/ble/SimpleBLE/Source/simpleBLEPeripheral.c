@@ -21,6 +21,7 @@
 #include "gattservapp.h"
 #include "devinfoservice.h"
 #include "simpleGATTprofile.h"
+#include "simpleBLECentralPeripheralCommon.h"
 
 #if defined(CC2540_MINIDK)
 #include "simplekeys.h"
@@ -58,23 +59,21 @@
 /*********************************************************************
  * CONSTANTS
  */
-#define HAL_KEY_SW_6_PORT   P0
-#define HAL_KEY_SW_6_BIT    BV(1)
 
 // General discoverable mode advertises indefinitely
 #define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_GENERAL
 
 // Minimum connection interval (units of 1.25ms, 80=100ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ���Ӽ�������ݷ������йأ�???? ���Ӽ��Խ�̣�???? ��λʱ���ھ��ܷ���Խ�������????
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ���Ӽ�������ݷ������йأ�???? ���Ӽ��Խ�̣�???? ��λʱ���ھ��ܷ���Խ�������????
 
 // Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ���Ӽ�������ݷ������йأ�???? ���Ӽ��Խ�̣�???? ��λʱ���ھ��ܷ���Խ�������????
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ���Ӽ�������ݷ������йأ�???? ���Ӽ��Խ�̣�???? ��λʱ���ھ��ܷ���Խ�������????
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_DESIRED_SLAVE_LATENCY 0
 
 // Supervision timeout value (units of 10ms, 1000=10s) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -����ԭ��Ͽ����Ӻ�????��ʱ�����¹㲥��ʱ��:  100 = 1s
+#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -����ԭ��Ͽ����Ӻ�????��ʱ�����¹㲥��ʱ��:  100 = 1s
 
 // Whether to enable automatic parameter update request when a connection is formed
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
@@ -159,9 +158,6 @@ static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
 //first boot up
 static bool first_boot = FALSE;
 
-// Low power status
-static bool low_power_state = FALSE;
-
 //static uint8 key_long_press_cnt = 0;
 //static uint8 sleep_toggle_cnt = 0;
 static bool rapid_processing = FALSE;
@@ -170,25 +166,18 @@ static bool rapid_processing = FALSE;
 static uint8 minsRunning = 0;
 #endif
 
-#ifdef DEBUG_BOARD
-static bool debug_low_power = FALSE;
-#endif
-
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
 static void simpleBLEPeripheral_ProcessOSALMsg(osal_event_hdr_t *pMsg);
 static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg);
 
-static bool check_low_battery(void);
-static void enter_low_battery_mode(void);
-static bool check_keys_pressed(uint8 keys);
 static void init_ibeacon_advertise(bool reset_index);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
-  BOND_PAIR_STATUS_PAIRING, //δ���????
-  BOND_PAIR_STATUS_PAIRED,  //�����????
+  BOND_PAIR_STATUS_PAIRING, //δ���????
+  BOND_PAIR_STATUS_PAIRED,  //�����????
 } BOND_PAIR_STATUS;
 
 void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs);
@@ -266,7 +255,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 
   {
     // ����rssi ������������
-    uint16 rssi_read_rate_1ms = 500; //һ�����????2��
+    uint16 rssi_read_rate_1ms = 500; //һ�����????2��
     GAPRole_SetParameter(GAPROLE_RSSI_READ_RATE, sizeof(uint16), &rssi_read_rate_1ms);
   }
 
@@ -289,12 +278,12 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     uint32 passkey = 0; // passkey "000000"
     uint8 pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
     uint8 mitm = TRUE;
-    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //��ʾ���룬 �Ա�����������Ե�����????
+    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //��ʾ���룬 �Ա�����������Ե�����????
 
     /*
-    bonding���ǰ�������?��¼����, �´ξͲ��������????. ��bonding�´ξͻ������????.    
-    �������Ǵӻ������???? bonding = FALSE �ĺ�����ǣ�???? ���豸ÿ�����Ӷ�������������
-    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������???? ����Ͽ��󶼲����?�ٴ��������뼴������
+    bonding���ǰ�������?��¼����, �´ξͲ��������????. ��bonding�´ξͻ������????.    
+    �������Ǵӻ������???? bonding = FALSE �ĺ�����ǣ�???? ���豸ÿ�����Ӷ�������������
+    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������???? ����Ͽ��󶼲����?�ٴ��������뼴������
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -335,7 +324,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // VOID SimpleProfile_RegisterAppCBs(&simpleBLEPeripheral_SimpleProfileCBs);
 
   // ��Ҫ�رյ�CLK�Զ���Ƶ���ڳ�ʼ���м���HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT )?  // �������ᵼ��Ƶ���Զ��л���DMA�����ܵ�Ӱ�죬С��Χ������
-  // ��������رգ�???? ����뽵�͹��ģ�???? ���Ӧ���?����ģ�???? ����ì����
+  // ��������رգ�???? ����뽵�͹��ģ�???? ���Ӧ���?����ģ�???? ����ì����
   HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT);
   //HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT );
 
@@ -390,13 +379,13 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     // Start the Device
     VOID GAPRole_StartDevice(NULL);
     // Start Bond Manager
-    updateSysConfigMac();
     osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, 500);
     return (events ^ START_DEVICE_EVT);
   }
 
   if (events & SBP_WAKE_EVT)
   {
+    //updateSysConfigMac();
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     osal_pwrmgr_device(PWRMGR_BATTERY);
     #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
@@ -526,7 +515,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     DEBUG_PRINT("Enter Sleep Mode\r\n");
     simpleBLE_Delay_1ms(1);
     */
-    DEBUG_PRINT("SLEEP EVT, should not be here\r\n")
+    DEBUG_PRINT("SLEEP EVT, should not be here\r\n");
     return (events ^ SBP_SLEEP_EVT);
   }
 
@@ -623,11 +612,6 @@ static void simpleBLEPeripheral_ProcessGATTMsg(gattMsgEvent_t *pMsg)
 
 static void PeripherialPerformPeriodicTask(uint16 event_id)
 {
-  if (low_power_state == TRUE)
-  {
-    return;
-  }
-
   switch (event_id)
   {
   case SBP_PERIODIC_INDEX_EVT:
@@ -652,7 +636,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     {
       DEBUG_PRINT("This is a per min event\r\n");
       sys_config.minLeft--;
-      DEBUG_VALUE("minLeft:", sys_config.minLeft, 10);
+      DEBUG_VALUE("min1Left:", sys_config.minLeft, 10);
       advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
       if (sys_config.minLeft == 0)
       {
@@ -784,11 +768,6 @@ void advertise_control(bool enable)
 
 void peripheral_key_press_process_callback(uint8 key_cnt_number)
 {
-  if (low_power_state == TRUE)
-  {
-    DEBUG_PRINT("Handle Keys, Low Power Mode\r\n");
-    return;
-  }
   #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
   if (key_cnt_number == 0)
   {

@@ -139,8 +139,6 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD;
     sys_config.txPower = 0;
 
-    sys_config.led_blink_on_boot = TRUE;
-
     sys_config.stationAdvInterval = SBP_STATION_ADV_INTERVAL;
     // PRE_ROLE_BEACON used.
     sys_config.bootup_blink = TRUE;
@@ -150,7 +148,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.key_pressed_in_scan = FALSE;
     sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;
     sys_config.powerOnPeriod = DEFAULT_WAKE_TIME_MINS;
-    sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD_MIN; // The scan interval in OFF mode, default 1 hour
+    sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD_MS; // The scan interval in OFF mode, default 1 hour
   }
   GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
   simpleBLE_WriteAllDataToFlash();
@@ -211,13 +209,13 @@ bool Check_startup_peripheral_or_central(void)
   {
     case BLE_STATUS_OFF:
     case BLE_STATUS_ON_SCAN:
-      return true;
+      return TRUE;
       break;
     case BLE_STATUS_ON_ADV:
-      return false;
+      return FALSE;
       break;
     default:
-      return true;
+      return FALSE;
       break;
   }
 #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
@@ -240,7 +238,6 @@ void simpleBLE_NPI_init(void)
   if (GetBleRole() == BLE_ROLE_CENTRAL)
   {
     NPI_InitTransport(HAL_UART_PORT_0, simpleBLE_NpiSerialCallback);
-    NPI_WriteTransportPort(HAL_UART_PORT_0, "Central\r\n", 21);
   }
   else
   {
@@ -266,7 +263,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���????
+  P0DIR |= 0x60; // P0.6����Ϊ���????
   P0_6 = onoff;
 }
 

@@ -1,11 +1,17 @@
 #include "simpleBLEBeacon.h"
+#include "simpleBLECentralPeripheralCommon.h"
 #include "simpleBLECentral.h"
+#include "simpleBLEPeripheral.h"
 #include "npi.h"
 #include "simpleBLELED.h"
+#include "hal_adc.h"
 
 #define MAC_SUM_BYTE    0xBF
-
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
+
+// Low power status
+bool low_power_state = FALSE;
+
 uint8 advertData_iBeacon[ADVERTISE_SIZE] =
 {
   0x02, // length of this data, 0
@@ -103,11 +109,11 @@ static bool simpleBLEStationMacFilter(uint8 *pEvtData)
     if (pEvtData[ADV_SPECIFIC_MAC_LAST_4] == 0x00 &&
         pEvtData[ADV_SPECIFIC_MAC_LAST_3] == 0x00 &&
         pEvtData[ADV_SPECIFIC_MAC_LAST_2] == 0x00 &&
-        pEvtData[ADV_SPECIFIC_MAC_LAST_1] == 0x00 &&)
+        pEvtData[ADV_SPECIFIC_MAC_LAST_1] == 0x00)
     {
         return TRUE;
     }
-    updateSysConfigMac();
+    //updateSysConfigMac();
     if (pEvtData[ADV_SPECIFIC_MAC_LAST_4] == sys_config.mac_addr[2] && 
         pEvtData[ADV_SPECIFIC_MAC_LAST_3] == sys_config.mac_addr[3] &&
         pEvtData[ADV_SPECIFIC_MAC_LAST_2] == sys_config.mac_addr[4] &&
@@ -155,7 +161,7 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
             {
                 DEBUG_PRINT("Station ADV\r\n");
                 DEBUG_VALUE("CMD: ", pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX], 10);
-                DEBUG_VALUE("StationIndex will update to ", advStationIndex, 10);
+                DEBUG_VALUE("StationIndex will update to ", (pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_2], 10);
                 DEBUG_VALUE("MinLeft : ", sys_config.minLeft, 10);
                 DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
                 DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
@@ -202,14 +208,15 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                 simpleBLEStationMacCRCCheck(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.addr) == TRUE &&
                 simpleBLEStationMacFilter(pEvent->deviceInfo.pEvtData) == TRUE)
             {
+                uint8 cmd = pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX];
+                uint8 battery_threshold = 0;
                 DEBUG_PRINT("OFF: Station ADV\r\n");
                 DEBUG_VALUE("CMD: ", cmd, 10);
-                DEBUG_VALUE("StationIndex = ", advStationIndex, 10);
+                DEBUG_VALUE("StationIndex = ", (pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_1] << 8) + pEvent->deviceInfo.pEvtData[ADV_STATION_INDEX_2], 10);
                 DEBUG_VALUE("PowerOnPeriod", sys_config.powerOnPeriod, 10);
                 DEBUG_VALUE("powerOnScanInterval", sys_config.powerOnScanInterval, 10);
                 DEBUG_VALUE("powerOffScanInterval", sys_config.powerOffScanInterval, 10);
                 DEBUG_VALUE("MinLeft : ", sys_config.minLeft, 10);
-                BLE_STATION_CMD cmd = pEvent->deviceInfo.pEvtData[ADV_STATION_CMD_INDEX];
                 switch (cmd)
                 {
                     case BLE_CMD_POWER_OFF:
@@ -231,7 +238,7 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                     case BLE_CMD_LED_BLINK:
                     led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, 0);       
                     case BLE_CMD_CHECK_BATTERY:
-                    uint8 battery_threshold = pEvent->deviceInfo.pEvtData[ADV_STATION_BATTERY_THRESHOLD];
+                    battery_threshold = pEvent->deviceInfo.pEvtData[ADV_STATION_BATTERY_THRESHOLD];
                     if (check_low_battery(battery_threshold) == TRUE)
                     {
                         enter_low_battery_mode();
@@ -283,6 +290,9 @@ bool scan_discovery_callback(void)
 
 void key_press_callback_central(uint8 key_cnt_number)
 {
+    if (low_power_state == TRUE)
+        return;
+        
     if (getCurrentBLEStatus() == BLE_STATUS_OFF)
     {
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
@@ -387,7 +397,7 @@ void enter_low_battery_mode()
   */
   DEBUG_PRINT("Enter Low Battery Mode\r\n");
   low_power_state = TRUE;
-  if (sys_config.role = BLE_ROLE_PERIPHERAL)
+  if (sys_config.role == BLE_ROLE_PERIPHERAL)
   {
     advertData_iBeacon[ADV_FLAG_BYTE] |= 0x40;
     // Stop advertising.
