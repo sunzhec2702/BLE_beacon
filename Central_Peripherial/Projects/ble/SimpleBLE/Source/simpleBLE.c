@@ -139,7 +139,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD;
     sys_config.txPower = 0;
 
-    sys_config.stationAdvInterval = SBP_STATION_ADV_INTERVAL;
+    sys_config.stationAdvInterval = ADV_INTERVAL_x00MS_TO_TICK(SBP_STATION_ADV_INTERVAL);
     // PRE_ROLE_BEACON used.
     sys_config.bootup_blink = TRUE;
     sys_config.stationIndex = 0;

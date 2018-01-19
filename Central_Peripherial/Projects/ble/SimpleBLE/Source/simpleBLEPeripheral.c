@@ -743,8 +743,8 @@ static void init_ibeacon_advertise(bool reset_index)
   // Update the simpleBLE status. Common Config
   advertData_iBeacon[ADV_STATION_INDEX_1] = (sys_config.stationIndex >> 8) & 0xFF;
   advertData_iBeacon[ADV_STATION_INDEX_2] = (sys_config.stationIndex & 0xFF);
-  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] = ((sys_config.powerOffScanInterval / 100) >> 8) & 0xFF;
-  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2] = (sys_config.powerOffScanInterval / 100) & 0xFF;
+  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] = ((sys_config.powerOffScanInterval) >> 8) & 0xFF;
+  advertData_iBeacon[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2] = (sys_config.powerOffScanInterval) & 0xFF;
   // Beacon config.
   advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
   advertData_iBeacon[ADV_BAT_BYTE] = read_battery_value() & 0xFF;

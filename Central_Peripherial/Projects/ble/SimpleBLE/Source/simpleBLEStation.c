@@ -178,7 +178,11 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
                 return TRUE;
             }
             break;
+            default:
+            return FALSE;
+            break;
         }
+        return FALSE;
         break;
 
         // Change the advertise data.
@@ -189,7 +193,7 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
         }
         StationAdvConfig *advConfig = (StationAdvConfig *)config;
         sys_config.stationAdvInterval = advConfig->stationAdvInterval;
-        osal_memcpy(advertData_iBeacon, advConfig->stationAdvData, sizeof(advertData_iBeacon));
+        osal_memcpy(advertData_iBeacon, advConfig->stationAdvData, ADVERTISE_SIZE);
         GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
         simpleBLE_WriteAllDataToFlash();
         if (sys_config.stationAdvInterval == 0xFF)
@@ -219,6 +223,7 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
         return TRUE;
         break;
         default:
+        return FALSE;
         break;
     }
     return FALSE;
