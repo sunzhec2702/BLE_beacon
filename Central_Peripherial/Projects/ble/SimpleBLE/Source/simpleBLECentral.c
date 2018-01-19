@@ -67,6 +67,11 @@
 #include "simpleBLEKey.h"
 #include "simpleBLELED.h"
 #include "simpleBLECentralPeripheralCommon.h"
+
+#if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+#include "simpleBLEStation.h"
+#endif
+
 /*********************************************************************
  * MACROS
  */
@@ -431,8 +436,6 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
         return (events ^ SBP_WAKE_EVT);
       }
     }
-    #endif
-
     if (first_boot == TRUE)
     {
       #ifdef DEBUG_BOARD
@@ -441,6 +444,9 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
       // Blink twice after 650ms
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, 0);
     }
+    #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
+    sendStationInfo();
+    #endif
 
     simpleBLEStartScan();
     return (events ^ SBP_WAKE_EVT);

@@ -171,12 +171,11 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                 {
                     case BLE_CMD_POWER_OFF:
                     // Do nothing.
-                    /*
-                    retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData);
-                    sys_config.stationIndex = 0;
-                    sys_config.status = BLE_STATUS_OFF;
-                    simpleBLE_SaveAndReset();
-                    */
+                    #ifdef (DEBUG_CMD_POWER_OFF)
+                    sys_config.minLeft = 0;
+                    set_beacon_status(BLE_STATUS_ON_SCAN, BLE_STATUS_OFF, TRUE);
+                    #endif
+
                     break;
                     case BLE_CMD_POWER_ON:
                     DEBUG_VALUE("current stationIndex: ", sys_config.stationIndex, 10);

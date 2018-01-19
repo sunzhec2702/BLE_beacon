@@ -1,7 +1,7 @@
 #ifndef __SIMPLE_BLE_STATION_H_
 #define __SIMPLE_BLE_STATION_H_
-#include "simpleble.h"
 #include "central.h"
+#include "simpleble.h"
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
 typedef struct
@@ -9,8 +9,14 @@ typedef struct
     uint8 stationRole;
     uint8 stationAdvInterval;
     uint8 macAddr[B_ADDR_LEN];
-    uint8 stationAdvData[ADVERTISE_SIZE];
+    uint8 stationAdvData[30];
 } StationInfo;
+
+typedef struct
+{
+    uint8 stationAdvInterval;
+    uint8 stationAdvData[30];
+} StationAdvConfig;
 
 typedef enum
 {
@@ -22,20 +28,10 @@ typedef enum
 typedef enum
 {
     BLE_SERIAL_CONFIG_CMD_ROLE_CHANGE = 0, // STATION_SCAN <--> STATION_ADV
-    BLE_SERIAL_CONFIG_CMD_ADV_DATA, // CHANGE ADV DATA.
-    BLE_SERIAL_CONFIG_CMD_ADV_INTERVAL, // CHANGE ADV INTERVAL.
+    BLE_SERIAL_CONFIG_CMD_ADV, // Change the ADV Interval and ADV data
     BLE_SERIAL_CONFIG_CMD_GET_STATUS, // GET CURRENT CONFIG. INCLUDE ROEL/DATA/INTERVAL
     BLE_SERIAL_CONFIG_CMD_NUM,
 } BLE_SERIAL_CONFIG_CMD_TYPE;
-
-typedef enum
-{
-    BLE_SERIAL_GET_ROLE = 0, // STATION_SCAN <--> STATION_ADV
-    BLE_SERIAL_GET_ADV_DATA, // CHANGE ADV DATA.
-    BLE_SERIAL_GET_ADV_INTERVAL, // CHANGE ADV INTERVAL.
-    BLE_SERIAL_GET_MAC,
-    BLE_SERIAL_GET_NUM,
-} BLE_SERIAL_GET_INFO_TYPE;
 
 typedef enum
 {

@@ -14,7 +14,7 @@ void updateSysConfigMac()
 {
   for (uint8 i = 0; i < B_ADDR_LEN; i++)
   {
-    sys_config.mac_addr[i] = XREG(XDATA_MAC_ADDR+i);
+    sys_config.mac_addr[B_ADDR_LEN - 1 - i] = XREG(XDATA_MAC_ADDR+i);
   }
 }
 

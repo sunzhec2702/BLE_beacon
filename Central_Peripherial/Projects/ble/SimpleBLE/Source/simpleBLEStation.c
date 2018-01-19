@@ -180,24 +180,17 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
             break;
         }
         break;
-        // Change the advertise data.
-        case BLE_SERIAL_CONFIG_CMD_ADV_DATA:
-        if (configLen != sizeof(advertData_iBeacon) || sys_config.status == BLE_STATUS_STATION_SCAN)
-        {
-            return FALSE;
-        }
-        osal_memcpy(advertData_iBeacon, config, sizeof(advertData_iBeacon));
-        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
-        return TRUE;
-        break;
 
-        // Change the advertise interval
-        case BLE_SERIAL_CONFIG_CMD_ADV_INTERVAL:
-        if (configLen != 1 || sys_config.status == BLE_STATUS_STATION_SCAN)
+        // Change the advertise data.
+        case BLE_SERIAL_CONFIG_CMD_ADV:
+        if (configLen != sizeof(StationAdvConfig) || sys_config.status == BLE_STATUS_STATION_SCAN)
         {
             return FALSE;
         }
-        sys_config.stationAdvInterval = config[0];
+        StationAdvConfig *advConfig = (StationAdvConfig *)config;
+        sys_config.stationAdvInterval = advConfig->stationAdvInterval;
+        osal_memcpy(advertData_iBeacon, advConfig->stationAdvData, sizeof(advertData_iBeacon));
+        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
         simpleBLE_WriteAllDataToFlash();
         if (sys_config.stationAdvInterval == 0xFF)
         {
@@ -220,37 +213,9 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
         advertise_control(TRUE);
         return TRUE;
         break;
+
         case BLE_SERIAL_CONFIG_CMD_GET_STATUS:
-        if (configLen != 1)
-        {
-            return FALSE;
-        }
-        BLE_SERIAL_GET_INFO_TYPE get_type = config[0];
-        switch (get_type)
-        {
-            case BLE_SERIAL_GET_ROLE:
-            sendWithFrameBuffer((uint8 *)&sys_config.status, 1);
-            break;
-            case BLE_SERIAL_GET_ADV_DATA:
-            sendWithFrameBuffer(advertData_iBeacon, sizeof(advertData_iBeacon));
-            break;
-            case BLE_SERIAL_GET_ADV_INTERVAL:
-            sendWithFrameBuffer((uint8 *)&sys_config.stationAdvInterval, 1);
-            break;
-            case BLE_SERIAL_GET_MAC:
-            uint8 *mac_addr = (uint8*)osal_mem_alloc(B_ADDR_LEN);
-            if (mac_addr == NULL)
-            {
-                return FALSE;
-            }
-            GAPRole_GetParameter(GAPROLE_BD_ADDR, mac_addr);
-            osal_revmemcpy(sys_config.mac_addr, mac_addr, MAC_ADDR_CHAR_LEN);
-            sendWithFrameBuffer(sys_config.mac_addr, MAC_ADDR_CHAR_LEN);
-            osal_mem_free(mac_addr);
-            return TRUE;
-            default:
-            return FALSE;
-        }
+        sendStationInfo();
         return TRUE;
         break;
         default:
@@ -354,20 +319,12 @@ void key_press_callback_central(uint8 key_cnt_number)
 
 void sendStationInfo()
 {
-    StationInfo *info = osal_mem_alloc(sizeof(StationInfo));
-    if (info == NULL)
-    {
-        serialConfigSendAck(BLE_SERIAL_CONFIG_FAILED);
-        return;
-    }
-    info->stationRole = sys_config.status;
-    info->stationAdvInterval = sys_config.stationAdvInterval;
-    GAPRole_GetParameter(GAPROLE_BD_ADDR, info->macAddr);
-    osal_revmemcpy(sys_config.mac_addr, info->macAddr, B_ADDR_LEN);
-    osal_memcpy(info->macAddr, sys_config.mac_addr, B_ADDR_LEN);
-    osal_memcpy(info->stationAdvData, advertData_iBeacon, ADVERTISE_SIZE);
-    sendWithFrameBuffer((uint8*)info, sizeof(StationInfo));
-    osal_mem_free(info);
+    StationInfo stationInfo;
+    stationInfo.stationRole = sys_config.status;
+    stationInfo.stationAdvInterval = sys_config.stationAdvInterval;
+    osal_memcpy(stationInfo.macAddr, sys_config.mac_addr, B_ADDR_LEN);
+    osal_memcpy(stationInfo.stationAdvData, advertData_iBeacon, ADVERTISE_SIZE);
+    sendWithFrameBuffer((uint8*) &stationInfo, sizeof(StationInfo));
     return;
 }
 
