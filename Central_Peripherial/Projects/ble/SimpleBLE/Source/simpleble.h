@@ -33,7 +33,7 @@ extern "C"
 #define POWER_OFF_SUPPORT FALSE
 #define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_PRE_ROLE_STATION
+#define PRESET_ROLE BLE_PRE_ROLE_BEACON
 
 #define BLE_PRE_ROLE_STATION 0
 #define BLE_PRE_ROLE_BEACON 1
@@ -43,6 +43,9 @@ extern "C"
 #elif (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
 #include "simpleBLEBeacon.h"
 #endif
+
+#define DEBUG_MAC_CRC 1
+#define DEBUG_CMD_POWER_OFF 1
 
 typedef enum
 {
@@ -137,7 +140,7 @@ typedef enum
 
 /*********************** DEBUG_BOARD but normal period ********************************/
 
-#define SBP_PERIODIC_PER_MIN_PERIOD                     5000    // 1 min
+#define SBP_PERIODIC_PER_MIN_PERIOD                     60000    // 1 min
 #define DEFAULT_WAKE_TIME_MINS                          30        // 30mins
 #define SCAN_ADV_TRANS_MIN_PERIOD                       10 // 10mins
 #define SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1              0x0E //

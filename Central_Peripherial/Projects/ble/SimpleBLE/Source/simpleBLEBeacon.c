@@ -171,7 +171,7 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                 {
                     case BLE_CMD_POWER_OFF:
                     // Do nothing.
-                    #ifdef (DEBUG_CMD_POWER_OFF)
+                    #ifdef DEBUG_CMD_POWER_OFF
                     sys_config.minLeft = 0;
                     set_beacon_status(BLE_STATUS_ON_SCAN, BLE_STATUS_OFF, TRUE);
                     #endif

@@ -192,29 +192,32 @@ bool serialConfigProcess(BLE_SERIAL_CONFIG_CMD_TYPE cmdType, uint8 *config, uint
             return FALSE;
         }
         StationAdvConfig *advConfig = (StationAdvConfig *)config;
-        sys_config.stationAdvInterval = advConfig->stationAdvInterval;
         osal_memcpy(advertData_iBeacon, advConfig->stationAdvData, ADVERTISE_SIZE);
         GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData_iBeacon), advertData_iBeacon);
-        simpleBLE_WriteAllDataToFlash();
-        if (sys_config.stationAdvInterval == 0xFF)
+        if (sys_config.stationAdvInterval != advConfig->stationAdvInterval)
         {
-            advertise_control(FALSE);
-            return TRUE;
+            sys_config.stationAdvInterval = advConfig->stationAdvInterval;
+            simpleBLE_WriteAllDataToFlash();
+            if (sys_config.stationAdvInterval == 0xFF)
+            {
+                advertise_control(FALSE);
+                return TRUE;
+            }
+            uint8 initial_advertising_enable;
+            GAPRole_GetParameter(GAPROLE_ADVERT_ENABLED, &initial_advertising_enable);
+            if (initial_advertising_enable == TRUE)
+            {
+                advertise_control(FALSE);
+                simpleBLE_Delay_1ms(500);
+            }
+            {
+                GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
+                GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
+                GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
+                GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
+            }
+            advertise_control(TRUE);
         }
-        uint8 initial_advertising_enable;
-        GAPRole_GetParameter(GAPROLE_ADVERT_ENABLED, &initial_advertising_enable);
-        if (initial_advertising_enable == TRUE)
-        {
-            advertise_control(FALSE);
-            simpleBLE_Delay_1ms(500);
-        }
-        {
-            GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
-            GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
-            GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
-            GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, ADV_INTERVAL_x00MS_TO_TICK(sys_config.stationAdvInterval));
-        }
-        advertise_control(TRUE);
         return TRUE;
         break;
 
