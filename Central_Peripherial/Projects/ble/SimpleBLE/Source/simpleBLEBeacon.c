@@ -90,13 +90,13 @@ static void retrive_info_from_station_adv(uint8 *pEvtData, bool use_hardcode_val
     {
         sys_config.powerOnPeriod = DEFAULT_WAKE_TIME_MINS;
         sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;
-        sys_config.powerOffScanInterval = SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_MS;
+        sys_config.powerOffScanInterval = SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_x00MS;
     }
     else
     {
         sys_config.powerOnPeriod = pEvtData[ADV_STATION_POWER_ON_PERIOD_INDEX];
         sys_config.powerOnScanInterval = pEvtData[ADV_STATION_ON_SCAN_INTERVAL_INDEX];
-        sys_config.powerOffScanInterval = (pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2];
+        sys_config.powerOffScanInterval = ((pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_1] << 8) + pEvtData[ADV_STATION_OFF_SCAN_INTERVAL_INDEX_2]);
     }
 }
 
@@ -137,7 +137,7 @@ static bool simpleBLEStationMacCRCCheck(uint8 *pEvtData, uint8 *addr)
         sum += addr[i];
     }
     sum += MAC_SUM_BYTE;
-    sum = sum % 0xFF;
+    sum = sum & 0xFF;
     if (pEvtData[ADV_STATION_MAC_CRC_BYTE] == sum)
         return TRUE;
     return FALSE;
@@ -183,6 +183,9 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                     retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData, TRUE);
                     // Reset the wake time left mins.
                     sys_config.minLeft = sys_config.powerOnPeriod;
+                    #ifdef DEBUG_BOARD
+                    PrintAllPara();
+                    #endif
                     break;
                     default:
                     break;
@@ -198,7 +201,8 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                     sys_config.stationIndex = advStationIndex;
                     // Reset the wake time left mins.
                     sys_config.minLeft = sys_config.powerOnPeriod;
-                    sys_config.powerOffScanInterval = SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_MS;
+                    sys_config.powerOffScanInterval = SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_x00MS;
+                    set_beacon_status(BLE_STATUS_ON_SCAN, BLE_STATUS_ON_ADV, FALSE);
                 }
             }
         }
@@ -233,10 +237,14 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                     retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData, TRUE);
                     // Reset the wake time left mins.
                     sys_config.minLeft = sys_config.powerOnPeriod;
+                    #ifdef DEBUG_BOARD
+                    PrintAllPara();
+                    #endif
                     set_beacon_status(BLE_STATUS_OFF, BLE_STATUS_ON_ADV, TRUE);
                     break;
                     case BLE_CMD_LED_BLINK:
-                    led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, 0);       
+                    led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, BUTTON_LED_TOGGLE_COUNT, 0);
+                    break;
                     case BLE_CMD_CHECK_BATTERY:
                     battery_threshold = pEvent->deviceInfo.pEvtData[ADV_STATION_BATTERY_THRESHOLD];
                     if (check_low_battery(battery_threshold) == TRUE)
@@ -279,7 +287,7 @@ bool scan_discovery_callback(void)
     {
       DEBUG_PRINT("OFF, TimeLeft 0\r\n");
       resetScanTimeLeft();
-      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, (sys_config.powerOffScanInterval * 1000));
+      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, (sys_config.powerOffScanInterval * 100));
     }
     else
     {
@@ -290,17 +298,19 @@ bool scan_discovery_callback(void)
 
 void key_press_callback_central(uint8 key_cnt_number)
 {
-    if (low_power_state == TRUE)
-        return;
-        
-    if (getCurrentBLEStatus() == BLE_STATUS_OFF)
+    if (key_cnt_number == 0)
     {
-        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
         return;
     }
 
-    if (key_cnt_number == 0)
+    if (low_power_state == TRUE)
     {
+        enter_low_battery_mode();
+    }
+
+    if (getCurrentBLEStatus() == BLE_STATUS_OFF)
+    {
+        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
         return;
     }
 
@@ -335,6 +345,10 @@ void set_beacon_status(BLE_STATUS current_status, BLE_STATUS target_status, bool
       }
       break;
       case BLE_STATUS_ON_ADV:
+      if (current_status == BLE_STATUS_OFF || current_status == BLE_STATUS_ON_SCAN)
+      {
+        sys_config.bootup_blink = FALSE;
+      }
       break;
       default:
       break;
@@ -371,7 +385,6 @@ uint8 read_battery_value()
   }
   adc_read = adc_read >> 4;
   battery_voltage = adc_read * 3 * 125 / 511 / 10;
-  DEBUG_VALUE("adc value : ", adc_read, 10);
   DEBUG_VALUE("Battery Value : ", battery_voltage * 10, 10);
   return battery_voltage;
 }
@@ -405,7 +418,7 @@ void enter_low_battery_mode()
   }
   else if (sys_config.role == BLE_ROLE_CENTRAL)
   {
-    return;
+    //return;
   }
   // LED Blinking.
   led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);

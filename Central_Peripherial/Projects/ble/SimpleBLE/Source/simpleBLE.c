@@ -148,7 +148,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.key_pressed_in_scan = FALSE;
     sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;
     sys_config.powerOnPeriod = DEFAULT_WAKE_TIME_MINS;
-    sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD_MS; // The scan interval in OFF mode, default 1 hour
+    sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD_x00MS; // The scan interval in OFF mode, default 1 hour
   }
   GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
   simpleBLE_WriteAllDataToFlash();
@@ -156,27 +156,42 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
 
 void PrintAllPara(void)
 {
-  char strTemp[32];
+  char strTemp[64];
+  sprintf(strTemp, "sys_config.minLeft = %d\r\n", sys_config.minLeft);
+  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
+  simpleBLE_Delay_1ms(50);
+
+  sprintf(strTemp, "sys_config.stationAdvInterval = %d\r\n", sys_config.stationAdvInterval);
+  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
+  simpleBLE_Delay_1ms(50);
+
+  sprintf(strTemp, "sys_config.powerOnScanInterval = %d\r\n", sys_config.powerOnScanInterval);
+  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
+  simpleBLE_Delay_1ms(50);
+
+  sprintf(strTemp, "sys_config.powerOffScanInterval = %u\r\n", sys_config.powerOffScanInterval);
+  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
+  simpleBLE_Delay_1ms(50);
+  
+  sprintf(strTemp, "sys_config.powerOnPeriod = %d\r\n", sys_config.powerOnPeriod);
+  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
+  simpleBLE_Delay_1ms(50);
+
   sprintf(strTemp, "sys_config.status = %d\r\n", sys_config.status);
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-  
+  simpleBLE_Delay_1ms(50);
+
   sprintf(strTemp, "sys_config.role = %d\r\n", sys_config.role);
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
+  simpleBLE_Delay_1ms(50);
 
-  sprintf(strTemp, "sys_config.mac_addr = %s\r\n", sys_config.mac_addr);
+  sprintf(strTemp, "sys_config.stationIndex = %d\r\n", sys_config.stationIndex);
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
+  simpleBLE_Delay_1ms(50);
 
-  sprintf(strTemp, "sys_config.rssi = %d\r\n", sys_config.rssi);
+  sprintf(strTemp, "sys_config.beaconIndex = %d\r\n", sys_config.beaconIndex);
   NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
-  sprintf(strTemp, "sys_config.txPower = %d\r\n", sys_config.txPower);
-  NPI_WriteTransport((uint8 *)strTemp, osal_strlen(strTemp));
-  simpleBLE_Delay_1ms(100);
-
+  simpleBLE_Delay_1ms(50);
 }
 
 // BLE_ROLE_PERIPHERAL = 0,  BLE_ROLE_CENTRAL = 1

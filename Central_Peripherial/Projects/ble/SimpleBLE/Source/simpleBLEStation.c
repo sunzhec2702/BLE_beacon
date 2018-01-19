@@ -37,11 +37,11 @@ uint8 advertData_iBeacon[ADVERTISE_SIZE] =
   0x00, // 23
   0x00, // 24, Station Index
   /*Major Value (2 Bytes)*/
-  0x00, //
-  0x00, //
+  0xFF, //
+  0xFF, //
   /*Minor Value (2 Bytes)*/
-  0x00, //
-  0x00, //
+  0xFF, //
+  0xFF, //
   0xCD //29  /*Measured Power*/
 };
 
