@@ -8,13 +8,14 @@ extern SYS_CONFIG sys_config;
 
 #define HAL_KEY_SW_6_PORT   P0
 #define HAL_KEY_SW_6_BIT    BV(1)
+#define XDATA_MAC_ADDR      (0x780E)
 
 void updateSysConfigMac()
 {
-  uint8 mac_addr[B_ADDR_LEN] = {0};
-  GAPRole_GetParameter(GAPROLE_BD_ADDR, mac_addr);
-  GAPRole_GetParameter(GAPROLE_BD_ADDR, mac_addr);
-  osal_revmemcpy(sys_config.mac_addr, mac_addr, B_ADDR_LEN);
+  for (uint8 i = 0; i < B_ADDR_LEN; i++)
+  {
+    sys_config.mac_addr[i] = XREG(XDATA_MAC_ADDR+i);
+  }
 }
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)

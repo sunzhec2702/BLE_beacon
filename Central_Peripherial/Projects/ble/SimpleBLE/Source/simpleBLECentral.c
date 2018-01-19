@@ -106,10 +106,10 @@
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
 
 // Minimum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ���Ӽ�������ݷ������йأ�?? ���Ӽ��Խ�̣�?? ��λʱ���ھ��ܷ���Խ�������??
+#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ���Ӽ�������ݷ������йأ�??? ���Ӽ��Խ�̣�??? ��λʱ���ھ��ܷ���Խ�������???
 
 // Maximum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ���Ӽ�������ݷ������йأ�?? ���Ӽ��Խ�̣�?? ��λʱ���ھ��ܷ���Խ�������??
+#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ���Ӽ�������ݷ������йأ�??? ���Ӽ��Խ�̣�??? ��λʱ���ھ��ܷ���Խ�������???
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_UPDATE_SLAVE_LATENCY 0
@@ -305,9 +305,9 @@ void SimpleBLECentral_Init(uint8 task_id)
     //uint8 bonding = DEFAULT_BONDING_MODE;
 
     /*
-    bonding���ǰ�������?��¼����, �´ξͲ��������??. ��bonding�´ξͻ������??.    
-    �������Ǵӻ������?? bonding = FALSE �ĺ�����ǣ�?? ���豸ÿ�����Ӷ�������������
-    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������?? ����Ͽ��󶼲����?�ٴ��������뼴������
+    bonding���ǰ�������?��¼����, �´ξͲ��������???. ��bonding�´ξͻ������???.    
+    �������Ǵӻ������??? bonding = FALSE �ĺ�����ǣ�??? ���豸ÿ�����Ӷ�������������
+    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������??? ����Ͽ��󶼲����?�ٴ��������뼴������
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -387,6 +387,8 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & START_DEVICE_EVT)
   {
+    updateSysConfigMac();
+
     first_boot = sys_config.bootup_blink;
     // record current status;
     currentBLEStatus = sys_config.status;
@@ -413,7 +415,6 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_WAKE_EVT)
   {
-    //updateSysConfigMac();
     g_sleepFlag = FALSE;
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     osal_pwrmgr_device(PWRMGR_BATTERY);
@@ -652,7 +653,7 @@ static void simpleBLECentralProcessGATTMsg(gattMsgEvent_t *pMsg)
     {
       // After a succesful write, display the value that was written and increment value
       //LCD_WRITE_STRING_VALUE( "Write sent:", simpleBLECharVal++, 10, HAL_LCD_LINE_1 );
-      // ����������ڱ�����һ��д���ݵ��ӻ��Ѿ��ɹ���?? �������ж�д����ʱ���жϣ� ��ȷ�����ݵ�������
+      // ����������ڱ�����һ��д���ݵ��ӻ��Ѿ��ɹ���??? �������ж�д����ʱ���жϣ� ��ȷ�����ݵ�������
       simpleBLEChar6DoWrite = TRUE;
     }
 
@@ -710,7 +711,6 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
   {
     LCD_WRITE_STRING("BLE Central", HAL_LCD_LINE_1);
     LCD_WRITE_STRING(bdAddr2Str(pEvent->initDone.devAddr), HAL_LCD_LINE_2);
-    //updateSysConfigMac();
   }
   break;
  
@@ -746,7 +746,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     simpleBLECentralCanSend = FALSE;
     LCD_WRITE_STRING("Disconnected", HAL_LCD_LINE_1);
     LCD_WRITE_STRING_VALUE("Reason:", pEvent->linkTerminate.reason, 10, HAL_LCD_LINE_2);
-    //��������ʧ�ܺ� ���Գ���ִ��������߼����?��ӻ�??
+    //��������ʧ�ܺ� ���Գ���ִ��������߼����?��ӻ�???
     simpleBLEScanning = 0;
     simpleBLEStartScan();
   }
