@@ -268,6 +268,7 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                     sys_config.stationIndex = advStationIndex;
                     // Reset the wake time left mins.
                     sys_config.minLeft = sys_config.powerOnPeriod;
+                    sys_config.powerOffScanInterval = SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_x00MS;
                     set_beacon_status(BLE_STATUS_OFF, BLE_STATUS_ON_ADV, TRUE);
                 }
             }
