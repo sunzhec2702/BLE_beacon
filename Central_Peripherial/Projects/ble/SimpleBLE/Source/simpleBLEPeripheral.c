@@ -379,7 +379,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     first_boot = sys_config.bootup_blink;
     // Only BEACON needs the set the target to off.
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-    reset_to_no_battery_status();
+    reset_to_no_battery_status(sys_config.role);
     #endif
     // Start the Device
     VOID GAPRole_StartDevice(NULL);
@@ -435,6 +435,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     }
     if (first_boot == TRUE)
     {
+      sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
       #ifdef DEBUG_BOARD
       PrintAllPara();
       #endif

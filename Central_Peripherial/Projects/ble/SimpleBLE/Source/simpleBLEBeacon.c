@@ -366,7 +366,7 @@ void set_beacon_status(BLE_STATUS current_status, BLE_STATUS target_status, bool
 }
 
 // For beacon, the features are LED blink 2 times and ON_ADV
-void reset_to_no_battery_status()
+void reset_to_no_battery_status(uint8 role)
 {
     sys_config.status = BLE_STATUS_ON_SCAN;
     sys_config.bootup_blink = TRUE;

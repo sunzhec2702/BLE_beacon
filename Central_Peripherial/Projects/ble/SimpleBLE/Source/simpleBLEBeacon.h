@@ -28,7 +28,7 @@ bool scan_discovery_callback(void);
 void key_press_callback_central(uint8 key_cnt_number);
 bool simpleBLEStationMacCRCCheck(uint8 *pEvtData, uint8 *addr);
 void set_beacon_status(BLE_STATUS current_status, BLE_STATUS target_status, bool reset);
-void reset_to_no_battery_status(void);
+void reset_to_no_battery_status(uint8 role);
 uint8 read_battery_value(void);
 bool check_low_battery(uint8 battery_value);
 void enter_low_battery_mode(void);

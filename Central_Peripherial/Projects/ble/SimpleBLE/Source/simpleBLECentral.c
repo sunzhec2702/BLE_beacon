@@ -399,7 +399,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     currentBLEStatus = sys_config.status;
     // Only Beacon needs this.
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-    reset_to_no_battery_status();
+    reset_to_no_battery_status(sys_config.role);
     #endif
     // Start the Device
     VOID GAPCentralRole_StartDevice((gapCentralRoleCB_t *)&simpleBLERoleCB);
@@ -438,6 +438,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     }
     if (first_boot == TRUE)
     {
+      sys_config.minLeft = DEFAULT_WAKE_TIME_MINS;
       #ifdef DEBUG_BOARD
       PrintAllPara();
       #endif
@@ -743,10 +744,6 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     simpleBLEScanning = FALSE;
     scanTimeLeft--;
     scan_discovery_callback();
-    if(scanTimeLeft > 0)
-    {
-        simpleBLEStartScan();
-    }
   }
   break;
 
