@@ -61,6 +61,7 @@ void scan_adv_event_callback(uint8 role)
     {
         if (getCurrentBLEStatus() == BLE_STATUS_ON_SCAN)
         {
+            // Need this callback to support reset later.
             if (get_led_toggle_status() == TRUE)
             {
                 osal_start_timerEx(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT, PERIPHERAL_START_LED_TOGGLE_PERIOD_ON + PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF);
@@ -69,6 +70,10 @@ void scan_adv_event_callback(uint8 role)
             {
                 set_beacon_status(BLE_STATUS_ON_SCAN, BLE_STATUS_ON_ADV, TRUE);
             }
+        }
+        else if (getCurrentBLEStatus() == BLE_STATUS_OFF)
+        {
+            DEBUG_PRINT("OFF_SCAN_TRANS, Should NOT be here\r\n");
         }
     }
     else if (role == BLE_ROLE_PERIPHERAL)
