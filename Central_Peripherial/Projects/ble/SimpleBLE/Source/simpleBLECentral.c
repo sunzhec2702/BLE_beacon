@@ -775,7 +775,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     LCD_WRITE_STRING("Param Update", HAL_LCD_LINE_1);
     osal_start_timerEx(simpleBLETaskId, SBP_CONNECT_EVT, 1000);
     g_sleepFlag = FALSE;
-    osal_pwrmgr_device(PWRMGR_ALWAYS_ON); //  ��˯�ߣ����ĺܸߵ�
+    osal_pwrmgr_device(PWRMGR_BATTERY); //  ��˯�ߣ����ĺܸߵ�
   }
   break;
 
