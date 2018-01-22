@@ -290,9 +290,12 @@ bool scan_discovery_callback(void)
     }
     else if (getCurrentBLEStatus() == BLE_STATUS_OFF && getScanTimeLeft() == 0)
     {
+      uint32 off_scan_interval = sys_config.powerOffScanInterval;
+      off_scan_interval *= 100;
       DEBUG_PRINT("OFF, TimeLeft 0\r\n");
+      DEBUG_VALUE("OFFSCAN INterval: %ld", off_scan_interval, 10);
       resetScanTimeLeft();
-      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, (sys_config.powerOffScanInterval * 100));
+      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, off_scan_interval);
     }
     else
     {

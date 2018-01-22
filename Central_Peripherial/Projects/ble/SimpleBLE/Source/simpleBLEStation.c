@@ -315,6 +315,7 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
 bool scan_discovery_callback()
 {
   resetScanTimeLeft();
+  simpleBLEStartScan();
   return TRUE;
 }
 

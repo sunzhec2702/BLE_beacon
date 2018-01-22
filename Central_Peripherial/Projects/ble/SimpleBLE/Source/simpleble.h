@@ -322,7 +322,7 @@ typedef struct
     uint8 stationAdvCmd;
     uint8 powerOnScanInterval; // ON_SCAN/ON_ADV trans interval. default 10 mins.
     uint8 powerOnPeriod; // Without new adv data, how long will it last in ON status. default 30 mins.
-    uint32 powerOffScanInterval; // The scan interval in OFF mode, default 1 hour
+    uint16 powerOffScanInterval; // The scan interval in OFF mode, default 1 hour
 } SYS_CONFIG;
 extern SYS_CONFIG sys_config;
 

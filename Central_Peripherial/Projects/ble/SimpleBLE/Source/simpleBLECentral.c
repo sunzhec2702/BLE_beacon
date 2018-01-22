@@ -448,7 +448,7 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
     sendStationInfo();
     #endif
-
+    DEBUG_PRINT("Central Wake\r\n");
     simpleBLEStartScan();
     return (events ^ SBP_WAKE_EVT);
   }
