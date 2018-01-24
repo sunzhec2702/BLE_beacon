@@ -144,7 +144,8 @@
 #define DEFAULT_DEV_DISC_BY_SVC_UUID TRUE
 
 // Darren Scan Macros
-#define DEFAULT_SCAN_TIME (2000 / DEFAULT_SCAN_DURATION)
+#define DEFAULT_OFF_SCAN_TIME (500 / DEFAULT_SCAN_DURATION)
+#define DEFAULT_ON_SCAN_TIME (2000 / DEFAULT_SCAN_DURATION)
 
 // Discovery states
 enum
@@ -205,10 +206,13 @@ uint16 simpleBLECharHd6 = 0;
 bool simpleBLEChar6DoWrite = TRUE;
 bool simpleBLECentralCanSend = FALSE; //  �����ɷ�������
 
+
+static uint8 default_scan_time = DEFAULT_OFF_SCAN_TIME;
+static uint8 scanTimeLeft = 0;
+
 extern bool timerIsOn; //
 
 static BLE_STATUS currentBLEStatus;
-static uint8 scanTimeLeft = DEFAULT_SCAN_TIME;
 
 static uint8 first_boot = FALSE;
 
@@ -234,7 +238,7 @@ uint8 getScanTimeLeft()
 
 void resetScanTimeLeft()
 {
-  scanTimeLeft = DEFAULT_SCAN_TIME;
+  scanTimeLeft = default_scan_time;
 }
 // Value to write
 //static uint8 simpleBLECharVal = 0;
@@ -407,6 +411,17 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
     first_boot = sys_config.bootup_blink;
     // record current status;
     currentBLEStatus = sys_config.status;
+
+    if (currentBLEStatus == BLE_STATUS_ON_SCAN)
+    {
+      default_scan_time = DEFAULT_ON_SCAN_TIME;
+    }
+    else if (currentBLEStatus == BLE_STATUS_OFF)
+    {
+      default_scan_time = DEFAULT_OFF_SCAN_TIME;
+    }
+    scanTimeLeft = default_scan_time;
+
     // Only Beacon needs this.
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     reset_to_no_battery_status(sys_config.role);
