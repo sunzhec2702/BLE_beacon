@@ -144,7 +144,7 @@
 #define DEFAULT_DEV_DISC_BY_SVC_UUID TRUE
 
 // Darren Scan Macros
-#define DEFAULT_SCAN_TIME (5000 / DEFAULT_SCAN_DURATION)
+#define DEFAULT_SCAN_TIME (2000 / DEFAULT_SCAN_DURATION)
 
 // Discovery states
 enum

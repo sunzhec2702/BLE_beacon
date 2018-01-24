@@ -112,6 +112,7 @@ char *bdAddr2Str(uint8 *pAddr)
 void simpleBLE_SaveAndReset()
 {
   simpleBLE_WriteAllDataToFlash();
+  HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
   HAL_SYSTEM_RESET();
 }
 

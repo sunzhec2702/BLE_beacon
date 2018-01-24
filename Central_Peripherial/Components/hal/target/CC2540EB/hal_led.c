@@ -117,10 +117,10 @@ void HalLedOnOff (uint8 leds, uint8 mode);
 void HalLedInit (void)
 {
 #if (HAL_LED == TRUE)
-  HalLedSet(HAL_LED_ALL, HAL_LED_MODE_OFF);  // Initialize all LEDs to OFF.
-
   // Set LED GPIOs to outputs.
   LED1_DDR |= LED1_BV;
+  HalLedSet(HAL_LED_ALL, HAL_LED_MODE_OFF);  // Initialize all LEDs to OFF.
+
 #if (TARGET_BOARD == DEVELOP_BOARD)
 #if (!defined HAL_PA_LNA && !defined HAL_PA_LNA_CC2590)
   LED2_DDR |= LED2_BV;
