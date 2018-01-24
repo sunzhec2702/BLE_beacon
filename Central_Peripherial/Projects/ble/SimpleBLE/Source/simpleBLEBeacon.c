@@ -295,6 +295,7 @@ bool scan_discovery_callback(void)
       DEBUG_PRINT("OFF, TimeLeft 0\r\n");
       DEBUG_VALUE("OFFSCAN INterval: %ld", off_scan_interval, 10);
       resetScanTimeLeft();
+      set_first_boot(FALSE);
       osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, off_scan_interval);
     }
     else

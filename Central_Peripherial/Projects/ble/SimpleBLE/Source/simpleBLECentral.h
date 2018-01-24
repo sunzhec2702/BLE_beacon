@@ -95,6 +95,10 @@ extern void SimpleBLECentral_Init( uint8 task_id );
 /*
  * Task Event Processor for the BLE Application
  */
+
+void set_first_boot(uint8 status);
+uint8 get_first_boot(void);
+
 extern uint16 SimpleBLECentral_ProcessEvent( uint8 task_id, uint16 events );
 void simpleBLECentral_HandleKeys(uint8 shift, uint8 keys);
 bool simpleBLEFilterSelfBeacon(uint8 *data, uint8 dataLen);

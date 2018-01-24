@@ -278,7 +278,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���????
+  P0DIR |= 0x60; // P0.6����Ϊ���?????
   P0_6 = onoff;
 }
 

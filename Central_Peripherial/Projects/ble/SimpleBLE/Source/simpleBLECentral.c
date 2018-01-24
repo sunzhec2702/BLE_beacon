@@ -111,10 +111,10 @@
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
 
 // Minimum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ���Ӽ�������ݷ������йأ�??? ���Ӽ��Խ�̣�??? ��λʱ���ھ��ܷ���Խ�������???
+#define DEFAULT_UPDATE_MIN_CONN_INTERVAL 6 //400  ���Ӽ�������ݷ������йأ�???? ���Ӽ��Խ�̣�???? ��λʱ���ھ��ܷ���Խ�������????
 
 // Maximum connection interval (units of 1.25ms) if automatic parameter update request is enabled
-#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ���Ӽ�������ݷ������йأ�??? ���Ӽ��Խ�̣�??? ��λʱ���ھ��ܷ���Խ�������???
+#define DEFAULT_UPDATE_MAX_CONN_INTERVAL 6 //800  ���Ӽ�������ݷ������йأ�???? ���Ӽ��Խ�̣�???? ��λʱ���ھ��ܷ���Խ�������????
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_UPDATE_SLAVE_LATENCY 0
@@ -211,6 +211,16 @@ static BLE_STATUS currentBLEStatus;
 static uint8 scanTimeLeft = DEFAULT_SCAN_TIME;
 
 static uint8 first_boot = FALSE;
+
+void set_first_boot(uint8 status)
+{
+  first_boot = status;
+}
+
+uint8 get_first_boot()
+{
+  return first_boot;
+}
 
 BLE_STATUS getCurrentBLEStatus()
 {
@@ -310,9 +320,9 @@ void SimpleBLECentral_Init(uint8 task_id)
     //uint8 bonding = DEFAULT_BONDING_MODE;
 
     /*
-    bonding���ǰ�������?��¼����, �´ξͲ��������???. ��bonding�´ξͻ������???.    
-    �������Ǵӻ������??? bonding = FALSE �ĺ�����ǣ�??? ���豸ÿ�����Ӷ�������������
-    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������??? ����Ͽ��󶼲����?�ٴ��������뼴������
+    bonding���ǰ�������?��¼����, �´ξͲ��������????. ��bonding�´ξͻ������????.    
+    �������Ǵӻ������???? bonding = FALSE �ĺ�����ǣ�???? ���豸ÿ�����Ӷ�������������
+    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������???? ����Ͽ��󶼲����?�ٴ��������뼴������
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -672,7 +682,7 @@ static void simpleBLECentralProcessGATTMsg(gattMsgEvent_t *pMsg)
     {
       // After a succesful write, display the value that was written and increment value
       //LCD_WRITE_STRING_VALUE( "Write sent:", simpleBLECharVal++, 10, HAL_LCD_LINE_1 );
-      // ����������ڱ�����һ��д���ݵ��ӻ��Ѿ��ɹ���??? �������ж�д����ʱ���жϣ� ��ȷ�����ݵ�������
+      // ����������ڱ�����һ��д���ݵ��ӻ��Ѿ��ɹ���???? �������ж�д����ʱ���жϣ� ��ȷ�����ݵ�������
       simpleBLEChar6DoWrite = TRUE;
     }
 
@@ -761,7 +771,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     simpleBLECentralCanSend = FALSE;
     LCD_WRITE_STRING("Disconnected", HAL_LCD_LINE_1);
     LCD_WRITE_STRING_VALUE("Reason:", pEvent->linkTerminate.reason, 10, HAL_LCD_LINE_2);
-    //��������ʧ�ܺ� ���Գ���ִ��������߼����?��ӻ�???
+    //��������ʧ�ܺ� ���Գ���ִ��������߼����?��ӻ�????
     simpleBLEScanning = 0;
     simpleBLEStartScan();
   }
