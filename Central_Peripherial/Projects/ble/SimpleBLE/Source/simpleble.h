@@ -16,13 +16,13 @@ extern "C"
 #define POWER_OFF_SUPPORT TRUE
 //#define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_ROLE_CENTRAL
+#define PRESET_ROLE BLE_ROLE_PERIPHERAL
 
-// µ±Ç°µ¥Æ¬»úÔËÐÐµÄ½ÇÉ«
+// ï¿½ï¿½Ç°ï¿½ï¿½Æ¬ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ½ï¿½É«
 typedef enum
 {
-    BLE_ROLE_PERIPHERAL = 0,        //´Ó»ú½ÇÉ«
-    BLE_ROLE_CENTRAL = 1,           //Ö÷»ú½ÇÉ«    
+    BLE_ROLE_PERIPHERAL = 0,        //ï¿½Ó»ï¿½ï¿½ï¿½É«
+    BLE_ROLE_CENTRAL = 1,           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«    
 }BLE_ROLE;
 
 #if (PRESET_ROLE == BLE_ROLE_CENTRAL)
@@ -52,23 +52,23 @@ typedef enum
 #endif
 
 
-// Ö÷»ú´Ó»úÊÂ¼þ¹²ÓÃ¶¨Òå
-#define START_DEVICE_EVT                               0x0001//Æô¶¯Éè±¸
-#define SBP_PERIODIC_EVT                               0x0002//ÏµÍ³ÂÖÑ¯¶¨Ê±Æ÷
-#define SBP_DATA_EVT                                   0x8000//Êý¾Ý´«Êä
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½
+#define START_DEVICE_EVT                               0x0001//ï¿½ï¿½ï¿½è±¸
+#define SBP_PERIODIC_EVT                               0x0002//ÏµÍ³ï¿½ï¿½Ñ¯ï¿½ï¿½Ê±ï¿½ï¿½
+#define SBP_DATA_EVT                                   0x8000//ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
 #define SBP_KEY_CNT_EVT                                0x0008//count the key pressed.
-#define SBP_UART_EVT                                   0x0010//´®¿ÚÊý¾ÝÊÂ¼þ
-#define SBP_SLEEP_EVT                                  0x0020//Ë¯ÃßÊÂ¼þ
-#define SBP_WAKE_EVT                                   0x0040//»½ÐÑÊÂ¼þ
-#define SBP_PERIODIC_LED_EVT                           0x0080//¿ª»úÉÁµÆ
-#define SBP_CONNECT_EVT                                0x0100//Ö÷»úÁ¬½Ó-È·ÈÏÁ¬½Ó
-#define START_DISCOVERY_EVT                            0x0200//·¢ÏÖ´ÓÉè±¸
+#define SBP_UART_EVT                                   0x0010//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
+#define SBP_SLEEP_EVT                                  0x0020//Ë¯ï¿½ï¿½ï¿½Â¼ï¿½
+#define SBP_WAKE_EVT                                   0x0040//ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
+#define SBP_PERIODIC_LED_EVT                           0x0080//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define SBP_CONNECT_EVT                                0x0100//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+#define START_DISCOVERY_EVT                            0x0200//ï¿½ï¿½ï¿½Ö´ï¿½ï¿½è±¸
 
 #define SBP_PERIODIC_BUTTON_LED_EVT                    0x0400
 #define SBP_PERIODIC_PER_HOUR_EVT                      0x0800
 #define SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE            0x1000
 #define SBP_PERIODIC_CHN_ADVERT_EVT_PRESS              0x2000
-#define SBP_PERIODIC_INDEX_EVT                         0x4000//ÏµÍ³ÂÖÑ¯¶¨Ê±Æ÷
+#define SBP_PERIODIC_INDEX_EVT                         0x4000//ÏµÍ³ï¿½ï¿½Ñ¯ï¿½ï¿½Ê±ï¿½ï¿½
 
 #define SBP_KEY_LONG_PRESSED_EVT                       0x0004
 
@@ -89,7 +89,7 @@ typedef enum
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #else
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   // 1 hour
-#define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
+#define DEFAULT_WAKE_TIME_HOURS                         (30 * 24) // 5 days
 #define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
 #endif
@@ -97,7 +97,7 @@ typedef enum
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
 #define BUTTON_LED_TOGGLE_COUNT                         2
 
-#define SLEEP_MS                                        300  //Ë¯ÃßÊ±¼ä£¬ ´®¿Ú¼¤»îÊÂ¼þ
+#define SLEEP_MS                                        300  //Ë¯ï¿½ï¿½Ê±ï¿½ä£¬ ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
 
 #define PERIPHERAL_WAKEUP_LED_TOGGLE_CNT                4
 #define PERIPHERAL_START_LED_TOGGLE_CNT                 6
@@ -131,7 +131,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
-//#define RELEASE_VER                      //¶¨Òå°æ±¾·¢²¼ÓÃ
+//#define RELEASE_VER                      //ï¿½ï¿½ï¿½ï¿½æ±¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x03
@@ -143,83 +143,83 @@ typedef enum
 #endif
 #define MINOR_SW_VERSION   0x03
 
-//Éè±¸Ãû³ÆµÄ×Ö·û³¤¶È <= 12
+//ï¿½è±¸ï¿½ï¿½ï¿½Æµï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ <= 12
 #define DEV_NAME_DEFAULT                           "DarrenBLE"
 
 
-//Éè±¸Ãû³ÆµÄ×Ö·û³¤¶È <= 12
+//ï¿½è±¸ï¿½ï¿½ï¿½Æµï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ <= 12
 #define DEV_NAME_LEN                                12
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// ÏµÍ³¶¨Ê±Æ÷¼ä¸ôÊ±¼ä
-#define SBP_PERIODIC_EVT_PERIOD                   100//±ØÐëÊÇ100ms
+// ÏµÍ³ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
+#define SBP_PERIODIC_EVT_PERIOD                   100//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½100ms
 
-//×î´ó¼ÇÂ¼µÄ´Ó»úµØÖ·
-#define MAX_PERIPHERAL_MAC_ADDR                   10//×î´ó¼ÇÂ¼µÄ´Ó»úµØÖ·
+//ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ä´Ó»ï¿½ï¿½ï¿½Ö·
+#define MAX_PERIPHERAL_MAC_ADDR                   10//ï¿½ï¿½ï¿½ï¿½Â¼ï¿½Ä´Ó»ï¿½ï¿½ï¿½Ö·
 
-//macµØÖ·µÄ×Ö·û³¤¶È (Ò»¸ö×Ö½ÚµÈÓÚÁ½¸ö×Ö·û)
-#define MAC_ADDR_CHAR_LEN                          12//macµØÖ·µÄ×Ö·û³¤¶È (Ò»¸ö×Ö½ÚµÈÓÚÁ½¸ö×Ö·û)
+//macï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ (Ò»ï¿½ï¿½ï¿½Ö½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½)
+#define MAC_ADDR_CHAR_LEN                          12//macï¿½ï¿½Ö·ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ (Ò»ï¿½ï¿½ï¿½Ö½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½)
 
-// ³ö³§ÉèÖÃ»òÇå³ýÅä¶ÔÐÅÏ¢Óë´Ó»úÐÅÏ¢
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½Ó»ï¿½ï¿½ï¿½Ï¢
 typedef enum
 {
-    PARA_ALL_FACTORY = 0,           //È«²¿»Ö¸´³ö³§ÉèÖÃ
-    PARA_PARI_FACTORY = 1,          //Åä¶ÔÐÅÏ¢»Ö¸´³ö³§ÉèÖÃ-Ïàµ±ÓÚÇå³ýÅä¶ÔÐÅÏ¢Óë´Ó»úÐÅÏ¢
+    PARA_ALL_FACTORY = 0,           //È«ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    PARA_PARI_FACTORY = 1,          //ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½àµ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½Ó»ï¿½ï¿½ï¿½Ï¢
 }PARA_SET_FACTORY;
 
-// Ó¦ÓÃ³ÌÐò×´Ì¬
+// Ó¦ï¿½Ã³ï¿½ï¿½ï¿½×´Ì¬
 enum
 {
-  BLE_STATE_IDLE,                    //ÎÞÁ¬½Ó-¿ÕÏÐ×´Ì¬
-  BLE_STATE_CONNECTING,             //Á¬½ÓÖÐ...
-  BLE_STATE_CONNECTED,              //ÒÑÁ¬½ÓÉÏ
-  BLE_STATE_DISCONNECTING,          //¶Ï¿ªÁ¬½ÓÖÐ
-  BLE_STATE_ADVERTISING             //´Ó»ú¹ã²¥ÖÐ
+  BLE_STATE_IDLE,                    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½×´Ì¬
+  BLE_STATE_CONNECTING,             //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...
+  BLE_STATE_CONNECTED,              //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  BLE_STATE_DISCONNECTING,          //ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  BLE_STATE_ADVERTISING             //ï¿½Ó»ï¿½ï¿½ã²¥ï¿½ï¿½
 };
 
-// Á¬½ÓÄ£Ê½Ö¸Ê¾
+// ï¿½ï¿½ï¿½ï¿½Ä£Ê½Ö¸Ê¾
 typedef enum
 {
-  CONNECT_MODE_FIX_ADDR_CONNECTED,     // Ö¸¶¨ macµØÖ·½øÐÐÁ¬½Ó
-  CONNECT_MODE_LAST_ADDR_CONNECTED,    // Á¬½Ó×îºó³É¹¦Á¬½Ó¹ýµÄ macµØÖ·
+  CONNECT_MODE_FIX_ADDR_CONNECTED,     // Ö¸ï¿½ï¿½ macï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+  CONNECT_MODE_LAST_ADDR_CONNECTED,    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ macï¿½ï¿½Ö·
   CONNECT_MODE_MAX,
 }CONNECT_MODE;
 
 
-// Ó¦ÓÃ³ÌÐò×´Ì¬
+// Ó¦ï¿½Ã³ï¿½ï¿½ï¿½×´Ì¬
 typedef enum
 {
-  BLE_CENTRAL_CONNECT_CMD_NULL,              //Ö÷»ú AT Á¬½ÓÃüÁî  ¿Õ
-  BLE_CENTRAL_CONNECT_CMD_CONNL,             //Ö÷»ú AT Á¬½ÓÃüÁî  Á¬½Ó×î½ü³É¹¦¹ýµÄµØÖ·
-  BLE_CENTRAL_CONNECT_CMD_CON,               //Ö÷»ú AT Á¬½ÓÃüÁî  Á¬½ÓÖ¸¶¨µØÖ·
-  BLE_CENTRAL_CONNECT_CMD_DISC,              //Ö÷»ú AT É¨Ãè´Ó»úÃüÁî
-  BLE_CENTRAL_CONNECT_CMD_CONN,              //Ö÷»ú AT Á¬½ÓÃüÁî  Á¬½ÓÉ¨Ãèµ½µÄµØÖ·µÄÏÂ±êºÅ¶ÔÓ¦µÄµØÖ·
+  BLE_CENTRAL_CONNECT_CMD_NULL,              //ï¿½ï¿½ï¿½ï¿½ AT ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½
+  BLE_CENTRAL_CONNECT_CMD_CONNL,             //ï¿½ï¿½ï¿½ï¿½ AT ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½Äµï¿½Ö·
+  BLE_CENTRAL_CONNECT_CMD_CON,               //ï¿½ï¿½ï¿½ï¿½ AT ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Ö·
+  BLE_CENTRAL_CONNECT_CMD_DISC,              //ï¿½ï¿½ï¿½ï¿½ AT É¨ï¿½ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½
+  BLE_CENTRAL_CONNECT_CMD_CONN,              //ï¿½ï¿½ï¿½ï¿½ AT ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ï¿½ï¿½É¨ï¿½èµ½ï¿½Äµï¿½Ö·ï¿½ï¿½ï¿½Â±ï¿½Å¶ï¿½Ó¦ï¿½Äµï¿½Ö·
 }BLE_CENTRAL_CONNECT_CMD;
 extern BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd ;
 
-// ¶¨ÓÚÏµÍ³½á¹¹±äÁ¿£¬ ¸Ã½á¹¹»áÔÚ¿ª»úÊ±´Ónv flash ÖÐ¶ÁÈ¡£¬ Êý¾ÝÓÐÐÞ¸ÄÊ±£¬ ÐèÒªÐ´Èënv flash
-// ÕâÑù£¬ ¾ÍÊµÏÖÁËÏµÍ³ÖØÆôºóÊý¾Ý»¹ÊÇÉÏÒ»´ÎÉèÖÃµÄ
+// ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½á¹¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ã½á¹¹ï¿½ï¿½ï¿½Ú¿ï¿½ï¿½ï¿½Ê±ï¿½ï¿½nv flash ï¿½Ð¶ï¿½È¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½Ê±ï¿½ï¿½ ï¿½ï¿½ÒªÐ´ï¿½ï¿½nv flash
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½
 typedef struct 
 {
     /*
-    ²¨ÌØÂÊ
+    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     0---------9600 
     1---------19200 
     2---------38400 
     3---------57600 
     4---------115200
     */
-    uint8 baudrate;                 //²¨ÌØÂÊ £¬ Ä¿Ç°Ö§³ÖµÄÁÐ±íÈçÉÏ
-    uint8 parity;                   //Ð£ÑéÎ»    
+    uint8 baudrate;                 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ Ä¿Ç°Ö§ï¿½Öµï¿½ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½
+    uint8 parity;                   //Ð£ï¿½ï¿½Î»    
     uint8 stopbit;                  //Í£Ö¹Î»
-    // Éè±¸Ãû³Æ£¬×î³¤ 11 Î»Êý×Ö»ò×ÖÄ¸£¬º¬ÖÐ»®ÏßºÍÏÂ»®Ïß£¬²»½¨ÒéÓÃÆäËü×Ö·û    
+    // ï¿½è±¸ï¿½ï¿½ï¿½Æ£ï¿½ï¿½î³¤ 11 Î»ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ßºï¿½ï¿½Â»ï¿½ï¿½ß£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½    
     uint8 name[12];                 
-    BLE_ROLE role;                  //Ö÷´ÓÄ£Ê½  0: ´Ó»ú   1: Ö÷»ú
-    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //±¾»úmacµØÖ· ×î´ó12Î» ×Ö·û±íÊ¾
-    int8 rssi;                              //  RSSI ÐÅºÅÖµ
-    uint8 rxGain;                           //  ½ÓÊÕÔöÒæÇ¿¶È
-    uint8 txPower;                          //  ·¢ÉäÐÅºÅÇ¿¶È
+    BLE_ROLE role;                  //ï¿½ï¿½ï¿½ï¿½Ä£Ê½  0: ï¿½Ó»ï¿½   1: ï¿½ï¿½ï¿½ï¿½
+    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //ï¿½ï¿½ï¿½ï¿½macï¿½ï¿½Ö· ï¿½ï¿½ï¿½12Î» ï¿½Ö·ï¿½ï¿½ï¿½Ê¾
+    int8 rssi;                              //  RSSI ï¿½Åºï¿½Öµ
+    uint8 rxGain;                           //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½
+    uint8 txPower;                          //  ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½Ç¿ï¿½ï¿½
 } SYS_CONFIG;
 extern SYS_CONFIG sys_config;
 
@@ -252,7 +252,7 @@ extern bool simpleBLEChar6DoWrite2;
 #endif
 #endif
 
-extern uint8 simpleBLETaskId;               // Ö÷»úÈÎÎñ
+extern uint8 simpleBLETaskId;               // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 extern uint8 simpleBLEState;
 extern uint16 simpleBLECharHdl;
 extern uint16 simpleBLECharHd6;
@@ -260,70 +260,70 @@ extern bool simpleBLECentralCanSend;
 extern bool simpleBLEChar6DoWrite;
 
 #if 1
-// ¸Ãº¯ÊýÑÓÊ±Ê±¼äÎª1ms£¬ ÓÃÊ¾²¨Æ÷²âÁ¿¹ý£¬ ÉÔÓÐÎó²î£¬ µ«Îó²îºÜÐ¡  --amomcu.com
+// ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½ï¿½Îª1msï¿½ï¿½ ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î£¬ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡  --amomcu.com
 void simpleBLE_Delay_1ms(int times);
 
-// ×Ö·û´®¶Ô±È
+// ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ô±ï¿½
 uint8 str_cmp(uint8 *p1,uint8 *p2,uint8 len);
 
-// ×Ö·û´®×ªÊý×Ö
+// ï¿½Ö·ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½
 uint32 str2Num(uint8* numStr, uint8 iLength);
 
 char *bdAddr2Str( uint8 *pAddr );
 
-// ±£´æËùÓÐÊý¾Ýµ½nv flash
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½nv flash
 void simpleBLE_WriteAllDataToFlash();
 
-// ¶ÁÈ¡×Ô¶¨ÒåµÄ nv flash Êý¾Ý  -------Î´Ê¹ÓÃµ½
+// ï¿½ï¿½È¡ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ nv flash ï¿½ï¿½ï¿½ï¿½  -------Î´Ê¹ï¿½Ãµï¿½
 void simpleBLE_ReadAllDataToFlash();
 
-//flag: PARA_ALL_FACTORY:  È«²¿»Ö¸´³ö³§ÉèÖÃ
-//flag: PARA_PARI_FACTORY: Çå³ýÅä¶ÔÐÅÏ¢
+//flag: PARA_ALL_FACTORY:  È«ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//flag: PARA_PARI_FACTORY: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag); 
 
-// ´òÓ¡ËùÓÐ´æ´¢µ½nv flashµÄÊý¾Ý£¬ ·½±ãµ÷ÊÔ´úÂë
+// ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Ð´æ´¢ï¿½ï¿½nv flashï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½
 void PrintAllPara(void);
 
-// ·µ»ØÉè±¸½ÇÉ«
-//Ö÷´ÓÄ£Ê½  0: ´Ó»ú   1: Ö÷»ú
+// ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½É«
+//ï¿½ï¿½ï¿½ï¿½Ä£Ê½  0: ï¿½Ó»ï¿½   1: ï¿½ï¿½ï¿½ï¿½
 BLE_ROLE GetBleRole();
 
-// ÓÐ°´¼ü°´ÏÂ£¬ÔòÆô¶¯ÎªÖ÷»ú£¬ ·ñÔòÄ¬ÈÏÆô¶¯Îª´Ó»ú
-// 0 Æô¶¯peripheral´ÓÉè±¸£¬ 1: Æô¶¯Îª central
+// ï¿½Ð°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½Îªï¿½Ó»ï¿½
+// 0 ï¿½ï¿½peripheralï¿½ï¿½ï¿½è±¸ï¿½ï¿½ 1: ï¿½ï¿½Îª central
 bool Check_startup_peripheral_or_central(void);
 
-// ´®ÐÐ¿Ú uart ³õÊ¼»¯
+// ï¿½ï¿½ï¿½Ð¿ï¿½ uart ï¿½ï¿½Ê¼ï¿½ï¿½
 void simpleBLE_NPI_init(void);
 
-// ÉèÖÃ½ÓÊÕÔöÒæ
+// ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void UpdateRxGain(void);
 
-// ÉèÖÃ·¢Éä¹¦ÂÊ
+// ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ä¹¦ï¿½ï¿½
 void UpdateTxPower(void);
 
-// ÉèÖÃledµÆµÄ×´Ì¬
+// ï¿½ï¿½ï¿½ï¿½ledï¿½Æµï¿½×´Ì¬
 void simpleBle_LedSetState(uint8 onoff);
 
-// »ñÈ¡Éè±¸Ãû³Æ
+// ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
 uint8* simpleBle_GetAttDeviceName();
 
-// ¶¨Ê±Æ÷ÈÎÎñ¶¨Ê±Ö´ÐÐº¯Êý£¬ ÓÃÓÚÉèÖÃledµÄ×´Ì¬----Ò²¿ÉÒÔÔö¼ÓÒ»¸ö¶¨Ê±Æ÷À´×ö
+// ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ö´ï¿½Ðºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ledï¿½ï¿½×´Ì¬----Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void simpleBLE_performPeriodicTask( void );
 
-//uart »Øµ÷º¯Êý
+//uart ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 static void simpleBLE_NpiSerialCallback( uint8 port, uint8 events );
-// AT ÃüÁî´¦Àí º¯Êý
+// AT ï¿½ï¿½ï¿½î´¦ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 bool simpleBLE_AT_CMD_Handle(uint8 *pBuffer, uint16 length);
-// MT ÃüÁî´¦Àí º¯Êý
+// MT ï¿½ï¿½ï¿½î´¦ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 bool simpleBLE_MT_CMD_Handle(uint8 *pBuffer, uint16 length);
 
-#if defined(USE_DISPLAY_KEY_VALUE)  // ²âÊÔ°´¼ü×¨ÓÃ£¬ÏÔÊ¾5Ïò°´¼üÖµ
+#if defined(USE_DISPLAY_KEY_VALUE)  // ï¿½ï¿½ï¿½Ô°ï¿½ï¿½ï¿½×¨ï¿½Ã£ï¿½ï¿½ï¿½Ê¾5ï¿½ò°´¼ï¿½Öµ
 void SimpleBLE_DisplayTestKeyValue();
 #endif
 
-extern bool g_sleepFlag;    //Ë¯Ãß±êÖ¾
-extern uint8 uart_sleep_count; // Ë¯Ãß¼ÆÊýÆ÷
-extern bool g_rssi_flag;       //ÊÇ·ñ¿ªÆô²â¾à
+extern bool g_sleepFlag;    //Ë¯ï¿½ß±ï¿½Ö¾
+extern uint8 uart_sleep_count; // Ë¯ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½
+extern bool g_rssi_flag;       //ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
 #endif
 
 #ifdef __cplusplus
