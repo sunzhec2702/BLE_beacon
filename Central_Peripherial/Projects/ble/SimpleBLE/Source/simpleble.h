@@ -155,15 +155,15 @@ typedef enum
 
 #else
 #define SBP_PERIODIC_PER_MIN_PERIOD                     60000    // 1 min
-#define DEFAULT_WAKE_TIME_MINS                          30        // 30mins
+#define DEFAULT_WAKE_TIME_MINS                          40        // 30mins
 
 #define SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_1              0x0E //
 #define SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2              0x10 // total 3600s, 1 hour
 
-#define SCAN_ADV_TRANS_MIN_PERIOD                       10 // 10mins
+#define SCAN_ADV_TRANS_MIN_PERIOD                       20 // 10mins
 #define SBP_PERIODIC_OFF_SCAN_PERIOD_MIN                60
 #define SBP_PERIODIC_OFF_SCAN_PERIOD_x00MS              (SBP_PERIODIC_OFF_SCAN_PERIOD_MIN * 60 * 10) // one hour
-#define SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_x00MS         (50) // 5s
+#define SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_x00MS         (600) // 60s
 
 #define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
 #define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
