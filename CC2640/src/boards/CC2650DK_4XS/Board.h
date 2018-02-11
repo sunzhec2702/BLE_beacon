@@ -42,8 +42,8 @@ extern "C" {
 #include "CC2650DK_4XS.h"
 
 /* These #defines allow us to reuse TI-RTOS across other device families */
-#define     Board_LED0              Board_DK_LED0
-#define     Board_LED1              Board_DK_LED1
+#define     Board_LED0              Board_DK_LED1
+#define     Board_LED1              Board_DK_LED2
 #define     Board_LED2              Board_LED0
 
 #define     Board_BUTTON0           Board_KEY_SELECT

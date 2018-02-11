@@ -391,6 +391,9 @@ static void SimpleBLEPeripheral_init(void)
   // so that the application can send and receive messages.
   ICall_registerApp(&selfEntity, &sem);
 
+  ledInit();
+  ledOn(Board_LED0);
+
 #ifdef USE_RCOSC
   RCOSC_enableCalibration();
 #endif // USE_RCOSC
