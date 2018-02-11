@@ -74,13 +74,13 @@ C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/bios_6_46_01_38/packages/iar/targ
 package.mak: C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/bios_6_46_01_38/packages/iar/targets/arm/ITarget.xs
 C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/bios_6_46_01_38/packages/iar/targets/arm/package.xs:
 package.mak: C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/bios_6_46_01_38/packages/iar/targets/arm/package.xs
-package.mak: package.bld
-C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/compiler.opt.xdt:
-package.mak: C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/compiler.opt.xdt
 C:/ti/xdctools_3_32_00_06_core/packages/xdc/services/io/File.xs:
 package.mak: C:/ti/xdctools_3_32_00_06_core/packages/xdc/services/io/File.xs
 C:/ti/xdctools_3_32_00_06_core/packages/xdc/services/io/package.xs:
 package.mak: C:/ti/xdctools_3_32_00_06_core/packages/xdc/services/io/package.xs
+package.mak: package.bld
+C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/compiler.opt.xdt:
+package.mak: C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/compiler.opt.xdt
 C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/compiler.defs.xdt:
 package.mak: C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/compiler.defs.xdt
 C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/custom.mak.exe.xdt:
@@ -89,7 +89,7 @@ C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/package.xs.
 package.mak: C:/ti/xdctools_3_32_00_06_core/packages/xdc/tools/configuro/template/package.xs.xdt
 endif
 
-iar.targets.arm.M3.rootDir ?= D:/IAR_Systems/Embedded_Workbench_8_0/arm
+iar.targets.arm.M3.rootDir ?= C:/PROGRA~2/IARSYS~1/EMBEDD~2.0/arm
 iar.targets.arm.packageBase ?= C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/bios_6_46_01_38/packages/iar/targets/arm/
 .PRECIOUS: $(XDCCFGDIR)/%.orm3
 .PHONY: all,rm3 .dlls,rm3 .executables,rm3 test,rm3
@@ -157,7 +157,7 @@ app_ble.xrm3: package/cfg/app_ble_prm3.orm3
 	$(RM) $@
 	@$(MSG) lnkrm3 $@ ...
 	$(RM) $(XDCCFGDIR)/$@.map
-	LC_ALL=C $(iar.targets.arm.M3.rootDir)/bin/ilinkarm -o F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640/examples/cc2650em/simple_peripheral/iar/app/FlashROM/Exe/simple_peripheral_cc2650em_app.out --map F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640/examples/cc2650em/simple_peripheral/iar/app/FlashROM/List/simple_peripheral_cc2650em_app.map --config F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640/examples/cc2650em/simple_peripheral/iar/app/../../../../../src/common/cc26xx/iar/cc26xx_app.icf --keep __vector_table -f F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640/examples/cc2650em/simple_peripheral/iar/app/../config/configPkg/linker.cmd -f F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640/examples/cc2650em/simple_peripheral/iar/app/../config/iar_boundary.xcl F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640/examples/cc2650em/simple_peripheral/iar/app/../../../../../src/rom/common_rom_releases/03282014/common_rom.symbols C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/cc26xxware_2_24_02_17393/driverlib/bin/iar/driverlib.lib --entry __iar_program_start --vfe --text_out locale --silent -o $@ package/cfg/app_ble_prm3.orm3 -f package/cfg/app_ble_prm3.xdl  --semihosting=iar_breakpoint  --cpu=Cortex-M3 --map $(XDCCFGDIR)/$@.map  --redirect _Printf=_PrintfSmall --redirect _Scanf=_ScanfSmall 
+	LC_ALL=C $(iar.targets.arm.M3.rootDir)/bin/ilinkarm -o C:/Users/darrens/Documents/Projects/BLE_beacon/CC2640/examples/cc2650em/simple_peripheral/iar/app/FlashROM/Exe/simple_peripheral_cc2650em_app.out --map C:/Users/darrens/Documents/Projects/BLE_beacon/CC2640/examples/cc2650em/simple_peripheral/iar/app/FlashROM/List/simple_peripheral_cc2650em_app.map --config C:/Users/darrens/Documents/Projects/BLE_beacon/CC2640/examples/cc2650em/simple_peripheral/iar/app/../../../../../src/common/cc26xx/iar/cc26xx_app.icf --keep __vector_table -f C:/Users/darrens/Documents/Projects/BLE_beacon/CC2640/examples/cc2650em/simple_peripheral/iar/app/../config/configPkg/linker.cmd -f C:/Users/darrens/Documents/Projects/BLE_beacon/CC2640/examples/cc2650em/simple_peripheral/iar/app/../config/iar_boundary.xcl C:/Users/darrens/Documents/Projects/BLE_beacon/CC2640/examples/cc2650em/simple_peripheral/iar/app/../../../../../src/rom/common_rom_releases/03282014/common_rom.symbols C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/cc26xxware_2_24_02_17393/driverlib/bin/iar/driverlib.lib --entry __iar_program_start --vfe --text_out locale --silent -o $@ package/cfg/app_ble_prm3.orm3 -f package/cfg/app_ble_prm3.xdl  --semihosting=iar_breakpoint  --cpu=Cortex-M3 --map $(XDCCFGDIR)/$@.map  --redirect _Printf=_PrintfSmall --redirect _Scanf=_ScanfSmall 
 	
 
 app_ble.test test,rm3 test: app_ble.xrm3.test

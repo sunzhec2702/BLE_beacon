@@ -60,13 +60,14 @@ extern "C" {
     } \
 }
 
-#define     Board_initGPIO()
+#define     Board_initGPIO()        GPIO_init()
 #define     Board_initPWM()         PWM_init()
 #define     Board_initSPI()         SPI_init()
 #define     Board_initUART()        UART_init()
 #define     Board_initWatchdog()    Watchdog_init()
-#define     GPIO_toggle(n)
-#define     GPIO_write(n,m)
+#define     Board_GPIO_toggle(n)    GPIO_toggle(n)
+#define     Board_GPIO_write(n,m)   GPIO_write(n,m)
+#define     Board_GPIO_read(n)      GPIO_read(n)
 
 #ifdef __cplusplus
 }
