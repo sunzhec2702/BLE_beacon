@@ -25,7 +25,7 @@ if not "%~1" == "" goto debugFile
 
 @echo on 
 
-"D:\IAR_Systems\Embedded_Workbench_8_0\common\bin\cspybat" -f "C:\ti\simplelink\ble_sdk_2_02_01_18\examples\cc2650em\simple_peripheral\iar\stack\settings\cc2650em_stack.FlashROM.general.xcl" --backend -f "C:\ti\simplelink\ble_sdk_2_02_01_18\examples\cc2650em\simple_peripheral\iar\stack\settings\cc2650em_stack.FlashROM.driver.xcl" 
+"D:\IAR_Systems\Embedded_Workbench_8_0\common\bin\cspybat" -f "F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640\examples\cc2650em\simple_peripheral\iar\stack\settings\cc2650em_stack.FlashROM.general.xcl" --backend -f "F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640\examples\cc2650em\simple_peripheral\iar\stack\settings\cc2650em_stack.FlashROM.driver.xcl" 
 
 @echo off 
 goto end 
@@ -34,7 +34,7 @@ goto end
 
 @echo on 
 
-"D:\IAR_Systems\Embedded_Workbench_8_0\common\bin\cspybat" -f "C:\ti\simplelink\ble_sdk_2_02_01_18\examples\cc2650em\simple_peripheral\iar\stack\settings\cc2650em_stack.FlashROM.general.xcl" "--debug_file=%~1" --backend -f "C:\ti\simplelink\ble_sdk_2_02_01_18\examples\cc2650em\simple_peripheral\iar\stack\settings\cc2650em_stack.FlashROM.driver.xcl" 
+"D:\IAR_Systems\Embedded_Workbench_8_0\common\bin\cspybat" -f "F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640\examples\cc2650em\simple_peripheral\iar\stack\settings\cc2650em_stack.FlashROM.general.xcl" "--debug_file=%~1" --backend -f "F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640\examples\cc2650em\simple_peripheral\iar\stack\settings\cc2650em_stack.FlashROM.driver.xcl" 
 
 @echo off 
 :end

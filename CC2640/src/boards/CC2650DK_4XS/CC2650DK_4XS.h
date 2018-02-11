@@ -73,43 +73,74 @@ extern const PIN_Config BoardGpioInitTable[];
 /* Mapping of pins to board signals using general board aliases
  *      <board signal alias>                <pin mapping>
  */
+
+#if (BOARD_TYPE == DEVELOP_BOARD)
 /* Leds */
 #define Board_LED_ON                        1 /* LEDs on CC2650 are active high */
 #define Board_LED_OFF                       0
-#define Board_DK_LED1                       PIN_UNASSIGNED
+#define Board_DK_LED1                       IOID_0
 #define Board_DK_LED2                       PIN_UNASSIGNED
-#define Board_DK_LED3                       IOID_5          /* P1.2  */
-#define Board_DK_LED4                       IOID_6          /* P1.4  */
+#define Board_DK_LED3                       PIN_UNASSIGNED
+#define Board_DK_LED4                       PIN_UNASSIGNED
 /* Button Board */
-#define Board_KEY_SELECT                    IOID_7          /* P1.14 */
-#define Board_KEY_UP                        IOID_4          /* P1.10 */
-#define Board_KEY_DOWN                      IOID_3          /* P1.12 */
+#define Board_KEY_SELECT                    IOID_7
+#define Board_KEY_UP                        PIN_UNASSIGNED
+#define Board_KEY_DOWN                      PIN_UNASSIGNED
 #define Board_KEY_LEFT                      PIN_UNASSIGNED
 #define Board_KEY_RIGHT                     PIN_UNASSIGNED
+/* UART Board */
+#define Board_UART_RX                       IOID_1
+#define Board_UART_TX                       IOID_2
+#define Board_UART_CTS                      PIN_UNASSIGNED
+#define Board_UART_RTS                      PIN_UNASSIGNED
+/* NFC GPIO */
+#define Board_NFC_ENABLE                    IOID_3
+
+#elif (BOARD_TYPE == PRODUCT_BOARD)
+/* Leds */
+#define Board_LED_ON                        1 /* LEDs on CC2650 are active high */
+#define Board_LED_OFF                       0
+#define Board_DK_LED1                       IOID_1
+#define Board_DK_LED2                       IOID_2
+#define Board_DK_LED3                       PIN_UNASSIGNED
+#define Board_DK_LED4                       PIN_UNASSIGNED
+/* Button Board */
+#define Board_KEY_SELECT                    IOID_4
+#define Board_KEY_UP                        PIN_UNASSIGNED
+#define Board_KEY_DOWN                      PIN_UNASSIGNED
+#define Board_KEY_LEFT                      PIN_UNASSIGNED
+#define Board_KEY_RIGHT                     PIN_UNASSIGNED
+/* UART Board */
+#define Board_UART_RX                       IOID_9          /* P1.7  */
+#define Board_UART_TX                       IOID_8          /* P1.9  */
+#define Board_UART_CTS                      PIN_UNASSIGNED
+#define Board_UART_RTS                      PIN_UNASSIGNED
+/* NFC GPIO */
+#define Board_NFC_ENABLE                    IOID_3
+
+#endif
+
 /* LCD  Board */
 #define Board_3V3_EN                        PIN_UNASSIGNED
 #define Board_LCD_MODE                      PIN_UNASSIGNED
 #define Board_LCD_RST                       PIN_UNASSIGNED
 #define Board_LCD_CSN                       PIN_UNASSIGNED
-/* UART Board */
-#define Board_UART_RX                       IOID_1          /* P1.7  */
-#define Board_UART_TX                       IOID_2          /* P1.9  */
-#define Board_UART_CTS                      PIN_UNASSIGNED
-#define Board_UART_RTS                      PIN_UNASSIGNED
+
 /* SPI Board */
-#define Board_SPI0_MISO                     IOID_0          /* P1.20 */
-#define Board_SPI0_MOSI                     IOID_9          /* P1.18 */
-#define Board_SPI0_CLK                      IOID_8          /* P1.16 */
+#define Board_SPI0_MISO                     PIN_UNASSIGNED          /* P1.20 */
+#define Board_SPI0_MOSI                     PIN_UNASSIGNED          /* P1.18 */
+#define Board_SPI0_CLK                      PIN_UNASSIGNED          /* P1.16 */
 #define Board_SPI0_CSN                      PIN_UNASSIGNED
 /* PWM outputs */
-#define Board_PWMPIN0                       Board_DK_LED3
-#define Board_PWMPIN1                       Board_DK_LED4
+#define Board_PWMPIN0                       PIN_UNASSIGNED
+#define Board_PWMPIN1                       PIN_UNASSIGNED
 #define Board_PWMPIN2                       PIN_UNASSIGNED
 #define Board_PWMPIN3                       PIN_UNASSIGNED
 #define Board_PWMPIN4                       PIN_UNASSIGNED
 #define Board_PWMPIN5                       PIN_UNASSIGNED
 #define Board_PWMPIN6                       PIN_UNASSIGNED
 #define Board_PWMPIN7                       PIN_UNASSIGNED
+
 
 /** ============================================================================
  *  Instance identifiers
