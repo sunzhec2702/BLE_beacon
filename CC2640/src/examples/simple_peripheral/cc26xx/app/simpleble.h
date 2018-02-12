@@ -7,6 +7,11 @@
  */
 #define BOARD_TYPE DEVELOP_BOARD
 
+// LED Related Macro
+#define LED_BLINK_ON_PERIOD         50 //ms
+#define LED_BLINK_OFF_PERIOD        150 //ms
+
+
 
 
 #endif

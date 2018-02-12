@@ -391,9 +391,6 @@ static void SimpleBLEPeripheral_init(void)
   // so that the application can send and receive messages.
   ICall_registerApp(&selfEntity, &sem);
 
-  ledInit();
-  ledOn(Board_LED0);
-
 #ifdef USE_RCOSC
   RCOSC_enableCalibration();
 #endif // USE_RCOSC
@@ -1217,6 +1214,13 @@ static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state)
     Util_enqueueMsg(appMsgQueue, sem, (uint8*)pMsg);
   }
 }
+
+
+void appKeyPressedCallback(uint8_t keyPressed)
+{
+  return;
+}
+
 
 /*********************************************************************
 *********************************************************************/

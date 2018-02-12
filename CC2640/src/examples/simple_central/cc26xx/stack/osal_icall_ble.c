@@ -80,6 +80,8 @@
 
 #include "gattservapp.h"
 
+#include "gapbondmgr.h"
+
 #include "ble_user_config.h"
 #include "ble_dispatch.h"
 
@@ -150,15 +152,15 @@ void osalInitTasks( void )
   /* GAP Task */
   GAP_Init( taskID++ );
 
-	  /* SM Task */
+  /* SM Task */
   SM_Init( taskID++ );
-	
+
   /* GATT Task */
   GATT_Init( taskID++ );
- 
+
   /* GATT Server App Task */
   GATTServApp_Init( taskID++ );
-    
+
 #if defined ( GAP_BOND_MGR )
   /* Bond Manager Task */
   GAPBondMgr_Init( taskID++ );

@@ -154,13 +154,13 @@ void osalInitTasks( void )
 
   /* SM Task */
   SM_Init( taskID++ );
-  
+
   /* GATT Task */
   GATT_Init( taskID++ );
 
   /* GATT Server App Task */
   GATTServApp_Init( taskID++ );
-      
+
 #if defined ( GAP_BOND_MGR )
   /* Bond Manager Task */
   GAPBondMgr_Init( taskID++ );

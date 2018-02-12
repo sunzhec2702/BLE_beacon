@@ -75,6 +75,8 @@ bleUserCfg_t user0Cfg = BLE_USER_CFG;
 
 #include <ti/mw/display/Display.h>
 
+#include "simple_beacon_common.h"
+
 /*******************************************************************************
  * MACROS
  */
@@ -147,6 +149,7 @@ int main()
   /* Kick off profile - Priority 3 */
   GAPRole_createTask();
 
+  
   SimpleBLEPeripheral_createTask();
 
   /* enable interrupts and start SYS/BIOS */
