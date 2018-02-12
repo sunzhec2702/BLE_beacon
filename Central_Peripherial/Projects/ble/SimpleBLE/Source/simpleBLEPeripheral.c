@@ -189,7 +189,7 @@ static uint8 led_toggling = FALSE;
 static uint16 led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
 static uint16 led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
 // Default WAKEUP period
-static uint8 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
 static uint8 battery_voltage = 0;
 // Key related
 static uint8 key_pressed_count = 0;
@@ -266,7 +266,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // Setup the GAP Peripheral Role Profile
   {
     // Change the ibeacon adverdata of wake up hours remain.
-    advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+    advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
 
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
@@ -599,7 +599,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
         DEBUG_PRINT("Timer is reset\r\n");
         wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
         // reset wake_up_left
-        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
         // LED blink twice
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
       }
@@ -767,7 +767,7 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
         if (wake_up_hours_remain <= RESET_WAKE_TIME_HOURS_THRES)
         {
           wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
-          advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+          advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
         }
         if (g_long_press_flag == FALSE)
         {
@@ -838,9 +838,10 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       else
       {
         wake_up_hours_remain--;
-        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
         if (wake_up_hours_remain == 0)
         {
+          wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
           DEBUG_PRINT("Enter Sleep mode\r\n");
           osal_start_timerEx(simpleBLETaskId, SBP_SLEEP_EVT, SLEEP_MS);
         }
@@ -970,7 +971,7 @@ static bool check_keys_pressed(uint8 keys)
 
 static void init_ibeacon_advertise(bool reset_index)
 {
-  advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = wake_up_hours_remain;
+  advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
   advertData_iBeacon[ADV_BAT_BYTE] = battery_voltage & 0xFF;
   advertData_iBeacon[ADV_FLAG_BYTE] = 0x00;
   if (reset_index == TRUE)

@@ -85,11 +85,13 @@ typedef enum
 #ifdef DEBUG_BOARD
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    60000    // 1 min
 #define DEFAULT_WAKE_TIME_HOURS                         (5) // 5 mins
+#define DEFAULT_RIGHT_MOVE_BIT                          3
 #define BUTTON_WAKE_TIME_HOURS                          (2) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #else
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   // 1 hour
-#define DEFAULT_WAKE_TIME_HOURS                         (30 * 24) // 5 days
+#define DEFAULT_WAKE_TIME_HOURS                         (1535) // 5 days
+#define DEFAULT_RIGHT_MOVE_BIT                          3
 #define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
 #endif
