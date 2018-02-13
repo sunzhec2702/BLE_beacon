@@ -6,9 +6,10 @@ void simple_beacon_drivers_init()
 {
     // LED related initial.
     ledInit();
-    ledBlinkWithParameters(Board_LED0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 5);
+    ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 100);
+    //ledOn(LED_INDEX_0);
 
     // Key Setup.
-    keyInit();
+    // keyInit();
     return;
 }

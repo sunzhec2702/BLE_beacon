@@ -3,6 +3,14 @@
 #include <stdint.h>
 #include <stdint.h>
 
+typedef struct
+{
+    uint32_t ledBlinkIO;
+    uint8_t ledBlinkStatus;
+    uint16_t ledBlinkTimes;
+    uint16_t ledBlinkOnPeriod;
+    uint16_t ledBlinkOffPeriod;
+} LedBlinkStruct;
 
 typedef enum
 {

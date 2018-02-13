@@ -2,6 +2,7 @@
 #include <ti/drivers/pin/PINCC26XX.h>
 #include <ti/sysbios/knl/Clock.h>
 #include "simple_led.h"
+#include "util.h"
 #include <Board.h>
 
 #define KEY_DEBOUNCE_TIMEOUT  20
@@ -22,14 +23,14 @@ const PIN_Config keyPinList[] = {
 #endif
     PIN_TERMINATE};
 
-static void keyPressedCB(UArg a0)
+static void keyPressedCB(PIN_Handle hPin, PIN_Id pinIbd)
 {
     keysPressed = 0;
     if ( PIN_getInputValue(Board_KEY_SELECT) == KEY_PRESSED )
     {
         keysPressed |= KEY_SELECT;
     }
-    Util_startClock(&keyChangeClock);
+    Util_startClock(&keyDebounceClock);
 }
 
 static void Board_keyChangeHandler(UArg a0)
@@ -39,7 +40,7 @@ static void Board_keyChangeHandler(UArg a0)
     {
         debouncedKeyPressed |= KEY_SELECT;
     }
-    ledToggle(Board_LED0);
+    ledToggle(LED_INDEX_0);
     appKeyPressedCallback(debouncedKeyPressed);
 }
 
@@ -51,13 +52,13 @@ void keyInit()
     PIN_registerIntCb(keyPinHandle, keyPressedCB);
     #if (BOARD_TYPE == PRODUCT_BOARD)
     PIN_setConfig(keyPinHandle, PIN_BM_IRQ, Board_KEY_SELECT | PIN_IRQ_POSEDGE); // Rising Edge
-    PIN_setConfig(hKeyPins, PINCC26XX_BM_WAKEUP, Board_KEY_SELECT | PINCC26XX_WAKEUP_POSEDGE);
+    PIN_setConfig(keyPinHandle, PINCC26XX_BM_WAKEUP, Board_KEY_SELECT | PINCC26XX_WAKEUP_POSEDGE);
     #elif (BOARD_TYPE == DEVELOP_BOARD)
     PIN_setConfig(keyPinHandle, PIN_BM_IRQ, Board_KEY_SELECT | PIN_IRQ_NEGEDGE); // Falling Edge.
-    PIN_setConfig(hKeyPins, PINCC26XX_BM_WAKEUP, Board_KEY_SELECT | PINCC26XX_WAKEUP_NEGEDGE);
+    PIN_setConfig(keyPinHandle, PINCC26XX_BM_WAKEUP, Board_KEY_SELECT | PINCC26XX_WAKEUP_NEGEDGE);
     #endif
-  // Setup keycallback for keys
-  Util_constructClock(&keyDebounceClock, Board_keyChangeHandler, KEY_DEBOUNCE_TIMEOUT, 0, false, 0);
+    // Setup keycallback for keys
+    Util_constructClock(&keyDebounceClock, Board_keyChangeHandler, KEY_DEBOUNCE_TIMEOUT, 0, false, 0);
 
   // Set the application callback
   /*
