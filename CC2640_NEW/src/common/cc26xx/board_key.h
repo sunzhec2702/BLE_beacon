@@ -78,7 +78,7 @@ extern "C" {
 #endif
 
 // Debounce timeout in milliseconds
-#define KEY_DEBOUNCE_TIMEOUT  50
+#define KEY_DEBOUNCE_TIMEOUT  20
 
 /*********************************************************************
  * TYPEDEFS

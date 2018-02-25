@@ -182,6 +182,7 @@
         <option>
           <name>CCDefines</name>
           <state>BOARD_DISPLAY_EXCLUDE_UART</state>
+          <state>NPI_USE_UART</state>
           <state>CC2650DK_4XS</state>
           <state>CC26XX</state>
           <state>Display_DISABLE_ALL</state>
@@ -347,6 +348,7 @@
           <state>$SRC_COMMON$/services/src/sdata</state>
           <state>$CC26XXWARE$</state>
           <state>$TI_RTOS_DRIVERS_BASE$</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\src\components\npi\src\inc</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -3048,6 +3050,9 @@
       <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_peripheral.h</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simpleble.h</name>
     </file>
     <file>
@@ -3087,6 +3092,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\src\common\cc26xx\ecc\ECCROMCC26XX.h</name>
+      </file>
+    </group>
+    <group>
+      <name>KEY</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\common\cc26xx\board_key.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\common\cc26xx\board_key.h</name>
       </file>
     </group>
     <group>
@@ -3153,6 +3167,15 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\src\components\hal\src\target\_common\TRNGCC26XX.h</name>
+      </file>
+    </group>
+    <group>
+      <name>UART</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\components\npi\src\npi_tl_uart.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\components\npi\src\inc\npi_tl_uart.h</name>
       </file>
     </group>
     <group>

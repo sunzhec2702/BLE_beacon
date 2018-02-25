@@ -30,7 +30,7 @@ LeaveTargetRunning=_ 0
 xdsResetStyle=0
 xdsResetStrategy=3
 [DebugChecksum]
-Checksum=-751269210
+Checksum=-143256391
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -103,10 +103,6 @@ ITMportsEnable=0
 ITMportsTermIO=0
 ITMportsLogFile=0
 ITMlogFile=$PROJ_DIR$\ITM.log
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -117,7 +113,12 @@ ShowTiming=1
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart.c}.47.1" 0 0 1 "" 0 "" 0
+Count=1
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
 [Aliases]
 Count=0
 SuppressDialog=0

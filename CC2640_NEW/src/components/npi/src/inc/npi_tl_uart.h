@@ -54,7 +54,7 @@ extern "C"
 // ****************************************************************************
 // includes
 // ****************************************************************************
-
+#include <stdint.h>
 // ****************************************************************************
 // defines
 // ****************************************************************************
@@ -86,7 +86,7 @@ extern "C"
 //!
 //! \return     void
 // -----------------------------------------------------------------------------
-typedef void (*npiCB_t)(uint16 Rxlen, uint16 Txlen);
+typedef void (*npiCB_t)(uint16_t Rxlen, uint16_t Txlen);
 
 //*****************************************************************************
 // globals
@@ -107,7 +107,7 @@ typedef void (*npiCB_t)(uint16 Rxlen, uint16 Txlen);
 //!
 //! \return     void
 // -----------------------------------------------------------------------------
-void NPITLUART_initializeTransport(Char *tRxBuf, Char *tTxBuf, npiCB_t npiCBack);
+void NPITLUART_initializeTransport(char *tRxBuf, char *tTxBuf, npiCB_t npiCBack);
 
 // -----------------------------------------------------------------------------
 //! \brief      This routine reads data from the UART
@@ -123,7 +123,7 @@ void NPITLUART_readTransport(void);
 //!
 //! \return     uint16 - number of bytes written to transport
 // -----------------------------------------------------------------------------
-uint16 NPITLUART_writeTransport(uint16);
+uint16_t NPITLUART_writeTransport(uint16_t);
 
 // -----------------------------------------------------------------------------
 //! \brief      This routine stops any pending reads

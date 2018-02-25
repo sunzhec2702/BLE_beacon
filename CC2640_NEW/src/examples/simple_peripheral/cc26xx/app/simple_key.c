@@ -1,14 +1,15 @@
 #include "simple_key.h"
-#include <ti/drivers/pin/PINCC26XX.h>
-#include <ti/sysbios/knl/Clock.h>
-#include "simple_led.h"
-#include "util.h"
-#include <Board.h>
 #include "board_key.h"
+#include "simple_uart.h"
+#include "simple_led.h"
 
 static void processKeyEvent(uint8_t keyPressed)
 {
-    ledToggle(LED_INDEX_0);
+    if (keyPressed & KEY_SELECT)
+    {
+        ledToggle(LED_INDEX_0);
+    }
+    UART_WriteTransport("Hello\r\n",7);
 }
 
 void keyInit()

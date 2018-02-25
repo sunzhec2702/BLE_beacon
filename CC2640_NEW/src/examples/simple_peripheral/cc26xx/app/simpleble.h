@@ -1,6 +1,11 @@
 #ifndef __SIMPLE_BLE_H__
 #define __SIMPLE_BLE_H__
 
+// Common Include 
+#include <stdint.h>
+#include <hal_types.h>
+#include <comdef.h>
+
 /* Board Type 
  * DEVELOP_BOARD
  * PRODUCT_BOARD
@@ -11,8 +16,8 @@
 #define BOARD_TYPE DEVELOP_BOARD
 
 // LED Related Macro
-#define LED_BLINK_ON_PERIOD         200 //ms
-#define LED_BLINK_OFF_PERIOD        200 //ms
+#define LED_BLINK_ON_PERIOD         100 //ms
+#define LED_BLINK_OFF_PERIOD        250 //ms
 
 // Internal Events for RTOS application
 #define SBP_STATE_CHANGE_EVT                  0x0001
