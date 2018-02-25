@@ -5,7 +5,10 @@
  * DEVELOP_BOARD
  * PRODUCT_BOARD
  */
-#define BOARD_TYPE  DEVELOP_BOARD
+#define DEVELOP_BOARD 0
+#define PRODUCT_BOARD 1
+
+#define BOARD_TYPE DEVELOP_BOARD
 
 // LED Related Macro
 #define LED_BLINK_ON_PERIOD         200 //ms

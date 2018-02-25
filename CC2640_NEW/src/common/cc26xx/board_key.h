@@ -68,9 +68,17 @@ extern "C" {
 #define KEY_DOWN              0x0004
 #define KEY_LEFT              0x0008
 #define KEY_RIGHT             0x0010
-   
+
+#if (BOARD_TYPE == PRODUCT_BOARD)
+#define KEY_PRESSED           1
+#define KEY_RELEASED          0
+#elif (BOARD_TYPE == DEVELOP_BOARD)
+#define KEY_PRESSED           0
+#define KEY_RELEASED          1
+#endif
+
 // Debounce timeout in milliseconds
-#define KEY_DEBOUNCE_TIMEOUT  200
+#define KEY_DEBOUNCE_TIMEOUT  50
 
 /*********************************************************************
  * TYPEDEFS

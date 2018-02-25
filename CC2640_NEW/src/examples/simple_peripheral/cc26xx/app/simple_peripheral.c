@@ -83,6 +83,7 @@
 #include "simple_peripheral.h"
 
 #include "simple_led.h"
+#include "simple_key.h"
 /*********************************************************************
  * CONSTANTS
  */
@@ -299,7 +300,6 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
 static void SimpleBLEPeripheral_processCharValueChangeEvt(uint8_t paramID);
 static void SimpleBLEPeripheral_performPeriodicTask(void);
 static void SimpleBLEPeripheral_clockHandler(UArg arg);
-static void SimpleBLEPeripheral_BeaconHandler(uint16_t arg);
 static void SimpleBLEPeripheral_sendAttRsp(void);
 static void SimpleBLEPeripheral_freeAttRsp(uint8_t status);
 
@@ -381,7 +381,7 @@ static void simple_beacon_drivers_init()
     ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 3);
 
     // Key Setup.
-    // keyInit();
+    keyInit();
     return;
 }
 
