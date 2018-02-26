@@ -84,7 +84,7 @@
 
 #include "simple_led.h"
 #include "simple_key.h"
-#include "npi_tl_uart.h"
+#include "simple_uart.h"
 /*********************************************************************
  * CONSTANTS
  */
@@ -385,7 +385,7 @@ static void simple_beacon_drivers_init()
     keyInit();
 
     // Uart Setup
-    Uart_Init();
+    uartInit();
     return;
 }
 

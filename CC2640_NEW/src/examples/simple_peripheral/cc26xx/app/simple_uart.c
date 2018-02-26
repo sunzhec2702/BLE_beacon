@@ -7,10 +7,10 @@
 
 static UART_Handle uartHandle;
 
-/*
-static char tRxBuf[256];
-static char tTxBuf[256];
-*/
+
+static uint8_t tRxBuf[256];
+static uint8_t tTxBuf[256];
+
 
 static bool uartInitFlag = false;
 
@@ -27,24 +27,15 @@ void UART_WriteTransport (uint8_t *str, uint16_t len)
     */
 }
 
+void UartWriteCallBack(UART_Handle handle, void *buf, size_t count)
+{
+    UART_writeCancel(handle);
+}
 void UartReadCallBack(UART_Handle handle, void *buf, size_t count)
 {
-    /*
-    if(uartInitFlag == true)
-    {
-    //   LCD_WRITE_STRING_VALUE("rxLen: ", (uint32_t)rxLen, 10, LCD_PAGE5);
-    //   LCD_WRITE_STRING_VALUE("txLen: ", (uint32_t)txLen, 10, LCD_PAGE6);
-
-    //   
-       if(rxLen > 0)
-       {
-    //        sprintf(tTxBuf, "123");
-    //        NPITLUART_writeTransport(strlen(tTxBuf));
-            sprintf(tTxBuf, tRxBuf, rxLen);
-            NPITLUART_writeTransport(rxLen);
-       }
-    }
-    */
+    //memcpy(tTxBuf, buf, count);
+    UART_write(handle, buf, count);
+    UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
 }
 
 
@@ -59,7 +50,7 @@ void uartInit()
         params.writeMode = UART_MODE_CALLBACK;
 
         params.readCallback = UartReadCallBack;
-        params.writeCallback = NULL;
+        params.writeCallback = UartWriteCallBack;
         params.readReturnMode = UART_RETURN_FULL;
         params.readDataMode = UART_DATA_BINARY;
         params.writeDataMode = UART_DATA_BINARY;
@@ -70,11 +61,13 @@ void uartInit()
         params.parityType = UART_PAR_NONE;
 
         uartHandle = UART_open(Board_UART, &params);
+        UART_control(uartHandle, UARTCC26XX_CMD_RETURN_PARTIAL_ENABLE,  NULL);
         if (!uartHandle)
         {
             ledBlinkWithParameters(LED_INDEX_0, 1000, 200, 10);
         }
         uartInitFlag = true;
         UART_write(uartHandle, "HELLO\r\n", 7);
+        UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
     }
 }
