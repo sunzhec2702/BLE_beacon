@@ -7,37 +7,39 @@
 
 static UART_Handle uartHandle;
 
-
 static uint8_t tRxBuf[256];
 static uint8_t tTxBuf[256];
 
-
 static bool uartInitFlag = false;
 
-void UART_WriteTransport (uint8_t *str, uint16_t len)
+void uartWriteTransport(uint8_t *str, uint16_t len)
 {
-    /*
-    if(uartInitFlag)
+    if(uartInitFlag == true)
     {
         memset(tTxBuf, 0, sizeof(tTxBuf));
-        
         memcpy(tTxBuf, str, len);
-        NPITLUART_writeTransport(len);
+        UART_Write(uartHandle, str, len);
     }
-    */
 }
 
-void UartWriteCallBack(UART_Handle handle, void *buf, size_t count)
+void uartWriteCallBack(UART_Handle handle, void *buf, size_t count)
 {
-    UART_writeCancel(handle);
-}
-void UartReadCallBack(UART_Handle handle, void *buf, size_t count)
-{
-    //memcpy(tTxBuf, buf, count);
-    UART_write(handle, buf, count);
-    UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
+    if (uartInitFlag == true)
+    {
+        UART_writeCancel(handle);
+    }
 }
 
+void uartReadCallBack(UART_Handle handle, void *buf, size_t count)
+{
+    if (uartInitFlag == true)
+    {
+        memset(tTxBuf, 0, sizeof(tTxBuf));
+        memcpy(tTxBuf, buf, count);
+        UART_write(handle, buf, count);
+        UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
+    }
+}
 
 void uartInit()
 {
@@ -49,8 +51,8 @@ void uartInit()
         params.readMode = UART_MODE_CALLBACK;
         params.writeMode = UART_MODE_CALLBACK;
 
-        params.readCallback = UartReadCallBack;
-        params.writeCallback = UartWriteCallBack;
+        params.readCallback = uartReadCallBack;
+        params.writeCallback = uartWriteCallBack;
         params.readReturnMode = UART_RETURN_FULL;
         params.readDataMode = UART_DATA_BINARY;
         params.writeDataMode = UART_DATA_BINARY;
@@ -67,7 +69,6 @@ void uartInit()
             ledBlinkWithParameters(LED_INDEX_0, 1000, 200, 10);
         }
         uartInitFlag = true;
-        UART_write(uartHandle, "HELLO\r\n", 7);
         UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
     }
 }
