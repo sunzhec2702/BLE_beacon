@@ -3018,6 +3018,21 @@
   </configuration>
   <group>
     <name>Application</name>
+    <group>
+      <name>SensorController</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\scif.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\scif_framework.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\scif_osal_tirtos.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart_emulator.c</name>
+      </file>
+    </group>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\src\common\cc26xx\rcosc\rcosc_calibration.c</name>
       <excluded>
@@ -3051,6 +3066,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart_callback.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simpleble.h</name>
@@ -3167,15 +3185,6 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\src\components\hal\src\target\_common\TRNGCC26XX.h</name>
-      </file>
-    </group>
-    <group>
-      <name>UART</name>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\components\npi\src\npi_tl_uart.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\components\npi\src\inc\npi_tl_uart.h</name>
       </file>
     </group>
     <group>
