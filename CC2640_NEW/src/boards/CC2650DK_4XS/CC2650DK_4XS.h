@@ -89,6 +89,8 @@ extern const PIN_Config BoardGpioInitTable[];
 #define Board_KEY_LEFT                      PIN_UNASSIGNED
 #define Board_KEY_RIGHT                     PIN_UNASSIGNED
 /* UART Board */
+#define Board_UART_NFC_RX                   IOID_5
+#define Board_UART_NFC_TX                   IOID_6
 #define Board_UART_RX                       IOID_1
 #define Board_UART_TX                       IOID_2
 #define Board_UART_CTS                      PIN_UNASSIGNED
@@ -111,6 +113,8 @@ extern const PIN_Config BoardGpioInitTable[];
 #define Board_KEY_LEFT                      PIN_UNASSIGNED
 #define Board_KEY_RIGHT                     PIN_UNASSIGNED
 /* UART Board */
+#define Board_UART_NFC_RX                   IOID_5
+#define Board_UART_NFC_TX                   IOID_6
 #define Board_UART_RX                       IOID_9          /* P1.7  */
 #define Board_UART_TX                       IOID_8          /* P1.9  */
 #define Board_UART_CTS                      PIN_UNASSIGNED

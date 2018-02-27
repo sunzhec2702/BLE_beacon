@@ -9,7 +9,7 @@ static void processKeyEvent(uint8_t keyPressed)
     {
         ledToggle(LED_INDEX_0);
     }
-    UART_WriteTransport("Hello\r\n",7);
+    uartWriteTransport("Hello\r\n",7);
 }
 
 void keyInit()

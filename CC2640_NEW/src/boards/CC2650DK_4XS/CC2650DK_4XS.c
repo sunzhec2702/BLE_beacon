@@ -86,6 +86,7 @@ const PIN_Config BoardGpioInitTable[] = {
     Board_NFC_ENABLE | PIN_GPIO_OUTPUT_EN  | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,                     
     // System PINs
     Board_UART_TX    | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH   | PIN_PUSHPULL,                     /* UART TX pin at inactive level */
+    Board_UART_NFC_TX| PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH   | PIN_PUSHPULL,                     /* UART NFC TX pin at inactive level */
     PIN_TERMINATE                                                                               /* Terminate list                */
 };
 
@@ -138,8 +139,8 @@ const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650DK_4XS_UARTCOUNT] = {
         .intNum         = INT_UART0_COMB,
         .intPriority    = ~0,
         .swiPriority    = 0,
-        .txPin          = Board_UART_TX,
-        .rxPin          = Board_UART_RX,
+        .txPin          = Board_UART_NFC_TX,
+        .rxPin          = Board_UART_NFC_RX,
         .ctsPin         = PIN_UNASSIGNED,
         .rtsPin         = PIN_UNASSIGNED
     }

@@ -37,7 +37,7 @@ void uartWriteTransportCBMode(uint8_t *str, uint16_t len)
     {
         memset(tTxBuf, 0, sizeof(tTxBuf));
         memcpy(tTxBuf, str, len);
-        UART_Write(uartHandle, str, len);
+        UART_write(uartHandle, str, len);
     }
 }
 

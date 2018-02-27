@@ -86,7 +86,15 @@ void taskFxn(UArg a0, UArg a1) {
 
 } // taskFxn
 
-int simpleUartEmulatorCreateTask(void) {
+void uartEmulatorWriteByte(uint8_t *buf, uint16_t len)
+{
+    for (int i = 0; i < len; i++)
+    {
+        scifUartTxPutChar((char) buf[i]);
+    }
+}
+
+void simpleUartEmulatorCreateTask(void) {
     Task_Params taskParams;
     // Configure the OS task
     Task_Params_init(&taskParams);
@@ -99,5 +107,5 @@ int simpleUartEmulatorCreateTask(void) {
     Semaphore_Params_init(&semParams);
     semParams.mode = Semaphore_Mode_BINARY;
     Semaphore_construct(&semScTaskAlert, 0, &semParams);
-    return 0;
+    return;
 }

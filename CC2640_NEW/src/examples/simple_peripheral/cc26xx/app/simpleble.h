@@ -6,6 +6,9 @@
 #include <hal_types.h>
 #include <comdef.h>
 
+// Debug Uart
+#include "simple_uart_emulator.h"
+
 /* Board Type 
  * DEVELOP_BOARD
  * PRODUCT_BOARD
