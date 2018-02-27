@@ -3,6 +3,6 @@
 
 void uartInit();
 
-extern void UART_WriteTransport (uint8_t *str, uint16_t len);
+void uartWriteTransport(uint8_t *str, uint16_t len);
 
 #endif

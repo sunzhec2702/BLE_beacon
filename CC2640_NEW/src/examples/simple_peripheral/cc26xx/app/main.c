@@ -59,6 +59,8 @@
 #include "bcomdef.h"
 #include "peripheral.h"
 #include "simple_peripheral.h"
+#include "simple_uart_emulator.h"
+#include "simple_nfc.h"
 
 /* Header files required to enable instruction fetch cache */
 #include <inc/hw_memmap.h>
@@ -159,6 +161,8 @@ int main()
 
   /* Kick off profile - Priority 3 */
   GAPRole_createTask();
+
+  simpleUartEmulatorCreateTask();
 
   SimpleBLEPeripheral_createTask();
 
