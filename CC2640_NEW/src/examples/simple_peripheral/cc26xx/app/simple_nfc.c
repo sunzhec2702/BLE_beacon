@@ -4,7 +4,7 @@
  * provide target mode and inititor mode and card sim mode APIs.
  */
 #include "simple_nfc.h"
-
+#include "simple_uart.h"
 #include <ti/sysbios/knl/Task.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Semaphore.h>
@@ -28,17 +28,20 @@ static void simpleNFCInit(void)
 #ifdef USE_RCOSC
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
+    uartInitBKMode();
 }
 
 static void simpleNFCTaskFxn(UArg a0, UArg a1)
 {
     // Initialize application
     simpleNFCInit();
+    uint8_t rxBuf[100];
     // Application main loop
     for (;;)
     {
+        uartReadTransportBKMode(rxBuf, 20, NULL, 60000);
         ICall_Errno errno = ICall_wait(ICALL_TIMEOUT_FOREVER);
-
+        /*
         if (errno == ICALL_ERRNO_SUCCESS)
         {
             ICall_EntityID dest;
@@ -61,6 +64,7 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
                 }
             }
         }
+        */
     }
 }
 

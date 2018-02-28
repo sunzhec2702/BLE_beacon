@@ -162,7 +162,13 @@ int main()
   /* Kick off profile - Priority 3 */
   GAPRole_createTask();
 
+#if (ENABLE_UART_EMULATOR == 1)
   simpleUartEmulatorCreateTask();
+#endif
+
+#if (ENABLE_NFC == 1)
+  simpleNFCcreateTask();
+#endif
 
   SimpleBLEPeripheral_createTask();
 

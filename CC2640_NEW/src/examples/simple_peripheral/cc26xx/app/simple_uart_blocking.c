@@ -1,31 +1,52 @@
 #include "simple_uart_blocking.h"
-
-#include "simple_led.h"
+#include "util.h"
 #include <string.h>
 #include <stdio.h>
 #include <ti/drivers/uart/UARTCC26XX.h>
+#include <ti/sysbios/knl/Clock.h>
+#include <inc/hw_ints.h>
 #include "Board.h"
 
 static UART_Handle uartHandle;
+static Clock_Struct rxTimeoutClock;
 
-static uint8_t tRxBuf[256];
-static uint8_t tTxBuf[256];
+
+//static uint8_t tRxBuf[256];
+//static uint8_t tTxBuf[256];
 
 static bool uartInitFlag = false;
+static bool uartRxTimeout = false;
+
+static void rxTimeoutCallback(UArg arg)
+{
+    uartRxTimeout = true;
+}
+
+void uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, int timeout)
+{
+    uartRxTimeout = false;
+    uint16_t readByte = 0;
+    do
+    {
+        Util_restartClock(rxTimeoutClock, timeout);
+        readByte = UART_read(uartHandle, buf, exceptLen);
+    } while ((readByte < exceptLen) && uartTxTimeout == false)
+    Util_stopClock(rxTimeoutClock);
+}
 
 void uartWriteTransportBKMode(uint8_t *str, uint16_t len)
 {
-    if(uartInitFlag == true)
+    if (uartInitFlag == true)
     {
-        memset(tTxBuf, 0, sizeof(tTxBuf));
-        memcpy(tTxBuf, str, len);
+        //memset(tTxBuf, 0, sizeof(tTxBuf));
+        //memcpy(tTxBuf, str, len);
         UART_write(uartHandle, str, len);
     }
 }
 
 void uartInitBKMode()
 {
-    if(!uartInitFlag)
+    if (!uartInitFlag)
     {
         UART_Params params;
         UART_Params_init(&params);
@@ -45,12 +66,13 @@ void uartInitBKMode()
         params.parityType = UART_PAR_NONE;
 
         uartHandle = UART_open(Board_UART, &params);
-        UART_control(uartHandle, UARTCC26XX_CMD_RETURN_PARTIAL_ENABLE,  NULL);
+        UART_control(uartHandle, UARTCC26XX_CMD_RETURN_PARTIAL_ENABLE, NULL);
         if (!uartHandle)
         {
             ledBlinkWithParameters(LED_INDEX_0, 1000, 200, 10);
         }
+        Util_constructClock(rxTimeoutClock, rxTimeoutCallback, 0, 0, false, 0);
         uartInitFlag = true;
-        UART_write(uartHandle, "Hello\r\n", 7);
+        uartWriteTransportBKMode("Hello\r\n", 7);
     }
 }

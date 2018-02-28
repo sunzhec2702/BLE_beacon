@@ -18,6 +18,9 @@
 
 #define BOARD_TYPE DEVELOP_BOARD
 
+#define ENABLE_UART_EMULATOR 1
+#define ENABLE_NFC 1
+
 // LED Related Macro
 #define LED_BLINK_ON_PERIOD         100 //ms
 #define LED_BLINK_OFF_PERIOD        250 //ms
