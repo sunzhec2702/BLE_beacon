@@ -2,7 +2,7 @@
 
 <project>
   <fileVersion>2</fileVersion>
-  <fileChecksum>3273377422</fileChecksum>
+  <fileChecksum>106902622</fileChecksum>
   <configuration>
     <name>FlashOnly_OAD_ExtFlash</name>
     <outputs/>
@@ -428,6 +428,10 @@
       <file>C:\ti\xdctools_3_32_00_06_core\packages\xdc\runtime\Diags__epilogue.h</file>
       <file>C:\ti\tirtos_cc13xx_cc26xx_2_20_01_08\products\cc26xxware_2_24_02_17393\inc\hw_prcm.h</file>
       <file>$PROJ_DIR$\FlashROM\Obj\simple_uart_callback.o</file>
+      <file>$PROJ_DIR$\FlashROM\Obj\simple_uart_blocking.o</file>
+      <file>$PROJ_DIR$\FlashROM\Obj\simple_uart_blocking.pbi</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart_blocking.h</file>
+      <file>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart_blocking.c</file>
     </outputs>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\src\profiles\roles\cc26xx\peripheral.c</name>
@@ -1003,11 +1007,11 @@
       <inputs>
         <tool>
           <name>ICCARM</name>
-          <file> 314 75 134 202 117 316 126 144 132 77 284 313 308 231 76 293 129 334 191 336</file>
+          <file> 314 75 134 202 117 316 126 144 132 77 284 313 308 231 76 293 129 334 191 402</file>
         </tool>
         <tool>
           <name>BICOMP</name>
-          <file> 313 308 231 126 132 129 316 293 144 77 284 334 76 191 336</file>
+          <file> 313 308 231 126 132 129 316 293 144 77 284 334 76 191 402</file>
         </tool>
       </inputs>
     </file>
@@ -1195,7 +1199,7 @@
       <inputs>
         <tool>
           <name>ILINK</name>
-          <file> 315 201 206 244 297 79 319 223 307 291 275 301 68 233 96 69 213 169 123 56 285 335 333 339 277 309 166 272 140 170 399 107 306 280 279 247 87 80 250 252 225 218 227 150 147 65 78 222 63 287 264</file>
+          <file> 315 201 206 244 297 79 319 223 307 291 275 301 68 233 96 69 213 169 123 56 285 335 333 339 277 309 166 272 140 170 400 399 107 306 280 279 247 87 80 250 252 225 218 227 150 147 65 78 222 63 287 264</file>
         </tool>
       </inputs>
     </file>
@@ -1261,6 +1265,29 @@
           <file> 295 274</file>
         </tool>
       </outputs>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart_blocking.c</name>
+      <outputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 400</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 401</file>
+        </tool>
+      </outputs>
+      <inputs>
+        <tool>
+          <name>ICCARM</name>
+          <file> 314 75 134 202 117 316 126 144 132 77 284 313 308 231 76 293 129 334 402 199 84 226 288 185 190 127 165 364 323 42 34 236 382 243 248 71 106 350 359 242 224 220 215 394 103 255 262 90 371 393 122 241 149 256 159 196 240 246 99 81 259 375 89 245 265 365 95 88 258 397 282 261 86 91 121 173 388 239 152 186 355 154 373 100 193 219 370 251 58 392 257 391 216 253 268 70 254 139 367 358 66 249 72 232 384 310 162 281 273</file>
+        </tool>
+        <tool>
+          <name>BICOMP</name>
+          <file> 106 236 242 122 393 126 219 144 71 165 282 367 313 77 316 310 323 243 88 265 149 121 334 199 288 364 254 371 255 103 90 397 89 224 259 159 370 231 132 284 76 185 226 190 257 248 382 350 215 196 86 91 246 81 186 391 253 293 308 129 402 84 127 42 58 34 262 298 359 220 394 239 99 375 154 268 216 72 249 232 281 240 373 193 241 256 258 365 245 95 261 173 388 152 355 100 251 392 70 139 358 66 384 162 273</file>
+        </tool>
+      </inputs>
     </file>
     <forcedrebuild>
       <name>$PROJ_DIR$\..\..\..\..\..\src\profiles\oad\cc26xx\oad_target_internal_flash.c</name>
