@@ -6,12 +6,14 @@
 #include "simple_nfc.h"
 #include "simple_uart.h"
 #include "icall.h"
+#include <ti/drivers/pin/PINCC26XX.h>
 #include <ti/sysbios/knl/Task.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Queue.h>
 #include "util.h"
-   
+#include <Board.h>
+
 // Task configuration
 #define NFC_TASK_PRIORITY 1
 
@@ -19,57 +21,66 @@
 #define NFC_TASK_STACK_SIZE 1024
 #endif
 
+#define DEFAULT_TASK_TIMEOUT    2000 //ms
+
 Task_Struct nfcTask;
 Char nfcTaskStack[NFC_TASK_STACK_SIZE];
 
-static ICall_EntityID selfEntity;
-static ICall_Semaphore sem;
+//static ICall_EntityID selfEntity;
+//static ICall_Semaphore sem;
+
+static PIN_State nfcPinStatus;
+static Clock_Struct nfcTasksClock;
+static bool enableNFC = false;
+static Semaphore_Handle nfcSem;
+
+const PIN_Config nfcPinList[] = {
+    Board_NFC_ENABLE | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX, // High Active
+    PIN_TERMINATE
+    };
+
+static nfcTasksTimerCallback(UArg arg)
+{
+    if (enableNFC == true)
+    {
+
+    }
+}
+
+static void controlNFC(bool enable)
+{
+    if (enable)
+        PIN_setOutputValue(&nfcPinStatus, Board_NFC_ENABLE, Board_NFC_ON);
+    else
+        PIN_setOutputValue(&nfcPinStatus, Board_NFC_ENABLE, Board_LED_OFF);
+}
+
+void controlNfcTasks(bool enable)
+{
+    enableNFC = enable;
+}
 
 static void simpleNFCInit(void)
 {
     //ICall_registerApp(&selfEntity, &sem);
     //simple_beacon_drivers_init();
+    PIN_open(&nfcPinStatus, nfcPinList);
 #ifdef USE_RCOSC
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
     uartInitBKMode();
+    nfcSem = Semaphore_create(0, NULL, NULL);
+    Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }
 
 static void simpleNFCTaskFxn(UArg a0, UArg a1)
 {
     // Initialize application
     simpleNFCInit();
-    uint8_t rxBuf[100];
     // Application main loop
     for (;;)
     {
-        //uartReadTransportBKMode(rxBuf, 20, NULL, 60000);
-        //uartWriteTransportBKMode(rxBuf, 20);
-        //ICall_Errno errno = ICall_wait(ICALL_TIMEOUT_FOREVER);
-        /*
-        if (errno == ICALL_ERRNO_SUCCESS)
-        {
-            ICall_EntityID dest;
-            ICall_ServiceEnum src;
-            ICall_HciExtEvt *pMsg = NULL;
 
-            if (ICall_fetchServiceMsg(&src, &dest,
-                                      (void **)&pMsg) == ICALL_ERRNO_SUCCESS)
-            {
-                uint8 safeToDealloc = TRUE;
-
-                if ((src == ICALL_SERVICE_CLASS_BLE) && (dest == selfEntity))
-                {
-                    ICall_Stack_Event *pEvt = (ICall_Stack_Event *)pMsg;
-                }
-
-                if (pMsg && safeToDealloc)
-                {
-                    ICall_freeMsg(pMsg);
-                }
-            }
-        }
-        */
     }
 }
 
