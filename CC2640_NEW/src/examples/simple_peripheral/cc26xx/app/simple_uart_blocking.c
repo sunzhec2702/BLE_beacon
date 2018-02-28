@@ -28,10 +28,10 @@ void uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, in
     uint16_t readByte = 0;
     do
     {
-        Util_restartClock(rxTimeoutClock, timeout);
-        readByte = UART_read(uartHandle, buf, exceptLen);
-    } while ((readByte < exceptLen) && uartTxTimeout == false)
-    Util_stopClock(rxTimeoutClock);
+        Util_restartClock(&rxTimeoutClock, timeout);
+        readByte += UART_read(uartHandle, buf+readByte, exceptLen);
+    } while ((readByte < exceptLen) && (uartRxTimeout == false));
+    Util_stopClock(&rxTimeoutClock);
 }
 
 void uartWriteTransportBKMode(uint8_t *str, uint16_t len)
@@ -69,10 +69,12 @@ void uartInitBKMode()
         UART_control(uartHandle, UARTCC26XX_CMD_RETURN_PARTIAL_ENABLE, NULL);
         if (!uartHandle)
         {
-            ledBlinkWithParameters(LED_INDEX_0, 1000, 200, 10);
+            uartEmulatorWriteString("uart block mode error\r\n");
+            return;
         }
-        Util_constructClock(rxTimeoutClock, rxTimeoutCallback, 0, 0, false, 0);
+        Util_constructClock(&rxTimeoutClock, rxTimeoutCallback, 0, 0, false, 0);
         uartInitFlag = true;
-        uartWriteTransportBKMode("Hello\r\n", 7);
+        uint8_t initString[] = "Hello, this is blockUart\r\n";
+        uartWriteTransportBKMode(initString, sizeof(initString));
     }
 }

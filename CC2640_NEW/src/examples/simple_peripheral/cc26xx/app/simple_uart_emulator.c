@@ -94,6 +94,12 @@ void uartEmulatorWriteByte(uint8_t *buf, uint16_t len)
     }
 }
 
+void uartEmulatorWriteString(uint8_t *str)
+{
+    uint16_t strLen = strlen(str);
+    uartEmulatorWriteByte(str, strLen);
+}
+
 void simpleUartEmulatorCreateTask(void) {
     Task_Params taskParams;
     // Configure the OS task
