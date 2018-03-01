@@ -14,6 +14,12 @@
 #include "util.h"
 #include <Board.h>
 
+#include "simple_nfc_target.h"
+#include "simple_nfc_initiator.h"
+
+#include "nfc.h"
+
+
 // Task configuration
 #define NFC_TASK_PRIORITY 1
 
@@ -22,6 +28,9 @@
 #endif
 
 #define DEFAULT_TASK_TIMEOUT    2000 //ms
+
+nfc_device *pnd;
+nfc_context *context;
 
 Task_Struct nfcTask;
 Char nfcTaskStack[NFC_TASK_STACK_SIZE];
@@ -38,19 +47,6 @@ const PIN_Config nfcPinList[] = {
     Board_NFC_ENABLE | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX, // High Active
     PIN_TERMINATE
     };
-
-static void nfcWorkAsInitiator(uint16_t timeout)
-{
-    return;
-}
-
-static void nfcWorkAsTarget(uint16_t timeout)
-{
-    
-    return;
-}
-
-
 
 static void nfcTasksTimerCallback(UArg arg)
 {
@@ -75,6 +71,17 @@ void controlNfcTasks(bool enable)
     {
         Util_restartClock(&nfcTasksClock, 500);
     }
+}
+
+void nfcChipInit()
+{
+    nfc_init(&context);
+    if (context == NULL)
+    {
+        uartEmulatorWriteString("Unable to init libnfc");
+        return;
+    }
+    nfc_open(context, NULL);
 }
 
 static void simpleNFCInit(void)
