@@ -39,11 +39,24 @@ const PIN_Config nfcPinList[] = {
     PIN_TERMINATE
     };
 
-static nfcTasksTimerCallback(UArg arg)
+static void nfcWorkAsInitiator(uint16_t timeout)
+{
+    return;
+}
+
+static void nfcWorkAsTarget(uint16_t timeout)
+{
+    
+    return;
+}
+
+
+
+static void nfcTasksTimerCallback(UArg arg)
 {
     if (enableNFC == true)
     {
-
+        Semaphore_post(nfcSem);
     }
 }
 
@@ -58,6 +71,10 @@ static void controlNFC(bool enable)
 void controlNfcTasks(bool enable)
 {
     enableNFC = enable;
+    if (Util_isActive(&nfcTasksClock) == false)
+    {
+        Util_restartClock(&nfcTasksClock, 500);
+    }
 }
 
 static void simpleNFCInit(void)
@@ -69,7 +86,7 @@ static void simpleNFCInit(void)
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
     uartInitBKMode();
-    nfcSem = Semaphore_create(0, NULL, NULL);
+    nfcSem = Semaphore_create(1, NULL, NULL);
     Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }
 
@@ -80,7 +97,10 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
     // Application main loop
     for (;;)
     {
-
+        Semaphore_pend(nfcSem, BIOS_WAIT_FOREVER);
+        uartEmulatorWriteString("Got a semaphore\r\n");
+        nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT);
+        //Util_restartClock(&nfcTasksClock, )        
     }
 }
 
