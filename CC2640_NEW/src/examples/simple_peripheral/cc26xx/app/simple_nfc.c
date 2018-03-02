@@ -11,20 +11,21 @@
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Queue.h>
+#include <ti/sysbios/BIOS.h>
 #include "util.h"
 #include <Board.h>
 
 #include "simple_nfc_target.h"
 #include "simple_nfc_initiator.h"
 
-#include "nfc.h"
+#include <nfc/nfc.h>
 
 
 // Task configuration
 #define NFC_TASK_PRIORITY 1
 
 #ifndef NFC_TASK_STACK_SIZE
-#define NFC_TASK_STACK_SIZE 1024
+#define NFC_TASK_STACK_SIZE 2048
 #endif
 
 #define DEFAULT_TASK_TIMEOUT    2000 //ms
@@ -93,7 +94,7 @@ static void simpleNFCInit(void)
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
     uartInitBKMode();
-    nfcSem = Semaphore_create(1, NULL, NULL);
+    nfcSem = Semaphore_create(0, NULL, NULL);
     Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }
 

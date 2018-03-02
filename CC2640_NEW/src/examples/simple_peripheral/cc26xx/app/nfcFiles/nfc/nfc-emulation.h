@@ -22,41 +22,49 @@
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
- *
  */
 
 /**
- * @file uart.h
- * @brief UART driver header
+ * @file nfc-emulation.h
+ * @brief Provide a small API to ease emulation in libnfc
  */
 
-#ifndef __NFC_BUS_UART_H__
-#  define __NFC_BUS_UART_H__
+#ifndef __NFC_EMULATION_H__
+#define __NFC_EMULATION_H__
+#include <nfc/nfc-types.h>
+#include <nfc/nfc.h>
 
-#  include <sys/time.h>
+#ifdef __cplusplus
+extern  "C" {
+#endif /* __cplusplus */
 
-#  include <stdio.h>
-#  include <string.h>
-#  include <stdlib.h>
+struct nfc_emulator;
+struct nfc_emulation_state_machine;
+
+/**
+ * @struct nfc_emulator
+ * @brief NFC emulator structure
+ */
+struct nfc_emulator {
+  nfc_target *target;
+  struct nfc_emulation_state_machine *state_machine;
+  void *user_data;
+};
+
+/**
+ * @struct nfc_emulation_state_machine
+ * @brief  NFC emulation state machine structure
+ */
+struct nfc_emulation_state_machine {
+  int (*io)(struct nfc_emulator *emulator, const uint8_t *data_in, const size_t data_in_len, uint8_t *data_out, const size_t data_out_len);
+  void *data;
+};
+
+NFC_EXPORT int    nfc_emulate_target(nfc_device *pnd, struct nfc_emulator *emulator, const int timeout);
+
+#ifdef __cplusplus
+}
+#endif /* __cplusplus */
 
 
-#  include <nfc/nfc-types.h>
-
-// Define shortcut to types to make code more readable
-typedef void *serial_port;
-#  define INVALID_SERIAL_PORT (void*)(~1)
-#  define CLAIMED_SERIAL_PORT (void*)(~2)
-
-serial_port uart_open(const char *pcPortName);
-void    uart_close(const serial_port sp);
-void    uart_flush_input(const serial_port sp, bool wait);
-
-void    uart_set_speed(serial_port sp, const uint32_t uiPortSpeed);
-uint32_t uart_get_speed(const serial_port sp);
-
-int     uart_receive(serial_port sp, uint8_t *pbtRx, const size_t szRx, void *abort_p, int timeout);
-int     uart_send(serial_port sp, const uint8_t *pbtTx, const size_t szTx, int timeout);
-
-char  **uart_list_ports(void);
-
-#endif // __NFC_BUS_UART_H__
+#endif /* __NFC_EMULATION_H__ */

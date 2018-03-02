@@ -32,8 +32,6 @@
 #ifndef __PN53X_INTERNAL_H__
 #define __PN53X_INTERNAL_H__
 
-#include "log.h"
-
 // Miscellaneous
 #define Diagnose 0x00
 #define GetFirmwareVersion 0x02

@@ -1,5 +1,5 @@
 #include "simple_nfc_target.h"
-#include "nfc.h"
+#include <nfc/nfc.h>
 
 extern nfc_device *pnd;
 extern nfc_context *context;

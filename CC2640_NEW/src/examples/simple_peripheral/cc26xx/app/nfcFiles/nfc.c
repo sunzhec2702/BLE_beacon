@@ -74,7 +74,6 @@
 #  include "config.h"
 #endif // HAVE_CONFIG_H
 
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
@@ -86,38 +85,7 @@
 #include "target-subr.h"
 #include "drivers.h"
 
-#if defined (DRIVER_ACR122_PCSC_ENABLED)
-#  include "drivers/acr122_pcsc.h"
-#endif /* DRIVER_ACR122_PCSC_ENABLED */
-
-#if defined (DRIVER_ACR122_USB_ENABLED)
-#  include "drivers/acr122_usb.h"
-#endif /* DRIVER_ACR122_USB_ENABLED */
-
-#if defined (DRIVER_ACR122S_ENABLED)
-#  include "drivers/acr122s.h"
-#endif /* DRIVER_ACR122S_ENABLED */
-
-#if defined (DRIVER_PN53X_USB_ENABLED)
-#  include "drivers/pn53x_usb.h"
-#endif /* DRIVER_PN53X_USB_ENABLED */
-
-#if defined (DRIVER_ARYGON_ENABLED)
-#  include "drivers/arygon.h"
-#endif /* DRIVER_ARYGON_ENABLED */
-
-#if defined (DRIVER_PN532_UART_ENABLED)
-#  include "drivers/pn532_uart.h"
-#endif /* DRIVER_PN532_UART_ENABLED */
-
-#if defined (DRIVER_PN532_SPI_ENABLED)
-#  include "drivers/pn532_spi.h"
-#endif /* DRIVER_PN532_SPI_ENABLED */
-
-#if defined (DRIVER_PN532_I2C_ENABLED)
-#  include "drivers/pn532_i2c.h"
-#endif /* DRIVER_PN532_I2C_ENABLED */
-
+#include "pn532_uart.h"
 
 #define LOG_CATEGORY "libnfc.general"
 #define LOG_GROUP    NFC_LOG_GROUP_GENERAL
@@ -245,6 +213,7 @@ nfc_close(nfc_device *pnd)
 size_t
 nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_t connstrings_len)
 {
+  /*
   size_t device_found = 0;
 #ifdef CONFFILES
   // Load manually configured devices (from config file and env variables)
@@ -260,7 +229,7 @@ nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_
       // do it silently
       if (env_log_level) {
         if ((old_env_log_level = malloc(strlen(env_log_level) + 1)) == NULL) {
-          log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to malloc()");
+          //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to malloc()");
           return 0;
         }
         strcpy(old_env_log_level, env_log_level);
@@ -281,7 +250,7 @@ nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_
 
       if (pnd) {
         nfc_close(pnd);
-        log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "User device %s found", context->user_defined_devices[i].name);
+        //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "User device %s found", context->user_defined_devices[i].name);
         strcpy((char *)(connstrings + device_found), context->user_defined_devices[i].connstring);
         device_found ++;
         if (device_found == connstrings_len)
@@ -304,7 +273,7 @@ nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_
       const struct nfc_driver *ndr = pndl->driver;
       if ((ndr->scan_type == NOT_INTRUSIVE) || ((context->allow_intrusive_scan) && (ndr->scan_type == INTRUSIVE))) {
         size_t _device_found = ndr->scan(context, connstrings + (device_found), connstrings_len - (device_found));
-        log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%ld device(s) found using %s driver", (unsigned long) _device_found, ndr->name);
+        //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_DEBUG, "%ld device(s) found using %s driver", (unsigned long) _device_found, ndr->name);
         if (_device_found > 0) {
           device_found += _device_found;
           if (device_found == connstrings_len)
@@ -314,10 +283,11 @@ nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_
       pndl = pndl->next;
     }
   } else if (context->user_defined_device_count == 0) {
-    log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_INFO, "Warning: %s" , "user must specify device(s) manually when autoscan is disabled");
+    //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_INFO, "Warning: %s" , "user must specify device(s) manually when autoscan is disabled");
   }
-
   return device_found;
+  */
+  return 0;
 }
 
 /** @ingroup properties
@@ -452,7 +422,8 @@ nfc_initiator_select_passive_target(nfc_device *pnd,
                                     nfc_target *pnt)
 {
   uint8_t *abtInit = NULL;
-  uint8_t abtTmpInit[MAX(12, szInitData)];
+  //uint8_t abtTmpInit[MAX(12, szInitData)];
+  uint8_t abtTmpInit[12];
   size_t  szInit = 0;
   if (szInitData == 0) {
     // Provide default values, if any
@@ -545,9 +516,9 @@ nfc_initiator_list_passive_targets(nfc_device *pnd,
  * @param pnd \a nfc_device struct pointer that represent currently used device
  * @param pnmModulations desired modulations
  * @param szModulations size of \a pnmModulations
- * @param uiPollNr specifies the number of polling (0x01 â€? 0xFE: 1 up to 254 polling, 0xFF: Endless polling)
+ * @param uiPollNr specifies the number of polling (0x01 ï¿½? 0xFE: 1 up to 254 polling, 0xFF: Endless polling)
  * @note one polling is a polling for each desired target type
- * @param uiPeriod indicates the polling period in units of 150 ms (0x01 â€? 0x0F: 150ms â€? 2.25s)
+ * @param uiPeriod indicates the polling period in units of 150 ms (0x01 ï¿½? 0x0F: 150ms ï¿½? 2.25s)
  * @note e.g. if uiPeriod=10, it will poll each desired target type during 1.5s
  * @param[out] pnt pointer on \a nfc_target (over)writable struct
  */
@@ -1065,7 +1036,7 @@ nfc_strerror_r(const nfc_device *pnd, char *pcStrErrBuf, size_t szBufLen)
 void
 nfc_perror(const nfc_device *pnd, const char *pcString)
 {
-  fprintf(stderr, "%s: %s\n", pcString, nfc_strerror(pnd));
+  uartEmulatorWriteString("nfc_perror\r\n");
 }
 
 /** @ingroup error
@@ -1145,11 +1116,7 @@ nfc_device_get_supported_baud_rate(nfc_device *pnd, const nfc_modulation_type nm
 const char *
 nfc_version(void)
 {
-#ifdef GIT_REVISION
-  return GIT_REVISION;
-#else
-  return PACKAGE_VERSION;
-#endif // GIT_REVISION
+  return 0;
 }
 
 /** @ingroup misc

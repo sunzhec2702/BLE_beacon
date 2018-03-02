@@ -9,7 +9,7 @@ static void processKeyEvent(uint8_t keyPressed)
     {
         ledToggle(LED_INDEX_0);
     }
-    uartWriteTransport("Hello\r\n",7);
+    uartEmulatorWriteString("Hello\r\n");
 }
 
 void keyInit()

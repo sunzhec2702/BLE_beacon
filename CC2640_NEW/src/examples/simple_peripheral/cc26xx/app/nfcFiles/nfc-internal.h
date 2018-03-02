@@ -33,12 +33,7 @@
 #define __NFC_INTERNAL_H__
 
 #include <stdbool.h>
-#include <err.h>
-#  include <sys/time.h>
-
 #include "nfc/nfc.h"
-
-#include "log.h"
 
 /**
  * @macro HAL
