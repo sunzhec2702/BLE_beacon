@@ -72,7 +72,7 @@ string_as_boolean(const char *s, bool *value)
 nfc_context *
 nfc_context_new(void)
 {
-  nfc_context *res = malloc(sizeof(*res));
+  nfc_context *res = (nfc_context*) ICall_malloc(sizeof(*res));
   if (!res) {
     return NULL;
   }
@@ -85,7 +85,7 @@ nfc_context_new(void)
 void
 nfc_context_free(nfc_context *context)
 {
-  free(context);
+  ICall_free(context);
 }
 
 void
@@ -141,22 +141,22 @@ connstring_decode(const nfc_connstring connstring, const char *driver_name, cons
     bus_name = "";
   }
   int n = strlen(connstring) + 1;
-  char *param0 = malloc(n);
+  char *param0 = (char*)ICall_malloc(n);
   if (param0 == NULL) {
-    perror("malloc");
+    perror("ICall_malloc");
     return 0;
   }
-  char *param1 = malloc(n);
+  char *param1 = (char*)ICall_malloc(n);
   if (param1 == NULL) {
-    perror("malloc");
-    free(param0);
+    perror("ICall_malloc");
+    ICall_free(param0);
     return 0;
   }
-  char *param2    = malloc(n);
+  char *param2    = (char*)ICall_malloc(n);
   if (param2 == NULL) {
-    perror("malloc");
-    free(param0);
-    free(param1);
+    perror("ICall_malloc");
+    ICall_free(param0);
+    ICall_free(param1);
     return 0;
   }
 
@@ -172,25 +172,25 @@ connstring_decode(const nfc_connstring connstring, const char *driver_name, cons
   }
   if (pparam1 != NULL) {
     if (res < 2) {
-      free(param1);
+      ICall_free(param1);
       *pparam1 = NULL;
     } else {
       *pparam1 = param1;
     }
   } else {
-    free(param1);
+    ICall_free(param1);
   }
   if (pparam2 != NULL) {
     if (res < 3) {
-      free(param2);
+      ICall_free(param2);
       *pparam2 = NULL;
     } else {
       *pparam2 = param2;
     }
   } else {
-    free(param2);
+    ICall_free(param2);
   }
-  free(param0);
+  ICall_free(param0);
   return res;
 }
 

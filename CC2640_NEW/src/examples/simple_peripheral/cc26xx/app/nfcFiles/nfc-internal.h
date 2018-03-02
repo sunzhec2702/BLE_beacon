@@ -151,17 +151,6 @@ struct nfc_driver {
   int (*powerdown)(struct nfc_device *pnd);
 };
 
-#  define DEVICE_NAME_LENGTH  256
-#  define DEVICE_PORT_LENGTH  64
-
-#define MAX_USER_DEFINED_DEVICES 4
-
-struct nfc_user_defined_device {
-  char name[DEVICE_NAME_LENGTH];
-  nfc_connstring connstring;
-  bool optional;
-};
-
 /**
  * @struct nfc_context
  * @brief NFC library context
@@ -185,8 +174,6 @@ struct nfc_device {
   void *driver_data;
   void *chip_data;
 
-  /** Device name string, including device wrapper firmware */
-  char    name[DEVICE_NAME_LENGTH];
   /** Device connection string */
   nfc_connstring connstring;
   /** Is the CRC automaticly added, checked and removed from the frames */

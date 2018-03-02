@@ -106,7 +106,7 @@
 /* constant value for heap size */
 #undef AUTOHEAPSIZE
 #ifndef HEAPMGR_SIZE
-  #define HEAPMGR_SIZE 1024
+  #define HEAPMGR_SIZE 2048
 #elif defined(HEAPMGR_SIZE) && (HEAPMGR_SIZE == 0)
   #undef HEAPMGR_SIZE
   #define AUTOHEAPSIZE

@@ -34,7 +34,7 @@ void uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, in
     Util_stopClock(&rxTimeoutClock);
 }
 
-void uartWriteTransportBKMode(uint8_t *str, uint16_t len)
+void uartWriteTransportBKMode(const uint8_t *str, uint16_t len)
 {
     if (uartInitFlag == true)
     {

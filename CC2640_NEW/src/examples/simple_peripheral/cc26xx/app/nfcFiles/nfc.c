@@ -117,7 +117,7 @@ nfc_register_driver(const struct nfc_driver *ndr)
   if (!ndr)
     return NFC_EINVARG;
 
-  struct nfc_driver_list *pndl = (struct nfc_driver_list *)malloc(sizeof(struct nfc_driver_list));
+  struct nfc_driver_list *pndl = (struct nfc_driver_list *)ICall_malloc(sizeof(struct nfc_driver_list));
   if (!pndl)
     return NFC_ESOFT;
   pndl->driver = ndr;
@@ -136,7 +136,7 @@ nfc_init(nfc_context **context)
 {
   *context = nfc_context_new();
   if (!*context) {
-    uartEmulatorWriteString("malloc");
+    uartEmulatorWriteString("ICall_malloc");
     return;
   }
   if (!nfc_drivers)
@@ -154,7 +154,7 @@ nfc_exit(nfc_context *context)
   while (nfc_drivers) {
     struct nfc_driver_list *pndl = (struct nfc_driver_list *) nfc_drivers;
     nfc_drivers = pndl->next;
-    free(pndl);
+    ICall_free(pndl);
   }
 
   nfc_context_free(context);
@@ -177,8 +177,7 @@ nfc_exit(nfc_context *context)
  * @note Depending on the desired operation mode, the device needs to be configured by using nfc_initiator_init() or nfc_target_init(),
  * optionally followed by manual tuning of the parameters if the default parameters are not suiting your goals.
  */
-nfc_device *
-nfc_open(nfc_context *context, const nfc_connstring connstring)
+nfc_device *nfc_open(nfc_context *context, const nfc_connstring connstring)
 {
   nfc_device *pnd = NULL;
   const struct nfc_driver_list *pndl = nfc_drivers;
@@ -228,8 +227,8 @@ nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_
       char *old_env_log_level = NULL;
       // do it silently
       if (env_log_level) {
-        if ((old_env_log_level = malloc(strlen(env_log_level) + 1)) == NULL) {
-          //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to malloc()");
+        if ((old_env_log_level = ICall_malloc(strlen(env_log_level) + 1)) == NULL) {
+          //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "%s", "Unable to ICall_malloc()");
           return 0;
         }
         strcpy(old_env_log_level, env_log_level);
@@ -242,7 +241,7 @@ nfc_list_devices(nfc_context *context, nfc_connstring connstrings[], const size_
 #ifdef ENVVARS
       if (old_env_log_level) {
         setenv("LIBNFC_LOG_LEVEL", old_env_log_level, 1);
-        free(old_env_log_level);
+        ICall_free(old_env_log_level);
       } else {
         unsetenv("LIBNFC_LOG_LEVEL");
       }
@@ -1062,7 +1061,7 @@ nfc_device_get_last_error(const nfc_device *pnd)
 const char *
 nfc_device_get_name(nfc_device *pnd)
 {
-  return pnd->name;
+  return NULL;//pnd->name;
 }
 
 /** @ingroup data
@@ -1127,7 +1126,7 @@ nfc_version(void)
 void
 nfc_free(void *p)
 {
-  free(p);
+  ICall_free(p);
 }
 
 /** @ingroup misc
@@ -1222,10 +1221,12 @@ str_nfc_modulation_type(const nfc_modulation_type nmt)
 int
 str_nfc_target(char **buf, const nfc_target *pnt, bool verbose)
 {
-  *buf = malloc(4096);
+  /*
+  *buf = ICall_malloc(4096);
   if (! *buf)
     return NFC_ESOFT;
   (*buf)[0] = '\0';
   snprint_nfc_target(*buf, 4096, pnt, verbose);
   return strlen(*buf);
+  */
 }

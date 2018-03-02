@@ -83,7 +83,7 @@ pn53x_init(struct nfc_device *pnd)
   }
 
   if (!CHIP_DATA(pnd)->supported_modulation_as_initiator) {
-    CHIP_DATA(pnd)->supported_modulation_as_initiator = malloc(sizeof(nfc_modulation_type) * 9);
+    CHIP_DATA(pnd)->supported_modulation_as_initiator = (nfc_modulation_type *)ICall_malloc(sizeof(nfc_modulation_type) * 9);
     if (! CHIP_DATA(pnd)->supported_modulation_as_initiator)
       return NFC_ESOFT;
     int nbSupportedModulation = 0;
@@ -1733,7 +1733,7 @@ pn53x_initiator_transceive_bytes_timed(struct nfc_device *pnd, const uint8_t *pb
   if (pnd->bCrc) {
     // We've to compute CRC ourselves to know last byte actually sent
     uint8_t *pbtTxRaw;
-    pbtTxRaw = (uint8_t *) malloc(szTx + 2);
+    pbtTxRaw = (uint8_t *) ICall_malloc(szTx + 2);
     if (!pbtTxRaw)
       return NFC_ESOFT;
     memcpy(pbtTxRaw, pbtTx, szTx);
@@ -1744,7 +1744,7 @@ pn53x_initiator_transceive_bytes_timed(struct nfc_device *pnd, const uint8_t *pb
     else
       //log_put(LOG_GROUP, LOG_CATEGORY, NFC_LOG_PRIORITY_ERROR, "Unsupported framing type %02X, cannot adjust CRC cycles", txmode & SYMBOL_TX_FRAMING);
     *cycles = __pn53x_get_timer(pnd, pbtTxRaw[szTx + 1]);
-    free(pbtTxRaw);
+    ICall_free(pbtTxRaw);
   } else {
     *cycles = __pn53x_get_timer(pnd, pbtTx[szTx - 1]);
   }
@@ -2544,7 +2544,7 @@ static struct sErrorMessage {
   { ERFPROTO, "RF Protocol Error" },    // RF Protocol error (see PN53x manual)
   { EOVHEAT, "Chip Overheating" },    // Temperature error: the internal temperature sensor has detected overheating, and therefore has automatically switched off the antenna drivers
   { EINBUFOVF, "Internal Buffer overflow."},  // Internal buffer overflow
-  { EINVPARAM, "Invalid Parameter"},    // Invalid parameter (range, format, â€?)
+  { EINVPARAM, "Invalid Parameter"},    // Invalid parameter (range, format, ï¿½?)
   { EOPNOTALL, "Operation Not Allowed" }, // Operation not allowed in this configuration (host controller interface)
   { ECMD, "Command Not Acceptable" },   // Command is not acceptable due to the current context
   { EOVCURRENT, "Over Current"  },
@@ -3335,7 +3335,7 @@ int
 pn53x_get_information_about(nfc_device *pnd, char **pbuf)
 {
   size_t buflen = 2048;
-  *pbuf = malloc(buflen);
+  *pbuf = (char*) ICall_malloc(buflen);
   if (! *pbuf) {
     return NFC_ESOFT;
   }
@@ -3343,146 +3343,146 @@ pn53x_get_information_about(nfc_device *pnd, char **pbuf)
 
   int res;
   if ((res = snprintf(buf, buflen, "chip: %s\n", CHIP_DATA(pnd)->firmware_text)) < 0) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_ESOFT;
   }
   buf += res;
   if (buflen <= (size_t)res) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_EOVFLOW;
   }
   buflen -= res;
 
   if ((res = snprintf(buf, buflen, "initator mode modulations: ")) < 0) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_ESOFT;
   }
   buf += res;
   if (buflen <= (size_t)res) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_EOVFLOW;
   }
   buflen -= res;
   const nfc_modulation_type *nmt;
   if ((res = nfc_device_get_supported_modulation(pnd, N_INITIATOR, &nmt)) < 0) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return res;
   }
 
   for (int i = 0; nmt[i]; i++) {
     if ((res = snprintf(buf, buflen, "%s%s (", (i == 0) ? "" : ", ", str_nfc_modulation_type(nmt[i]))) < 0) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return NFC_ESOFT;
     }
     buf += res;
     if (buflen <= (size_t)res) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return NFC_EOVFLOW;
     }
     buflen -= res;
     const nfc_baud_rate *nbr;
     if ((res = nfc_device_get_supported_baud_rate(pnd, nmt[i], &nbr)) < 0) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return res;
     }
 
     for (int j = 0; nbr[j]; j++) {
       if ((res = snprintf(buf, buflen, "%s%s", (j == 0) ? "" : ", ", str_nfc_baud_rate(nbr[j]))) < 0) {
-        free(*pbuf);
+        ICall_free(*pbuf);
         return NFC_ESOFT;
       }
       buf += res;
       if (buflen <= (size_t)res) {
-        free(*pbuf);
+        ICall_free(*pbuf);
         return NFC_EOVFLOW;
       }
       buflen -= res;
     }
     if ((res = snprintf(buf, buflen, ")")) < 0) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return NFC_ESOFT;
     }
     buf += res;
     if (buflen <= (size_t)res) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return NFC_EOVFLOW;
     }
     buflen -= res;
 
   }
   if ((res = snprintf(buf, buflen, "\n")) < 0) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_ESOFT;
   }
   buf += res;
   if (buflen <= (size_t)res) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_EOVFLOW;
   }
   buflen -= res;
   if ((res = snprintf(buf, buflen, "target mode modulations: ")) < 0) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_ESOFT;
   }
   buf += res;
   if (buflen <= (size_t)res) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_EOVFLOW;
   }
   buflen -= res;
   if ((res = nfc_device_get_supported_modulation(pnd, N_TARGET, &nmt)) < 0) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return res;
   }
 
   for (int i = 0; nmt[i]; i++) {
     if ((res = snprintf(buf, buflen, "%s%s (", (i == 0) ? "" : ", ", str_nfc_modulation_type(nmt[i]))) < 0) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return NFC_ESOFT;
     }
     buf += res;
     if (buflen <= (size_t)res) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return NFC_EOVFLOW;
     }
     buflen -= res;
     const nfc_baud_rate *nbr;
     if ((res = nfc_device_get_supported_baud_rate(pnd, nmt[i], &nbr)) < 0) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return res;
     }
 
     for (int j = 0; nbr[j]; j++) {
       if ((res = snprintf(buf, buflen, "%s%s", (j == 0) ? "" : ", ", str_nfc_baud_rate(nbr[j]))) < 0) {
-        free(*pbuf);
+        ICall_free(*pbuf);
         return NFC_ESOFT;
       }
       buf += res;
       if (buflen <= (size_t)res) {
-        free(*pbuf);
+        ICall_free(*pbuf);
         return NFC_EOVFLOW;
       }
       buflen -= res;
     }
     if ((res = snprintf(buf, buflen, ")")) < 0) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return NFC_ESOFT;
     }
     buf += res;
     if (buflen <= (size_t)res) {
-      free(*pbuf);
+      ICall_free(*pbuf);
       return NFC_EOVFLOW;
     }
     buflen -= res;
 
   }
   if ((res = snprintf(buf, buflen, "\n")) < 0) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_ESOFT;
   }
   //buf += res;
   if (buflen <= (size_t)res) {
-    free(*pbuf);
+    ICall_free(*pbuf);
     return NFC_EOVFLOW;
   }
   //buflen -= res;
@@ -3498,9 +3498,9 @@ pn53x_current_target_new(const struct nfc_device *pnd, const nfc_target *pnt)
   }
   // Keep the current nfc_target for further commands
   if (CHIP_DATA(pnd)->current_target) {
-    free(CHIP_DATA(pnd)->current_target);
+    ICall_free(CHIP_DATA(pnd)->current_target);
   }
-  CHIP_DATA(pnd)->current_target = malloc(sizeof(nfc_target));
+  CHIP_DATA(pnd)->current_target = (nfc_target*) ICall_malloc(sizeof(nfc_target));
   if (!CHIP_DATA(pnd)->current_target) {
     return NULL;
   }
@@ -3512,7 +3512,7 @@ void
 pn53x_current_target_free(const struct nfc_device *pnd)
 {
   if (CHIP_DATA(pnd)->current_target) {
-    free(CHIP_DATA(pnd)->current_target);
+    ICall_free(CHIP_DATA(pnd)->current_target);
     CHIP_DATA(pnd)->current_target = NULL;
   }
 }
@@ -3533,7 +3533,7 @@ pn53x_current_target_is(const struct nfc_device *pnd, const nfc_target *pnt)
 void *
 pn53x_data_new(struct nfc_device *pnd, const struct pn53x_io *io)
 {
-  pnd->chip_data = malloc(sizeof(struct pn53x_data));
+  pnd->chip_data = (void*)ICall_malloc(sizeof(struct pn53x_data));
   if (!pnd->chip_data) {
     return NULL;
   }
@@ -3587,7 +3587,7 @@ pn53x_data_free(struct nfc_device *pnd)
 
   // Free supported modulation(s)
   if (CHIP_DATA(pnd)->supported_modulation_as_initiator) {
-    free(CHIP_DATA(pnd)->supported_modulation_as_initiator);
+    ICall_free(CHIP_DATA(pnd)->supported_modulation_as_initiator);
   }
-  free(pnd->chip_data);
+  ICall_free(pnd->chip_data);
 }

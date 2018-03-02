@@ -41,8 +41,8 @@
 nfc_device *
 nfc_device_new(const nfc_context *context, const nfc_connstring connstring)
 {
-  nfc_device *res = malloc(sizeof(*res));
-
+  nfc_device *res = (nfc_device*) ICall_malloc(sizeof(*res));
+  //nfc_device *res = ICall_malloc(20);
   if (!res) {
     return NULL;
   }
@@ -60,7 +60,6 @@ nfc_device_new(const nfc_context *context, const nfc_connstring connstring)
   res->bInfiniteSelect = false;
   res->bAutoIso14443_4 = false;
   res->last_error  = 0;
-  memcpy(res->connstring, connstring, sizeof(res->connstring));
   res->driver_data = NULL;
   res->chip_data   = NULL;
 
@@ -71,7 +70,7 @@ void
 nfc_device_free(nfc_device *dev)
 {
   if (dev) {
-    free(dev->driver_data);
-    free(dev);
+    ICall_free(dev->driver_data);
+    ICall_free(dev);
   }
 }
