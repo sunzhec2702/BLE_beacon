@@ -12,7 +12,7 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
 {
     if (uartReadTransportBKMode(pbtRx, szRx, NULL, timeout) < 0)
     {
-        return NFC_ETIMEOUT
+        return NFC_ETIMEOUT;
     }
     return NFC_SUCCESS;
 }
