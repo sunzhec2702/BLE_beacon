@@ -3,7 +3,7 @@
 
 void uartInitBKMode();
 void uartWriteTransportBKMode(const uint8_t *str, uint16_t len);
-void uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, int timeout);
+int uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, int timeout);
 
 #endif
 

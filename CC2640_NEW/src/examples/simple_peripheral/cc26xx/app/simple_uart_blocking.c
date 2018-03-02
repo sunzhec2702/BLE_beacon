@@ -7,6 +7,7 @@
 #include <inc/hw_ints.h>
 #include "Board.h"
 
+
 static UART_Handle uartHandle;
 static Clock_Struct rxTimeoutClock;
 
@@ -22,19 +23,27 @@ static void rxTimeoutCallback(UArg arg)
     uartRxTimeout = true;
 }
 
-void uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, int timeout)
+int uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, int timeout)
 {
     uartRxTimeout = false;
     uint16_t readByte = 0;
     do
     {
-        Util_restartClock(&rxTimeoutClock, timeout);
+        if (timeout > 0)
+        {
+            Util_restartClock(&rxTimeoutClock, timeout);
+        }
         readByte += UART_read(uartHandle, buf+readByte, exceptLen);
     } while ((readByte < exceptLen) && (uartRxTimeout == false));
     Util_stopClock(&rxTimeoutClock);
+    if (uartRxTimeout == true)
+    {
+        return -1;
+    }
+    return 0;
 }
 
-void uartWriteTransportBKMode(const uint8_t *str, uint16_t len)
+int uartWriteTransportBKMode(const uint8_t *str, uint16_t len)
 {
     if (uartInitFlag == true)
     {
@@ -42,6 +51,7 @@ void uartWriteTransportBKMode(const uint8_t *str, uint16_t len)
         //memcpy(tTxBuf, str, len);
         UART_write(uartHandle, str, len);
     }
+    return 0;
 }
 
 void uartInitBKMode()
@@ -74,7 +84,6 @@ void uartInitBKMode()
         }
         Util_constructClock(&rxTimeoutClock, rxTimeoutCallback, 0, 0, false, 0);
         uartInitFlag = true;
-        uint8_t initString[] = "Hello, this is blockUart\r\n";
-        uartWriteTransportBKMode(initString, sizeof(initString));
+        uartEmulatorWriteString("Uart Block Mode Init Success\r\n");
     }
 }

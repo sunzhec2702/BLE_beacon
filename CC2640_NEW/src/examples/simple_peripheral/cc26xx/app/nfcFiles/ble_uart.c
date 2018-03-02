@@ -1,5 +1,6 @@
 #include "ble_uart.h"
 #include "simple_uart_blocking.h"
+#include "nfc/nfc.h"
 
 void uart_flush_input(bool wait)
 {
@@ -9,13 +10,16 @@ void uart_flush_input(bool wait)
 
 int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout)
 {
-    uartReadTransportBKMode(pbtRx, szRx, NULL, timeout);
-    return 0;
+    if (uartReadTransportBKMode(pbtRx, szRx, NULL, timeout) < 0)
+    {
+        return NFC_ETIMEOUT
+    }
+    return NFC_SUCCESS;
 }
 
 int uart_send(const uint8_t *pbtTx, const uint16_t szTx, int timeout)
 {
     VOID(timeout);
     uartWriteTransportBKMode(pbtTx, szTx);
-    return 0;
+    return NFC_SUCCESS;
 }
