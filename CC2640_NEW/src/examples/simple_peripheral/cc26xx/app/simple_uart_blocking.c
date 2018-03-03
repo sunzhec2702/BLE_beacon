@@ -20,6 +20,7 @@ static bool uartRxTimeout = false;
 
 static void rxTimeoutCallback(UArg arg)
 {
+    UART_readCancel(uartHandle);
     uartRxTimeout = true;
 }
 
@@ -35,6 +36,8 @@ int uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, int
         }
         readByte += UART_read(uartHandle, buf+readByte, exceptLen);
     } while ((readByte < exceptLen) && (uartRxTimeout == false));
+    DEBUG_STRING("read bytes: ");
+    DEBUG_NUMBER(readByte);
     Util_stopClock(&rxTimeoutClock);
     if (uartRxTimeout == true)
     {
@@ -79,11 +82,11 @@ void uartInitBKMode()
         UART_control(uartHandle, UARTCC26XX_CMD_RETURN_PARTIAL_ENABLE, NULL);
         if (!uartHandle)
         {
-            uartEmulatorWriteString("uart block mode error\r\n");
+            DEBUG_STRING("uart block mode error\r\n");
             return;
         }
         Util_constructClock(&rxTimeoutClock, rxTimeoutCallback, 0, 0, false, 0);
         uartInitFlag = true;
-        uartEmulatorWriteString("Uart Block Mode Init Success\r\n");
+        DEBUG_STRING("Uart Block Mode Init Success\r\n");
     }
 }

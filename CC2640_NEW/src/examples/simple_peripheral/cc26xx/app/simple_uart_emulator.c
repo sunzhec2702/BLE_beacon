@@ -100,6 +100,13 @@ void uartEmulatorWriteString(uint8_t *str)
     uartEmulatorWriteByte(str, strLen);
 }
 
+void uartEmulatorWriteNumber(uint16_t val)
+{
+    uint8_t str[12] = "";
+    snprintf(str, sizeof(str)-1, "%d", val);
+    uartEmulatorWriteString(str);
+}
+
 void simpleUartEmulatorCreateTask(void) {
     Task_Params taskParams;
     // Configure the OS task

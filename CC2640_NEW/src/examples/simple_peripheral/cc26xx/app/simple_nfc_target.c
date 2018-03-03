@@ -32,39 +32,39 @@ void nfcWorkAsTarget(uint16_t timeout)
     };
     if (pnd == NULL)
     {
-        uartEmulatorWriteString("Unable to open NFC device.\r\n");
+        DEBUG_STRING("Unable to open NFC device.\r\n");
         nfc_exit(context);
     }
-    uartEmulatorWriteString("NFC device will now act as Target\r\n");
-    uartEmulatorWriteString("Waiting for initiator request...\r\n");
+    DEBUG_STRING("NFC device will now act as Target\r\n");
+    DEBUG_STRING("Waiting for initiator request...\r\n");
     if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), 0)) < 0)
     {
-        uartEmulatorWriteString("nfc_target_init\r\n");
+        DEBUG_STRING("nfc_target_init\r\n");
         nfc_close(pnd);
         nfc_exit(context);
     }
 
-    uartEmulatorWriteString("Initiator request received. Waiting for data...\r\n");
+    DEBUG_STRING("Initiator request received. Waiting for data...\r\n");
     if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), 0)) < 0)
     {
-        uartEmulatorWriteString("nfc_target_receive_bytes\r\n");
+        DEBUG_STRING("nfc_target_receive_bytes\r\n");
         nfc_close(pnd);
         nfc_exit(context);
     }
     abtRx[(size_t)szRx] = '\0';
-    uartEmulatorWriteString("Received: ");
-    uartEmulatorWriteString(abtRx);
-    uartEmulatorWriteString("\r\n");
-    uartEmulatorWriteString("Sending: ");
-    uartEmulatorWriteString(abtTx);
-    uartEmulatorWriteString("\r\n");
+    DEBUG_STRING("Received: ");
+    DEBUG_STRING(abtRx);
+    DEBUG_STRING("\r\n");
+    DEBUG_STRING("Sending: ");
+    DEBUG_STRING(abtTx);
+    DEBUG_STRING("\r\n");
     if (nfc_target_send_bytes(pnd, abtTx, sizeof(abtTx), 0) < 0)
     {
         nfc_perror(pnd, "nfc_target_send_bytes");
         nfc_close(pnd);
         nfc_exit(context);
     }
-    uartEmulatorWriteString("Data sent.\r\n");
+    DEBUG_STRING("Data sent.\r\n");
     nfc_close(pnd);
     nfc_exit(context);
 }

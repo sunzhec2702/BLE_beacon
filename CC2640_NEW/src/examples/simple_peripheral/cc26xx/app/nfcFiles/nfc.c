@@ -136,7 +136,7 @@ nfc_init(nfc_context **context)
 {
   *context = nfc_context_new();
   if (!*context) {
-    uartEmulatorWriteString("ICall_malloc");
+    DEBUG_STRING("ICall_malloc");
     return;
   }
   if (!nfc_drivers)
@@ -1035,7 +1035,7 @@ nfc_strerror_r(const nfc_device *pnd, char *pcStrErrBuf, size_t szBufLen)
 void
 nfc_perror(const nfc_device *pnd, const char *pcString)
 {
-  uartEmulatorWriteString("nfc_perror\r\n");
+  DEBUG_STRING("nfc_perror\r\n");
 }
 
 /** @ingroup error

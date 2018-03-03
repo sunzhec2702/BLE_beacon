@@ -70,7 +70,7 @@ void
 nfc_device_free(nfc_device *dev)
 {
   if (dev) {
-    ICall_free(dev->driver_data);
+    //ICall_free(dev->driver_data);
     ICall_free(dev);
   }
 }

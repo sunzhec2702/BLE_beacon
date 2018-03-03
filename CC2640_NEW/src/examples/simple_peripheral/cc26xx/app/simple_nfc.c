@@ -17,7 +17,7 @@
 
 #include "simple_nfc_target.h"
 #include "simple_nfc_initiator.h"
-
+#include "ble_uart.h"
 #include <nfc/nfc.h>
 
 
@@ -25,7 +25,7 @@
 #define NFC_TASK_PRIORITY 1
 
 #ifndef NFC_TASK_STACK_SIZE
-#define NFC_TASK_STACK_SIZE 3072
+#define NFC_TASK_STACK_SIZE 4096
 #endif
 
 #define DEFAULT_TASK_TIMEOUT    2000 //ms
@@ -79,10 +79,14 @@ void nfcChipInit()
     nfc_init(&context);
     if (context == NULL)
     {
-        uartEmulatorWriteString("Unable to init libnfc");
+        DEBUG_STRING("Unable to init libnfc");
         return;
     }
-    nfc_open(context, NULL);
+    nfc_device* nfcDevice = nfc_open(context, NULL);
+    if (nfcDevice == NULL)
+    {
+        DEBUG_STRING("Cannot open NFC device\r\n");
+    }
 }
 
 static void simpleNFCInit(void)
@@ -94,7 +98,13 @@ static void simpleNFCInit(void)
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
     uartInitBKMode();
-    nfcChipInit();
+    uint8_t debugInfo[] = 
+    {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+     0x00, 0x00, 0xFF, 0x03, 0xFD, 0xD4, 0x14, 0x01, 0x17, 0x00};
+    uart_send(debugInfo, sizeof(debugInfo), 0);
+    uint8_t debugReceive[20];
+    uart_receive(debugReceive, 20, NULL, 3000);
+    //nfcChipInit();
     nfcSem = Semaphore_create(0, NULL, NULL);
     Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }
@@ -107,7 +117,7 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
     for (;;)
     {
         Semaphore_pend(nfcSem, BIOS_WAIT_FOREVER);
-        uartEmulatorWriteString("Got a semaphore\r\n");
+        DEBUG_STRING("Got a semaphore\r\n");
         nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT);
         //Util_restartClock(&nfcTasksClock, )        
     }
