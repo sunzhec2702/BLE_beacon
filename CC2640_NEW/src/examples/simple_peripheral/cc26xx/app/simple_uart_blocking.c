@@ -13,7 +13,7 @@ static Clock_Struct rxTimeoutClock;
 
 
 //static uint8_t tRxBuf[256];
-//static uint8_t tTxBuf[256];
+static uint8_t tTxBuf[256];
 
 static bool uartInitFlag = false;
 static bool uartRxTimeout = false;
@@ -50,8 +50,8 @@ int uartWriteTransportBKMode(const uint8_t *str, uint16_t len)
 {
     if (uartInitFlag == true)
     {
-        //memset(tTxBuf, 0, sizeof(tTxBuf));
-        //memcpy(tTxBuf, str, len);
+        memset(tTxBuf, 0, sizeof(tTxBuf));
+        memcpy(tTxBuf, str, len);
         UART_write(uartHandle, str, len);
     }
     return 0;
