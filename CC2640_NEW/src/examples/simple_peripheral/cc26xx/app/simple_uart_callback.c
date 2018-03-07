@@ -10,8 +10,6 @@ static UART_Handle uartHandle;
 
 static uint8_t tRxBuf[128];
 static uint8_t tTxBuf[128];
-static uint16_t tRxBufNumber = 0;
-static uint8_t tRxTmpBuf[64];
 
 static bool uartInitFlag = false;
 
@@ -45,7 +43,7 @@ static void uartReadCallBack(UART_Handle handle, void *buf, size_t count)
     {
         memcpy(&tRxBuf[0] + tRxBufNumber, buf, count);
         tRxBufNumber += count;
-        bleUartRxCallback();
+        bleUartRxCallback((uint8_t*)buf, count);
         DEBUG_NFC_BYTE(buf, count);
         UART_read(uartHandle, tRxTmpBuf, sizeof(tRxTmpBuf));
     }

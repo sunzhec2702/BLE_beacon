@@ -5,11 +5,13 @@
 #include <ti/sysbios/knl/Queue.h>
 #include <ti/sysbios/BIOS.h>
 #include <stdio.h>
+#include "bleUartCircleBuffer.h"
 
 static Semaphore_Handle nfcUartSem;
 
-void bleUartRxCallback()
+void bleUartRxCallback((uint8_t*)buf, uint16_t count)
 {
+    bleUartCircleBufferPut(buf, count);
     Semaphore_post(nfcUartSem);
 }
 
@@ -26,17 +28,14 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
     {
         if (Semaphore_pend(nfcUartSem, BIOS_WAIT_FOREVER))
         {
-            rxBytes  = getRxBufNumber();
+            rxBytes  = bleUartCircleBufferGet(pbtRx + rxBytes, szRx);
         }
         else
         {
-            clearRxBufNumber();
             return NFC_ETIMEOUT;
         }
     }
     while(rxBytes < szRx);
-    memcpy(pbtRx, getRxBuf(), rxBytes);
-    clearRxBufNumber();
     DEBUG_NFC_BYTE(pbtRx, szRx);
     /*
     DEBUG_STRING("Timeout:");
@@ -67,5 +66,6 @@ int uart_send(const uint8_t *pbtTx, const uint16_t szTx, int timeout)
 void ble_uart_init()
 {
     uartInitCBMode();
+    bleUartCircleBufferInit();
     nfcUartSem = Semaphore_create(0, NULL, NULL);
 }
