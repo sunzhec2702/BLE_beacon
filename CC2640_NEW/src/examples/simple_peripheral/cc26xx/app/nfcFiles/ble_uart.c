@@ -9,7 +9,7 @@ static Semaphore_Handle nfcUartSem;
 
 void bleUartRxCallback()
 {
-
+    Semaphore_post(nfcUartSem);
 }
 
 void uart_flush_input(bool wait)
@@ -25,17 +25,17 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
     {
         if (Semaphore_pend(nfcUartSem, timeout) == true)
         {
-            
+            rxBytes  = getRxBufNumber();
+        }
+        else
+        {
+            clearRxBufNumber();
+            return NFC_ETIMEOUT;
         }
     }
-    while(rxBytes < )
-    for (;;)
-    {
-        Semaphore_pend(nfcSem, BIOS_WAIT_FOREVER);
-        DEBUG_STRING("Got a semaphore\r\n");
-        nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT);
-        //Util_restartClock(&nfcTasksClock, )        
-    }
+    while(rxBytes < szRx);
+    memcpy(pbtRx, getRxBuf(), rxBytes);
+
     /*
     DEBUG_STRING("Timeout:");
     DEBUG_NUMBER(timeout);
@@ -53,6 +53,7 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
 int uart_send(const uint8_t *pbtTx, const uint16_t szTx, int timeout)
 {
     VOID(timeout);
+    uartWriteTransportCBMode(pbtTx, szTx);
     /*
     DEBUG_NFC_BYTE((uint8_t*)pbtTx, szTx);
     uartWriteTransportCBMode(pbtTx, szTx);

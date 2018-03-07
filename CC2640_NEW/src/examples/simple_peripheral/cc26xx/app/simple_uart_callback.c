@@ -1,5 +1,6 @@
 #include "simple_uart_callback.h"
 #include "simple_led.h"
+#include "ble_uart.h"
 #include <string.h>
 #include <stdio.h>
 #include <ti/drivers/uart/UARTCC26XX.h>
@@ -9,8 +10,26 @@ static UART_Handle uartHandle;
 
 static uint8_t tRxBuf[256];
 static uint8_t tTxBuf[256];
+static uint16_t tRxBufNumber = 0;
+
 
 static bool uartInitFlag = false;
+
+void clearRxBufNumber()
+{
+    memset(tRxBuf, 0, sizeof(tRxBuf));
+    tRxBufNumber = 0;
+}
+
+uint16_t getRxBufNumber()
+{
+    return tRxBufNumber;
+}
+
+uint8_t *getRxBuf()
+{
+    return tRxBuf;
+}
 
 static void uartWriteCallBack(UART_Handle handle, void *buf, size_t count)
 {
@@ -24,6 +43,9 @@ static void uartReadCallBack(UART_Handle handle, void *buf, size_t count)
 {
     if (uartInitFlag == true)
     {
+        memcpy(&tRxBuf[0] + tRxBufNumber, buf, count);
+        tRxBufNumber += count;
+        bleUartRxCallback();
         UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
     }
 }

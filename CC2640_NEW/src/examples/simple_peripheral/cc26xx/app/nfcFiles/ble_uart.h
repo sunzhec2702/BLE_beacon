@@ -1,6 +1,8 @@
 #ifndef __BLE_UART_H
 #define __BLE_UART_H
 
+void bleUartRxCallback(void);
+
 //serial_port uart_open(const char *pcPortName);
 //void    uart_close();
 void    uart_flush_input(bool wait);
