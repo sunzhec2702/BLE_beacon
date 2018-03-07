@@ -8,10 +8,10 @@
 
 static UART_Handle uartHandle;
 
-static uint8_t tRxBuf[256];
-static uint8_t tTxBuf[256];
+static uint8_t tRxBuf[128];
+static uint8_t tTxBuf[128];
 static uint16_t tRxBufNumber = 0;
-
+static uint8_t tRxTmpBuf[64];
 
 static bool uartInitFlag = false;
 
@@ -46,11 +46,12 @@ static void uartReadCallBack(UART_Handle handle, void *buf, size_t count)
         memcpy(&tRxBuf[0] + tRxBufNumber, buf, count);
         tRxBufNumber += count;
         bleUartRxCallback();
-        UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
+        DEBUG_NFC_BYTE(buf, count);
+        UART_read(uartHandle, tRxTmpBuf, sizeof(tRxTmpBuf));
     }
 }
 
-void uartWriteTransportCBMode(uint8_t *str, uint16_t len)
+void uartWriteTransportCBMode(const uint8_t *str, uint16_t len)
 {
     if(uartInitFlag == true)
     {
@@ -88,6 +89,6 @@ void uartInitCBMode()
             DEBUG_STRING("uart callback mode error\r\n");
         }
         uartInitFlag = true;
-        UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
+        UART_read(uartHandle, tRxTmpBuf, sizeof(tRxTmpBuf));
     }
 }

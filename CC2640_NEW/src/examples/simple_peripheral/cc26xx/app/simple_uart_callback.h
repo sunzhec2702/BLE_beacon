@@ -3,7 +3,8 @@
 
 void clearRxBufNumber(void);
 uint16_t getRxBufNumber(void);
+uint8_t *getRxBuf(void);
 void uartInitCBMode(void);
-void uartWriteTransportCBMode(uint8_t *str, uint16_t len);
+void uartWriteTransportCBMode(const uint8_t *str, uint16_t len);
 
 #endif

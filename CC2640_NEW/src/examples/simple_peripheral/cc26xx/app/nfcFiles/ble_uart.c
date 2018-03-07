@@ -4,6 +4,7 @@
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Queue.h>
 #include <ti/sysbios/BIOS.h>
+#include <stdio.h>
 
 static Semaphore_Handle nfcUartSem;
 
@@ -23,7 +24,7 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
     uint16_t rxBytes = 0;
     do
     {
-        if (Semaphore_pend(nfcUartSem, timeout) == true)
+        if (Semaphore_pend(nfcUartSem, BIOS_WAIT_FOREVER))
         {
             rxBytes  = getRxBufNumber();
         }
@@ -35,7 +36,8 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
     }
     while(rxBytes < szRx);
     memcpy(pbtRx, getRxBuf(), rxBytes);
-
+    clearRxBufNumber();
+    DEBUG_NFC_BYTE(pbtRx, szRx);
     /*
     DEBUG_STRING("Timeout:");
     DEBUG_NUMBER(timeout);
@@ -53,6 +55,7 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
 int uart_send(const uint8_t *pbtTx, const uint16_t szTx, int timeout)
 {
     VOID(timeout);
+    DEBUG_NFC_BYTE((uint8_t*)pbtTx, szTx);
     uartWriteTransportCBMode(pbtTx, szTx);
     /*
     DEBUG_NFC_BYTE((uint8_t*)pbtTx, szTx);
@@ -63,5 +66,6 @@ int uart_send(const uint8_t *pbtTx, const uint16_t szTx, int timeout)
 
 void ble_uart_init()
 {
+    uartInitCBMode();
     nfcUartSem = Semaphore_create(0, NULL, NULL);
 }
