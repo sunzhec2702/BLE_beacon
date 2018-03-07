@@ -1,7 +1,7 @@
 #ifndef __SIMPLE_UART_EMULATOR_H
 #define __SIMPLE_UART_EMULATOR_H
 
-#define DEBUG_EMULATOR
+//#define DEBUG_EMULATOR
 #define DEBUG_NFC
 
 #if defined (DEBUG_EMULATOR)

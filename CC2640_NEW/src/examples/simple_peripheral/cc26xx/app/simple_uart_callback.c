@@ -24,9 +24,6 @@ static void uartReadCallBack(UART_Handle handle, void *buf, size_t count)
 {
     if (uartInitFlag == true)
     {
-        memset(tTxBuf, 0, sizeof(tTxBuf));
-        memcpy(tTxBuf, buf, count);
-        UART_write(handle, buf, count);
         UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));
     }
 }
@@ -66,7 +63,7 @@ void uartInitCBMode()
         UART_control(uartHandle, UARTCC26XX_CMD_RETURN_PARTIAL_ENABLE,  NULL);
         if (!uartHandle)
         {
-            ledBlinkWithParameters(LED_INDEX_0, 1000, 200, 10);
+            DEBUG_STRING("uart callback mode error\r\n");
         }
         uartInitFlag = true;
         UART_read(uartHandle, tRxBuf, sizeof(tRxBuf));

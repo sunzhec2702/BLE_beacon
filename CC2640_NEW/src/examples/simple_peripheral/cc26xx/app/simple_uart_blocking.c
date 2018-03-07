@@ -30,11 +30,11 @@ int uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, int
     uint16_t readByte = 0;
     do
     {
+        readByte += UART_read(uartHandle, buf+readByte, exceptLen);
         if (timeout > 0)
         {
             Util_restartClock(&rxTimeoutClock, timeout);
         }
-        readByte += UART_read(uartHandle, buf+readByte, exceptLen);
     } while ((readByte < exceptLen) && (uartRxTimeout == false));
     DEBUG_STRING("read bytes: ");
     DEBUG_NUMBER(readByte);

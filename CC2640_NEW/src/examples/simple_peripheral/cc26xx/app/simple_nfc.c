@@ -98,9 +98,7 @@ static void simpleNFCInit(void)
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
     uartInitBKMode();
-    uint8_t debugReceive[20];
-    uart_receive(debugReceive, 20, NULL, 3000);
-    //nfcChipInit();
+    nfcChipInit();
     nfcSem = Semaphore_create(0, NULL, NULL);
     Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }

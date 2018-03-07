@@ -1083,11 +1083,14 @@ static void SimpleBLEPeripheral_processCharValueChangeEvt(uint8_t paramID)
  */
 static void SimpleBLEPeripheral_performPeriodicTask(void)
 {
+  /*
   uint8_t debugInfo[] = 
   {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0x00, 0x00, 0xFF, 0x03, 0xFD, 0xD4, 0x14, 0x01, 0x17, 0x00};
   uart_send(debugInfo, sizeof(debugInfo), 0);
-  
+  uint8_t ack[100];
+  uart_receive(ack, 14, NULL, 1000);
+  */
   DEBUG_STRING("PeriodTask\r\n");
 #ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
