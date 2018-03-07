@@ -26,15 +26,16 @@ void bleUartCircleBufferPut(uint8_t *buf, uint16_t number)
         emptySize = number;
     }
     
+    uint16_t bufIndex = 0;
     if ((tail + number) > BUFFER_SIZE)
     {
         memcpy(&buffer[tail], buf, BUFFER_SIZE - tail);
         number -= BUFFER_SIZE - tail;
-        buf += BUFFER_SIZE - tail;
-        tail = 0;
+        bufIndex = BUFFER_SIZE - tail;
         emptySize -= BUFFER_SIZE - tail;
+        tail = 0;
     }
-    memcpy(&buffer[tail], buf, number);
+    memcpy(&buffer[tail], buf + bufIndex, number);
     tail += number;
     tail %= BUFFER_SIZE;
     emptySize -= number;
@@ -49,15 +50,16 @@ uint16_t bleUartCircleBufferGet(uint8_t *buf, uint16_t number)
         readNumber = (BUFFER_SIZE - emptySize);
         number = readNumber;
     }
+    uint16_t bufIndex = 0;
     if ((head + readNumber) > BUFFER_SIZE)
     {
         memcpy(buf, &buffer[head], BUFFER_SIZE - head);
         readNumber -= BUFFER_SIZE - head;
-        buf += BUFFER_SIZE - head;
-        head = 0;
+        bufIndex = BUFFER_SIZE - head;
         emptySize += BUFFER_SIZE - head;
+        head = 0;
     }
-    memcpy(buf, &buffer[head], readNumber);
+    memcpy(buf + bufIndex, &buffer[head], readNumber);
     head += readNumber;
     head %= BUFFER_SIZE;
     emptySize += readNumber;

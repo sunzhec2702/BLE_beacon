@@ -9,7 +9,7 @@
 
 static Semaphore_Handle nfcUartSem;
 
-void bleUartRxCallback((uint8_t*)buf, uint16_t count)
+void bleUartRxCallback(uint8_t *buf, uint16_t count)
 {
     bleUartCircleBufferPut(buf, count);
     Semaphore_post(nfcUartSem);
@@ -26,17 +26,21 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
     uint16_t rxBytes = 0;
     do
     {
-        if (Semaphore_pend(nfcUartSem, BIOS_WAIT_FOREVER))
+        if (bleUartCircleBufferGetNumber() > 0)
         {
-            rxBytes  = bleUartCircleBufferGet(pbtRx + rxBytes, szRx);
+            rxBytes  += bleUartCircleBufferGet(pbtRx + rxBytes, szRx);
+        }
+        else if (Semaphore_pend(nfcUartSem, timeout))
+        {
+            rxBytes  += bleUartCircleBufferGet(pbtRx + rxBytes, szRx);
         }
         else
         {
             return NFC_ETIMEOUT;
         }
-    }
-    while(rxBytes < szRx);
+    } while(rxBytes < szRx);
     DEBUG_NFC_BYTE(pbtRx, szRx);
+
     /*
     DEBUG_STRING("Timeout:");
     DEBUG_NUMBER(timeout);
