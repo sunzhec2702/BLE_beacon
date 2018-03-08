@@ -1,13 +1,16 @@
 #include "simple_nfc_target.h"
 #include <nfc/nfc.h>
 
-extern nfc_device *pnd;
-extern nfc_context *context;
+static nfc_device *pnd;
+static nfc_context *context;
 
 #define MAX_FRAME_LEN 264
+#define DEFAULT_TARGET_TIMEOUT  2000
 
-void nfcWorkAsTarget(uint16_t timeout)
+void nfcWorkAsTarget(uint16_t timeout, nfc_device *curPnd, nfc_context *curContext)
 {
+    pnd = curPnd;
+    context = curContext;
     uint8_t abtRx[MAX_FRAME_LEN];
     int szRx;
     uint8_t abtTx[] = "Hello Mars!";
@@ -37,7 +40,7 @@ void nfcWorkAsTarget(uint16_t timeout)
     }
     DEBUG_STRING("NFC device will now act as Target\r\n");
     DEBUG_STRING("Waiting for initiator request...\r\n");
-    if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), 0)) < 0)
+    if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), DEFAULT_TARGET_TIMEOUT)) < 0)
     {
         DEBUG_STRING("nfc_target_init\r\n");
         nfc_close(pnd);
@@ -45,7 +48,7 @@ void nfcWorkAsTarget(uint16_t timeout)
     }
 
     DEBUG_STRING("Initiator request received. Waiting for data...\r\n");
-    if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), 0)) < 0)
+    if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), DEFAULT_TARGET_TIMEOUT)) < 0)
     {
         DEBUG_STRING("nfc_target_receive_bytes\r\n");
         nfc_close(pnd);

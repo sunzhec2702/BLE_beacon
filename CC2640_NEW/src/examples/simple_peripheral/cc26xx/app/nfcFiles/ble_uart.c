@@ -23,6 +23,8 @@ void uart_flush_input(bool wait)
 
 int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout)
 {
+    DEBUG_NFC_NUMBER(timeout);
+    DEBUG_NFC_BYTE("\r\n", 2);
     uint16_t rxBytes = 0;
     do
     {
@@ -30,16 +32,27 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
         {
             rxBytes  += bleUartCircleBufferGet(pbtRx + rxBytes, szRx);
         }
-        else if (Semaphore_pend(nfcUartSem, timeout))
-        {
-            rxBytes  += bleUartCircleBufferGet(pbtRx + rxBytes, szRx);
-        }
         else
         {
-            return NFC_ETIMEOUT;
+            if (timeout <= 0)
+            {
+               Semaphore_pend(nfcUartSem, BIOS_WAIT_FOREVER);
+            }
+            else
+            {
+                if (Semaphore_pend(nfcUartSem, timeout * 100))
+                {
+                    rxBytes  += bleUartCircleBufferGet(pbtRx + rxBytes, szRx);
+                }
+                else
+                {
+                    return NFC_ETIMEOUT;
+                }
+            }
         }
-    } while(rxBytes < szRx);
-    DEBUG_NFC_BYTE(pbtRx, szRx);
+    } while(szRx > rxBytes);
+    //DEBUG_NFC_BYTE(pbtRx, szRx);
+    //DEBUG_NFC_BYTE("AAAA", 4);
 
     /*
     DEBUG_STRING("Timeout:");
@@ -58,7 +71,8 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
 int uart_send(const uint8_t *pbtTx, const uint16_t szTx, int timeout)
 {
     VOID(timeout);
-    DEBUG_NFC_BYTE((uint8_t*)pbtTx, szTx);
+    //DEBUG_NFC_BYTE((uint8_t*)pbtTx, szTx);
+    //DEBUG_NFC_BYTE("0000", 4);
     uartWriteTransportCBMode(pbtTx, szTx);
     /*
     DEBUG_NFC_BYTE((uint8_t*)pbtTx, szTx);

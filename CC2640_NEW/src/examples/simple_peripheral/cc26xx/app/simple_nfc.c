@@ -82,8 +82,8 @@ void nfcChipInit()
         DEBUG_STRING("Unable to init libnfc");
         return;
     }
-    nfc_device* nfcDevice = nfc_open(context, NULL);
-    if (nfcDevice == NULL)
+    pnd = nfc_open(context, NULL);
+    if (pnd == NULL)
     {
         DEBUG_STRING("Cannot open NFC device\r\n");
     }
@@ -99,7 +99,7 @@ static void simpleNFCInit(void)
 #endif // USE_RCOSC
     ble_uart_init();
     nfcChipInit();
-    nfcSem = Semaphore_create(0, NULL, NULL);
+    nfcSem = Semaphore_create(1, NULL, NULL);
     Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }
 
@@ -112,7 +112,7 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
     {
         Semaphore_pend(nfcSem, BIOS_WAIT_FOREVER);
         DEBUG_STRING("Got a semaphore\r\n");
-        nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT);
+        nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT, pnd, context);
         //Util_restartClock(&nfcTasksClock, )        
     }
 }
