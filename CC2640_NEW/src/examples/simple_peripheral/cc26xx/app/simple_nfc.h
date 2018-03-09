@@ -2,5 +2,4 @@
 #define __SIMPLE_NFC_H
 
 void simpleNFCcreateTask(void);
-
 #endif

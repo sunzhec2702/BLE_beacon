@@ -218,6 +218,10 @@ NFC_EXPORT int str_nfc_target(char **buf, const nfc_target *pnt, bool verbose);
  */
 #define NFC_ECHIP			-90
 
+/** @
+ * WHOLE NFC ERROR DEFINE
+ */
+#define NFC_ERROR           -100
 
 #  ifdef __cplusplus
 }

@@ -4,7 +4,8 @@
 static nfc_device *pnd;
 static nfc_context *context;
 #define MAX_FRAME_LEN   264
-void nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curContext)
+
+int nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curContext)
 {
     pnd = curPnd;
     context = curContext;
@@ -16,13 +17,13 @@ void nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCo
     if (context == NULL)
     {
         DEBUG_STRING("context is NULL\r\n");
-        return;
+        return NFC_ERROR;
     }
     if (pnd == NULL)
     {
         DEBUG_STRING("pnd is NULL\r\n");
         nfc_exit(context);
-        return;
+        return NFC_ERROR;
     }
 
     if (nfc_initiator_init(pnd) < 0)
@@ -30,7 +31,7 @@ void nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCo
         DEBUG_STRING("nfc_initiator_init failed\r\n");
         nfc_close(pnd);
         nfc_exit(context);
-        return;
+        return NFC_ERROR;
     }
 
     if (nfc_initiator_select_dep_target(pnd, NDM_PASSIVE, NBR_212, NULL, &nt, 1000) < 0)
@@ -38,7 +39,7 @@ void nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCo
         DEBUG_STRING("nfc_initiator_select_dep_target failed\r\n");
         nfc_close(pnd);
         nfc_exit(context);
-        return;
+        return NFC_ERROR;
     }
     //print_nfc_target(&nt, false);
 
@@ -51,7 +52,7 @@ void nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCo
         DEBUG_STRING("nfc_initiator_transceive_bytes failed\r\n");
         nfc_close(pnd);
         nfc_exit(context);
-        return;
+        return NFC_ERROR;
     }
 
     abtRx[res] = 0;
@@ -64,9 +65,9 @@ void nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCo
         DEBUG_STRING("nfc_initiator_deselect_target failed\r\n");
         nfc_close(pnd);
         nfc_exit(context);
-        return;
+        return NFC_ERROR;
     }
+    return NFC_SUCCESS;
     nfc_close(pnd);
     nfc_exit(context);
-    return;
 }

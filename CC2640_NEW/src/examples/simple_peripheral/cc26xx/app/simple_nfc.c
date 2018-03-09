@@ -19,7 +19,7 @@
 #include "simple_nfc_initiator.h"
 #include "ble_uart.h"
 #include <nfc/nfc.h>
-
+#include "icall_apimsg.h"
 
 // Task configuration
 #define NFC_TASK_PRIORITY 1
@@ -43,6 +43,8 @@ static PIN_State nfcPinStatus;
 static Clock_Struct nfcTasksClock;
 static bool enableNFC = false;
 static Semaphore_Handle nfcSem;
+
+static void scheduleNfcTask(void);
 
 const PIN_Config nfcPinList[] = {
     Board_NFC_ENABLE | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX, // High Active
@@ -112,9 +114,41 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
     {
         Semaphore_pend(nfcSem, BIOS_WAIT_FOREVER);
         DEBUG_STRING("Got a semaphore\r\n");
-        nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT, pnd, context);
-        //Util_restartClock(&nfcTasksClock, )        
+        scheduleNfcTask();
     }
+}
+
+static void scheduleNfcTask()
+{
+    if (enableNFC == false)
+        return;
+
+    uint32_t randomNumber = Util_GetTRNG();
+    if ((randomNumber % 2) == 0)
+    {
+        DEBUG_STRING("Start Target\r\n");
+        if (nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT, pnd, context) == NFC_ERROR)
+        {
+            DEBUG_STRING("Target Error\r\n");
+        }
+        if (enableNFC == true)
+        {
+            Util_restartClock(&nfcTasksClock, 500);
+        }
+    }
+    else
+    {
+        DEBUG_STRING("Start Initiator\r\n");
+        if (nfcWorkAsInitiator(DEFAULT_TASK_TIMEOUT, pnd, context) == NFC_ERROR)
+        {
+            DEBUG_STRING("Initiator Error\r\n");
+        }
+        if (enableNFC == true)
+        {
+            Util_restartClock(&nfcTasksClock, 500);
+        }
+    }
+    return;
 }
 
 void simpleNFCcreateTask(void)
