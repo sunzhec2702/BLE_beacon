@@ -33,6 +33,11 @@ void nfcWorkAsTarget(uint16_t timeout, nfc_device *curPnd, nfc_context *curConte
             },
         },
     };
+    if (context == NULL)
+    {
+        DEBUG_STRING("Unable to init libnfc (malloc)");
+        exit(EXIT_FAILURE);
+    }
     if (pnd == NULL)
     {
         DEBUG_STRING("Unable to open NFC device.\r\n");
