@@ -1091,7 +1091,7 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
   uint8_t ack[100];
   uart_receive(ack, 14, NULL, 1000);
   */
-  DEBUG_STRING("PeriodTask\r\n");
+  //DEBUG_STRING("PeriodTask\r\n");
 #ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
 

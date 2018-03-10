@@ -9,7 +9,7 @@
 static UART_Handle uartHandle;
 
 static uint8_t tRxBuf[128];
-static uint8_t tTxBuf[128];
+//static uint8_t tTxBuf[64];
 
 static bool uartInitFlag = false;
 
@@ -35,8 +35,8 @@ void uartWriteTransportCBMode(const uint8_t *str, uint16_t len)
 {
     if(uartInitFlag == true)
     {
-        memset(tTxBuf, 0, sizeof(tTxBuf));
-        memcpy(tTxBuf, str, len);
+        //memset(tTxBuf, 0, sizeof(tTxBuf));
+        //memcpy(tTxBuf, str, len);
         UART_write(uartHandle, str, len);
     }
 }

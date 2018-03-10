@@ -4,7 +4,7 @@
 static nfc_device *pnd;
 static nfc_context *context;
 
-#define MAX_FRAME_LEN 264
+#define MAX_FRAME_LEN 128
 #define DEFAULT_TARGET_TIMEOUT  2000
 
 int nfcWorkAsTarget(uint16_t timeout, nfc_device *curPnd, nfc_context *curContext)
@@ -46,16 +46,16 @@ int nfcWorkAsTarget(uint16_t timeout, nfc_device *curPnd, nfc_context *curContex
     }
     DEBUG_STRING("NFC device will now act as Target\r\n");
     DEBUG_STRING("Waiting for initiator request...\r\n");
-    if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), DEFAULT_TARGET_TIMEOUT)) < 0)
+    if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), timeout)) < 0)
     {
-        DEBUG_STRING("nfc_target_init\r\n");
+        DEBUG_STRING("nfc_target_init_failed\r\n");
         nfc_close(pnd);
         nfc_exit(context);
         return NFC_ERROR;
     }
 
     DEBUG_STRING("Initiator request received. Waiting for data...\r\n");
-    if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), DEFAULT_TARGET_TIMEOUT)) < 0)
+    if ((szRx = nfc_target_receive_bytes(pnd, abtRx, sizeof(abtRx), timeout)) < 0)
     {
         DEBUG_STRING("nfc_target_receive_bytes\r\n");
         nfc_close(pnd);

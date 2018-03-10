@@ -3334,6 +3334,7 @@ pn53x_get_supported_baud_rate(nfc_device *pnd, const nfc_modulation_type nmt, co
 int
 pn53x_get_information_about(nfc_device *pnd, char **pbuf)
 {
+  /*
   size_t buflen = 2048;
   *pbuf = (char*) ICall_malloc(buflen);
   if (! *pbuf) {
@@ -3486,10 +3487,11 @@ pn53x_get_information_about(nfc_device *pnd, char **pbuf)
     return NFC_EOVFLOW;
   }
   //buflen -= res;
-
+  */
   return NFC_SUCCESS;
 }
 
+//static nfc_target curTarget;
 void *
 pn53x_current_target_new(const struct nfc_device *pnd, const nfc_target *pnt)
 {
@@ -3498,9 +3500,11 @@ pn53x_current_target_new(const struct nfc_device *pnd, const nfc_target *pnt)
   }
   // Keep the current nfc_target for further commands
   if (CHIP_DATA(pnd)->current_target) {
+    //memset(&curTarget, 0, sizeof(nfc_target));
     ICall_free(CHIP_DATA(pnd)->current_target);
   }
   CHIP_DATA(pnd)->current_target = (nfc_target*) ICall_malloc(sizeof(nfc_target));
+  //CHIP_DATA(pnd)->current_target = &curTarget;
   if (!CHIP_DATA(pnd)->current_target) {
     return NULL;
   }

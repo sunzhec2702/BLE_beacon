@@ -13,7 +13,7 @@ static Clock_Struct rxTimeoutClock;
 
 
 //static uint8_t tRxBuf[256];
-static uint8_t tTxBuf[256];
+//static uint8_t tTxBuf[256];
 
 static bool uartInitFlag = false;
 static bool uartRxTimeout = false;
@@ -36,8 +36,8 @@ int uartReadTransportBKMode(uint8_t *buf, uint16_t exceptLen, void *abort_p, int
             Util_restartClock(&rxTimeoutClock, timeout);
         }
     } while ((readByte < exceptLen) && (uartRxTimeout == false));
-    DEBUG_STRING("read bytes: ");
-    DEBUG_NUMBER(readByte);
+    //DEBUG_STRING("read bytes: ");
+    //DEBUG_NUMBER(readByte);
     Util_stopClock(&rxTimeoutClock);
     if (uartRxTimeout == true)
     {
@@ -50,8 +50,8 @@ int uartWriteTransportBKMode(const uint8_t *str, uint16_t len)
 {
     if (uartInitFlag == true)
     {
-        memset(tTxBuf, 0, sizeof(tTxBuf));
-        memcpy(tTxBuf, str, len);
+        //memset(tTxBuf, 0, sizeof(tTxBuf));
+        //memcpy(tTxBuf, str, len);
         UART_write(uartHandle, str, len);
     }
     return 0;

@@ -19,13 +19,13 @@
 #include "simple_nfc_initiator.h"
 #include "ble_uart.h"
 #include <nfc/nfc.h>
-#include "icall_apimsg.h"
+//#include "icall_apimsg.h"
 
 // Task configuration
 #define NFC_TASK_PRIORITY 1
 
 #ifndef NFC_TASK_STACK_SIZE
-#define NFC_TASK_STACK_SIZE 4096
+#define NFC_TASK_STACK_SIZE (3720)
 #endif
 
 #define DEFAULT_TASK_TIMEOUT    2000 //ms
@@ -41,7 +41,7 @@ Char nfcTaskStack[NFC_TASK_STACK_SIZE];
 
 static PIN_State nfcPinStatus;
 static Clock_Struct nfcTasksClock;
-static bool enableNFC = false;
+static bool enableNFC = true;
 static Semaphore_Handle nfcSem;
 
 static void scheduleNfcTask(void);
@@ -123,6 +123,12 @@ static void scheduleNfcTask()
     if (enableNFC == false)
         return;
 
+    if (nfcWorkAsInitiator(0, pnd, context) == NFC_ERROR)
+    {
+        DEBUG_STRING("Target Error\r\n");
+    }
+    return;
+    /*
     uint32_t randomNumber = Util_GetTRNG();
     if ((randomNumber % 2) == 0)
     {
@@ -149,6 +155,7 @@ static void scheduleNfcTask()
         }
     }
     return;
+    */
 }
 
 void simpleNFCcreateTask(void)

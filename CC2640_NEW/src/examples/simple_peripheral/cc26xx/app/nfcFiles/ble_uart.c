@@ -23,8 +23,8 @@ void uart_flush_input(bool wait)
 
 int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout)
 {
-    DEBUG_NFC_NUMBER(timeout);
-    DEBUG_NFC_BYTE("\r\n", 2);
+    DEBUG_NUMBER(timeout);
+    DEBUG_STRING("\r\n");
     uint16_t rxBytes = 0;
     do
     {
@@ -51,8 +51,7 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
             }
         }
     } while(szRx > rxBytes);
-    //DEBUG_NFC_BYTE(pbtRx, szRx);
-    //DEBUG_NFC_BYTE("AAAA", 4);
+    DEBUG_NFC_BYTE(pbtRx, szRx);
 
     /*
     DEBUG_STRING("Timeout:");
@@ -71,7 +70,7 @@ int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout
 int uart_send(const uint8_t *pbtTx, const uint16_t szTx, int timeout)
 {
     VOID(timeout);
-    //DEBUG_NFC_BYTE((uint8_t*)pbtTx, szTx);
+    DEBUG_NFC_BYTE((uint8_t*)pbtTx, szTx);
     //DEBUG_NFC_BYTE("0000", 4);
     uartWriteTransportCBMode(pbtTx, szTx);
     /*
