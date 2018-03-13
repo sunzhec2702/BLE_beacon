@@ -14,9 +14,12 @@ void bleUartCircleBufferInit(void)
 
 void bleUartCircleBufferPut(uint8_t *buf, uint16_t number)
 {
+
     if (number > BUFFER_SIZE)
     {
-        DEBUG_STRING("Input number is larger than Circle Buffer\r\n");
+        DEBUG_STRING("WriteCircleBuffer ");
+        DEBUG_NUMBER(number);
+        DEBUG_STRING("\r\n");
         return;
     }
     if (number > emptySize)
@@ -46,7 +49,7 @@ uint16_t bleUartCircleBufferGet(uint8_t *buf, uint16_t number)
     uint16_t readNumber = number;
     if (readNumber > (BUFFER_SIZE - emptySize))
     {
-        DEBUG_STRING("Input number is larger than Circle Buffer\r\n");
+        DEBUG_STRING("ReadCircleBuffer\r\n");
         readNumber = (BUFFER_SIZE - emptySize);
         number = readNumber;
     }

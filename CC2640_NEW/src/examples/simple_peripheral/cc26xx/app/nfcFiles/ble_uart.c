@@ -23,8 +23,6 @@ void uart_flush_input(bool wait)
 
 int uart_receive(uint8_t *pbtRx, const uint16_t szRx, void *abort_p, int timeout)
 {
-    DEBUG_NUMBER(timeout);
-    DEBUG_STRING("\r\n");
     uint16_t rxBytes = 0;
     do
     {
