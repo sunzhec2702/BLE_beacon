@@ -166,12 +166,11 @@ int main()
   simpleUartEmulatorCreateTask();
 #endif
 
+  SimpleBLEPeripheral_createTask();
+
 #if (ENABLE_NFC == 1)
   simpleNFCcreateTask();
 #endif
-
-  SimpleBLEPeripheral_createTask();
-
   /* enable interrupts and start SYS/BIOS */
   BIOS_start();
 

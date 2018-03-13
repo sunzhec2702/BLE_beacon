@@ -16,11 +16,12 @@
 #include "util.h"
 #include <Board.h>
 
+
 #include "simple_nfc_target.h"
 #include "simple_nfc_initiator.h"
 #include "ble_uart.h"
 #include <nfc/nfc.h>
-//#include "icall_apimsg.h"
+#include "hal_trng_wrapper.h"
 
 // Task configuration
 #define NFC_TASK_PRIORITY 1
@@ -29,7 +30,8 @@
 #define NFC_TASK_STACK_SIZE (3720)
 #endif
 
-#define DEFAULT_TASK_TIMEOUT    2000 //ms
+#define DEFAULT_TARGET_TIMEOUT    4000 //ms
+#define DEFAULT_INITIATOR_TIMEOUT 500 //ms
 
 nfc_device *pnd;
 nfc_context *context;
@@ -50,13 +52,13 @@ const PIN_Config nfcPinList[] = {
     PIN_TERMINATE
     };
 
-static bool scheduleNfcTask()
+bool scheduleNfcTask()
 {
-    uint32_t randomNumber = Util_GetTRNG();
+    uint32_t randomNumber = HalTRNG_GetTRNG();
     if ((randomNumber % 2) == 0)
     {
         DEBUG_STRING("Start Target\r\n");
-        if (nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT, pnd, context) == NFC_ERROR)
+        if (nfcWorkAsTarget(DEFAULT_TARGET_TIMEOUT, pnd, context) == NFC_ERROR)
         {
             DEBUG_STRING("Target Error\r\n");
             return false;
@@ -65,7 +67,7 @@ static bool scheduleNfcTask()
     else
     {
         DEBUG_STRING("Start Initiator\r\n");
-        if (nfcWorkAsInitiator(DEFAULT_TASK_TIMEOUT, pnd, context) == NFC_ERROR)
+        if (nfcWorkAsInitiator(DEFAULT_INITIATOR_TIMEOUT, pnd, context) == NFC_ERROR)
         {
             DEBUG_STRING("Initiator Error\r\n");
             return false;
@@ -99,8 +101,13 @@ void controlNfcTasks(bool enable)
     }
 }
 
-void nfcChipInit()
+bool nfcChipInit(bool lastRes)
 {
+    if (lastRes == true)
+    {
+        DEBUG_STRING("LastRes is True\r\n");
+        return true;
+    }
     if (pnd != NULL)
     {
         DEBUG_STRING("pnd not NULL\r\n");
@@ -115,49 +122,58 @@ void nfcChipInit()
     if (context == NULL)
     {
         DEBUG_STRING("Unable to init libnfc");
+        return false;
     }
     pnd = nfc_open(context, NULL);
     if (pnd == NULL)
     {
         DEBUG_STRING("Cannot open NFC device\r\n");
+        return false;
     }
-    if (context == NULL || pnd == NULL)
+    if (pnd != NULL && context != NULL)
     {
-        DEBUG_STRING("Chip Init failed\r\n");
+        DEBUG_STRING("ChipInitSuccess\r\n");
     }
+    return true;
 }
 
 static void simpleNFCInit(void)
 {
     //ICall_registerApp(&selfEntity, &sem);
-    //simple_beacon_drivers_init();
     PIN_open(&nfcPinStatus, nfcPinList);
 #ifdef USE_RCOSC
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
     ble_uart_init();
-    nfcSem = Semaphore_create(0, NULL, NULL);
+    nfcSem = Semaphore_create(1, NULL, NULL);
     Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }
 
 static void simpleNFCTaskFxn(UArg a0, UArg a1)
 {
+    bool lastRes = false;
+    uint32_t restartTime = 0;
     // Initialize application
     simpleNFCInit();
     // Application main loop
     for (;;)
     {
-        nfcChipInit();
         Semaphore_pend(nfcSem, BIOS_WAIT_FOREVER);
         DEBUG_STRING("Got a semaphore\r\n");
-        if (context == NULL || pnd == NULL)
-        if (scheduleNfcTask() == true)
+        restartTime = (HalTRNG_GetTRNG() % 2000);
+        if (nfcChipInit(lastRes) == false)
+        {
+            Util_restartClock(&nfcTasksClock, 100);
+        }
+        lastRes = scheduleNfcTask();
+        if (lastRes == true)
         {
             ledBlinkWithParameters(LED_INDEX_0, 100, 50 ,2);
+            Util_restartClock(&nfcTasksClock, restartTime);
         }
         else
         {
-            Util_rescheduleClock(&nfcTasksClock, 1500);
+            Util_restartClock(&nfcTasksClock, restartTime);
         }
     }
 }

@@ -44,7 +44,6 @@ int nfcWorkAsTarget(uint16_t timeout, nfc_device *curPnd, nfc_context *curContex
         nfc_exit(context);
         return NFC_ERROR;
     }
-    DEBUG_STRING("NFC device will now act as Target\r\n");
     DEBUG_STRING("Waiting for initiator request...\r\n");
     if ((szRx = nfc_target_init(pnd, &nt, abtRx, sizeof(abtRx), timeout)) < 0)
     {
@@ -69,7 +68,7 @@ int nfcWorkAsTarget(uint16_t timeout, nfc_device *curPnd, nfc_context *curContex
     DEBUG_STRING("Sending: ");
     DEBUG_STRING(abtTx);
     DEBUG_STRING("\r\n");
-    if (nfc_target_send_bytes(pnd, abtTx, sizeof(abtTx), 0) < 0)
+    if (nfc_target_send_bytes(pnd, abtTx, sizeof(abtTx), timeout) < 0)
     {
         nfc_perror(pnd, "nfc_target_send_bytes");
         nfc_close(pnd);

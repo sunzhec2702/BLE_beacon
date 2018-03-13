@@ -47,7 +47,7 @@ int nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCon
     DEBUG_STRING(abtTx);
     DEBUG_STRING("\r\n");
     int res;
-    if ((res = nfc_initiator_transceive_bytes(pnd, abtTx, sizeof(abtTx), abtRx, sizeof(abtRx), 0)) < 0)
+    if ((res = nfc_initiator_transceive_bytes(pnd, abtTx, sizeof(abtTx), abtRx, sizeof(abtRx), timeout)) < 0)
     {
         DEBUG_STRING("nfc_initiator_transceive_bytes failed\r\n");
         nfc_close(pnd);
