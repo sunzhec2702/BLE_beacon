@@ -78,16 +78,29 @@ void controlNfcTasks(bool enable)
 
 void nfcChipInit()
 {
+    if (pnd != NULL)
+    {
+        DEBUG_STRING("ChipInit: pnd not NULL\r\n");
+        nfc_close(pnd);
+    }
+    if (context != NULL)
+    {
+        DEBUG_STRING("ChipInit: context not NULL\r\n");
+        nfc_exit(context);
+    }
     nfc_init(&context);
     if (context == NULL)
     {
         DEBUG_STRING("Unable to init libnfc");
-        return;
     }
     pnd = nfc_open(context, NULL);
     if (pnd == NULL)
     {
         DEBUG_STRING("Cannot open NFC device\r\n");
+    }
+    if (context == NULL || pnd == NULL)
+    {
+        DEBUG_STRING("Chip Init failed\r\n");
     }
 }
 
@@ -122,13 +135,6 @@ static void scheduleNfcTask()
 {
     if (enableNFC == false)
         return;
-
-    if (nfcWorkAsInitiator(0, pnd, context) == NFC_ERROR)
-    {
-        DEBUG_STRING("Target Error\r\n");
-    }
-    return;
-    /*
     uint32_t randomNumber = Util_GetTRNG();
     if ((randomNumber % 2) == 0)
     {
@@ -136,10 +142,11 @@ static void scheduleNfcTask()
         if (nfcWorkAsTarget(DEFAULT_TASK_TIMEOUT, pnd, context) == NFC_ERROR)
         {
             DEBUG_STRING("Target Error\r\n");
+            nfcChipInit();
         }
-        if (enableNFC == true)
+        else
         {
-            Util_restartClock(&nfcTasksClock, 500);
+            ledBlinkWithParameters(LED_INDEX_0, 100, 50, 2);
         }
     }
     else
@@ -148,14 +155,18 @@ static void scheduleNfcTask()
         if (nfcWorkAsInitiator(DEFAULT_TASK_TIMEOUT, pnd, context) == NFC_ERROR)
         {
             DEBUG_STRING("Initiator Error\r\n");
+            nfcChipInit();
         }
-        if (enableNFC == true)
+        else
         {
-            Util_restartClock(&nfcTasksClock, 500);
+            ledBlinkWithParameters(LED_INDEX_0, 100, 50, 2);
         }
     }
+    if (enableNFC == true)
+    {
+        Util_restartClock(&nfcTasksClock, 500);
+    }
     return;
-    */
 }
 
 void simpleNFCcreateTask(void)

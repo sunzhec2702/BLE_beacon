@@ -156,8 +156,8 @@ nfc_exit(nfc_context *context)
     nfc_drivers = pndl->next;
     ICall_free(pndl);
   }
-
   nfc_context_free(context);
+  context = NULL;
 }
 
 /** @ingroup dev
@@ -199,6 +199,7 @@ nfc_close(nfc_device *pnd)
     // Close, clean up and release the device
     pnd->driver->close(pnd);
   }
+  pnd = NULL;
 }
 
 /** @ingroup dev
@@ -515,9 +516,9 @@ nfc_initiator_list_passive_targets(nfc_device *pnd,
  * @param pnd \a nfc_device struct pointer that represent currently used device
  * @param pnmModulations desired modulations
  * @param szModulations size of \a pnmModulations
- * @param uiPollNr specifies the number of polling (0x01 ï¿½? 0xFE: 1 up to 254 polling, 0xFF: Endless polling)
+ * @param uiPollNr specifies the number of polling (0x01 ï¿?? 0xFE: 1 up to 254 polling, 0xFF: Endless polling)
  * @note one polling is a polling for each desired target type
- * @param uiPeriod indicates the polling period in units of 150 ms (0x01 ï¿½? 0x0F: 150ms ï¿½? 2.25s)
+ * @param uiPeriod indicates the polling period in units of 150 ms (0x01 ï¿?? 0x0F: 150ms ï¿?? 2.25s)
  * @note e.g. if uiPeriod=10, it will poll each desired target type during 1.5s
  * @param[out] pnt pointer on \a nfc_target (over)writable struct
  */

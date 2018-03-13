@@ -78,6 +78,8 @@ int nfcWorkAsTarget(uint16_t timeout, nfc_device *curPnd, nfc_context *curContex
     }
     DEBUG_STRING("Data sent.\r\n");
     return NFC_SUCCESS;
+    /*
     nfc_close(pnd);
     nfc_exit(context);
+    */
 }

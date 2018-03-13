@@ -62,12 +62,17 @@ int nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCon
 
     if (nfc_initiator_deselect_target(pnd) < 0)
     {
-        DEBUG_STRING("nfc_initiator_deselect_target failed\r\n");
+        DEBUG_STRING("nfc_initiator_deselect_target failed, but it's ok\r\n");
+        return NFC_SUCCESS;
+        /*
         nfc_close(pnd);
         nfc_exit(context);
         return NFC_ERROR;
+        */
     }
     return NFC_SUCCESS;
+    /*
     nfc_close(pnd);
     nfc_exit(context);
+    */
 }
