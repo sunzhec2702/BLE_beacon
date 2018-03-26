@@ -55,7 +55,8 @@ const PIN_Config nfcPinList[] = {
 bool scheduleNfcTask()
 {
     uint32_t randomNumber = HalTRNG_GetTRNG();
-    if ((randomNumber % 2) == 0)
+    //if ((randomNumber % 2) == 0)
+    if (0)
     {
         DEBUG_STRING("Start Target\r\n");
         if (nfcWorkAsTarget(DEFAULT_TARGET_TIMEOUT, pnd, context) == NFC_ERROR)
@@ -110,18 +111,18 @@ bool nfcChipInit(bool lastRes)
     }
     if (pnd != NULL)
     {
-        DEBUG_STRING("pnd not NULL\r\n");
+        //DEBUG_STRING("pnd not NULL\r\n");
         nfc_close(pnd);
     }
     if (context != NULL)
     {
-        DEBUG_STRING("context not NULL\r\n");
+        //DEBUG_STRING("context not NULL\r\n");
         nfc_exit(context);
     }
     nfc_init(&context);
     if (context == NULL)
     {
-        DEBUG_STRING("Unable to init libnfc");
+        //DEBUG_STRING("Unable to init libnfc");
         return false;
     }
     pnd = nfc_open(context, NULL);
@@ -132,6 +133,7 @@ bool nfcChipInit(bool lastRes)
     }
     if (pnd != NULL && context != NULL)
     {
+        ledToggle(LED_INDEX_0);
         DEBUG_STRING("ChipInitSuccess\r\n");
     }
     return true;
@@ -145,7 +147,7 @@ static void simpleNFCInit(void)
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
     ble_uart_init();
-    nfcSem = Semaphore_create(1, NULL, NULL);
+    nfcSem = Semaphore_create(0, NULL, NULL);
     Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }
 
@@ -155,6 +157,7 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
     uint32_t restartTime = 0;
     // Initialize application
     simpleNFCInit();
+    controlNFC(true);
     // Application main loop
     for (;;)
     {
@@ -163,17 +166,18 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
         restartTime = (HalTRNG_GetTRNG() % 2000);
         if (nfcChipInit(lastRes) == false)
         {
-            Util_restartClock(&nfcTasksClock, 100);
+            //Util_restartClock(&nfcTasksClock, 100);
         }
         lastRes = scheduleNfcTask();
         if (lastRes == true)
         {
             ledBlinkWithParameters(LED_INDEX_0, 100, 50 ,2);
-            Util_restartClock(&nfcTasksClock, restartTime);
+            //Util_restartClock(&nfcTasksClock, restartTime);
         }
         else
         {
-            Util_restartClock(&nfcTasksClock, restartTime);
+            //controlNFC(false);
+            //Util_restartClock(&nfcTasksClock, restartTime);
         }
     }
 }
