@@ -547,7 +547,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     if (++led_toggle_count <= led_toggle_cnt_target)
     {
       osal_pwrmgr_device(PWRMGR_ALWAYS_ON); // Make sure the LED can on correctly.
-      HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
+      HalLedSet(HAL_LED_TARGET_TOGGLE, HAL_LED_MODE_TOGGLE);
       if (led_toggle_status == FALSE)
       {
         led_toggle_status = TRUE;
@@ -561,9 +561,9 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     }
     else
     {
-      led_toggle_status = FALSE;
-      HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
-      osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
+      //led_toggle_status = FALSE;
+      //HalLedSet(HAL_LED_TARGET_TOGGLE, HAL_LED_MODE_OFF);
+      //osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
       led_toggle_clean_param();
       if (low_power_state == TRUE)
       {

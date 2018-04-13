@@ -11,7 +11,7 @@ extern "C"
 #define DEVELOP_BOARD 0
 #define PRODUCT_BOARD 1
 
-#define TARGET_BOARD PRODUCT_BOARD
+#define TARGET_BOARD DEVELOP_BOARD
 
 #define POWER_OFF_SUPPORT TRUE
 //#define DEBUG_BOARD 1
@@ -97,7 +97,7 @@ typedef enum
 #endif
 
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
-#define BUTTON_LED_TOGGLE_COUNT                         2
+#define BUTTON_LED_TOGGLE_COUNT                         1
 
 #define SLEEP_MS                                        300  //˯��ʱ�䣬 ���ڼ����¼�
 
