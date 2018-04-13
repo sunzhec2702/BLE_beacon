@@ -11,7 +11,7 @@ extern "C"
 #define DEVELOP_BOARD 0
 #define PRODUCT_BOARD 1
 
-#define TARGET_BOARD PRODUCT_BOARD
+#define TARGET_BOARD DEVELOP_BOARD
 
 #define POWER_OFF_SUPPORT TRUE
 //#define DEBUG_BOARD 1
@@ -97,14 +97,14 @@ typedef enum
 #endif
 
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
-#define BUTTON_LED_TOGGLE_COUNT                         2
+#define BUTTON_LED_TOGGLE_COUNT                         1
 
 #define SLEEP_MS                                        300  //˯��ʱ�䣬 ���ڼ����¼�
 
-#define PERIPHERAL_WAKEUP_LED_TOGGLE_CNT                4
-#define PERIPHERAL_START_LED_TOGGLE_CNT                 6
-#define PERIPHERAL_START_LED_TOGGLE_PERIOD_ON               50
-#define PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF              150
+#define PERIPHERAL_WAKEUP_LED_TOGGLE_CNT                2
+#define PERIPHERAL_START_LED_TOGGLE_CNT                 3
+#define PERIPHERAL_START_LED_TOGGLE_PERIOD_ON               500
+#define PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF              PERIPHERAL_START_LED_TOGGLE_PERIOD_ON
 #define PERIPHERAL_KEY_CALCULATE_PERIOD                 250 // 250ms
 
 #define PERIPHERAL_KEY_LONG_PRESS_CALC_PERIOD           100 // 100ms

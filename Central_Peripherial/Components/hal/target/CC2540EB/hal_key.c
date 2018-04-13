@@ -26,7 +26,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED ï¿½AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -110,11 +110,18 @@
 #define HAL_KEY_CPU_PORT_0_IF P0IF
 #define HAL_KEY_CPU_PORT_2_IF P2IF
 
+#if (TARGET_BOARD == DEVLOP_BOARD)
 /* SW_6 is at P0.1 */
 #define HAL_KEY_SW_6_PORT   P0
 #define HAL_KEY_SW_6_BIT    BV(1)
 #define HAL_KEY_SW_6_SEL    P0SEL
 #define HAL_KEY_SW_6_DIR    P0DIR
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+#define HAL_KEY_SW_6_PORT   P0
+#define HAL_KEY_SW_6_BIT    BV(7)
+#define HAL_KEY_SW_6_SEL    P0SEL
+#define HAL_KEY_SW_6_DIR    P0DIR
+#endif
 
 #if (TARGET_BOARD == DEVLOP_BOARD)
 /* SW_7(uart_rx) is at P0.2 */
@@ -128,12 +135,22 @@
 #define HAL_KEY_SW_6_EDGEBIT  BV(0)
 #define HAL_KEY_SW_6_EDGE     HAL_KEY_FALLING_EDGE
 
+#if (TARGET_BOARD == DEVELOP_BOARD)
 /* SW_6 interrupts */
 #define HAL_KEY_SW_6_IEN      IEN1  /* CPU interrupt mask register */
 #define HAL_KEY_SW_6_IENBIT   BV(5) /* Mask bit for all of Port_0 */
 #define HAL_KEY_SW_6_ICTL     P0IEN /* Port Interrupt Control register */
 #define HAL_KEY_SW_6_ICTLBIT  BV(1) /* P0IEN - P0.1 enable/disable bit */
 #define HAL_KEY_SW_6_PXIFG    P0IFG /* Interrupt flag at source */
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+/* SW_6 interrupts */
+#define HAL_KEY_SW_6_IEN      IEN1  /* CPU interrupt mask register */
+#define HAL_KEY_SW_6_IENBIT   BV(5) /* Mask bit for all of Port_0 */
+#define HAL_KEY_SW_6_ICTL     P0IEN /* Port Interrupt Control register */
+#define HAL_KEY_SW_6_ICTLBIT  BV(5) /* P0IEN - P0.1 enable/disable bit */
+#define HAL_KEY_SW_6_PXIFG    P0IFG /* Interrupt flag at source */
+#endif
+
 
 #if (TARGET_BOARD == DEVELOP_BOARD)
 /* SW_7 interrupts */
@@ -190,21 +207,21 @@ uint8 halGetJoyKeyInput(void);
  **************************************************************************************************/
 
 #if defined ( AMOMCU_UART_RX_MODE)
-bool b_amomcu_uart_rx_mode = false;       // ´®¿Ú½ÓÊÕÄ£Ê½»òÕßgpioÖÐ¶ÏÄ£Ê½
+bool b_amomcu_uart_rx_mode = false;       // ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½Ä£Ê½ï¿½ï¿½ï¿½ï¿½gpioï¿½Ð¶ï¿½Ä£Ê½
 
-//ÉèÖÃp02µÄ¹¦ÄÜ£¬1Îªuart½Å£¬ 0ÎªÊäÈëÖÐ¶Ï½Å
+//ï¿½ï¿½ï¿½ï¿½p02ï¿½Ä¹ï¿½ï¿½Ü£ï¿½1Îªuartï¿½Å£ï¿½ 0Îªï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï½ï¿½
 void HalKey_Set_P02_for_UartRX_or_GPIO(bool flag)
 {
     if(flag)
     {
-        P0SEL |= 0x04; // Configure Port 0.2 as uart rx¹¦ÄÜ½Å
-        HAL_KEY_SW_7_ICTL &= ~HAL_KEY_SW_7_ICTLBIT;      // p0.2¹Ü½ÅÖÐ¶ÏÆÁ±Î
+        P0SEL |= 0x04; // Configure Port 0.2 as uart rxï¿½ï¿½ï¿½Ü½ï¿½
+        HAL_KEY_SW_7_ICTL &= ~HAL_KEY_SW_7_ICTLBIT;      // p0.2ï¿½Ü½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½
         b_amomcu_uart_rx_mode = true; 
     }
     else
     {
         P0SEL &= ~0x04; // Configure Port 0 as GPIO
-        HAL_KEY_SW_7_ICTL |= HAL_KEY_SW_7_ICTLBIT;      // p0.2¹Ü½ÅÖÐ¶ÏÊ¹ÄÜ
+        HAL_KEY_SW_7_ICTL |= HAL_KEY_SW_7_ICTLBIT;      // p0.2ï¿½Ü½ï¿½ï¿½Ð¶ï¿½Ê¹ï¿½ï¿½
         b_amomcu_uart_rx_mode = false; 
     }
 }
@@ -229,6 +246,7 @@ void HalKeyInit( void )
   HAL_KEY_SW_7_DIR &= ~(HAL_KEY_SW_7_BIT);    /* Set pin direction to Input */
   HAL_KEY_JOY_MOVE_SEL &= ~(HAL_KEY_JOY_MOVE_BIT); /* Set pin function to GPIO */
   HAL_KEY_JOY_MOVE_DIR &= ~(HAL_KEY_JOY_MOVE_BIT); /* Set pin direction to Input */
+  
 #endif
   P2INP |= PUSH2_BV;  /* Configure GPIO tri-state. */
 
@@ -281,9 +299,9 @@ void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
     /* Rising/Falling edge configuratinn */
     HAL_KEY_JOY_MOVE_ICTL &= ~(HAL_KEY_JOY_MOVE_EDGEBIT);    /* Clear the edge bit */
     /* For falling edge, the bit must be set. */
-  #if (HAL_KEY_JOY_MOVE_EDGE == HAL_KEY_FALLING_EDGE)
-    HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_EDGEBIT;
-  #endif
+      #if (HAL_KEY_JOY_MOVE_EDGE == HAL_KEY_FALLING_EDGE)
+        HAL_KEY_JOY_MOVE_ICTL |= HAL_KEY_JOY_MOVE_EDGEBIT;
+      #endif
 
 
 
@@ -447,13 +465,13 @@ uint8 halGetJoyKeyInput(void)
     {
        ksave0 |= HAL_KEY_UP;
     }
-    else if ((adc >= 74) && (adc <= 88))//Ô­°æ
+    else if ((adc >= 74) && (adc <= 88))//Ô­ï¿½ï¿½
     //else if ((adc >= 78) && (adc <= 88))
     {
       ksave0 |= HAL_KEY_RIGHT;
     }
     else if ((adc >= 60) && (adc <= 73))
-    //else if ((adc >= 60) && (adc <= 78))  // left¾­³£ÔÚ 75    
+    //else if ((adc >= 60) && (adc <= 78))  // leftï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 75    
     {
       ksave0 |= HAL_KEY_LEFT;
     }

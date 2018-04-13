@@ -181,7 +181,7 @@ static uint8 advertData_iBeacon[] =
 };
 
 // LED related.
-static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
+//static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
 static uint8 led_toggle_status = FALSE;
 static uint8 led_toggle_count = 0;
 static uint8 led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
@@ -478,6 +478,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_PERIODIC_BUTTON_LED_EVT)
   {
+    /*
     // Restart timer
     if (key_led_count > 0)
     {
@@ -489,7 +490,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     {
       key_led_count = BUTTON_LED_TOGGLE_COUNT;
     }
-
+    */
     return (events ^ SBP_PERIODIC_BUTTON_LED_EVT);
   }
 
@@ -547,22 +548,14 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     if (++led_toggle_count <= led_toggle_cnt_target)
     {
       osal_pwrmgr_device(PWRMGR_ALWAYS_ON); // Make sure the LED can on correctly.
-      HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
-      if (led_toggle_status == FALSE)
-      {
-        led_toggle_status = TRUE;
-        osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_on);
-      }
-      else if (led_toggle_status == TRUE)
-      {
-        led_toggle_status = FALSE;
-        osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_off);
-      }
+      HalLedSet(HAL_LED_TARGET, HAL_LED_MODE_TOGGLE);
+      led_toggle_status = TRUE;
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_on);
     }
     else
     {
       led_toggle_status = FALSE;
-      HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
+      //HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
       osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
       led_toggle_clean_param();
       if (low_power_state == TRUE)
@@ -659,7 +652,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
         g_long_press_flag = TRUE;
         sleep_toggle_cnt = 3;
         key_long_press_cnt = 0;
-        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, sleep_toggle_cnt << 1, 0);
+        //led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, sleep_toggle_cnt, 0);
       }
       else
       {
@@ -849,8 +842,10 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     }
     break;
   case SBP_PERIODIC_BUTTON_LED_EVT:
+    /*
     HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
     key_led_count--;
+    */
     break;
   default:
     break;

@@ -27,7 +27,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED ï¿½AS IS? WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -96,7 +96,7 @@ extern "C"
 #if (TARGET_BOARD == DEVELOP_BOARD)
   #define HAL_NUM_LEDS                 3
 #elif (TARGET_BOARD == PRODUCT_BOARD)
-  #define HAL_NUM_LEDS                 1
+  #define HAL_NUM_LEDS                 2
 #else
   #error Unknown Board Indentifier
 #endif
@@ -105,20 +105,20 @@ extern "C"
 
 #if (TARGET_BOARD == DEVELOP_BOARD)
 /* 1 - Green */
-#define LED1_BV                        BV(0)
-#define LED1_SBIT                      P1_0
+#define LED1_BV                        BV(1)
+#define LED1_SBIT                      P1_1
 #define LED1_DDR                       P1DIR
 #define LED1_POLARITY                  ACTIVE_HIGH
 
-/* 2 - Red */
-#define LED2_BV                      BV(1)
-#define LED2_SBIT                    P1_1
+/* 2 - Yellow */
+#define LED2_BV                      BV(4)
+#define LED2_SBIT                    P1_4
 #define LED2_DDR                     P1DIR
 #define LED2_POLARITY                ACTIVE_HIGH
 
-/* 3 - Yellow */
-#define LED3_BV                      BV(4)
-#define LED3_SBIT                    P1_4
+/* 3 - Red */
+#define LED3_BV                      BV(0)
+#define LED3_SBIT                    P1_0
 #define LED3_DDR                     P1DIR
 #define LED3_POLARITY                ACTIVE_HIGH
 
@@ -127,6 +127,11 @@ extern "C"
 #define LED1_SBIT                      P1_4
 #define LED1_DDR                       P1DIR
 #define LED1_POLARITY                  ACTIVE_HIGH
+
+#define LED2_BV                        BV(5)
+#define LED2_SBIT                      P1_5
+#define LED2_DDR                       P1DIR
+#define LED2_POLARITY                  ACTIVE_LOW
 #endif
 
 /* Push Button Configuration */
