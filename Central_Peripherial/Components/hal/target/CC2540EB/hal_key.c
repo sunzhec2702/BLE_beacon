@@ -132,7 +132,7 @@
 #endif
 
 /* edge interrupt */
-#define HAL_KEY_SW_6_EDGEBIT  BV(0)
+#define HAL_KEY_SW_6_EDGEBIT  BV(0) //PICTL[0] for all PORT0 GPIOs.
 #define HAL_KEY_SW_6_EDGE     HAL_KEY_FALLING_EDGE
 
 #if (TARGET_BOARD == DEVELOP_BOARD)
@@ -147,7 +147,7 @@
 #define HAL_KEY_SW_6_IEN      IEN1  /* CPU interrupt mask register */
 #define HAL_KEY_SW_6_IENBIT   BV(5) /* Mask bit for all of Port_0 */
 #define HAL_KEY_SW_6_ICTL     P0IEN /* Port Interrupt Control register */
-#define HAL_KEY_SW_6_ICTLBIT  BV(5) /* P0IEN - P0.1 enable/disable bit */
+#define HAL_KEY_SW_6_ICTLBIT  BV(7) /* P0IEN - P0.1 enable/disable bit */
 #define HAL_KEY_SW_6_PXIFG    P0IFG /* Interrupt flag at source */
 #endif
 

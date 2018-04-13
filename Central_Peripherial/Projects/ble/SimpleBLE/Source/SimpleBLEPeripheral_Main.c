@@ -84,8 +84,7 @@ int main(void)
   InitBoard(OB_READY);
 
 #if defined(POWER_SAVING)
-  //    osal_pwrmgr_device( PWRMGR_BATTERY );
-  osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
+  osal_pwrmgr_device( PWRMGR_BATTERY );
 #endif
 
   /* Start OSAL */

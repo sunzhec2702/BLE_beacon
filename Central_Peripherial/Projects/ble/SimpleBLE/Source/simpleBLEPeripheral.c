@@ -63,16 +63,16 @@
 #define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_GENERAL
 
 // Minimum connection interval (units of 1.25ms, 80=100ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ���Ӽ�������ݷ������йأ� ���Ӽ��Խ�̣� ��λʱ���ھ��ܷ���Խ�������
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL 6 //80   ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
 
 // Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ���Ӽ�������ݷ������йأ� ���Ӽ��Խ�̣� ��λʱ���ھ��ܷ���Խ�������
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL 6 //800   ���Ӽ�������ݷ������йأ�? ���Ӽ��Խ�̣�? ��λʱ���ھ��ܷ���Խ�������?
 
 // Slave latency to use if automatic parameter update request is enabled
 #define DEFAULT_DESIRED_SLAVE_LATENCY 0
 
 // Supervision timeout value (units of 10ms, 1000=10s) if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -����ԭ��Ͽ����Ӻ󣬳�ʱ�����¹㲥��ʱ��:  100 = 1s
+#define DEFAULT_DESIRED_CONN_TIMEOUT 100 //1000  -����ԭ��Ͽ����Ӻ�?��ʱ�����¹㲥��ʱ��:  100 = 1s
 
 // Whether to enable automatic parameter update request when a connection is formed
 #define DEFAULT_ENABLE_UPDATE_REQUEST TRUE
@@ -224,8 +224,8 @@ static void advertise_control(bool enable);
 
 //#if defined( BLE_BOND_PAIR )
 typedef enum {
-  BOND_PAIR_STATUS_PAIRING, //δ���
-  BOND_PAIR_STATUS_PAIRED,  //�����
+  BOND_PAIR_STATUS_PAIRING, //δ���?
+  BOND_PAIR_STATUS_PAIRED,  //�����?
 } BOND_PAIR_STATUS;
 
 void ProcessPasscodeCB(uint8 *deviceAddr, uint16 connectionHandle, uint8 uiInputs, uint8 uiOutputs);
@@ -303,7 +303,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
 
   {
     // ����rssi ������������
-    uint16 rssi_read_rate_1ms = 500; //һ�����2��
+    uint16 rssi_read_rate_1ms = 500; //һ�����?2��
     GAPRole_SetParameter(GAPROLE_RSSI_READ_RATE, sizeof(uint16), &rssi_read_rate_1ms);
   }
 
@@ -322,12 +322,12 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
     uint32 passkey = 0; // passkey "000000"
     uint8 pairMode = GAPBOND_PAIRING_MODE_WAIT_FOR_REQ;
     uint8 mitm = TRUE;
-    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //��ʾ���룬 �Ա�����������Ե�����
+    uint8 ioCap = GAPBOND_IO_CAP_DISPLAY_ONLY; //��ʾ���룬 �Ա�����������Ե�����?
 
     /*
-    bonding���ǰ������Ϣ��¼����, �´ξͲ��������. ��bonding�´ξͻ������.    
-    �������Ǵӻ������ bonding = FALSE �ĺ�����ǣ� ���豸ÿ�����Ӷ�������������
-    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ�������룬 ����Ͽ��󶼲���Ҫ�ٴ��������뼴������
+    bonding���ǰ�������?��¼����, �´ξͲ��������?. ��bonding�´ξͻ������?.    
+    �������Ǵӻ������? bonding = FALSE �ĺ�����ǣ�? ���豸ÿ�����Ӷ�������������
+    ����  bonding = TRUE �� ���豸ֻ���һ������ʱ��������? ����Ͽ��󶼲����?�ٴ��������뼴������
     ---------------amomcu.com-------------------------    
     */
     uint8 bonding = FALSE;
@@ -368,7 +368,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // VOID SimpleProfile_RegisterAppCBs(&simpleBLEPeripheral_SimpleProfileCBs);
 
   // ��Ҫ�رյ�CLK�Զ���Ƶ���ڳ�ʼ���м���HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_DISABLE_CLK_DIVIDE_ON_HALT )?  // �������ᵼ��Ƶ���Զ��л���DMA�����ܵ�Ӱ�죬С��Χ������
-  // ��������رգ� ����뽵�͹��ģ� ���Ӧ��Ҫ����ģ� ����ì����
+  // ��������رգ�? ����뽵�͹��ģ�? ���Ӧ���?����ģ�? ����ì����
   HCI_EXT_ClkDivOnHaltCmd(HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT);
   //HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT );
 
@@ -548,14 +548,17 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     if (++led_toggle_count <= led_toggle_cnt_target)
     {
       osal_pwrmgr_device(PWRMGR_ALWAYS_ON); // Make sure the LED can on correctly.
+      HalLedSet(HAL_LED_2, HAL_LED_MODE_ON);
+      simpleBLE_Delay_1ms(PERIPHERAL_LED_PREPARE_PERIOD_KEEP);
       HalLedSet(HAL_LED_TARGET, HAL_LED_MODE_TOGGLE);
-      led_toggle_status = TRUE;
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_on);
+      simpleBLE_Delay_1ms(PERIPHERAL_LED_TOGGLE_PERIOD_KEEP);
+      HalLedSet(HAL_LED_TARGET, HAL_LED_MODE_OFF);
+      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, 0);
     }
     else
     {
-      led_toggle_status = FALSE;
-      //HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
+      //led_toggle_status = FALSE;
+      HalLedSet(HAL_LED_TARGET, HAL_LED_MODE_OFF);
       osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
       led_toggle_clean_param();
       if (low_power_state == TRUE)
@@ -682,8 +685,10 @@ static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_
   osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
   led_toggle_status = FALSE;
   led_toggling = TRUE;
-  led_toggle_period_on = toggle_period_on;
-  led_toggle_period_off = toggle_period_off;
+  //led_toggle_period_on = toggle_period_on;
+  //led_toggle_period_off = toggle_period_off;
+  (void)toggle_period_on;
+  (void)toggle_period_off;
   led_toggle_count = 0;
   led_toggle_cnt_target = toggle_target_cnt;
   osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, delay);
@@ -694,8 +699,8 @@ static uint8 led_toggle_clean_param()
   if (led_toggling == FALSE)
     return FALSE;
   osal_pwrmgr_device(PWRMGR_BATTERY);
-  led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
-  led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
+  //led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
+  //led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
   led_toggle_count = 0;
   led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
   led_toggling = FALSE;
