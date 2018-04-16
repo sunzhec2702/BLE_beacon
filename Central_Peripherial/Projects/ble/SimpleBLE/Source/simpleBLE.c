@@ -27,17 +27,17 @@
 #include "math.h"
 
 SYS_CONFIG sys_config;
-bool g_sleepFlag = FALSE;    //Ë¯Ãß±êÖ¾
-uint8 uart_sleep_count = 0; // Ë¯Ãß¼ÆÊýÆ÷
-bool g_rssi_flag = false; //ÊÇ·ñ¿ªÆô²â¾à
-extern gaprole_States_t gapProfileState; // ´Ó»úÁ¬½Ó×´Ì¬
+bool g_sleepFlag = TRUE;    //Ë¯ï¿½ß±ï¿½Ö¾
+uint8 uart_sleep_count = 0; // Ë¯ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½
+bool g_rssi_flag = false; //ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
+extern gaprole_States_t gapProfileState; // ï¿½Ó»ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
 // Connection handle
 extern uint16 gapConnHandle;
 BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd = BLE_CENTRAL_CONNECT_CMD_NULL;
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events);
 
 
-// ¸Ãº¯ÊýÑÓÊ±Ê±¼äÎª1ms£¬ ÓÃÊ¾²¨Æ÷²âÁ¿¹ý£¬ ÉÔÓÐÎó²î£¬ µ«Îó²îºÜÐ¡  --amomcu.com
+// ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ê±ï¿½ï¿½Îª1msï¿½ï¿½ ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½î£¬ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡  --amomcu.com
 void simpleBLE_Delay_1ms(int times)
 {
   while (times--)
@@ -50,7 +50,7 @@ void simpleBLE_Delay_1ms(int times)
   }
 }
 
-// ×Ö·û´®¶Ô±È
+// ï¿½Ö·ï¿½ï¿½ï¿½ï¿½Ô±ï¿½
 uint8 str_cmp(uint8 *p1, uint8 *p2, uint8 len)
 {
   uint8 i = 0;
@@ -63,16 +63,16 @@ uint8 str_cmp(uint8 *p1, uint8 *p2, uint8 len)
   return 1;
 }
 
-// ×Ö·û´®×ªÊý×Ö
+// ï¿½Ö·ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½
 uint32 str2Num(uint8 *numStr, uint8 iLength)
 {
   uint8 i = 0;
   int32 rtnInt = 0;
 
   /* 
-          Îª´úÂë¼òµ¥£¬ÔÚÈ·¶¨ÊäÈëµÄ×Ö·û´®¶¼ÊÇÊý×ÖµÄ
-          Çé¿öÏÂ£¬´Ë´¦Î´×ö¼ì²é£¬·ñÔòÒª¼ì²é
-          numStr[i] - '0'ÊÇ·ñÔÚ[0, 9]Õâ¸öÇø¼äÄÚ
+          Îªï¿½ï¿½ï¿½ï¿½òµ¥£ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½
+          ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½Ë´ï¿½Î´ï¿½ï¿½ï¿½ï¿½é£¬ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½
+          numStr[i] - '0'ï¿½Ç·ï¿½ï¿½ï¿½[0, 9]ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     */
   for (; i < iLength && numStr[i] != '\0'; ++i)
     rtnInt = rtnInt * 10 + (numStr[i] - '0');
@@ -113,20 +113,20 @@ char *bdAddr2Str(uint8 *pAddr)
   return str;
 }
 
-// ±£´æËùÓÐÊý¾Ýµ½nv flash
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½nv flash
 void simpleBLE_WriteAllDataToFlash()
-{ // Ð´ËùÓÐ²ÎÊý
+{ // Ð´ï¿½ï¿½ï¿½Ð²ï¿½ï¿½ï¿½
   osal_snv_write(0x80, sizeof(SYS_CONFIG), &sys_config);
 }
 
-// ¶ÁÈ¡×Ô¶¨ÒåµÄ nv flash Êý¾Ý  -------Î´Ê¹ÓÃµ½
+// ï¿½ï¿½È¡ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ nv flash ï¿½ï¿½ï¿½ï¿½  -------Î´Ê¹ï¿½Ãµï¿½
 void simpleBLE_ReadAllDataToFlash()
 {
   int8 ret8 = osal_snv_read(0x80, sizeof(SYS_CONFIG), &sys_config);
 }
 
-//flag: PARA_ALL_FACTORY:  È«²¿»Ö¸´³ö³§ÉèÖÃ
-//flag: PARA_PARI_FACTORY: Çå³ýÅä¶ÔÐÅÏ¢
+//flag: PARA_ALL_FACTORY:  È«ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+//flag: PARA_PARI_FACTORY: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
 {
   if (flag == PARA_ALL_FACTORY)
@@ -136,22 +136,22 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.parity = 0;
     sys_config.stopbit = 0;
 
-    sprintf((char *)sys_config.name, DEV_NAME_DEFAULT); //Éè±¸Ãû³Æ
+    sprintf((char *)sys_config.name, DEV_NAME_DEFAULT); //ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
 
-    sys_config.role = BLE_ROLE_PERIPHERAL; //Ö÷´ÓÄ£Ê½, Ä¬ÈÏ´Ó»ú
+    sys_config.role = BLE_ROLE_PERIPHERAL; //ï¿½ï¿½ï¿½ï¿½Ä£Ê½, Ä¬ï¿½Ï´Ó»ï¿½
     //sys_config.role = BLE_ROLE_CENTRAL;
 
     osal_memset(sys_config.mac_addr, 0, sizeof(sys_config.mac_addr));
 
-    sys_config.rssi = 0; //  RSSI ÐÅºÅÖµ
-    sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ½ÓÊÕÔöÒæÇ¿¶È
-    sys_config.txPower = 0;                  //  ·¢ÉäÐÅºÅÇ¿¶È
+    sys_config.rssi = 0; //  RSSI ï¿½Åºï¿½Öµ
+    sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¿ï¿½ï¿½
+    sys_config.txPower = 0;                  //  ï¿½ï¿½ï¿½ï¿½ï¿½Åºï¿½Ç¿ï¿½ï¿½
   }
-  GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //Çå³ý°ó¶¨ÐÅÏ¢
+  GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
   simpleBLE_WriteAllDataToFlash();
 }
 
-// ´òÓ¡ËùÓÐ´æ´¢µ½nv flashµÄÊý¾Ý£¬ ·½±ãµ÷ÊÔ´úÂë
+// ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½Ð´æ´¢ï¿½ï¿½nv flashï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ï¿½
 void PrintAllPara(void)
 {
   char strTemp[32];
@@ -190,19 +190,19 @@ void PrintAllPara(void)
 
 }
 
-// ·µ»ØÉè±¸½ÇÉ«
-//Ö÷´ÓÄ£Ê½  0: ´Ó»ú   1: Ö÷»ú
+// ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½É«
+//ï¿½ï¿½ï¿½ï¿½Ä£Ê½  0: ï¿½Ó»ï¿½   1: ï¿½ï¿½ï¿½ï¿½
 BLE_ROLE GetBleRole()
 {
   return sys_config.role;
 }
 
-// ÅÐ¶ÏÀ¶ÑÀÊÇ·ñÁ¬½ÓÉÏ
-// 0: Î´Á¬½ÓÉÏ
-// 1: ÒÑÁ¬½ÓÉÏ
+// ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// 0: Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+// 1: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 bool simpleBLE_IfConnected()
 {
-  if (GetBleRole() == BLE_ROLE_CENTRAL) //Ö÷»ú
+  if (GetBleRole() == BLE_ROLE_CENTRAL) //ï¿½ï¿½ï¿½ï¿½
   {
     return (simpleBLEState == BLE_STATE_CONNECTED);
   }
@@ -212,26 +212,26 @@ bool simpleBLE_IfConnected()
   }
 }
 
-// Ôö¼Ó´Ó»úµØÖ·£¬ ×¢Òâ£¬ ÐèÒªÁ¬½Ó³É¹¦ºó£¬ ÔÙÔö¼Ó¸ÃµØÖ·
+// ï¿½ï¿½ï¿½Ó´Ó»ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ ×¢ï¿½â£¬ ï¿½ï¿½Òªï¿½ï¿½ï¿½Ó³É¹ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¸Ãµï¿½Ö·
 void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
 {
   return;
 }
 
-// ÓÐ°´¼ü°´ÏÂ£¬ÔòÆô¶¯ÎªÖ÷»ú£¬ ·ñÔòÄ¬ÈÏÆô¶¯Îª´Ó»ú
-// 0 Æô¶¯peripheral´ÓÉè±¸£¬ 1: Æô¶¯Îª central
+// ï¿½Ð°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½Îªï¿½Ó»ï¿½
+// 0 ï¿½ï¿½peripheralï¿½ï¿½ï¿½è±¸ï¿½ï¿½ 1: ï¿½ï¿½Îª central
 bool Check_startup_peripheral_or_central(void)
 {
   /*
-    P0SEL &= ~0x02;     //ÉèÖÃP0.1ÎªÆÕÍ¨IO¿Ú  
-    P0DIR &= ~0x02;     //°´¼ü½ÓÔÚP0.1¿ÚÉÏ£¬ÉèP0.1ÎªÊäÈëÄ£Ê½ 
-    P0INP &= ~0x02;     //´ò¿ªP0.1ÉÏÀ­µç×è
+    P0SEL &= ~0x02;     //ï¿½ï¿½ï¿½ï¿½P0.1Îªï¿½ï¿½Í¨IOï¿½ï¿½  
+    P0DIR &= ~0x02;     //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½P0.1ï¿½ï¿½ï¿½Ï£ï¿½ï¿½ï¿½P0.1Îªï¿½ï¿½ï¿½ï¿½Ä£Ê½ 
+    P0INP &= ~0x02;     //ï¿½ï¿½P0.1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    if(0 == P0_1)// ÓÐ°´¼ü°´ÏÂ
+    if(0 == P0_1)// ï¿½Ð°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
-        // 10ms È¥¶¶¶¯ 
+        // 10ms È¥ï¿½ï¿½ï¿½ï¿½ 
         simpleBLE_Delay_1ms(10);
-        if(0 == P0_1)// ÓÐ°´¼ü°´ÏÂ
+        if(0 == P0_1)// ï¿½Ð°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         {
             return true;
         }
@@ -245,11 +245,11 @@ bool Check_startup_peripheral_or_central(void)
     return false;
 }
 
-// ´®ÐÐ¿Ú uart ³õÊ¼»¯
+// ï¿½ï¿½ï¿½Ð¿ï¿½ uart ï¿½ï¿½Ê¼ï¿½ï¿½
 void simpleBLE_NPI_init(void)
 {
   NPI_InitTransport(simpleBLE_NpiSerialCallback);
-  // ¿ª»ú´òÓ¡Ö÷»ú»¹ÊÇ´Ó»ú
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´Ó»ï¿½
   if (GetBleRole() == BLE_ROLE_CENTRAL)
   {
     NPI_WriteTransport("Central\r\n", 21);
@@ -260,45 +260,45 @@ void simpleBLE_NPI_init(void)
   }
 }
 
-// ÉèÖÃ½ÓÊÕÔöÒæ
+// ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void UpdateRxGain(void)
 {
-  // HCI_EXT_SetRxGainCmd()ÊÇÓÃÀ´ÉèÖÃ·¢Éä¹¦ÂÊµÄ.
+  // HCI_EXT_SetRxGainCmd()ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ä¹¦ï¿½Êµï¿½.
   // rxGain - HCI_EXT_RX_GAIN_STD, HCI_EXT_RX_GAIN_HIGH
   HCI_EXT_SetRxGainCmd(HCI_EXT_RX_GAIN_STD);
 }
 
-// ÉèÖÃ·¢Éä¹¦ÂÊ
+// ï¿½ï¿½ï¿½Ã·ï¿½ï¿½ä¹¦ï¿½ï¿½
 void UpdateTxPower(void)
 {
   HCI_EXT_SetTxPowerCmd(3 - sys_config.txPower);
 }
 
-// ÉèÖÃledµÆµÄ×´Ì¬
+// ï¿½ï¿½ï¿½ï¿½ledï¿½Æµï¿½×´Ì¬
 void simpleBle_LedSetState(uint8 onoff)
 {
-  HalLedSet(HAL_LED_1, onoff); //led³£ÁÁ
-  P0DIR |= 0x60; // P0.6¶¨ÒåÎªÊä³ö
+  HalLedSet(HAL_LED_1, onoff); //ledï¿½ï¿½ï¿½ï¿½
+  P0DIR |= 0x60; // P0.6ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½ï¿½
   P0_6 = onoff;
 }
 
-// »ñÈ¡Éè±¸Ãû³Æ
+// ï¿½ï¿½È¡ï¿½è±¸ï¿½ï¿½ï¿½ï¿½
 uint8 *simpleBle_GetAttDeviceName()
 {
   return sys_config.name;
 }
 
-// ¶¨Ê±Æ÷ÈÎÎñ¶¨Ê±Ö´ÐÐº¯Êý£¬ ÓÃÓÚÉèÖÃledµÄ×´Ì¬----Ò²¿ÉÒÔÔö¼ÓÒ»¸ö¶¨Ê±Æ÷À´×ö
+// ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±Ö´ï¿½Ðºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ledï¿½ï¿½×´Ì¬----Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 void simpleBLE_performPeriodicTask(void)
 {
   return;
 }
 
-//uart »Øµ÷º¯Êý
+//uart ï¿½Øµï¿½ï¿½ï¿½ï¿½ï¿½
 static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
 {
   (void)port;
-  if (events & (HAL_UART_RX_TIMEOUT | HAL_UART_RX_FULL)) //´®¿ÚÓÐÊý¾Ý
+  if (events & (HAL_UART_RX_TIMEOUT | HAL_UART_RX_FULL)) //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   {
     (void)port;
     /*uint8*/ uint16 numBytes = 0;
@@ -307,10 +307,10 @@ static void simpleBLE_NpiSerialCallback(uint8 port, uint8 events)
     if (numBytes > 0)
     {
       uint8 *buffer = osal_mem_alloc(numBytes);
-      NPI_ReadTransport(buffer, numBytes); //ÊÍ·Å´®¿ÚÊý¾Ý
+      NPI_ReadTransport(buffer, numBytes); //ï¿½Í·Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       if (FALSE == g_sleepFlag) //discard the data directly.
       {
-        NPI_WriteTransport(buffer, numBytes); //ÊÍ·Å´®¿ÚÊý¾Ý
+        NPI_WriteTransport(buffer, numBytes); //ï¿½Í·Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
       }
       osal_mem_free(buffer);
     }

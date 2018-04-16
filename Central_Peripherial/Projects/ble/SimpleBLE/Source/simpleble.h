@@ -125,7 +125,7 @@ typedef enum
 #define BUTTON_LEY_DELAY_IN_SLEEP  BUTTON_LED_DELAY //1s
 
 #define BATTERY_LOW_THRESHOLD_SLEEP                           27 //2.7V
-#define BATTERY_LOW_THRESHOLD                                 20 //2V
+#define BATTERY_LOW_THRESHOLD                                 22 //2V
 #define ENABLE_DISABLE_PERIOD 500
 
 #define ADV_HOUR_LEFT_BYTE 25
