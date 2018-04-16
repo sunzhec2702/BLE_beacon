@@ -56,8 +56,8 @@ int main(void)
 
   /* Initialize LL */
 
-  // ¸ù¾ÝS1 °´¼üÅÐ¶ÏÆô¶¯´ÓÉè±¸»òÕßÖ÷Éè±¸£¬
-  // Èç¹ûÆô¶¯ÆÚ¼ä S1 °´¼ü°´ÏÂ£¬P0_1==0, ÔòÆô¶¯Ö÷»ú
+  // ï¿½ï¿½ï¿½ï¿½S1 ï¿½ï¿½ï¿½ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è±¸ï¿½ï¿½
+  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½ S1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½P0_1==0, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
   if (false == Check_startup_peripheral_or_central())
   {
     sys_config.role = BLE_ROLE_PERIPHERAL;
@@ -69,7 +69,7 @@ int main(void)
     simpleBLE_WriteAllDataToFlash();
   }
 
-  // Æô¶¯´®¿Ú
+  // ï¿½ï¿½ï¿½ï¿½ï¿½
   #if (HAL_UART == TRUE)
   simpleBLE_NPI_init();
   #endif
@@ -84,7 +84,7 @@ int main(void)
   InitBoard(OB_READY);
 
 #if defined(POWER_SAVING)
-  osal_pwrmgr_device( PWRMGR_BATTERY );
+  osal_pwrmgr_device( PWRMGR_ALWAYS_ON );
 #endif
 
   /* Start OSAL */
