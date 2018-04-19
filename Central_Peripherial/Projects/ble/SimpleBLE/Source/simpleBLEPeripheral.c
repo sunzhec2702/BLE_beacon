@@ -962,8 +962,8 @@ static void enter_low_battery_mode()
 
 void wake_from_vibra_sensor()
 {
-  first_boot = TRUE;
-  exit_sleep_mode(TRUE);
+  first_boot = FALSE;
+  exit_sleep_mode(FALSE);
 }
 void exit_sleep_mode(uint8 first_wake)
 {
