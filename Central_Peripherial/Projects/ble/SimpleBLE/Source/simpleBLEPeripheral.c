@@ -524,6 +524,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   if (events & SBP_SLEEP_EVT)
   {
     DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
+    HalVibraSensorInterruptControl(TRUE);
     low_power_state = FALSE; // set false to enable key event.
     g_sleepFlag = TRUE;
     osal_pwrmgr_device(PWRMGR_BATTERY); //  �Զ�˯��
@@ -583,11 +584,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
     if (g_sleepFlag == TRUE)
     {
-      if (key_pressed_count == 1)
-      {
-        first_boot = TRUE;
-      }
-      osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);        
+      exit_sleep_mode((key_pressed_count == 1));
     }
     else if (g_sleepFlag == FALSE)
     {
@@ -836,7 +833,16 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
       }
       else
       {
-        wake_up_hours_remain--;
+        if (readVibraTriggered() == TRUE)
+        {
+          clearVibraTriggered();
+          wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+        }
+        else
+        {
+          wake_up_hours_remain--;
+        }
+        HalVibraSensorInterruptControl(TRUE);
         advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
         if (wake_up_hours_remain == 0)
         {
@@ -952,6 +958,27 @@ static void enter_low_battery_mode()
   advertise_control(FALSE);
   // LED Blinking.
   led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
+}
+
+void wake_from_vibra_sensor()
+{
+  first_boot = TRUE;
+  exit_sleep_mode(TRUE);
+}
+void exit_sleep_mode(uint8 first_wake)
+{
+  if (g_sleepFlag == TRUE)
+  {
+    if (first_wake == TRUE)
+    {
+      first_boot = TRUE;
+    }
+    else if (first_wake == FALSE)
+    {
+      first_boot = FALSE;
+    }
+    osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
+  }
 }
 
 static bool check_keys_pressed(uint8 keys)

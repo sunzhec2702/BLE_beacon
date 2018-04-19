@@ -11,7 +11,7 @@
 static uint16 vibraIntCount = 0;
 static bool vibraEnable = FALSE;
 static bool vibraTriggered = FALSE;
-
+extern bool g_sleepFlag;
 
 void clearVibraTriggered()
 {
@@ -24,11 +24,12 @@ bool readVibraTriggered()
 void halProcessVibraInterrupt()
 {
     vibraIntCount++;
-    if (vibraIntCount >= VIBRA_INT_THRESHOLD)
+    if (vibraIntCount >= VIBRA_INT_THRESHOLD || g_sleepFlag == TRUE)
     {
         vibraIntCount = 0;
         vibraTriggered = TRUE;
         HalVibraSensorInterruptControl(FALSE);
+        wake_from_vibra_sensor();
     }
 }
 bool getVibraEnableStatus()
@@ -44,6 +45,7 @@ void HalVibraSensorInterruptControl(bool enable)
      */
     if (enable)
     {
+        clearVibraTriggered();
         HAL_VIBRA_ICTL |= HAL_VIBRA_ICTLBIT;
         HAL_VIBRA_IEN |= HAL_VIBRA_IENBIT;
         HAL_VIBRA_PXIFG &= ~(HAL_VIBRA_BIT);

@@ -30,5 +30,8 @@ typedef void (*halVibraSensorCBack_t)(void);
 void halProcessVibraInterrupt(void);
 void HalVibraSensorInterruptControl(bool enable);
 void HalVibraSensorConfig (bool interruptEnable);
+void clearVibraTriggered(void);
+bool readVibraTriggered(void);
+bool getVibraEnableStatus(void);
 
 #endif

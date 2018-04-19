@@ -90,10 +90,10 @@ typedef enum
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #else
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000 // 1 hour
-#define DEFAULT_WAKE_TIME_HOURS                         (24 * 60) // 5 days
+#define DEFAULT_WAKE_TIME_HOURS                         (24 * 1) // 5 days
 #define DEFAULT_RIGHT_MOVE_BIT                          3
-#define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
-#define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
+#define BUTTON_WAKE_TIME_HOURS                          (1) // 2 days
+#define RESET_WAKE_TIME_HOURS_THRES                     (12) // 1 days
 #endif
 
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
