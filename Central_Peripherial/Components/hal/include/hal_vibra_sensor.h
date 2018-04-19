@@ -29,6 +29,6 @@ typedef void (*halVibraSensorCBack_t)(void);
 
 void halProcessVibraInterrupt(void);
 void HalVibraSensorInterruptControl(bool enable);
-void HalVibraSensorConfig (bool interruptEnable, halKeyCBack_t cback);
+void HalVibraSensorConfig (bool interruptEnable);
 
 #endif

@@ -9,14 +9,16 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=1938718540
+Checksum=-731914655
 [CallStack]
 ShowArgs=0
 [Disassembly]
 MixedMode=1
 [Breakpoints]
-Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\Source\simpleBLEPeripheral.c}.425.9" 1 0 0 0 "" 0 ""
-Count=1
+Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_vibra_sensor.c}.27.5" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_interrupt_handler.c}.32.3" 1 0 0 0 "" 0 ""
+Bp2=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_interrupt_handler.c}.47.3" 1 0 0 0 "" 0 ""
+Count=3
 [ChipconEmu]
 Stop timers on halt=0
 Leave target running=1

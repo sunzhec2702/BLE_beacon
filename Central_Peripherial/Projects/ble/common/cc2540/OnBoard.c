@@ -131,6 +131,7 @@ void InitBoard( uint8 level )
     /* Initialize Key stuff, only do this after Interrupt is enabled. */
     OnboardKeyIntEnable = HAL_KEY_INTERRUPT_ENABLE;
     HalKeyConfig( OnboardKeyIntEnable, OnBoard_KeyCallback);
+    HalVibraSensorConfig(TRUE);
   }
 }
 

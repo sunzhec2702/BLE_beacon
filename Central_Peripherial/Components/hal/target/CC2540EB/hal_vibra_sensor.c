@@ -26,6 +26,7 @@ void halProcessVibraInterrupt()
     vibraIntCount++;
     if (vibraIntCount >= VIBRA_INT_THRESHOLD)
     {
+        vibraIntCount = 0;
         vibraTriggered = TRUE;
         HalVibraSensorInterruptControl(FALSE);
     }
@@ -45,12 +46,12 @@ void HalVibraSensorInterruptControl(bool enable)
     {
         HAL_VIBRA_ICTL |= HAL_VIBRA_ICTLBIT;
         HAL_VIBRA_IEN |= HAL_VIBRA_IENBIT;
-        HAL_VIBRA_PXIFG = ~(HAL_VIBRA_BIT);
+        HAL_VIBRA_PXIFG &= ~(HAL_VIBRA_BIT);
     }
     else
     {
+        HAL_VIBRA_PXIFG &= ~(HAL_VIBRA_BIT);
         HAL_VIBRA_ICTL &= ~(HAL_VIBRA_ICTLBIT); /* don't generate interrupt */
-        HAL_VIBRA_PXIFG = ~(HAL_VIBRA_BIT);
     }
     vibraEnable = enable;
 }

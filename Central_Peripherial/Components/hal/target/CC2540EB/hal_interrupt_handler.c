@@ -34,9 +34,12 @@ HAL_ISR_FUNCTION( halPort0Isr, P0INT_VECTOR )
     halProcessKeyInterrupt();
     HAL_KEY_SW_6_PXIFG &= ~HAL_KEY_SW_6_BIT;
   }
-  if ( (HAL_VIBRA_PXIFG & HAL_VIBRA_BIT))
+  if ((HAL_VIBRA_PXIFG & HAL_VIBRA_BIT))
   {
-    halProcessVibraInterrupt();
+    if (HAL_VIBRA_ICTL & HAL_VIBRA_ICTLBIT)
+    {
+      halProcessVibraInterrupt();
+    }
     HAL_VIBRA_PXIFG &= ~HAL_VIBRA_BIT;
   }
 #endif
