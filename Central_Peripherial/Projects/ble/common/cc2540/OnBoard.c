@@ -57,7 +57,7 @@
 
 #include "hal_led.h"
 #include "hal_key.h"
-
+#include "hal_vibra_sensor.h"
 
 /*********************************************************************
  * MACROS

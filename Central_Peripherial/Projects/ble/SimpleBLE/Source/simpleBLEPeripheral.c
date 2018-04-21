@@ -57,8 +57,6 @@
 /*********************************************************************
  * CONSTANTS
  */
-#define HAL_KEY_SW_6_PORT   P0
-#define HAL_KEY_SW_6_BIT    BV(1)
 
 // General discoverable mode advertises indefinitely
 #define DEFAULT_DISCOVERABLE_MODE GAP_ADTYPE_FLAGS_GENERAL
@@ -183,12 +181,12 @@ static uint8 advertData_iBeacon[] =
 
 // LED related.
 //static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
-static uint8 led_toggle_status = FALSE;
+
 static uint8 led_toggle_count = 0;
 static uint8 led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
 static uint8 led_toggling = FALSE;
-static uint16 led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
-static uint16 led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
+//static uint16 led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
+//static uint16 led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
 // Default WAKEUP period
 static uint16 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
 static uint8 battery_voltage = 0;
@@ -201,9 +199,11 @@ static bool first_boot = FALSE;
 static bool low_power_state = FALSE;
 static bool key_pressed = FALSE;
 
+#if (POWER_OFF_SUPPORT == TRUE)
 static bool g_long_press_flag = FALSE;
 static uint8 key_long_press_cnt = 0;
 static uint8 sleep_toggle_cnt = 0;
+#endif
 static bool rapid_processing = FALSE;
 
 #ifdef DEBUG_BOARD
@@ -219,7 +219,10 @@ static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_
 static uint8 led_toggle_clean_param(void);
 static bool check_low_battery(void);
 static void enter_low_battery_mode(void);
+#if (POWER_OFF_SUPPORT == TRUE)
 static bool check_keys_pressed(uint8 keys);
+#endif
+static void update_wake_up_hour_2_adv(void);
 static void init_ibeacon_advertise(bool reset_index);
 static void advertise_control(bool enable);
 
@@ -267,8 +270,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   // Setup the GAP Peripheral Role Profile
   {
     // Change the ibeacon adverdata of wake up hours remain.
-    advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
-
+    update_wake_up_hour_2_adv();
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
     // until the enabler is set back to TRUE
@@ -559,7 +561,6 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     }
     else
     {
-      //led_toggle_status = FALSE;
       HalLedSet(HAL_LED_TARGET, HAL_LED_MODE_OFF);
       osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
       led_toggle_clean_param();
@@ -568,11 +569,13 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
         osal_set_event(simpleBLETaskId, SBP_SLEEP_EVT);
         low_power_state = FALSE;
       }
+#if (POWER_OFF_SUPPORT == TRUE)
       if (g_long_press_flag == TRUE)
       {
         key_pressed_count = 0;
         osal_start_timerEx(simpleBLETaskId, SBP_KEY_LONG_PRESSED_EVT, PERIPHERAL_KEY_SLEEP_CALC_PERIOD_STAGE_1);
       }
+#endif
     }
     return (events ^ SBP_PERIODIC_LED_EVT);
   }
@@ -593,7 +596,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
         DEBUG_PRINT("Timer is reset\r\n");
         wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
         // reset wake_up_left
-        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
+        update_wake_up_hour_2_adv();
         // LED blink twice
         led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LED_DELAY);
       }
@@ -617,6 +620,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_KEY_LONG_PRESSED_EVT)
   {
+#if (POWER_OFF_SUPPORT == TRUE)
     static uint8 sleep_button_event_stage = 0;
     if (g_long_press_flag == TRUE)
     {
@@ -669,6 +673,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     // Reset Key event.
     key_pressed_count = 0;
     key_processing = FALSE;
+#endif
     return (events ^ SBP_KEY_LONG_PRESSED_EVT);
   }
   // Discard unknown events
@@ -681,7 +686,6 @@ static uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_
   if (led_toggling == TRUE)
     return FALSE;
   osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
-  led_toggle_status = FALSE;
   led_toggling = TRUE;
   //led_toggle_period_on = toggle_period_on;
   //led_toggle_period_off = toggle_period_off;
@@ -763,12 +767,14 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
         if (wake_up_hours_remain <= RESET_WAKE_TIME_HOURS_THRES)
         {
           wake_up_hours_remain = BUTTON_WAKE_TIME_HOURS;
-          advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
+          update_wake_up_hour_2_adv();
         }
+#if (POWER_OFF_SUPPPORT == TRUE)
         if (g_long_press_flag == FALSE)
         {
           osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
         }
+#endif
       }
       key_pressed_count++;
     }
@@ -836,14 +842,14 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
         if (readVibraTriggered() == TRUE)
         {
           clearVibraTriggered();
-          wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
+          //wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
         }
         else
         {
           wake_up_hours_remain--;
         }
         HalVibraSensorInterruptControl(TRUE);
-        advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
+        update_wake_up_hour_2_adv();
         if (wake_up_hours_remain == 0)
         {
           wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
@@ -981,6 +987,11 @@ void exit_sleep_mode(uint8 first_wake)
   }
 }
 
+static void update_wake_up_hour_2_adv()
+{
+  advertData_iBeacon[ADV_HOUR_LEFT_BYTE] = (wake_up_hours_remain >> DEFAULT_RIGHT_MOVE_BIT) & 0xFF;
+}
+#if (POWER_OFF_SUPPORT == TRUE)
 static bool check_keys_pressed(uint8 keys)
 {
   switch (keys)
@@ -996,6 +1007,7 @@ static bool check_keys_pressed(uint8 keys)
   }
   return FALSE;
 }
+#endif
 
 static void init_ibeacon_advertise(bool reset_index)
 {

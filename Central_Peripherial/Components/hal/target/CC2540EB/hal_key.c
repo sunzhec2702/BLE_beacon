@@ -211,7 +211,7 @@ void HalKeyConfig (bool interruptEnable, halKeyCBack_t cback)
      */
     HAL_KEY_SW_6_ICTL |= HAL_KEY_SW_6_ICTLBIT;
     HAL_KEY_SW_6_IEN |= HAL_KEY_SW_6_IENBIT;
-    HAL_KEY_SW_6_PXIFG = ~(HAL_KEY_SW_6_BIT);
+    HAL_KEY_SW_6_PXIFG &= ~(HAL_KEY_SW_6_BIT);
 
     #if (TARGET_BOARD == DEVELOP_BOARD)
     /* Rising/Falling edge configuratinn */
@@ -419,7 +419,7 @@ void halProcessKeyInterrupt (void)
   bool valid = FALSE;
   if (HAL_KEY_SW_6_PXIFG & HAL_KEY_SW_6_BIT)  /* Interrupt Flag has been set */
   {
-    HAL_KEY_SW_6_PXIFG = ~(HAL_KEY_SW_6_BIT); /* Clear Interrupt Flag */
+    HAL_KEY_SW_6_PXIFG &= ~(HAL_KEY_SW_6_BIT); /* Clear Interrupt Flag */
     valid = TRUE;
   }
 

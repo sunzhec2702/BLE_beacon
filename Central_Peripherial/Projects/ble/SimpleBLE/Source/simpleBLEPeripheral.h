@@ -86,6 +86,7 @@ void PeripherialPerformPeriodicTask(uint16 event_id);
 void change_advertise_data(uint8 key_pressed);
 void exit_sleep_mode(uint8 first);
 void wake_from_vibra_sensor(void);
+
 /*********************************************************************
 *********************************************************************/
 

@@ -13,7 +13,7 @@ extern "C"
 
 #define TARGET_BOARD PRODUCT_BOARD
 
-#define POWER_OFF_SUPPORT TRUE
+#define POWER_OFF_SUPPORT FALSE
 //#define DEBUG_BOARD 1
 
 #define PRESET_ROLE BLE_ROLE_PERIPHERAL
@@ -90,10 +90,10 @@ typedef enum
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #else
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000 // 1 hour
-#define DEFAULT_WAKE_TIME_HOURS                         (24 * 1) // 5 days
-#define DEFAULT_RIGHT_MOVE_BIT                          3
+#define DEFAULT_WAKE_TIME_HOURS                         (1 * 1) // 5 days
+#define DEFAULT_RIGHT_MOVE_BIT                          0
 #define BUTTON_WAKE_TIME_HOURS                          (1) // 2 days
-#define RESET_WAKE_TIME_HOURS_THRES                     (12) // 1 days
+#define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #endif
 
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
@@ -121,7 +121,7 @@ typedef enum
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON         (50) // 50ms
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               20
 
-#define BUTTON_LED_DELAY  (650 - PERIPHERAL_LED_PREPARE_PERIOD_KEEP) // 1s
+#define BUTTON_LED_DELAY  ((650 - PERIPHERAL_LED_PREPARE_PERIOD_KEEP) > 0 ? (650 - PERIPHERAL_LED_PREPARE_PERIOD_KEEP) : 0) // 1s
 #define BUTTON_LEY_DELAY_IN_SLEEP  BUTTON_LED_DELAY //1s
 
 #define BATTERY_LOW_THRESHOLD_SLEEP                           27 //2.7V
@@ -140,14 +140,14 @@ typedef enum
 //#define RELEASE_VER                      //����汾������?
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
-#define MINOR_HW_VERSION   0x03
-#define MAJOR_SW_VERSION   0x01
+#define MINOR_HW_VERSION   0x04
+#define MAJOR_SW_VERSION   0x02
 #if (POWER_OFF_SUPPORT == TRUE)
 #define MIDDLE_SW_VERSION  0x01
 #elif (POWER_OFF_SUPPORT == FALSE)
 #define MIDDLE_SW_VERSION  0x00
 #endif
-#define MINOR_SW_VERSION   0x03
+#define MINOR_SW_VERSION   0x01
 
 //�豸���Ƶ��ַ����� <= 12
 #define DEV_NAME_DEFAULT                           "DarrenBLE"
