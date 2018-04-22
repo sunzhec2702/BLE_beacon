@@ -28,9 +28,8 @@ extern "C"
 #define POWER_OFF_SUPPORT FALSE
 //#define DEBUG_BOARD 1
 
-
-#define BLE_PRE_ROLE_STATION 0
-#define BLE_PRE_ROLE_BEACON 1
+#define BLE_PRE_ROLE_STATION 0 // Station. ADV/SCAN from UART config.
+#define BLE_PRE_ROLE_BEACON 1  // Beacon.
 
 #define PRESET_ROLE BLE_PRE_ROLE_BEACON
 

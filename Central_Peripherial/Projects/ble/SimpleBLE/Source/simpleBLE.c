@@ -218,8 +218,12 @@ void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
   return;
 }
 
+
+// Return FALSE == peripheral, TRUE == Central 
 bool Check_startup_peripheral_or_central(void)
 {
+  return FALSE;
+
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
   switch (sys_config.status)
   {
@@ -279,7 +283,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���?????
+  P0DIR |= 0x60; // P0.6����Ϊ���?????
   P0_6 = onoff;
 }
 

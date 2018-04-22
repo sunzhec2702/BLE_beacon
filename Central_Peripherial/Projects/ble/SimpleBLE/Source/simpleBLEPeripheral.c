@@ -377,10 +377,13 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   {
     updateSysConfigMac();
     first_boot = sys_config.bootup_blink;
-    // Only BEACON needs the set the target to off.
+    /* Only BEACON needs the set the target to off.
+     * Set to no battery status, but not execute directly
+     */
     #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
     reset_to_no_battery_status(sys_config.role);
     #endif
+
     // Start the Device
     VOID GAPRole_StartDevice(NULL);
     // Start Bond Manager
@@ -427,6 +430,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
     // Per Min Event
     osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_MIN_EVT, SBP_PERIODIC_PER_MIN_PERIOD);
+
     if (sys_config.key_pressed_in_scan == TRUE)
     {
       sys_config.key_pressed_in_scan = FALSE;
@@ -475,19 +479,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_PERIODIC_BUTTON_LED_EVT)
   {
-    /*
-    // Restart timer
-    if (key_led_count > 0)
-    {
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_BUTTON_LED_EVT, SBP_PERIODIC_BUTTON_LED_PERIOD);
-      // Perform periodic application task
-      PeripherialPerformPeriodicTask(SBP_PERIODIC_BUTTON_LED_EVT);
-    }
-    else if (key_led_count == 0)
-    {
-      key_led_count = BUTTON_LED_TOGGLE_COUNT;
-    }
-    */
+    // Place Holder.
     return (events ^ SBP_PERIODIC_BUTTON_LED_EVT);
   }
 
@@ -505,6 +497,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_DATA_EVT)
   {
+    // Place Holder.
     return (events ^ SBP_DATA_EVT);
   }
 
@@ -519,8 +512,10 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
   
   if (events & SBP_SLEEP_EVT)
   {
+    // TODO: Add sleep function.
     /*
     DEBUG_PRINT("SBP_SLEEP_EVT\r\n");
+    HalVibraSensorInterruptControl(TRUE);
     low_power_state = FALSE; // set false to enable key event.
     g_sleepFlag = TRUE;
     osal_pwrmgr_device(PWRMGR_BATTERY);
@@ -650,7 +645,7 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     {
       DEBUG_PRINT("This is a per min event\r\n");
       sys_config.minLeft--;
-      DEBUG_VALUE("min1Left:", sys_config.minLeft, 10);
+      DEBUG_VALUE("minLeft:", sys_config.minLeft, 10);
       advertData_iBeacon[ADV_MIN_LEFT_BYTE] = sys_config.minLeft;
       if (sys_config.minLeft == 0)
       {

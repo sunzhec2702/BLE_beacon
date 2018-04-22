@@ -375,7 +375,7 @@ void set_beacon_status(BLE_STATUS current_status, BLE_STATUS target_status, bool
     return;
 }
 
-// For beacon, the features are LED blink 2 times and ON_ADV
+// For beacon, the features are LED blink 2 times and ON_ADV. If no battery to power off, next time will enter no battery status.
 void reset_to_no_battery_status(uint8 role)
 {
     sys_config.status = BLE_STATUS_ON_SCAN;

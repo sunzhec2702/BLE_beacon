@@ -19,8 +19,6 @@ void updateSysConfigMac()
 }
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
-
-
 bool check_keys_pressed(uint8 keys)
 {
   switch (keys)
@@ -36,8 +34,6 @@ bool check_keys_pressed(uint8 keys)
   }
   return FALSE;
 }
-
-
 #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
-
+// Place holder
 #endif
