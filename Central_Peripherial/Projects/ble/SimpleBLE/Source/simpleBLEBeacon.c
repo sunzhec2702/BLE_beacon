@@ -433,4 +433,27 @@ void enter_low_battery_mode()
   // LED Blinking.
   led_toggle_set_param(PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON, PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT, 0);
 }
+
+void wake_from_vibra_sensor()
+{
+  //first_boot = FALSE;
+  exit_sleep_mode(FALSE);
+}
+
+void exit_sleep_mode(uint8 first_wake)
+{
+  if (g_sleepFlag == TRUE)
+  {
+    if (first_wake == TRUE)
+    {
+      //first_boot = TRUE;
+    }
+    else if (first_wake == FALSE)
+    {
+      //first_boot = FALSE;
+    }
+    osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
+  }
+}
+
 #endif

@@ -24,21 +24,16 @@ void led_event_callback()
   if (++led_toggle_count <= led_toggle_cnt_target)
   {
     osal_pwrmgr_device(PWRMGR_ALWAYS_ON); // Make sure the LED can on correctly.
-    HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
-    if (led_toggle_status == FALSE)
-    {
-      led_toggle_status = TRUE;
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_on);
-    }
-    else if (led_toggle_status == TRUE)
-    {
-      led_toggle_status = FALSE;
-      osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, led_toggle_period_off);
-    }
+    HalLedSet(HAL_LED_2, HAL_LED_MODE_ON);
+    simpleBLE_Delay_1ms(PERIPHERAL_LED_PREPARE_PERIOD_KEEP);
+    HalLedSet(HAL_LED_TARGET, HAL_LED_MODE_TOGGLE);
+    simpleBLE_Delay_1ms(PERIPHERAL_LED_TOGGLE_PERIOD_KEEP);
+    HalLedSet(HAL_LED_TARGET, HAL_LED_MODE_OFF);
+    osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, 0);
   }
   else
   {
-    led_toggle_status = FALSE;
+    //led_toggle_status = FALSE;
     HalLedSet(HAL_LED_1, HAL_LED_MODE_OFF);
     osal_stop_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT);
     led_toggle_clean_param();
@@ -57,11 +52,13 @@ uint8 led_toggle_set_param(uint16 toggle_period_on, uint16 toggle_period_off, ui
 {
   if (led_toggling == TRUE)
     return FALSE;
-  led_toggling = TRUE;
   osal_pwrmgr_device(PWRMGR_ALWAYS_ON);
   led_toggle_status = FALSE;
-  led_toggle_period_on = toggle_period_on;
-  led_toggle_period_off = toggle_period_off;
+  led_toggling = TRUE;
+  //led_toggle_period_on = toggle_period_on;
+  //led_toggle_period_off = toggle_period_off;
+  (void) toggle_period_on;
+  (void) toggle_period_off;
   led_toggle_count = 0;
   led_toggle_cnt_target = toggle_target_cnt;
   osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_LED_EVT, delay);
@@ -73,8 +70,8 @@ uint8 led_toggle_clean_param()
   if (led_toggling == FALSE)
     return FALSE;
   osal_pwrmgr_device(PWRMGR_BATTERY);
-  led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
-  led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
+  //led_toggle_period_on = PERIPHERAL_START_LED_TOGGLE_PERIOD_ON;
+  //led_toggle_period_off = PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF;
   led_toggle_count = 0;
   led_toggle_cnt_target = PERIPHERAL_START_LED_TOGGLE_CNT;
   led_toggling = FALSE;

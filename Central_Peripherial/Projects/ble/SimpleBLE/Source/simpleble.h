@@ -14,11 +14,6 @@ extern "C"
 #define DEVELOP_BOARD 0
 #define PRODUCT_BOARD 1
 
-//#define NFC_DEBUG_MODE 1 // UART: CC2541 -> NP532 -> PC
-
-//#define NFC_BOARD_VERSION 0x1 //BLE+NFC
-
-
 //DEBUG RELATED MACRO.
 #define DEBUG_NFC_UART_MAX_TIMEOUT_ENABLE 1
 #define DEBUG_NFC_UART_MAX_TIMEOUT        5000     
@@ -33,10 +28,12 @@ extern "C"
 #define POWER_OFF_SUPPORT FALSE
 //#define DEBUG_BOARD 1
 
-#define PRESET_ROLE BLE_PRE_ROLE_STATION
 
 #define BLE_PRE_ROLE_STATION 0
 #define BLE_PRE_ROLE_BEACON 1
+
+#define PRESET_ROLE BLE_PRE_ROLE_BEACON
+
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
 #include "simpleBLEStation.h"
@@ -165,18 +162,22 @@ typedef enum
 #define SBP_PERIODIC_OFF_SCAN_PERIOD_x00MS              (SBP_PERIODIC_OFF_SCAN_PERIOD_MIN * 60 * 10) // one hour
 #define SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_x00MS         (600) // 60s
 
-#define DEFAULT_WAKE_TIME_HOURS                         (5 * 24) // 5 days
-#define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
-#define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
+#define DEFAULT_WAKE_TIME_HOURS                         (1) // 1 hours
+#define BUTTON_WAKE_TIME_HOURS                          (1) // 2 days
+#define RESET_WAKE_TIME_HOURS_THRES                     (12) // 1 days
 #endif
 
 #define SBP_PERIODIC_BUTTON_LED_PERIOD                  100
-#define BUTTON_LED_TOGGLE_COUNT                         2
+#define BUTTON_LED_TOGGLE_COUNT                         1
 
 #define SLEEP_MS                                        300  //˯��ʱ�䣬 ���ڼ����¼�
 
-#define PERIPHERAL_WAKEUP_LED_TOGGLE_CNT                4
-#define PERIPHERAL_START_LED_TOGGLE_CNT                 6
+#define PERIPHERAL_WAKEUP_LED_TOGGLE_CNT                2
+#define PERIPHERAL_START_LED_TOGGLE_CNT                 3
+
+#define PERIPHERAL_LED_PREPARE_PERIOD_KEEP                  650
+#define PERIPHERAL_LED_TOGGLE_PERIOD_KEEP                   30
+
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_ON               50
 #define PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF              150
 #define PERIPHERAL_KEY_CALCULATE_PERIOD                 250 // 250ms
@@ -191,8 +192,8 @@ typedef enum
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_PERIOD_ON         (50) // 50ms
 #define PERIPHERAL_LOW_BAT_LED_TOGGLE_CNT               20
 
-#define BUTTON_LED_DELAY  650 // 1s
-#define BUTTON_LEY_DELAY_IN_SLEEP  650 //1s
+#define BUTTON_LED_DELAY  (650 - PERIPHERAL_LED_PREPARE_PERIOD_KEEP)  // 1s
+#define BUTTON_LEY_DELAY_IN_SLEEP  BUTTON_LED_DELAY //1s
 
 #define BATTERY_LOW_THRESHOLD_SLEEP                           27 //2.7V
 #define BATTERY_LOW_THRESHOLD                                 20 //2V

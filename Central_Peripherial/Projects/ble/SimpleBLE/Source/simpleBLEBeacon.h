@@ -32,7 +32,8 @@ void reset_to_no_battery_status(uint8 role);
 uint8 read_battery_value(void);
 bool check_low_battery(uint8 battery_value);
 void enter_low_battery_mode(void);
-
+void exit_sleep_mode(uint8 first);
+void wake_from_vibra_sensor(void);
 
 #endif
 

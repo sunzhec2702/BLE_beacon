@@ -153,7 +153,7 @@ static uint8 scanRspData[] =
 
 extern uint8 advertData_iBeacon[30];
 
-static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
+//static uint8 key_led_count = BUTTON_LED_TOGGLE_COUNT; //Blink for 3 times.
 
 // Default WAKEUP period
 //static uint8 wake_up_hours_remain = DEFAULT_WAKE_TIME_HOURS;
@@ -475,6 +475,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
 
   if (events & SBP_PERIODIC_BUTTON_LED_EVT)
   {
+    /*
     // Restart timer
     if (key_led_count > 0)
     {
@@ -486,6 +487,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     {
       key_led_count = BUTTON_LED_TOGGLE_COUNT;
     }
+    */
     return (events ^ SBP_PERIODIC_BUTTON_LED_EVT);
   }
 
@@ -675,8 +677,10 @@ static void PeripherialPerformPeriodicTask(uint16 event_id)
     #endif
     break;
   case SBP_PERIODIC_BUTTON_LED_EVT:
+    /*
     HalLedSet(HAL_LED_1, HAL_LED_MODE_TOGGLE);
     key_led_count--;
+    */
     break;
   default:
     break;

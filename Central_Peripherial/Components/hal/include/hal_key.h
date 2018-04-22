@@ -26,7 +26,7 @@
  its documentation for any purpose.
 
  YOU FURTHER ACKNOWLEDGE AND AGREE THAT THE SOFTWARE AND DOCUMENTATION ARE
- PROVIDED “AS IS” WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
+ PROVIDED ï¿½AS ISï¿½ WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESS OR IMPLIED,
  INCLUDING WITHOUT LIMITATION, ANY WARRANTY OF MERCHANTABILITY, TITLE,
  NON-INFRINGEMENT AND FITNESS FOR A PARTICULAR PURPOSE. IN NO EVENT SHALL
  TEXAS INSTRUMENTS OR ITS LICENSORS BE LIABLE OR OBLIGATED UNDER CONTRACT,
@@ -97,6 +97,91 @@ extern "C"
 #define HAL_KEY_BUTTON_UP      0x40  // Button up
 #define HAL_KEY_BUTTON_DOWN    0x80  // Button down
 
+
+/**************************************************************************************************
+ *                                            CONSTANTS
+ **************************************************************************************************/
+#define HAL_KEY_RISING_EDGE   0
+#define HAL_KEY_FALLING_EDGE  1
+
+#define HAL_KEY_DEBOUNCE_VALUE  20
+
+/* CPU port interrupt */
+#define HAL_KEY_CPU_PORT_0_IF P0IF
+#define HAL_KEY_CPU_PORT_2_IF P2IF
+
+#if (TARGET_BOARD == DEVLOP_BOARD)
+/* SW_6 is at P0.1 */
+#define HAL_KEY_SW_6_PORT   P0
+#define HAL_KEY_SW_6_BIT    BV(1)
+#define HAL_KEY_SW_6_SEL    P0SEL
+#define HAL_KEY_SW_6_DIR    P0DIR
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+/* SW_5 is at P0.7 */
+#define HAL_KEY_SW_6_PORT   P0
+#define HAL_KEY_SW_6_BIT    BV(7)
+#define HAL_KEY_SW_6_SEL    P0SEL
+#define HAL_KEY_SW_6_DIR    P0DIR
+#endif
+
+#if (TARGET_BOARD == DEVLOP_BOARD)
+/* SW_7(uart_rx) is at P0.2 */
+#define HAL_KEY_SW_7_PORT   P0
+#define HAL_KEY_SW_7_BIT    BV(2)
+#define HAL_KEY_SW_7_SEL    P0SEL
+#define HAL_KEY_SW_7_DIR    P0DIR
+#endif
+
+#define HAL_KEY_SW_6_EDGEBIT  BV(0) //PICTL[0] for all PORT0 GPIOs.
+#define HAL_KEY_SW_6_EDGE     HAL_KEY_FALLING_EDGE
+
+/* edge interrupt */
+#if (TARGET_BOARD == DEVELOP_BOARD)
+/* SW_6 interrupts */
+#define HAL_KEY_SW_6_IEN      IEN1  /* CPU interrupt mask register */
+#define HAL_KEY_SW_6_IENBIT   BV(5) /* Mask bit for all of Port_0 */
+#define HAL_KEY_SW_6_ICTL     P0IEN /* Port Interrupt Control register */
+#define HAL_KEY_SW_6_ICTLBIT  BV(1) /* P0IEN - P0.1 enable/disable bit */
+#define HAL_KEY_SW_6_PXIFG    P0IFG /* Interrupt flag at source */
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+/* SW_6 interrupts */
+#define HAL_KEY_SW_6_IEN      IEN1  /* CPU interrupt mask register */
+#define HAL_KEY_SW_6_IENBIT   BV(5) /* Mask bit for all of Port_0 */
+#define HAL_KEY_SW_6_ICTL     P0IEN /* Port Interrupt Control register */
+#define HAL_KEY_SW_6_ICTLBIT  BV(7) /* P0IEN - P0.7 enable/disable bit */
+#define HAL_KEY_SW_6_PXIFG    P0IFG /* Interrupt flag at source */
+#endif
+
+#if (TARGET_BOARD == DEVELOP_BOARD)
+/* SW_7 interrupts */
+#define HAL_KEY_SW_7_IEN      IEN1  /* CPU interrupt mask register */
+#define HAL_KEY_SW_7_IENBIT   BV(5) /* Mask bit for all of Port_0 */
+#define HAL_KEY_SW_7_ICTL     P0IEN /* Port Interrupt Control register */
+#define HAL_KEY_SW_7_ICTLBIT  BV(2) /* P0IEN - P0.2 enable/disable bit */
+#define HAL_KEY_SW_7_PXIFG    P0IFG /* Interrupt flag at source */
+
+/* Joy stick move at P2.0 */
+#define HAL_KEY_JOY_MOVE_PORT   P2
+#define HAL_KEY_JOY_MOVE_BIT    BV(0)
+#define HAL_KEY_JOY_MOVE_SEL    P2SEL
+#define HAL_KEY_JOY_MOVE_DIR    P2DIR
+
+/* edge interrupt */
+#define HAL_KEY_JOY_MOVE_EDGEBIT  BV(3)
+#define HAL_KEY_JOY_MOVE_EDGE     HAL_KEY_FALLING_EDGE
+
+/* Joy move interrupts */
+#define HAL_KEY_JOY_MOVE_IEN      IEN2  /* CPU interrupt mask register */
+#define HAL_KEY_JOY_MOVE_IENBIT   BV(1) /* Mask bit for all of Port_2 */
+#define HAL_KEY_JOY_MOVE_ICTL     P2IEN /* Port Interrupt Control register */
+#define HAL_KEY_JOY_MOVE_ICTLBIT  BV(0) /* P2IENL - P2.0<->P2.3 enable/disable bit */
+#define HAL_KEY_JOY_MOVE_PXIFG    P2IFG /* Interrupt flag at source */
+
+#define HAL_KEY_JOY_CHN   HAL_ADC_CHANNEL_6
+
+#endif
+
+
 /**************************************************************************************************
  * TYPEDEFS
  **************************************************************************************************/
@@ -112,7 +197,7 @@ extern bool Hal_KeyIntEnable;
  **************************************************************************************************/
 
 #if defined ( AMOMCU_UART_RX_MODE)
-//ÉèÖÃp02µÄ¹¦ÄÜ£¬1Îªuart½Å£¬ 0ÎªÊäÈëÖÐ¶Ï½Å
+//ï¿½ï¿½ï¿½ï¿½p02ï¿½Ä¹ï¿½ï¿½Ü£ï¿½1Îªuartï¿½Å£ï¿½ 0Îªï¿½ï¿½ï¿½ï¿½ï¿½Ð¶Ï½ï¿½
 void HalKey_Set_P02_for_UartRX_or_GPIO(bool flag);
 #endif
 
