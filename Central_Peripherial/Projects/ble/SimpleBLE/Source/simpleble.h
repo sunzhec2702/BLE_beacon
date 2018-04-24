@@ -107,7 +107,7 @@ typedef enum
 //#define SBP_KEY_LONG_PRESSED_EVT                       0x0004
 #define SBP_SCAN_ADV_TRANS_EVT                         0x0004
 
-#define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
+#define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_MIN_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
 #define SBP_STATION_ADV_INTERVAL   (20) // 2s
@@ -232,7 +232,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
-//#define RELEASE_VER                      //����汾������?????
+//#define RELEASE_VER                      //����汾������??????
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x03
@@ -253,7 +253,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// ϵͳ��ʱ�����ʱ��?????
+// ϵͳ��ʱ�����ʱ��??????
 #define SBP_PERIODIC_EVT_PERIOD                   100//������100ms
 
 //����¼�Ĵӻ���ַ
@@ -294,18 +294,18 @@ typedef enum
   BLE_CENTRAL_CONNECT_CMD_NULL,              //���� AT ��������  ��
   BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ��?
   BLE_CENTRAL_CONNECT_CMD_CON,               //���� AT ��������  ����ָ����ַ
-  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����?????
+  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����??????
   BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ��?
 }BLE_CENTRAL_CONNECT_CMD;
 extern BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd ;
 
 // ����ϵͳ�ṹ������ �ýṹ���ڿ���ʱ��nv flash �ж�ȡ�� �������޸�ʱ�� ��Ҫд��nv flash
-// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�?????
+// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�??????
 typedef struct 
 {
     BLE_STATUS status;
     BLE_ROLE role;                  //����ģʽ  0: �ӻ�   1: ����
-    uint8 mac_addr[B_ADDR_LEN];            //����mac��ַ ���?????12λ �ַ���ʾ
+    uint8 mac_addr[B_ADDR_LEN];            //����mac��ַ ���??????12λ �ַ���ʾ
     int8 rssi;                              //  RSSI �ź�ֵ
     uint8 rxGain;                           //  ��������ǿ��
     uint8 txPower;                          //  �����ź�ǿ��
@@ -363,7 +363,7 @@ extern bool simpleBLECentralCanSend;
 extern bool simpleBLEChar6DoWrite;
 
 #if 1
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������????? ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������?????? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times);
 
 // �ַ����Ա�
@@ -379,14 +379,14 @@ void simpleBLE_SaveAndReset(void);
 // �����������ݵ�nv flash
 void simpleBLE_WriteAllDataToFlash();
 
-// ��ȡ�Զ����????? nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����?????? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash();
 
 //flag: PARA_ALL_FACTORY:  ȫ���ָ���������
 //flag: PARA_PARI_FACTORY: ��������Ϣ
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag); 
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?????
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���??????
 void PrintAllPara(void);
 
 // �����豸��ɫ
