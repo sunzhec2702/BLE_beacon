@@ -346,8 +346,6 @@ void set_beacon_status(BLE_STATUS current_status, BLE_STATUS target_status, bool
     switch (target_status)
     {
       case BLE_STATUS_OFF:
-      osal_set_event(simpleBLETaskId, SBP_SLEEP_EVT);
-      break;
       case BLE_STATUS_ON_SCAN:
       if (current_status == BLE_STATUS_ON_ADV)
       {
@@ -444,8 +442,6 @@ void wake_from_vibra_sensor()
 
 void exit_sleep_mode(uint8 first_wake)
 {
-    set_beacon_status(BLE_STATUS_ON_ADV, BLE_STATUS_ON_SCAN);
-    /*
   if (g_sleepFlag == TRUE)
   {
     if (first_wake == TRUE)
@@ -458,7 +454,6 @@ void exit_sleep_mode(uint8 first_wake)
     }
     osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);
   }
-  */
 }
 
 #endif
