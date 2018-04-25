@@ -6,8 +6,6 @@
 
 extern SYS_CONFIG sys_config;
 
-#define HAL_KEY_SW_6_PORT   P0
-#define HAL_KEY_SW_6_BIT    BV(1)
 #define XDATA_MAC_ADDR      (0x780E)
 
 void updateSysConfigMac()

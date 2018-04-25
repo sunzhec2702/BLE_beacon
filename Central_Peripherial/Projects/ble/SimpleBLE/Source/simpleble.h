@@ -111,7 +111,7 @@ typedef enum
 #define SBP_PERIODIC_EVT_ALL (SBP_PERIODIC_EVT|SBP_PERIODIC_LED_EVT|SBP_PERIODIC_BUTTON_LED_EVT|SBP_PERIODIC_PER_HOUR_EVT|SBP_PERIODIC_CHN_ADVERT_EVT_RELEASE|SBP_PERIODIC_CHN_ADVERT_EVT_PRESS|SBP_PERIODIC_INDEX_EVT)
 
 // What is the advertising interval when device is discoverable (units of 625us, 160=100ms)
-#define SBP_STATION_ADV_INTERVAL   (20) // 2s
+#define SBP_STATION_ADV_INTERVAL_x00MS   (20) // 2s
 #define RAPID_ADVERTISING_INTERVAL (160*2) // 200ms
 #define SLOW_ADVERTISING_INTERVAL (160*20) // 2s
 #define SBP_PERIODIC_ADVERT_CHG_PERIOD                  2000 // 2s
@@ -158,7 +158,7 @@ typedef enum
 #define SBP_PERIODIC_OFF_SCAN_PERIOD_SEC_2              0x10 // total 3600s, 1 hour
 
 #define SCAN_ADV_TRANS_MIN_PERIOD                       20 // 10mins
-#define SBP_PERIODIC_OFF_SCAN_PERIOD_MIN                60
+#define SBP_PERIODIC_OFF_SCAN_PERIOD_MIN                60 // Only 16 bits, max 109 Mins.
 #define SBP_PERIODIC_OFF_SCAN_PERIOD_x00MS              (SBP_PERIODIC_OFF_SCAN_PERIOD_MIN * 60 * 10) // one hour
 #define SBP_PERIODIC_FAST_OFF_SCAN_PERIOD_x00MS         (600) // 60s
 

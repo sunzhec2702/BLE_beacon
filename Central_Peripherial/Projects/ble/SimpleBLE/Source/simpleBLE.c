@@ -141,7 +141,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.txPower = 0;
 
     /* PRE_ROLE_STATION used Start. */
-    sys_config.stationAdvInterval = ADV_INTERVAL_x00MS_TO_TICK(SBP_STATION_ADV_INTERVAL);
+    sys_config.stationAdvInterval = SBP_STATION_ADV_INTERVAL_x00MS;
     /* PRE_ROLE_STATION used End. */
     
     /* PRE_ROLE_BEACON used Start. */

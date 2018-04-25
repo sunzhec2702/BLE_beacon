@@ -66,6 +66,7 @@
 
 #include "simpleBLEKey.h"
 #include "simpleBLELED.h"
+#include "hal_vibra_sensor.h"
 #include "simpleBLECentralPeripheralCommon.h"
 
 #if (PRESET_ROLE == BLE_PRE_ROLE_STATION)
