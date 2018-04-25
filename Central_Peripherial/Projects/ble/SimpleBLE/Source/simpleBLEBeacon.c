@@ -5,6 +5,7 @@
 #include "npi.h"
 #include "simpleBLELED.h"
 #include "hal_adc.h"
+#include "hal_vibra_sensor.h"
 
 #define MAC_SUM_BYTE    0xBF
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
@@ -283,6 +284,17 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
     }
 }
 
+void restart_off_scan()
+{
+    // A WAR for the date length.
+    uint32 off_scan_interval = sys_config.powerOffScanInterval;
+    off_scan_interval *= 100;
+    DEBUG_VALUE("Restart Off Scan after : %ld", off_scan_interval, 10);
+    resetScanTimeLeft();
+    set_first_boot(FALSE);
+    osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, off_scan_interval);
+}
+
 bool scan_discovery_callback(void)
 {
     if (getScanTimeLeft() == 0)
@@ -294,14 +306,7 @@ bool scan_discovery_callback(void)
                 osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
             break;
             case BLE_STATUS_OFF:
-                // A WAR for the date length.
-                uint32 off_scan_interval = sys_config.powerOffScanInterval;
-                off_scan_interval *= 100;
-                DEBUG_PRINT("OFF, TimeLeft 0\r\n");
-                DEBUG_VALUE("OFFSCAN INterval: %ld", off_scan_interval, 10);
-                resetScanTimeLeft();
-                set_first_boot(FALSE);
-                osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, off_scan_interval);
+                restart_off_scan();
             break;
         }
     }
@@ -442,8 +447,9 @@ void enter_low_battery_mode()
 
 void wake_from_vibra_sensor()
 {
+  // Here we do nothing.
   //first_boot = FALSE;
-  exit_sleep_mode(FALSE);
+  //exit_sleep_mode(FALSE);
 }
 
 void exit_sleep_mode(uint8 first_wake)

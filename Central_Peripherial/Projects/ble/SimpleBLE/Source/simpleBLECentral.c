@@ -361,7 +361,6 @@ void SimpleBLECentral_Init(uint8 task_id)
 void simpleBLEStartScan()
 {
   simpleBLECentralCanSend = FALSE;
-
   if (!simpleBLEScanning)
   {
     simpleBLEScanning = TRUE;
@@ -478,11 +477,29 @@ uint16 SimpleBLECentral_ProcessEvent(uint8 task_id, uint16 events)
       // Blink twice after 650ms
       led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, 0);
     }
+    if (currentBLEStatus == BLE_STATUS_OFF)
+    {
+      if (readVibraTriggered() == FALSE)
+      {
+        DEBUG_PRINT("No Vibra Triggered, Skip Scan\r\n");
+        restart_off_scan();
+      }
+      else
+      {
+        DEBUG_PRINT("Vibra Triggered, Start Scanning\r\n");
+        HalVibraSensorInterruptControl(TRUE);
+        simpleBLEStartScan();
+      }
+    }
+    else if (currentBLEStatus == BLE_STATUS_ON_SCAN)
+    {
+      simpleBLEStartScan();
+    }
     #elif (PRESET_ROLE == BLE_PRE_ROLE_STATION)
     sendStationInfo();
+    simpleBLEStartScan();
     #endif
     DEBUG_PRINT("Central Wake\r\n");
-    simpleBLEStartScan();
     return (events ^ SBP_WAKE_EVT);
   }
 
@@ -795,7 +812,7 @@ static uint8 simpleBLECentralEventCB(gapCentralRoleEvent_t *pEvent)
     LCD_WRITE_STRING("Disconnected", HAL_LCD_LINE_1);
     LCD_WRITE_STRING_VALUE("Reason:", pEvent->linkTerminate.reason, 10, HAL_LCD_LINE_2);
     //��������ʧ�ܺ� ���Գ���ִ��������߼����?��ӻ�?????
-    simpleBLEScanning = 0;
+    simpleBLEScanning = FALSE;
     simpleBLEStartScan();
   }
   break;
