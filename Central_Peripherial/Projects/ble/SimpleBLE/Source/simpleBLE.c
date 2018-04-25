@@ -140,8 +140,11 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD;
     sys_config.txPower = 0;
 
+    /* PRE_ROLE_STATION used Start. */
     sys_config.stationAdvInterval = ADV_INTERVAL_x00MS_TO_TICK(SBP_STATION_ADV_INTERVAL);
-    // PRE_ROLE_BEACON used.
+    /* PRE_ROLE_STATION used End. */
+    
+    /* PRE_ROLE_BEACON used Start. */
     sys_config.bootup_blink = TRUE;
     sys_config.stationIndex = 0;
     sys_config.beaconIndex = 0;
@@ -150,6 +153,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
     sys_config.powerOnScanInterval = SCAN_ADV_TRANS_MIN_PERIOD;
     sys_config.powerOnPeriod = DEFAULT_WAKE_TIME_MINS;
     sys_config.powerOffScanInterval = SBP_PERIODIC_OFF_SCAN_PERIOD_x00MS; // The scan interval in OFF mode, default 1 hour
+    /* PRE_ROLE_BEACON used End. */
   }
   GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //��������?
   simpleBLE_WriteAllDataToFlash();
@@ -222,8 +226,6 @@ void simpleBLE_SetPeripheralMacAddr(uint8 *pAddr)
 // Return FALSE == peripheral, TRUE == Central 
 bool Check_startup_peripheral_or_central(void)
 {
-  return FALSE;
-
 #if (PRESET_ROLE == BLE_PRE_ROLE_BEACON)
   switch (sys_config.status)
   {
@@ -283,7 +285,7 @@ void UpdateTxPower(void)
 void simpleBle_LedSetState(uint8 onoff)
 {
   HalLedSet(HAL_LED_1, onoff); //led����
-  P0DIR |= 0x60; // P0.6����Ϊ���?????
+  P0DIR |= 0x60; // P0.6����Ϊ���??????
   P0_6 = onoff;
 }
 

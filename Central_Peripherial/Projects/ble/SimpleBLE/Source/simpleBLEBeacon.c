@@ -82,6 +82,7 @@ void scan_adv_event_callback(uint8 role)
     }
 }
 
+// Retrive the station adv information and update to the sys_config structure.
 static void retrive_info_from_station_adv(uint8 *pEvtData, bool use_hardcode_value)
 {
     /*
@@ -177,14 +178,14 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                     case BLE_CMD_POWER_OFF:
                     // Do nothing.
                     #ifdef DEBUG_CMD_POWER_OFF
+                    // TODO: Check if we need to retrive information from station adv. For example, change the off scan interval.
                     sys_config.minLeft = 0;
                     set_beacon_status(BLE_STATUS_ON_SCAN, BLE_STATUS_OFF, TRUE);
                     #endif
-
                     break;
                     case BLE_CMD_POWER_ON:
                     DEBUG_VALUE("current stationIndex: ", sys_config.stationIndex, 10);
-                    retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData, TRUE);
+                    retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData, ADV_USE_HARDCODE_VALUE);
                     // Reset the wake time left mins.
                     sys_config.minLeft = sys_config.powerOnPeriod;
                     #ifdef DEBUG_BOARD
@@ -229,7 +230,7 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                 switch (cmd)
                 {
                     case BLE_CMD_POWER_OFF:
-                    // Do nothing.
+                    // Do nothing. We have a specific command to update the config.
                     /*
                     retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData);
                     sys_config.stationIndex = 0;
@@ -239,7 +240,7 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
                     break;
                     case BLE_CMD_POWER_ON:
                     DEBUG_VALUE("current stationIndex: ", sys_config.stationIndex, 10);
-                    retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData, TRUE);
+                    retrive_info_from_station_adv(pEvent->deviceInfo.pEvtData, ADV_USE_HARDCODE_VALUE);
                     // Reset the wake time left mins.
                     sys_config.minLeft = sys_config.powerOnPeriod;
                     #ifdef DEBUG_BOARD
@@ -284,24 +285,29 @@ void scan_device_info_callback(gapCentralRoleEvent_t *pEvent)
 
 bool scan_discovery_callback(void)
 {
-    if (getCurrentBLEStatus() == BLE_STATUS_ON_SCAN && getScanTimeLeft() == 0)
+    if (getScanTimeLeft() == 0)
     {
-      DEBUG_PRINT("ON_SCAN, TimeLeft 0\r\n");
-      osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
-    }
-    else if (getCurrentBLEStatus() == BLE_STATUS_OFF && getScanTimeLeft() == 0)
-    {
-      uint32 off_scan_interval = sys_config.powerOffScanInterval;
-      off_scan_interval *= 100;
-      DEBUG_PRINT("OFF, TimeLeft 0\r\n");
-      DEBUG_VALUE("OFFSCAN INterval: %ld", off_scan_interval, 10);
-      resetScanTimeLeft();
-      set_first_boot(FALSE);
-      osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, off_scan_interval);
+        switch(getCurrentBLEStatus())
+        {
+            case BLE_STATUS_ON_SCAN:
+                DEBUG_PRINT("ON_SCAN, TimeLeft 0\r\n");
+                osal_set_event(simpleBLETaskId, SBP_SCAN_ADV_TRANS_EVT);
+            break;
+            case BLE_STATUS_OFF:
+                // A WAR for the date length.
+                uint32 off_scan_interval = sys_config.powerOffScanInterval;
+                off_scan_interval *= 100;
+                DEBUG_PRINT("OFF, TimeLeft 0\r\n");
+                DEBUG_VALUE("OFFSCAN INterval: %ld", off_scan_interval, 10);
+                resetScanTimeLeft();
+                set_first_boot(FALSE);
+                osal_start_timerEx(simpleBLETaskId, SBP_WAKE_EVT, off_scan_interval);
+            break;
+        }
     }
     else
     {
-      simpleBLEStartScan();
+        simpleBLEStartScan();
     }
     return TRUE;
 }
