@@ -3,13 +3,15 @@
 #include "simple_uart.h"
 #include "simple_led.h"
 #include "simple_nfc.h"
+#include "simple_nfc.h"
 
 static void processKeyEvent(uint8_t keyPressed)
 {
     if (keyPressed & KEY_SELECT)
     {
-        //ledToggle(LED_INDEX_0);
+        #if (ENABLE_NFC == 1)
         controlNfcTasks(true);
+        #endif
     }
     DEBUG_STRING("Hello\r\n");
 }

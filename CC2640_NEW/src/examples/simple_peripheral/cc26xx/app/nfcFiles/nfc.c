@@ -1219,8 +1219,7 @@ str_nfc_modulation_type(const nfc_modulation_type nmt)
  *
  * @warning *buf must be freed using nfc_free()
 */
-int
-str_nfc_target(char **buf, const nfc_target *pnt, bool verbose)
+int str_nfc_target(char **buf, const nfc_target *pnt, bool verbose)
 {
   /*
   *buf = ICall_malloc(4096);
@@ -1230,4 +1229,5 @@ str_nfc_target(char **buf, const nfc_target *pnt, bool verbose)
   snprint_nfc_target(*buf, 4096, pnt, verbose);
   return strlen(*buf);
   */
+  return 0;
 }

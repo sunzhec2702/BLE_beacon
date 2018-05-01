@@ -98,7 +98,7 @@
  */
 
 // Link DB maximum number of connections
-uint8 linkDBNumConns;
+static uint8 linkDBNumConns;
 
 /*********************************************************************
  * EXTERNAL VARIABLES

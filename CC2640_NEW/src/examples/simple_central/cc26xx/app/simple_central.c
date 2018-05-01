@@ -75,6 +75,7 @@
 #include "board.h"
 
 #include "simple_central.h"
+#include "simple_beacon_common.h"
 
 #include "ble_user_config.h"
 
@@ -160,7 +161,7 @@
 #define DEFAULT_SVC_DISCOVERY_DELAY           1000
 
 // TRUE to filter discovery results on desired service UUID
-#define DEFAULT_DEV_DISC_BY_SVC_UUID          TRUE
+#define DEFAULT_DEV_DISC_BY_SVC_UUID          FALSE
 
 // Length of bd addr as a string
 #define B_ADDR_STR_LEN                        15
@@ -214,7 +215,7 @@ typedef struct
  */
 
 // Display Interface
-Display_Handle dispHandle = NULL;
+extern Display_Handle dispHandle;
 
 /*********************************************************************
  * EXTERNAL VARIABLES
@@ -328,8 +329,9 @@ void SimpleBLECentral_readRssiHandler(UArg a0);
 static uint8_t SimpleBLECentral_enqueueMsg(uint8_t event, uint8_t status,
                                            uint8_t *pData);
 
-#ifdef FPGA_AUTO_CONNECT
 static void SimpleBLECentral_startGapDiscovery(void);
+
+#ifdef FPGA_AUTO_CONNECT
 static void SimpleBLECentral_connectToFirstDevice(void);
 #endif // FPGA_AUTO_CONNECT
 
@@ -354,7 +356,7 @@ static gapBondCBs_t SimpleBLECentral_bondCB =
  * PUBLIC FUNCTIONS
  */
 
-#ifdef FPGA_AUTO_CONNECT
+
 /*********************************************************************
  * @fn      SimpleBLECentral_startGapDiscovery
  *
@@ -371,7 +373,7 @@ static void SimpleBLECentral_startGapDiscovery(void)
   {
     scanningStarted = TRUE;
     scanRes = 0;
-
+    DEBUG_STRING("Start Discovery\r\n");
     Display_print0(dispHandle, 2, 0, "Discovering...");
     Display_clearLines(dispHandle, 3, 4);
 
@@ -381,6 +383,7 @@ static void SimpleBLECentral_startGapDiscovery(void)
   }
 }
 
+#ifdef FPGA_AUTO_CONNECT
 /*********************************************************************
  * @fn      SimpleBLECentral_connectToFirstDevice
  *
@@ -453,6 +456,7 @@ void SimpleBLECentral_createTask(void)
  */
 static void SimpleBLECentral_init(void)
 {
+  uint8_t res = 0;
   uint8_t i;
 
   // ******************************************************************
@@ -462,6 +466,7 @@ static void SimpleBLECentral_init(void)
   // so that the application can send and receive messages.
   ICall_registerApp(&selfEntity, &sem);
 
+  simple_beacon_drivers_init();
 #if defined( USE_FPGA )
   // configure RF Core SMI Data Link
   IOCPortConfigureSet(IOID_12, IOC_PORT_RFC_GPO0, IOC_STD_OUTPUT);
@@ -486,8 +491,6 @@ static void SimpleBLECentral_init(void)
   // Setup discovery delay as a one-shot timer
   Util_constructClock(&startDiscClock, SimpleBLECentral_startDiscHandler,
                       DEFAULT_SVC_DISCOVERY_DELAY, 0, false, 0);
-
-  Board_initKeys(SimpleBLECentral_keyChangeHandler);
 
   dispHandle = Display_open(Display_Type_LCD, NULL);
 
@@ -529,8 +532,10 @@ static void SimpleBLECentral_init(void)
   }
 
   // Initialize GATT Client
-  VOID GATT_InitClient();
-
+  res = GATT_InitClient();
+  DEBUG_STRING("GATT INITClient res\r\n");
+  DEBUG_NUMBER(res);
+  DEBUG_STRING("\r\n");
   // Register to receive incoming ATT Indications/Notifications
   GATT_RegisterForInd(selfEntity);
 
@@ -539,7 +544,10 @@ static void SimpleBLECentral_init(void)
   GATTServApp_AddService(GATT_ALL_SERVICES); // GATT attributes
 
   // Start the Device
-  VOID GAPCentralRole_StartDevice(&SimpleBLECentral_roleCB);
+  res = GAPCentralRole_StartDevice(&SimpleBLECentral_roleCB);
+  DEBUG_STRING("GATT StartDevice res\r\n");
+  DEBUG_NUMBER(res);
+  DEBUG_STRING("\r\n");
 
   // Register with bond manager after starting device
   GAPBondMgr_Register(&SimpleBLECentral_bondCB);
@@ -743,18 +751,16 @@ static void SimpleBLECentral_processRoleEvent(gapCentralRoleEvent_t *pEvent)
     case GAP_DEVICE_INIT_DONE_EVENT:
       {
         maxPduSize = pEvent->initDone.dataPktLen;
-
+        DEBUG_STRING("INIT DONE EVENT\r\n");
         Display_print0(dispHandle, 1, 0, Util_convertBdAddr2Str(pEvent->initDone.devAddr));
         Display_print0(dispHandle, 2, 0, "Initialized");
-
-#ifdef FPGA_AUTO_CONNECT
         SimpleBLECentral_startGapDiscovery();
-#endif // FPGA_AUTO_CONNECT
       }
       break;
 
     case GAP_DEVICE_INFO_EVENT:
       {
+        /*
         // if filtering device discovery results based on service UUID
         if (DEFAULT_DEV_DISC_BY_SVC_UUID == TRUE)
         {
@@ -766,6 +772,14 @@ static void SimpleBLECentral_processRoleEvent(gapCentralRoleEvent_t *pEvent)
                                            pEvent->deviceInfo.addrType);
           }
         }
+        */
+        DEBUG_STRING("DEVICE INFO EVENT\r\n");
+        for (uint8_t i = 0; i < B_ADDR_LEN; i++)
+        {
+          DEBUG_NUMBER(pEvent->deviceInfo.addr[i]);
+          DEBUG_STRING(" ");
+        }
+        DEBUG_STRING("\r\n");
       }
       break;
 
@@ -782,9 +796,10 @@ static void SimpleBLECentral_processRoleEvent(gapCentralRoleEvent_t *pEvent)
           memcpy(devList, pEvent->discCmpl.pDevList,
                  (sizeof(gapDevRec_t) * scanRes));
         }
-
-        Display_print1(dispHandle, 2, 0, "Devices Found %d", scanRes);
-
+        DEBUG_STRING("DEVICE DISCOVERY EVENT, Found ");
+        DEBUG_NUMBER(scanRes);
+        DEBUG_STRING("\r\n");
+        SimpleBLECentral_startGapDiscovery();
         if (scanRes > 0)
         {
 #ifndef FPGA_AUTO_CONNECT

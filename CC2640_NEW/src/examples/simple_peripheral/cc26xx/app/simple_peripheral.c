@@ -81,6 +81,7 @@
 #include "board.h"
 
 #include "simple_peripheral.h"
+#include "simple_beacon_common.h"
 
 #include "simple_led.h"
 #include "simple_key.h"
@@ -160,7 +161,7 @@ typedef struct
  */
 
 // Display Interface
-Display_Handle dispHandle = NULL;
+extern Display_Handle dispHandle;
 
 /*********************************************************************
  * LOCAL VARIABLES
@@ -375,17 +376,6 @@ void SimpleBLEPeripheral_createTask(void)
   Task_construct(&sbpTask, SimpleBLEPeripheral_taskFxn, &taskParams, NULL);
 }
 
-
-static void simple_beacon_drivers_init()
-{
-    // LED related initial.
-    ledInit();
-    ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 3);
-    // Key Setup.
-    keyInit();
-    return;
-}
-
 /*********************************************************************
  * @fn      SimpleBLEPeripheral_init
  *
@@ -400,6 +390,7 @@ static void simple_beacon_drivers_init()
  */
 static void SimpleBLEPeripheral_init(void)
 {
+  uint8_t res = 0;
   // ******************************************************************
   // N0 STACK API CALLS CAN OCCUR BEFORE THIS CALL TO ICall_registerApp
   // ******************************************************************

@@ -1,0 +1,2164 @@
+###############################################################################
+#
+# IAR ELF Linker V7.80.4.12462/W32 for ARM                30/Apr/2018  12:51:46
+# Copyright 2007-2017 IAR Systems AB.
+#
+#    Output file  =  
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Exe\simple_central_cc2650em_stack.out
+#    Map file     =  
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\List\simple_central_cc2650em_stack.map
+#    Command line =  
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\ble_dispatch.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\ble_user_config.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\gap.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\gapbondmgr.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\gattservapp_util.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\hal_assert.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\hal_flash_wrapper.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\hal_rtc_wrapper.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\hal_trng_wrapper.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\icall_startup.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\npi.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\onboard.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal_bufmgr.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal_cbtimer.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal_clock.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal_icall_ble.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal_memory_icall.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal_pwrmgr.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal_snv_wrapper.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\osal_timers.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\rom_jt.o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj\sm_ecc.o
+#        -o
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Exe\simple_central_cc2650em_stack.out
+#        --config_def FLASH_ROM_BUILD=1 --config_def CC2650=1 --map
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\List\simple_central_cc2650em_stack.map
+#        --config
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\..\..\..\..\..\src/common/cc26xx/iar/cc26xx_stack.icf
+#        -f
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack/../config/lib_linker.cmd
+#        (F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\blelib\host\host_xcxx.a
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\blelib\ctrl\cc2640\cc2640_ctrl_xcxx_41c.a
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\blelib\hci_tl\cc26xx\cc26xx_hci_tl_none_v41.a)
+#        --semihosting
+#        F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\..\..\..\..\..\src\rom/ble_rom_releases/04242014/ble_rom_patch.symbols
+#        C:\ti\tirtos_cc13xx_cc26xx_2_20_01_08\products\cc26xxware_2_24_02_17393\driverlib\bin\iar\driverlib.lib
+#        --entry startup_entry --vfe
+#
+###############################################################################
+
+*******************************************************************************
+*** RUNTIME MODEL ATTRIBUTES
+***
+
+CppFlavor       = *
+__SystemLibrary = DLib
+
+
+*******************************************************************************
+*** RESERVED RANGES
+***
+
+Ranges reserved by absolute symbols:
+   [0x10005000-0x10005003]
+   [0x10005004-0x1000dffb]
+   [0x1000dffc-0x1000dffd]
+   [0x1000dffe-0x1000dfff]
+   [0x10016975-0x10016976]
+   [0x10016979-0x10016984]
+   [0x10016985-0x10016a98]
+   [0x10016a99-0x10016ae6]
+   [0x10016af5-0x10016b56]
+   [0x10016b79-0x10016c28]
+   [0x10016c29-0x10016c42]
+   [0x10016c45-0x10016c76]
+   [0x10016c79-0x10016d02]
+   [0x10016d05-0x10016d26]
+   [0x10016d29-0x10016da0]
+   [0x10016da1-0x10016dc6]
+   [0x10016dc9-0x10016e8c]
+   [0x10016e8d-0x10016ea0]
+   [0x10016ea1-0x10016ed2]
+   [0x10016ed5-0x10016f44]
+   [0x10017365-0x100174ba]
+   [0x100174fd-0x100175d0]
+   [0x100175ed-0x10017674]
+   [0x1001767d-0x10017754]
+   [0x10017771-0x100177fa]
+   [0x10017839-0x10017894]
+   [0x10017895-0x100178f2]
+   [0x100178f5-0x1001794e]
+   [0x10018315-0x1001833a]
+   [0x1001833d-0x10018366]
+   [0x10018369-0x1001838e]
+   [0x10018391-0x100183b6]
+   [0x100183b9-0x100183c4]
+   [0x10018485-0x100184a6]
+   [0x100184a9-0x100184c2]
+   [0x100184c5-0x100184cc]
+   [0x100184cd-0x100184d0]
+   [0x100184d1-0x100184d4]
+   [0x100184d5-0x100184f8]
+   [0x100184f9-0x10018546]
+   [0x10018549-0x10018550]
+   [0x10018551-0x100185e0]
+   [0x100185e1-0x1001865c]
+   [0x10018669-0x100186f6]
+   [0x10018a19-0x10018a32]
+   [0x10018a35-0x10018a4c]
+   [0x10018a99-0x10018ac2]
+   [0x10018ac5-0x10018aee]
+   [0x10018b09-0x10018b0c]
+   [0x200048e8-0x200048fb]
+   [0x200048fc-0x20004f2b]
+   [0x20004fac-0x20004fcb]
+   [0x20004fcc-0x20004fd7]
+
+
+*******************************************************************************
+*** PLACEMENT SUMMARY
+***
+
+"A0":  place at end of [0x00000000-0x0001efff] { block ROSTK };
+"A1":  place at end of [0x20000000-0x200048e7] { block RWDATA };
+initialize by copy with packing = packbits { rw };
+
+  Section                Kind        Address     Size  Object
+  -------                ----        -------     ----  ------
+"A0":                                         0x114e0
+  ROSTK                           0x0000db20  0x114e0  <Block>
+    ENTRY                         0x0000db20     0x30  <Block>
+      EntrySection       ro code  0x0000db20     0x30  icall_startup.o [1]
+    ROCODE                        0x0000db50  0x10483  <Block>
+      .rodata            const    0x0000db50     0x29  osal_icall_ble.o [1]
+      .rodata            const    0x0000db7a      0x2  ll_patch.o [4]
+      .rodata            const    0x0000db7c      0x8  gattservapp.o [8]
+      .rodata            const    0x0000db84      0x8  gapgattserver.o [8]
+      .rodata            const    0x0000db8c     0x5c  ll_config.o [4]
+      Veneer             ro code  0x0000dbe8      0x8  - Linker created -
+      Veneer             ro code  0x0000dbf0      0x8  - Linker created -
+      Veneer             ro code  0x0000dbf8      0x8  - Linker created -
+      Veneer             ro code  0x0000dc00      0x8  - Linker created -
+      Veneer             ro code  0x0000dc08      0x8  - Linker created -
+      Veneer             ro code  0x0000dc10      0x8  - Linker created -
+      Veneer             ro code  0x0000dc18      0x8  - Linker created -
+      Veneer             ro code  0x0000dc20      0x8  - Linker created -
+      Veneer             ro code  0x0000dc28      0x8  - Linker created -
+      Veneer             ro code  0x0000dc30      0x8  - Linker created -
+      Veneer             ro code  0x0000dc38      0x8  - Linker created -
+      Veneer             ro code  0x0000dc40      0x8  - Linker created -
+      Veneer             ro code  0x0000dc48      0x8  - Linker created -
+      Veneer             ro code  0x0000dc50      0x8  - Linker created -
+      Veneer             ro code  0x0000dc58      0x8  - Linker created -
+      Veneer             ro code  0x0000dc60      0x8  - Linker created -
+      Veneer             ro code  0x0000dc68      0x8  - Linker created -
+      Veneer             ro code  0x0000dc70      0x8  - Linker created -
+      Veneer             ro code  0x0000dc78      0x8  - Linker created -
+      Veneer             ro code  0x0000dc80      0x8  - Linker created -
+      Veneer             ro code  0x0000dc88      0x8  - Linker created -
+      Veneer             ro code  0x0000dc90      0x8  - Linker created -
+      Veneer             ro code  0x0000dc98      0x8  - Linker created -
+      Veneer             ro code  0x0000dca0      0x8  - Linker created -
+      Veneer             ro code  0x0000dca8      0x8  - Linker created -
+      Veneer             ro code  0x0000dcb0      0x8  - Linker created -
+      Veneer             ro code  0x0000dcb8      0x8  - Linker created -
+      Veneer             ro code  0x0000dcc0      0x8  - Linker created -
+      Veneer             ro code  0x0000dcc8      0x8  - Linker created -
+      Veneer             ro code  0x0000dcd0      0x8  - Linker created -
+      Veneer             ro code  0x0000dcd8      0x8  - Linker created -
+      Veneer             ro code  0x0000dce0      0x8  - Linker created -
+      .text              ro code  0x0000dce8    0xa38  ble_dispatch.o [1]
+      .text              ro code  0x0000e720    0x6b0  osal.o [1]
+      Veneer             ro code  0x0000edd0      0x8  - Linker created -
+      Veneer             ro code  0x0000edd8      0x8  - Linker created -
+      Veneer             ro code  0x0000ede0      0x8  - Linker created -
+      .text              ro code  0x0000ede8    0x162  l2cap_if.o [8]
+      .text              ro code  0x0000ef4c    0x1a4  att_client.o [8]
+      .text              ro code  0x0000f0f0    0x1ec  att_server.o [8]
+      Veneer             ro code  0x0000f2dc      0x8  - Linker created -
+      Veneer             ro code  0x0000f2e4      0x8  - Linker created -
+      Veneer             ro code  0x0000f2ec      0x8  - Linker created -
+      Veneer             ro code  0x0000f2f4      0x8  - Linker created -
+      .text              ro code  0x0000f2fc    0x378  hci_patch.o [4]
+      .text              ro code  0x0000f674    0xe34  gapbondmgr.o [1]
+      .text              ro code  0x000104a8    0x4a0  osal_snv_wrapper.o [1]
+      Veneer             ro code  0x00010948      0x8  - Linker created -
+      .text              ro code  0x00010950     0x14  onboard.o [1]
+      .text              ro code  0x00010964    0x2f6  gatt_task.o [8]
+      Veneer             ro code  0x00010c5c      0x8  - Linker created -
+      Veneer             ro code  0x00010c64      0x8  - Linker created -
+      .text              ro code  0x00010c6c    0x5d6  l2cap_util.o [8]
+      .text              ro code  0x00011244     0xcc  osal_bufmgr.o [1]
+      .text              ro code  0x00011310    0xd34  gatt_client.o [8]
+      .text              ro code  0x00012044    0xa98  gatt_server.o [8]
+      .text              ro code  0x00012adc    0xfb4  gattservapp.o [8]
+      .text              ro code  0x00013a90     0x44  gap.o [1]
+      Veneer             ro code  0x00013ad4      0x8  - Linker created -
+      Veneer             ro code  0x00013adc      0x8  - Linker created -
+      .text              ro code  0x00013ae4    0x544  gap_centdevmgr.o [8]
+      Veneer             ro code  0x00014028      0x8  - Linker created -
+      Veneer             ro code  0x00014030      0x8  - Linker created -
+      .text              ro code  0x00014038    0x24a  gap_centlinkmgr.o [8]
+      Veneer             ro code  0x00014284      0x8  - Linker created -
+      Veneer             ro code  0x0001428c      0x8  - Linker created -
+      .text              ro code  0x00014294    0x348  gap_configmgr.o [8]
+      Veneer             ro code  0x000145dc      0x8  - Linker created -
+      .text              ro code  0x000145e4    0x95c  gap_linkmgr.o [8]
+      .text              ro code  0x00014f40     0xb0  gap_devmgr.o [8]
+      .text              ro code  0x00014ff0    0x2ec  gapgattserver.o [8]
+      .text              ro code  0x000152dc    0x2e8  gap_task.o [8]
+      .text              ro code  0x000155c4    0x2c0  linkdb.o [8]
+      .text              ro code  0x00015884     0x30  hal_assert.o [1]
+      .text              ro code  0x000158b4     0x36  strlen.o [9]
+      .text              ro code  0x000158ec     0x40  osal_memory_icall.o [1]
+      .text              ro code  0x0001592c     0x66  ABImemset.o [9]
+      .text              ro code  0x00015994    0x298  osal_timers.o [1]
+      .text              ro code  0x00015c2c     0xa0  osal_pwrmgr.o [1]
+      .text              ro code  0x00015ccc    0x118  osal_icall_ble.o [1]
+      .text              ro code  0x00015de4    0x57c  att_util.o [8]
+      Veneer             ro code  0x00016360      0x8  - Linker created -
+      Veneer             ro code  0x00016368      0x8  - Linker created -
+      Veneer             ro code  0x00016370      0x8  - Linker created -
+      Veneer             ro code  0x00016378      0x8  - Linker created -
+      Veneer             ro code  0x00016380      0x8  - Linker created -
+      Veneer             ro code  0x00016388      0x8  - Linker created -
+      Veneer             ro code  0x00016390      0x8  - Linker created -
+      Veneer             ro code  0x00016398      0x8  - Linker created -
+      Veneer             ro code  0x000163a0      0x8  - Linker created -
+      Veneer             ro code  0x000163a8      0x8  - Linker created -
+      Veneer             ro code  0x000163b0      0x8  - Linker created -
+      Veneer             ro code  0x000163b8      0x8  - Linker created -
+      Veneer             ro code  0x000163c0      0x8  - Linker created -
+      Veneer             ro code  0x000163c8      0x8  - Linker created -
+      Veneer             ro code  0x000163d0      0x8  - Linker created -
+      Veneer             ro code  0x000163d8      0x8  - Linker created -
+      Veneer             ro code  0x000163e0      0x8  - Linker created -
+      Veneer             ro code  0x000163e8      0x8  - Linker created -
+      Veneer             ro code  0x000163f0      0x8  - Linker created -
+      Veneer             ro code  0x000163f8      0x8  - Linker created -
+      Veneer             ro code  0x00016400      0x8  - Linker created -
+      Veneer             ro code  0x00016408      0x8  - Linker created -
+      Veneer             ro code  0x00016410      0x8  - Linker created -
+      Veneer             ro code  0x00016418      0x8  - Linker created -
+      .text              ro code  0x00016420   0x1bc0  ll_patch.o [4]
+      Veneer             ro code  0x00017fe0      0x8  - Linker created -
+      .text              ro code  0x00017fe8    0x5f4  hci_event_patch.o [4]
+      .text              ro code  0x000185dc     0x58  hal_flash_wrapper.o [1]
+      .text              ro code  0x00018634     0x2c  flash.o [7]
+      .text              ro code  0x00018660     0x76  ABImemcpy_unaligned.o [9]
+      .text              ro code  0x000186d8     0x62  memcmp_unaligned.o [9]
+      .text              ro code  0x0001873c      0xe  vims.o [7]
+      .text              ro code  0x0001874c    0x1f8  osal_cbtimer.o [1]
+      .text              ro code  0x00018944     0x6c  gattservapp_util.o [1]
+      Veneer             ro code  0x000189b0      0x8  - Linker created -
+      .text              ro code  0x000189b8    0x550  sm_intpairing.o [8]
+      .text              ro code  0x00018f08    0x7dc  sm_pairing.o [8]
+      Veneer             ro code  0x000196e4      0x8  - Linker created -
+      .text              ro code  0x000196ec    0x628  sm_mgr.o [8]
+      .text              ro code  0x00019d14     0x6c  hci_tl.o [5]
+      .text              ro code  0x00019d80     0xee  I64DivMod.o [9]
+      .text              ro code  0x00019e70     0x60  osal_clock.o [1]
+      .text              ro code  0x00019ed0    0x2ac  l2cap_task.o [8]
+      .text              ro code  0x0001a17c     0xe8  sm_task.o [8]
+      .text              ro code  0x0001a264     0x74  ble_user_config.o [1]
+      .text              ro code  0x0001a2d8     0x60  hal_trng_wrapper.o [1]
+      Veneer             ro code  0x0001a338      0x8  - Linker created -
+      Veneer             ro code  0x0001a340      0x8  - Linker created -
+      Veneer             ro code  0x0001a348      0x8  - Linker created -
+      Veneer             ro code  0x0001a350      0x8  - Linker created -
+      Veneer             ro code  0x0001a358      0x8  - Linker created -
+      Veneer             ro code  0x0001a360      0x8  - Linker created -
+      Veneer             ro code  0x0001a368      0x8  - Linker created -
+      Veneer             ro code  0x0001a370      0x8  - Linker created -
+      Veneer             ro code  0x0001a378      0x8  - Linker created -
+      Veneer             ro code  0x0001a380      0x8  - Linker created -
+      Veneer             ro code  0x0001a388      0x8  - Linker created -
+      Veneer             ro code  0x0001a390      0x8  - Linker created -
+      .text              ro code  0x0001a398   0x1300  ll_common_patch.o [4]
+      .text              ro code  0x0001b698    0x1a8  ll_scheduler_patch.o [4]
+      .text              ro code  0x0001b840    0x380  smp.o [8]
+      .text              ro code  0x0001bbc0      0x2  I64DivZer.o [9]
+      .text              ro code  0x0001bbc4     0x30  trng.o [7]
+      .text              ro code  0x0001bbf4      0x6  ABImemclr.o [9]
+      .text              ro code  0x0001bbfc     0x46  ll_sleep.o [4]
+      Veneer             ro code  0x0001bc44      0x8  - Linker created -
+      Veneer             ro code  0x0001bc4c      0x8  - Linker created -
+      Veneer             ro code  0x0001bc54      0x8  - Linker created -
+      Veneer             ro code  0x0001bc5c      0x8  - Linker created -
+      Veneer             ro code  0x0001bc64      0x8  - Linker created -
+      Veneer             ro code  0x0001bc6c      0x8  - Linker created -
+      Veneer             ro code  0x0001bc74      0x8  - Linker created -
+      .text              ro code  0x0001bc7c    0x634  ble_patch.o [4]
+      Veneer             ro code  0x0001c2b0      0x8  - Linker created -
+      Veneer             ro code  0x0001c2b8      0x8  - Linker created -
+      Veneer             ro code  0x0001c2c0      0x8  - Linker created -
+      Veneer             ro code  0x0001c2c8      0x8  - Linker created -
+      .text              ro code  0x0001c2d0    0x14c  ll_enc_patch.o [4]
+      .text              ro code  0x0001c41c     0x10  ll_rat_patch.o [4]
+      Veneer             ro code  0x0001c42c      0x8  - Linker created -
+      .text              ro code  0x0001c434     0xa8  hci_data_patch.o [4]
+      Veneer             ro code  0x0001c4dc      0x8  - Linker created -
+      .text              ro code  0x0001c4e4     0xae  ll_wl_patch.o [4]
+      .text              ro code  0x0001c594    0x760  rom_jt.o [1]
+      .text              ro code  0x0001ccf4     0x10  cpu.o [7]
+      .text              ro code  0x0001cd04     0x24  gatt_uuid.o [8]
+      .text              ro code  0x0001cd28     0xbc  interrupt.o [7]
+      .text              ro code  0x0001cde4    0x328  ll_init_end_causes_patch.o [4]
+      Veneer             ro code  0x0001d10c      0x8  - Linker created -
+      Veneer             ro code  0x0001d114      0x8  - Linker created -
+      Veneer             ro code  0x0001d11c      0x8  - Linker created -
+      Veneer             ro code  0x0001d124      0x8  - Linker created -
+      Veneer             ro code  0x0001d12c      0x8  - Linker created -
+      Veneer             ro code  0x0001d134      0x8  - Linker created -
+      Veneer             ro code  0x0001d13c      0x8  - Linker created -
+      .text              ro code  0x0001d144    0x6ae  ll_master_end_causes_patch.o [4]
+      Veneer             ro code  0x0001d7f4      0x8  - Linker created -
+      Veneer             ro code  0x0001d7fc      0x8  - Linker created -
+      Veneer             ro code  0x0001d804      0x8  - Linker created -
+      Veneer             ro code  0x0001d80c      0x8  - Linker created -
+      .text              ro code  0x0001d814     0xe8  ll_scan_end_causes_patch.o [4]
+      .text              ro code  0x0001d8fc    0x458  ll_isr.o [4]
+      .text              ro code  0x0001dd54     0x28  data_init.o [9]
+      Veneer             ro code  0x0001dd7c      0x8  - Linker created -
+      Veneer             ro code  0x0001dd84      0x8  - Linker created -
+      Veneer             ro code  0x0001dd8c      0x8  - Linker created -
+      Veneer             ro code  0x0001dd94      0x8  - Linker created -
+      Veneer             ro code  0x0001dd9c      0x8  - Linker created -
+      Veneer             ro code  0x0001dda4      0x8  - Linker created -
+      Veneer             ro code  0x0001ddac      0x8  - Linker created -
+      .text              ro code  0x0001ddb4     0x42  ll_access_address_patch.o [4]
+      .text              ro code  0x0001ddf6     0x40  zero_init3.o [9]
+      .text              ro code  0x0001de36     0x38  packbits_init_single.o [9]
+      .iar.init_table    const    0x0001de70     0x20  - Linker created -
+      .rodata            const    0x0001de90      0x0  zero_init3.o [9]
+      .rodata            const    0x0001de90      0x0  packbits_init_single.o [9]
+      Initializer bytes  const    0x0001de90    0x143  <for RWDATA-1>
+    SNVSECT                       0x0001e000   0x1000  <Block>
+      .snvSectors        const    0x0001e000   0x1000  osal_snv_wrapper.o [1]
+                                - 0x0001f000  0x114e0
+
+"A1":                                           0x5a4
+  RWDATA                          0x20004340    0x5a4  <Block>
+    RWDATA-1                      0x20004340    0x36c  <Init block>
+      .data              inited   0x20004340    0x100  ll_patch.o [4]
+      .data              inited   0x20004440     0x54  gapbondmgr.o [1]
+      .data              inited   0x20004494      0x8  hal_assert.o [1]
+      .data              inited   0x2000449c     0x24  osal.o [1]
+      .data              inited   0x200044c0     0x7c  osal_cbtimer.o [1]
+      .data              inited   0x2000453c     0x1c  gap_linkmgr.o [8]
+      .data              inited   0x20004558     0x2c  gap_configmgr.o [8]
+      .data              inited   0x20004584     0x50  gap_configmgr.o [8]
+      .data              inited   0x200045d4     0x10  gap_centdevmgr.o [8]
+      .data              inited   0x200045e4      0x8  gap_centlinkmgr.o [8]
+      .data              inited   0x200045ec      0xc  gap_task.o [8]
+      .data              inited   0x200045f8     0x10  gattservapp.o [8]
+      .data              inited   0x20004608      0x8  gatt_server.o [8]
+      .data              inited   0x20004610     0x50  gapgattserver.o [8]
+      .data              inited   0x20004660     0x20  ll_config.o [4]
+      .data              inited   0x20004680      0xc  sm_intpairing.o [8]
+      .data              inited   0x2000468c      0x8  l2cap_task.o [8]
+      .data              inited   0x20004694      0xc  ll_common_patch.o [4]
+      .data              inited   0x200046a0      0x4  osal_snv_wrapper.o [1]
+      .data              inited   0x200046a4      0x2  l2cap_task.o [8]
+      .data              inited   0x200046a6      0x1  gattservapp.o [8]
+      .data              inited   0x200046a7      0x1  gatt_task.o [8]
+      .data              inited   0x200046a8      0x1  gatt_client.o [8]
+      .data              inited   0x200046a9      0x1  gatt_server.o [8]
+      .data              inited   0x200046aa      0x1  gapgattserver.o [8]
+      .data              inited   0x200046ab      0x1  gapgattserver.o [8]
+    .bss                 zero     0x200046b0      0x8  ll_patch.o [4]
+    .bss                 zero     0x200046b8     0x38  ble_dispatch.o [1]
+    .bss                 zero     0x200046f0     0x8c  gapbondmgr.o [1]
+    .bss                 zero     0x2000477c      0x4  hal_trng_wrapper.o [1]
+    .bss                 zero     0x20004780      0xc  icall_startup.o [1]
+    .bss                 zero     0x2000478c      0x4  osal_bufmgr.o [1]
+    .bss                 zero     0x20004790      0x8  osal_clock.o [1]
+    .bss                 zero     0x20004798      0x4  osal_icall_ble.o [1]
+    .bss                 zero     0x2000479c      0x8  osal_pwrmgr.o [1]
+    .bss                 zero     0x200047a4      0xc  osal_timers.o [1]
+    .bss                 zero     0x200047b0      0x4  att_server.o [8]
+    .bss                 zero     0x200047b4      0x4  att_client.o [8]
+    .bss                 zero     0x200047b8      0x4  gap_linkmgr.o [8]
+    .bss                 zero     0x200047bc      0x4  gap_task.o [8]
+    .bss                 zero     0x200047c0      0x4  gap_devmgr.o [8]
+    .bss                 zero     0x200047c4      0x4  gap_devmgr.o [8]
+    .bss                 zero     0x200047c8     0x24  gattservapp.o [8]
+    .bss                 zero     0x200047ec      0x4  gattservapp.o [8]
+    .bss                 zero     0x200047f0      0x8  gatt_task.o [8]
+    .bss                 zero     0x200047f8      0x4  gatt_client.o [8]
+    .bss                 zero     0x200047fc      0x4  gatt_server.o [8]
+    .bss                 zero     0x20004800      0x4  gapgattserver.o [8]
+    .bss                 zero     0x20004804     0x1c  gapgattserver.o [8]
+    .bss                 zero     0x20004820     0x38  linkdb.o [8]
+    .bss                 zero     0x20004858     0x30  l2cap_task.o [8]
+    .bss                 zero     0x20004888     0x10  hci_event_patch.o [4]
+    .bss                 zero     0x20004898      0x4  ble_patch.o [4]
+    .bss                 zero     0x2000489c      0x4  ble_patch.o [4]
+    .bss                 zero     0x200048a0     0x28  ll_scan_end_causes_patch.o [4]
+    .bss                 zero     0x200048c8      0xc  sm_pairing.o [8]
+    .bss                 zero     0x200048d4      0x1  ble_dispatch.o [1]
+    .bss                 zero     0x200048d5      0x1  osal.o [1]
+    .bss                 zero     0x200048d6      0x1  gap_devmgr.o [8]
+    .bss                 zero     0x200048d7      0x2  gatt_task.o [8]
+    .bss                 zero     0x200048d9      0x1  l2cap_if.o [8]
+    .bss                 zero     0x200048da      0x1  l2cap_util.o [8]
+    .bss                 zero     0x200048db      0x6  hci_tl.o [5]
+    .bss                 zero     0x200048e1      0x1  sm_task.o [8]
+    .bss                 zero     0x200048e2      0x1  ll_common_patch.o [4]
+                                - 0x200048e4    0x5a4
+
+
+*******************************************************************************
+*** INIT TABLE
+***
+
+          Address     Size
+          -------     ----
+Zero (__iar_zero_init3)
+    1 destination range, total size 0x233:
+          0x200046b0  0x233
+
+Copy/packbits (__iar_packbits_init_single3)
+    1 source range, total size 0x143 (36% of destination):
+          0x0001de90  0x143
+    1 destination range, total size 0x36c:
+          0x20004340  0x36c
+
+
+
+*******************************************************************************
+*** MODULE SUMMARY
+***
+
+    Module                        ro code  ro data  rw data
+    ------                        -------  -------  -------
+F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj: [1]
+    ble_dispatch.o                  2 616                57
+    ble_user_config.o                 116
+    gap.o                              68
+    gapbondmgr.o                    3 636       31      224
+    gattservapp_util.o                108
+    hal_assert.o                       48        3        8
+    hal_flash_wrapper.o                88
+    hal_trng_wrapper.o                 96                 4
+    icall_startup.o                    48                12
+    onboard.o                          20
+    osal.o                          1 712       13       37
+    osal_bufmgr.o                     204                 4
+    osal_cbtimer.o                    504       46      124
+    osal_clock.o                       96                 8
+    osal_icall_ble.o                  280       41        4
+    osal_memory_icall.o                64
+    osal_pwrmgr.o                     160                 8
+    osal_snv_wrapper.o              1 184    4 098        4
+    osal_timers.o                     664                12
+    rom_jt.o                        1 888
+    -------------------------------------------------------
+    Total:                         13 600    4 232      506
+
+F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\src\rom\ble_rom_releases\04242014: [2]
+    -------------------------------------------------------
+    Total:
+
+command line: [3]
+    -------------------------------------------------------
+    Total:
+
+cc2640_ctrl_xcxx_41c.a: [4]
+    ble_patch.o                     1 588                 8
+    hci_data_patch.o                  168
+    hci_event_patch.o               1 524                16
+    hci_patch.o                       888
+    ll_access_address_patch.o          66
+    ll_common_patch.o               4 864        4       13
+    ll_config.o                                104       32
+    ll_enc_patch.o                    332
+    ll_init_end_causes_patch.o        808
+    ll_isr.o                        1 112
+    ll_master_end_causes_patch.o    1 710
+    ll_patch.o                      7 104       96      264
+    ll_rat_patch.o                     16
+    ll_scan_end_causes_patch.o        232                40
+    ll_scheduler_patch.o              424
+    ll_sleep.o                         70
+    ll_wl_patch.o                     174
+    -------------------------------------------------------
+    Total:                         21 080      204      373
+
+cc26xx_hci_tl_none_v41.a: [5]
+    hci_tl.o                          108                 6
+    -------------------------------------------------------
+    Total:                            108                 6
+
+dl7M_tln.a: [6]
+    -------------------------------------------------------
+    Total:
+
+driverlib.lib: [7]
+    cpu.o                              16
+    flash.o                            44
+    interrupt.o                       188
+    trng.o                             48
+    vims.o                             14
+    -------------------------------------------------------
+    Total:                            310
+
+host_xcxx.a: [8]
+    att_client.o                      420                 4
+    att_server.o                      492                 4
+    att_util.o                      1 404
+    gap_centdevmgr.o                1 348        6       16
+    gap_centlinkmgr.o                 586        3        8
+    gap_configmgr.o                   840       46      124
+    gap_devmgr.o                      176                 9
+    gap_linkmgr.o                   2 396       10       32
+    gap_task.o                        744        4       16
+    gapgattserver.o                   748       38      114
+    gatt_client.o                   3 380                 5
+    gatt_server.o                   2 712        4       13
+    gatt_task.o                       758                11
+    gatt_uuid.o                        36
+    gattservapp.o                   4 020       15       57
+    l2cap_if.o                        354                 1
+    l2cap_task.o                      684        3       58
+    l2cap_util.o                    1 494                 1
+    linkdb.o                          704                56
+    sm_intpairing.o                 1 360        5       12
+    sm_mgr.o                        1 576
+    sm_pairing.o                    2 012                12
+    sm_task.o                         232                 1
+    smp.o                             896
+    -------------------------------------------------------
+    Total:                         29 372      134      554
+
+rt7M_tl.a: [9]
+    ABImemclr.o                         6
+    ABImemcpy_unaligned.o             118
+    ABImemset.o                       102
+    I64DivMod.o                       238
+    I64DivZer.o                         2
+    data_init.o                        40
+    memcmp_unaligned.o                 98
+    packbits_init_single.o             56
+    strlen.o                           54
+    zero_init3.o                       64
+    -------------------------------------------------------
+    Total:                            778
+
+    Gaps                               30        3        4
+    Linker created                    952       32
+-----------------------------------------------------------
+    Grand Total:                   66 230    4 605    1 443
+
+
+*******************************************************************************
+*** ENTRY LIST
+***
+
+Entry                      Address    Size  Type      Object
+-----                      -------    ----  ----      ------
+.iar.init_table$$Base   0x0001de70           --   Gb  - Linker created -
+.iar.init_table$$Limit  0x0001de90           --   Gb  - Linker created -
+A1_rw_1 {Abs}           0x10005000     0x4   --   Gb  ble_rom_patch.symbols [2]
+A2_rw_1 {Abs}           0x1000dffe     0x2   --   Gb  ble_rom_patch.symbols [2]
+A3_rw_1 {Abs}           0x1000dffc     0x2   --   Gb  ble_rom_patch.symbols [2]
+A4_rw_1 {Abs}           0x200048e8    0x14   --   Gb  ble_rom_patch.symbols [2]
+ATT_BuildErrorRsp       0x00015e3f    0x12  Code  Gb  att_util.o [8]
+ATT_BuildExchangeMTUReq
+                        0x00015e6f     0x2  Code  Gb  att_util.o [8]
+ATT_BuildExchangeMTURsp
+                        0x00015e7b     0x2  Code  Gb  att_util.o [8]
+ATT_BuildExecuteWriteReq
+                        0x000161a5     0x8  Code  Gb  att_util.o [8]
+ATT_BuildFindByTypeValueReq
+                        0x00015f09    0x1a  Code  Gb  att_util.o [8]
+ATT_BuildFindByTypeValueRsp
+                        0x00015f65     0x8  Code  Gb  att_util.o [8]
+ATT_BuildFindInfoReq    0x00015ea1     0x2  Code  Gb  att_util.o [8]
+ATT_BuildFindInfoRsp    0x00015ead    0x18  Code  Gb  att_util.o [8]
+ATT_BuildHandleValueInd
+                        0x000161c9     0x2  Code  Gb  att_util.o [8]
+ATT_BuildPrepareWriteReq
+                        0x0001612b     0x2  Code  Gb  att_util.o [8]
+ATT_BuildPrepareWriteRsp
+                        0x00016155     0x2  Code  Gb  att_util.o [8]
+ATT_BuildReadBlobReq    0x0001606f     0x2  Code  Gb  att_util.o [8]
+ATT_BuildReadBlobRsp    0x000160ad     0x4  Code  Gb  att_util.o [8]
+ATT_BuildReadByGrpTypeRsp
+                        0x000160ed     0x2  Code  Gb  att_util.o [8]
+ATT_BuildReadByTypeReq  0x00015f87    0x1a  Code  Gb  att_util.o [8]
+ATT_BuildReadByTypeRsp  0x00015ff3     0x2  Code  Gb  att_util.o [8]
+ATT_BuildReadMultiReq   0x000160bf     0x8  Code  Gb  att_util.o [8]
+ATT_BuildReadMultiRsp   0x000160e7     0x4  Code  Gb  att_util.o [8]
+ATT_BuildReadReq        0x00016017     0x2  Code  Gb  att_util.o [8]
+ATT_BuildReadRsp        0x00016033     0x4  Code  Gb  att_util.o [8]
+ATT_BuildWriteReq       0x00016063     0x2  Code  Gb  att_util.o [8]
+ATT_CompareUUID         0x0001628f    0x50  Code  Gb  att_util.o [8]
+ATT_ConvertUUIDto128    0x000162df    0x28  Code  Gb  att_util.o [8]
+ATT_ErrorRsp            0x0000f0f7     0xc  Code  Gb  att_server.o [8]
+ATT_ExchangeMTUReq      0x0000ef53    0x26  Code  Gb  att_client.o [8]
+ATT_ExchangeMTURsp      0x0000f109    0x18  Code  Gb  att_server.o [8]
+ATT_ExecuteWriteReq     0x0000f08d     0xc  Code  Gb  att_client.o [8]
+ATT_ExecuteWriteRsp     0x0000f23b     0xc  Code  Gb  att_server.o [8]
+ATT_FindByTypeValueReq  0x0000ef8d    0x24  Code  Gb  att_client.o [8]
+ATT_FindByTypeValueRsp  0x0000f151    0x20  Code  Gb  att_server.o [8]
+ATT_FindInfoReq         0x0000ef79     0xc  Code  Gb  att_client.o [8]
+ATT_FindInfoRsp         0x0000f121    0x30  Code  Gb  att_server.o [8]
+ATT_GetMTU              0x00016331    0x20  Code  Gb  att_util.o [8]
+ATT_HandleValueCfm      0x0000f099    0x2a  Code  Gb  att_client.o [8]
+ATT_HandleValueInd      0x0000f25d    0x14  Code  Gb  att_server.o [8]
+ATT_HandleValueNoti     0x0000f247    0x16  Code  Gb  att_server.o [8]
+ATT_ParseErrorRsp       0x00015e51    0x1e  Code  Gb  att_util.o [8]
+ATT_ParseExchangeMTUReq
+                        0x00015e71     0xa  Code  Gb  att_util.o [8]
+ATT_ParseExchangeMTURsp
+                        0x00015e8b    0x16  Code  Gb  att_util.o [8]
+ATT_ParseExecuteWriteReq
+                        0x000161ad    0x12  Code  Gb  att_util.o [8]
+ATT_ParseExecuteWriteRsp
+                        0x000161bf     0xa  Code  Gb  att_util.o [8]
+ATT_ParseFindByTypeValueReq
+                        0x00015f23    0x42  Code  Gb  att_util.o [8]
+ATT_ParseFindByTypeValueRsp
+                        0x00015f6d    0x1a  Code  Gb  att_util.o [8]
+ATT_ParseFindInfoReq    0x00015ea3     0xa  Code  Gb  att_util.o [8]
+ATT_ParseFindInfoRsp    0x00015ec5    0x44  Code  Gb  att_util.o [8]
+ATT_ParseHandleValueInd
+                        0x000161dd    0x1e  Code  Gb  att_util.o [8]
+ATT_ParsePacket         0x00015de5    0x5a  Code  Gb  att_util.o [8]
+ATT_ParsePrepareWriteReq
+                        0x0001612d    0x28  Code  Gb  att_util.o [8]
+ATT_ParsePrepareWriteRsp
+                        0x00016173    0x32  Code  Gb  att_util.o [8]
+ATT_ParseReadBlobReq    0x00016089     0xa  Code  Gb  att_util.o [8]
+ATT_ParseReadBlobRsp    0x000160b1     0x2  Code  Gb  att_util.o [8]
+ATT_ParseReadByGrpTypeRsp
+                        0x000160ff    0x22  Code  Gb  att_util.o [8]
+ATT_ParseReadByTypeReq  0x00015fb7    0x3c  Code  Gb  att_util.o [8]
+ATT_ParseReadByTypeRsp  0x00015ff5    0x22  Code  Gb  att_util.o [8]
+ATT_ParseReadMultiReq   0x000160c7    0x20  Code  Gb  att_util.o [8]
+ATT_ParseReadMultiRsp   0x000160eb     0x2  Code  Gb  att_util.o [8]
+ATT_ParseReadReq        0x00016019     0xa  Code  Gb  att_util.o [8]
+ATT_ParseReadRsp        0x00016037     0x2  Code  Gb  att_util.o [8]
+ATT_ParseWriteReq       0x00016039    0x2a  Code  Gb  att_util.o [8]
+ATT_ParseWriteRsp       0x00016065     0xa  Code  Gb  att_util.o [8]
+ATT_PrepareWriteReq     0x0000f06d    0x18  Code  Gb  att_client.o [8]
+ATT_PrepareWriteRsp     0x0000f221    0x1a  Code  Gb  att_server.o [8]
+ATT_ReadBlobReq         0x0000efd5     0xc  Code  Gb  att_client.o [8]
+ATT_ReadBlobRsp         0x0000f1b9    0x16  Code  Gb  att_server.o [8]
+ATT_ReadByGrpTypeReq    0x0000f00d    0x18  Code  Gb  att_client.o [8]
+ATT_ReadByGrpTypeRsp    0x0000f1f3    0x22  Code  Gb  att_server.o [8]
+ATT_ReadByTypeReq       0x0000efb1    0x18  Code  Gb  att_client.o [8]
+ATT_ReadByTypeRsp       0x0000f171    0x22  Code  Gb  att_server.o [8]
+ATT_ReadMultiReq        0x0000efe9    0x24  Code  Gb  att_client.o [8]
+ATT_ReadMultiRsp        0x0000f1d5    0x16  Code  Gb  att_server.o [8]
+ATT_ReadReq             0x0000efc9     0xc  Code  Gb  att_client.o [8]
+ATT_ReadRsp             0x0000f19d    0x14  Code  Gb  att_server.o [8]
+ATT_RegisterClient      0x0000ef4d     0x6  Code  Gb  att_client.o [8]
+ATT_RegisterServer      0x0000f0f1     0x6  Code  Gb  att_server.o [8]
+ATT_UpdateMTU           0x00016307    0x2a  Code  Gb  att_util.o [8]
+ATT_WriteReq            0x0000f025    0x48  Code  Gb  att_client.o [8]
+ATT_WriteRsp            0x0000f215     0xc  Code  Gb  att_server.o [8]
+AddRoundKeySubBytes_Sw {Abs}
+                        0x10016c29    0x1a  Code  Gb  ble_rom_patch.symbols [2]
+AesCcm_authEncrypt_Sw {Abs}
+                        0x10018a19    0x1a  Code  Gb  ble_rom_patch.symbols [2]
+AesCcm_decryptAuth_Sw {Abs}
+                        0x10018a35    0x18  Code  Gb  ble_rom_patch.symbols [2]
+AesCcm_getNumBlocks_Sw {Abs}
+                        0x10018b09     0x4  Code  Gb  ble_rom_patch.symbols [2]
+Aes_decrypt_Sw {Abs}    0x10018ac5    0x2a  Code  Gb  ble_rom_patch.symbols [2]
+Aes_encrypt_Sw {Abs}    0x10018a99    0x2a  Code  Gb  ble_rom_patch.symbols [2]
+COMMON_RAM_BASE_ADDR {Abs}
+                        0x20004f2c           --   Gb  ble_rom_patch.symbols [2]
+COMMON_ROM_BASE_ADDR {Abs}
+                        0x10014c01           --   Gb  ble_rom_patch.symbols [2]
+CommonROM_Init          0x0001c5db    0x1c  Code  Gb  rom_jt.o [1]
+ENTRY$$Base             0x0000db20           --   Gb  - Linker created -
+ENTRY$$Limit            0x0000db50           --   Gb  - Linker created -
+FFMult_Sw {Abs}         0x10016d05    0x22  Code  Gb  ble_rom_patch.symbols [2]
+Fill1_1 {Abs}           0x1000d9ec   0x610   --   Gb  ble_rom_patch.symbols [2]
+GAPBondMgr_CheckNVLen   0x000102d5    0x36  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_GetParameter
+                        0x0000f81d    0xa8  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_Init         0x0001017b    0x2e  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_LinkEst      0x0000f8c5    0xf4  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_LinkTerm     0x0000f9b9    0x50  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_PasscodeRsp  0x0000fbb7    0x30  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_ProcessEvent
+                        0x000101a9   0x128  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_ProcessGAPMsg
+                        0x0000fbe7   0x180  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_Register     0x0000fb9d    0x1a  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_ResolveAddr  0x0000fa8f    0xc0  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_SetParameter
+                        0x0000f675   0x1a8  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_SlaveReqSecurity
+                        0x0000fa09    0x86  Code  Gb  gapbondmgr.o [1]
+GAPBondMgr_UpdateCharCfg
+                        0x0000fb4f    0x4e  Code  Gb  gapbondmgr.o [1]
+GAP_Authenticate        0x000147a1    0x9c  Code  Gb  gap_linkmgr.o [8]
+GAP_Bond                0x000148db    0x76  Code  Gb  gap_linkmgr.o [8]
+GAP_CentConnRegister    0x00014125    0x10  Code  Gb  gap_centlinkmgr.o [8]
+GAP_CentDevMgrInit      0x00013ba1    0x68  Code  Gb  gap_centdevmgr.o [8]
+GAP_ConfigDeviceAddr    0x0001432b    0xcc  Code  Gb  gap_configmgr.o [8]
+GAP_DeviceDiscoveryCancel
+                        0x00013b6f    0x26  Code  Gb  gap_centdevmgr.o [8]
+GAP_DeviceDiscoveryRequest
+                        0x00013ae5    0x8a  Code  Gb  gap_centdevmgr.o [8]
+GAP_DeviceInit          0x00013a91    0x44  Code  Gb  gap.o [1]
+GAP_EstablishLinkReq    0x00014039    0xec  Code  Gb  gap_centlinkmgr.o [8]
+GAP_GetIRK              0x00014325     0x6  Code  Gb  gap_configmgr.o [8]
+GAP_GetParamValue       0x000142af    0x12  Code  Gb  gap_configmgr.o [8]
+GAP_Init                0x000152e3    0x16  Code  Gb  gap_task.o [8]
+GAP_NumActiveConnections
+                        0x000153c1     0x4  Code  Gb  gap_task.o [8]
+GAP_ParamsInit          0x000142c1    0x28  Code  Gb  gap_configmgr.o [8]
+GAP_PasscodeUpdate      0x0001488f    0x4c  Code  Gb  gap_linkmgr.o [8]
+GAP_PasskeyUpdate       0x0001485b    0x34  Code  Gb  gap_linkmgr.o [8]
+GAP_PrivacyInit         0x00014303    0x18  Code  Gb  gap_configmgr.o [8]
+GAP_ProcessEvent        0x000152f9    0xc8  Code  Gb  gap_task.o [8]
+GAP_RegisterBondMgrCBs  0x0001559b     0x6  Code  Gb  gap_task.o [8]
+GAP_RegisterForMsgs     0x000152dd     0x6  Code  Gb  gap_task.o [8]
+GAP_ResolvePrivateAddr  0x00014f41     0x4  Code  Gb  gap_devmgr.o [8]
+GAP_SecParamsInit       0x000142e9    0x1a  Code  Gb  gap_configmgr.o [8]
+GAP_SetParamValue       0x00014295    0x1a  Code  Gb  gap_configmgr.o [8]
+GAP_Signable            0x00014759    0x48  Code  Gb  gap_linkmgr.o [8]
+GAP_TerminateAuth       0x0001483d    0x1e  Code  Gb  gap_linkmgr.o [8]
+GAP_TerminateLinkReq    0x000145e5    0x7a  Code  Gb  gap_linkmgr.o [8]
+GAP_UpdateLinkParamReq  0x0001465f    0x68  Code  Gb  gap_linkmgr.o [8]
+GAP_UpdateLinkParamReqReply
+                        0x000146c7    0x86  Code  Gb  gap_linkmgr.o [8]
+GATTServApp_AddService  0x00012d23    0x16  Code  Gb  gattservapp.o [8]
+GATTServApp_DeregisterService
+                        0x00012bc7    0x44  Code  Gb  gattservapp.o [8]
+GATTServApp_GetParameter
+                        0x00012c69    0x14  Code  Gb  gattservapp.o [8]
+GATTServApp_Init        0x00012ae5    0x4e  Code  Gb  gattservapp.o [8]
+GATTServApp_InitCharCfg
+                        0x00018945    0x34  Code  Gb  gattservapp_util.o [1]
+GATTServApp_ProcessEvent
+                        0x00012b33    0x3e  Code  Gb  gattservapp.o [8]
+GATTServApp_ReadAttr    0x00013759   0x1f4  Code  Gb  gattservapp.o [8]
+GATTServApp_ReadCharCfg
+                        0x00018979     0xc  Code  Gb  gattservapp_util.o [1]
+GATTServApp_RegisterForMsg
+                        0x00012add     0x8  Code  Gb  gattservapp.o [8]
+GATTServApp_RegisterService
+                        0x00012b71    0x56  Code  Gb  gattservapp.o [8]
+GATTServApp_SendCCCUpdatedEvent
+                        0x00013a4b    0x36  Code  Gb  gattservapp.o [8]
+GATTServApp_SetParameter
+                        0x00012c0b    0x5e  Code  Gb  gattservapp.o [8]
+GATTServApp_TaskID      0x200047e0     0x1  Data  Gb  gattservapp.o [8]
+GATTServApp_UpdateCharCfg
+                        0x000139d9    0x1e  Code  Gb  gattservapp.o [8]
+GATTServApp_WriteAttr   0x00013951    0x7a  Code  Gb  gattservapp.o [8]
+GATT_AppCompletedMsg    0x00010983    0x28  Code  Gb  gatt_task.o [8]
+GATT_DeregisterService  0x00012149    0x40  Code  Gb  gatt_server.o [8]
+GATT_DiscAllCharDescs   0x000114c5    0x3c  Code  Gb  gatt_client.o [8]
+GATT_DiscAllChars       0x0001148f    0x1a  Code  Gb  gatt_client.o [8]
+GATT_DiscAllPrimaryServices
+                        0x000113c7    0x4c  Code  Gb  gatt_client.o [8]
+GATT_DiscCharsByUUID    0x000114bf     0x6  Code  Gb  gatt_client.o [8]
+GATT_DiscPrimaryServiceByUUID
+                        0x00011413    0x62  Code  Gb  gatt_client.o [8]
+GATT_ExchangeMTU        0x0001139b    0x2c  Code  Gb  gatt_client.o [8]
+GATT_FindHandle         0x00012279    0x4c  Code  Gb  gatt_server.o [8]
+GATT_FindHandleUUID     0x0001221b    0x5e  Code  Gb  gatt_server.o [8]
+GATT_FindIncludedServices
+                        0x00011475    0x1a  Code  Gb  gatt_client.o [8]
+GATT_FindNextAttr       0x000122c5    0x7a  Code  Gb  gatt_server.o [8]
+GATT_Indication         0x00012419    0x6c  Code  Gb  gatt_server.o [8]
+GATT_Init               0x000109ab    0x1e  Code  Gb  gatt_task.o [8]
+GATT_InitClient         0x00011311    0x82  Code  Gb  gatt_client.o [8]
+GATT_InitServer         0x00012045    0x68  Code  Gb  gatt_server.o [8]
+GATT_Notification       0x00012485    0x4a  Code  Gb  gatt_server.o [8]
+GATT_NotifyEvent        0x00010b15    0x14  Code  Gb  gatt_task.o [8]
+GATT_ProcessEvent       0x000109c9    0x30  Code  Gb  gatt_task.o [8]
+GATT_ReadCharDesc       0x00011615     0x2  Code  Gb  gatt_client.o [8]
+GATT_ReadCharValue      0x00011501     0x2  Code  Gb  gatt_client.o [8]
+GATT_ReadLongCharDesc   0x00011617     0x2  Code  Gb  gatt_client.o [8]
+GATT_ReadLongCharValue  0x00011509     0x2  Code  Gb  gatt_client.o [8]
+GATT_ReadMultiCharValues
+                        0x0001150b    0x2c  Code  Gb  gatt_client.o [8]
+GATT_ReadUsingCharUUID  0x00011503     0x6  Code  Gb  gatt_client.o [8]
+GATT_RegisterForInd     0x00011393     0x8  Code  Gb  gatt_client.o [8]
+GATT_RegisterForMsgs    0x00010971     0x6  Code  Gb  gatt_task.o [8]
+GATT_RegisterForReq     0x00012189     0x8  Code  Gb  gatt_server.o [8]
+GATT_RegisterService    0x000120ad    0x9c  Code  Gb  gatt_server.o [8]
+GATT_ReliableWrites     0x00011587    0x8e  Code  Gb  gatt_client.o [8]
+GATT_SendRsp            0x00012365    0xb4  Code  Gb  gatt_server.o [8]
+GATT_ServiceEncKeySize  0x00012355    0x10  Code  Gb  gatt_server.o [8]
+GATT_ServiceNumAttrs    0x00012349     0xc  Code  Gb  gatt_server.o [8]
+GATT_SetHostToAppFlowCtrl
+                        0x00010977     0xc  Code  Gb  gatt_task.o [8]
+GATT_SignedWriteNoRsp   0x00011553    0x1c  Code  Gb  gatt_client.o [8]
+GATT_UpdateMTU          0x00010b29    0x26  Code  Gb  gatt_task.o [8]
+GATT_VerifyReadPermissions
+                        0x00012191    0x36  Code  Gb  gatt_server.o [8]
+GATT_VerifyWritePermissions
+                        0x000121c7    0x54  Code  Gb  gatt_server.o [8]
+GATT_WriteCharDesc      0x00011619     0x2  Code  Gb  gatt_client.o [8]
+GATT_WriteCharValue     0x00011583     0x2  Code  Gb  gatt_client.o [8]
+GATT_WriteLongCharDesc  0x0001161b     0x2  Code  Gb  gatt_client.o [8]
+GATT_WriteLongCharValue
+                        0x00011585     0x2  Code  Gb  gatt_client.o [8]
+GATT_WriteNoRsp         0x00011537    0x1c  Code  Gb  gatt_client.o [8]
+GATT_bm_alloc           0x00010bd1    0x78  Code  Gb  gatt_task.o [8]
+GATT_bm_free            0x00010c49    0x12  Code  Gb  gatt_task.o [8]
+GGS_AddService          0x00015081    0x18  Code  Gb  gapgattserver.o [8]
+GGS_GetParameter        0x00015059    0x28  Code  Gb  gapgattserver.o [8]
+GGS_RegisterAppCBs      0x00015099     0x6  Code  Gb  gapgattserver.o [8]
+GGS_SetParameter        0x00014ff1    0x68  Code  Gb  gapgattserver.o [8]
+HCI_CommandCompleteEvent {Abs}
+                        0x10008add    0xac  Code  Gb  ble_rom_patch.symbols [2]
+HCI_CommandStatusEvent {Abs}
+                        0x10008ba1    0x54  Code  Gb  ble_rom_patch.symbols [2]
+HCI_DataBufferOverflowEvent {Abs}
+                        0x10008a2d    0x24  Code  Gb  ble_rom_patch.symbols [2]
+HCI_DisconnectCmd {Abs}
+                        0x10009525    0x1a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_BuildRevisionCmd {Abs}
+                        0x1000a109    0x4a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_ClkDivOnHaltCmd {Abs}
+                        0x10009d79    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_ConnEventNoticeCmd
+                        0x0000f56f     0x4  Code  Gb  hci_patch.o [4]
+HCI_EXT_DeclareNvUsageCmd {Abs}
+                        0x10009dad    0x22  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_DecryptCmd {Abs}
+                        0x10009dd1    0x5a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_DelaySleepCmd   0x0000f54b    0x1c  Code  Gb  hci_patch.o [4]
+HCI_EXT_DisconnectImmedCmd {Abs}
+                        0x1000a011    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_EnablePTMCmd {Abs}
+                        0x10009f69    0x16  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_EndModemTestCmd {Abs}
+                        0x10009eed    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_ExtendRfRangeCmd {Abs}
+                        0x1000a095    0x3a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_GetConnInfoCmd  0x0000f36f    0x8e  Code  Gb  hci_patch.o [4]
+HCI_EXT_HaltDuringRfCmd {Abs}
+                        0x1000a0d1    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_MapPmIoPortCmd {Abs}
+                        0x10009ff1    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_ModemHopTestTxCmd {Abs}
+                        0x10009ead    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_ModemTestRxCmd {Abs}
+                        0x10009ecd    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_ModemTestTxCmd {Abs}
+                        0x10009e8d    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_NumComplPktsLimitCmd {Abs}
+                        0x1000a1b5    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_OnePktPerEvtCmd {Abs}
+                        0x10009d45    0x26  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_OverlappedProcessingCmd {Abs}
+                        0x1000a195    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_PERbyChanCmd {Abs}
+                        0x1000a075    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_PacketErrorRateCmd {Abs}
+                        0x1000a031    0x36  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_ResetSystemCmd  0x0000f525    0x26  Code  Gb  hci_patch.o [4]
+HCI_EXT_SaveFreqTuneCmd {Abs}
+                        0x10009fb1    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_SetBDADDRCmd {Abs}
+                        0x10009f0d    0x3a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_SetFreqTuneCmd {Abs}
+                        0x10009f81    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_SetLocalSupportedFeaturesCmd {Abs}
+                        0x10009e2d    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_SetMaxDtmTxPowerCmd {Abs}
+                        0x10009fd1    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_SetRxGainCmd {Abs}
+                        0x10009cd5    0x34  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_SetSCACmd {Abs}
+                        0x10009f49    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_EXT_SetTxPowerCmd {Abs}
+                        0x10009d09    0x3a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_GAPTaskRegister     0x00019d65     0x6  Code  Gb  hci_tl.o [5]
+HCI_HardwareErrorEvent {Abs}
+                        0x10008bf5    0x2e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_HostBufferSizeCmd {Abs}
+                        0x10009631    0x2c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_HostNumCompletedPktCmd {Abs}
+                        0x1000965d    0x5a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_Init                0x00019d15    0x1e  Code  Gb  hci_tl.o [5]
+HCI_L2CAPTaskRegister   0x00019d6b     0x6  Code  Gb  hci_tl.o [5]
+HCI_LE_AddWhiteListCmd {Abs}
+                        0x10009a15    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_ClearWhiteListCmd {Abs}
+                        0x100099f9    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_ConnUpdateCmd    0x0000f503    0x1c  Code  Gb  hci_patch.o [4]
+HCI_LE_CreateConnCancelCmd {Abs}
+                        0x1000999d    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_CreateConnCmd {Abs}
+                        0x1000995d    0x40  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_EncryptCmd {Abs}
+                        0x10009af5    0x40  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_RandCmd {Abs}    0x10009b51    0x3c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_ReadBufSizeCmd   0x0000f405    0x26  Code  Gb  hci_patch.o [4]
+HCI_LE_ReadChannelMapCmd {Abs}
+                        0x10009aa1    0x36  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_ReadLocalSupportedFeaturesCmd {Abs}
+                        0x10009829    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_ReadRemoteUsedFeaturesCmd
+                        0x0000f48d    0x2a  Code  Gb  hci_patch.o [4]
+HCI_LE_ReadSupportedStatesCmd {Abs}
+                        0x10009c15    0x22  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_ReadWhiteListSizeCmd {Abs}
+                        0x100099c9    0x20  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_ReceiverTestCmd  0x0000f4c9    0x12  Code  Gb  hci_patch.o [4]
+HCI_LE_RemoteConnParamReqNegReplyCmd
+                        0x0000f465    0x14  Code  Gb  hci_patch.o [4]
+HCI_LE_RemoteConnParamReqReplyCmd
+                        0x0000f433    0x32  Code  Gb  hci_patch.o [4]
+HCI_LE_RemoveWhiteListCmd {Abs}
+                        0x10009a31    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_SetAdvParamCmd {Abs}
+                        0x1000986d    0x34  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_SetEventMaskCmd  0x0000f573    0x1e  Code  Gb  hci_patch.o [4]
+HCI_LE_SetHostChanClassificationCmd {Abs}
+                        0x10009a85    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_SetRandomAddressCmd {Abs}
+                        0x10009849    0x24  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_SetScanEnableCmd {Abs}
+                        0x10009941    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_SetScanParamCmd {Abs}
+                        0x10009915    0x2a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_StartEncyptCmd {Abs}
+                        0x10009ba9    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_TestEndCmd {Abs}
+                        0x10009c8d    0x32  Code  Gb  ble_rom_patch.symbols [2]
+HCI_LE_TransmitterTestCmd
+                        0x0000f4b7    0x12  Code  Gb  hci_patch.o [4]
+HCI_NumOfCompletedPacketsEvent
+                        0x00018125    0xc0  Code  Gb  hci_event_patch.o [4]
+HCI_ProcessEvent        0x00019d33    0x32  Code  Gb  hci_tl.o [5]
+HCI_ReadBDADDRCmd {Abs}
+                        0x10009765    0x26  Code  Gb  ble_rom_patch.symbols [2]
+HCI_ReadLocalSupportedCommandsCmd
+                        0x0000f35b    0x14  Code  Gb  hci_patch.o [4]
+HCI_ReadLocalSupportedFeaturesCmd {Abs}
+                        0x1000973d    0x20  Code  Gb  ble_rom_patch.symbols [2]
+HCI_ReadLocalVersionInfoCmd
+                        0x0000f5ad    0x58  Code  Gb  hci_patch.o [4]
+HCI_ReadRemoteVersionInfoCmd {Abs}
+                        0x10009541    0x30  Code  Gb  ble_rom_patch.symbols [2]
+HCI_ReadRssiCmd         0x0000f605    0x1a  Code  Gb  hci_patch.o [4]
+HCI_ReadTransmitPowerLevelCmd {Abs}
+                        0x100095d1    0x22  Code  Gb  ble_rom_patch.symbols [2]
+HCI_ResetCmd            0x0000f339    0x22  Code  Gb  hci_patch.o [4]
+HCI_ReverseBytes {Abs}  0x1000d7cd    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+HCI_SMPTaskRegister     0x00019d71     0x6  Code  Gb  hci_tl.o [5]
+HCI_SendCommandCompleteEvent {Abs}
+                        0x10008c81    0xb0  Code  Gb  ble_rom_patch.symbols [2]
+HCI_SendCommandStatusEvent {Abs}
+                        0x10008c59    0x28  Code  Gb  ble_rom_patch.symbols [2]
+HCI_SendControllerToHostEvent {Abs}
+                        0x10008d31    0x50  Code  Gb  ble_rom_patch.symbols [2]
+HCI_SendDataPkt {Abs}   0x100094e9    0x3a  Code  Gb  ble_rom_patch.symbols [2]
+HCI_SetControllerToHostFlowCtrlCmd {Abs}
+                        0x100095f5    0x3c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_SetEventMaskCmd {Abs}
+                        0x10009571    0x2c  Code  Gb  ble_rom_patch.symbols [2]
+HCI_SetEventMaskPage2Cmd
+                        0x0000f4db    0x1e  Code  Gb  hci_patch.o [4]
+HCI_ValidConnTimeParams
+                        0x0000f2fd    0x3c  Code  Gb  hci_patch.o [4]
+HCI_VendorSpecifcCommandCompleteEvent
+                        0x00018561    0x5e  Code  Gb  hci_event_patch.o [4]
+HCI_bm_alloc {Abs}      0x100094a1     0xc  Code  Gb  ble_rom_patch.symbols [2]
+HalFlashGetAddress      0x0001861f    0x16  Code  Gb  hal_flash_wrapper.o [1]
+HalFlashRead            0x000185dd    0x30  Code  Gb  hal_flash_wrapper.o [1]
+HalFlashWrite           0x00018615     0xa  Code  Gb  hal_flash_wrapper.o [1]
+HalTRNG_GetTRNG         0x0001a2f5    0x2e  Code  Gb  hal_trng_wrapper.o [1]
+HalTRNG_InitTRNG        0x0001a2d9    0x1c  Code  Gb  hal_trng_wrapper.o [1]
+ICall_abort             0x0000e769    0x14  Code  Lc  osal.o [1]
+ICall_dispatcher        0x20004780     0x4  Data  Gb  icall_startup.o [1]
+ICall_enrollService     0x00015ccd    0x30  Code  Lc  osal_icall_ble.o [1]
+ICall_enterCriticalSection
+                        0x20004784     0x4  Data  Gb  icall_startup.o [1]
+ICall_getTicks          0x00015995    0x1c  Code  Lc  osal_timers.o [1]
+ICall_leaveCriticalSection
+                        0x20004788     0x4  Data  Gb  icall_startup.o [1]
+ICall_pwrDispense       0x0001c2e1     0xe  Code  Lc  ll_enc_patch.o [4]
+ICall_pwrRequire        0x0001c2d1    0x10  Code  Lc  ll_enc_patch.o [4]
+ICall_pwrUpdActivityCounter
+                        0x00015c2d    0x22  Code  Lc  osal_pwrmgr.o [1]
+ICall_send              0x0000e73f    0x2a  Code  Lc  osal.o [1]
+ICall_signal            0x0000e721    0x1e  Code  Lc  osal.o [1]
+IOCapMatrix             0x000196c8    0x1c  Data  Lc  sm_pairing.o [8]
+IntMasterDisable        0x0001c59d     0x6  Code  Lc  rom_jt.o [1]
+IntMasterEnable         0x0001c595     0x8  Code  Lc  rom_jt.o [1]
+InvAddRoundKey_Sw {Abs}
+                        0x10016da1    0x26  Code  Gb  ble_rom_patch.symbols [2]
+InvMixColumns_Sw {Abs}  0x10016ed5    0x70  Code  Gb  ble_rom_patch.symbols [2]
+InvRoundKey_Sw {Abs}    0x10016dc9    0xc4  Code  Gb  ble_rom_patch.symbols [2]
+InvShiftRows_Sw {Abs}   0x10016ea1    0x32  Code  Gb  ble_rom_patch.symbols [2]
+InvSubBytes_Sw {Abs}    0x10016e8d    0x14  Code  Gb  ble_rom_patch.symbols [2]
+L2CAP_BuildCmdReject    0x00010ee9    0x3e  Code  Gb  l2cap_util.o [8]
+L2CAP_BuildParamUpdateRsp
+                        0x00010fcd     0x2  Code  Gb  l2cap_util.o [8]
+L2CAP_CmdReject         0x0000ee75     0xe  Code  Gb  l2cap_if.o [8]
+L2CAP_ConnParamUpdateReq
+                        0x0000ee83    0x36  Code  Gb  l2cap_if.o [8]
+L2CAP_ConnParamUpdateRsp
+                        0x0000eeb9     0xc  Code  Gb  l2cap_if.o [8]
+L2CAP_GetMTU            0x0000ef27     0x6  Code  Gb  l2cap_if.o [8]
+L2CAP_HostNumCompletedPkts
+                        0x0000ef05    0x16  Code  Gb  l2cap_if.o [8]
+L2CAP_Init              0x00019ed1    0x62  Code  Gb  l2cap_task.o [8]
+L2CAP_ParseParamUpdateReq
+                        0x00010f93    0x3a  Code  Gb  l2cap_util.o [8]
+L2CAP_ProcessEvent      0x00019f33    0x6e  Code  Gb  l2cap_task.o [8]
+L2CAP_RegisterApp       0x0000ede9    0x2a  Code  Gb  l2cap_if.o [8]
+L2CAP_SendData          0x0000ee13    0x62  Code  Gb  l2cap_if.o [8]
+L2CAP_SetBufSize        0x0000ef1b     0xc  Code  Gb  l2cap_if.o [8]
+L2CAP_SetControllerToHostFlowCtrl
+                        0x0000eecb    0x3a  Code  Gb  l2cap_if.o [8]
+L2CAP_SetUserConfig     0x0000ef49     0x2  Code  Gb  l2cap_if.o [8]
+L2CAP_bm_alloc          0x00011229    0x1a  Code  Gb  l2cap_util.o [8]
+LL_AddWhiteListDevice {Abs}
+                        0x10005739    0x2a  Code  Gb  ble_rom_patch.symbols [2]
+LL_AdvReportCback {Abs}
+                        0x10008d81   0x120  Code  Gb  ble_rom_patch.symbols [2]
+LL_AuthPayloadTimeoutExpiredCback
+                        0x00018207    0x74  Code  Gb  hci_event_patch.o [4]
+LL_ChanMapUpdate        0x00017dc9    0x8e  Code  Gb  ll_patch.o [4]
+LL_ClearWhiteList {Abs}
+                        0x10005719    0x20  Code  Gb  ble_rom_patch.symbols [2]
+LL_ConnActive {Abs}     0x1000678d    0x2e  Code  Gb  ble_rom_patch.symbols [2]
+LL_ConnParamUpdateCback
+                        0x00018035    0x84  Code  Gb  hci_event_patch.o [4]
+LL_ConnUpdate           0x000178f5    0xd8  Code  Gb  ll_patch.o [4]
+LL_ConnectionCompleteCback {Abs}
+                        0x10008ead   0x140  Code  Gb  ble_rom_patch.symbols [2]
+LL_CreateConn           0x00017b31   0x21a  Code  Gb  ll_patch.o [4]
+LL_CreateConnCancel     0x00017d4b    0x76  Code  Gb  ll_patch.o [4]
+LL_CtrlToHostFlowControl {Abs}
+                        0x100058d5    0x14  Code  Gb  ble_rom_patch.symbols [2]
+LL_DirectTestEnd        0x00017785    0x7a  Code  Gb  ll_patch.o [4]
+LL_DirectTestEndDoneCback {Abs}
+                        0x10009471    0x24  Code  Gb  ble_rom_patch.symbols [2]
+LL_DirectTestRxTest     0x00017699    0xca  Code  Gb  ll_patch.o [4]
+LL_DirectTestTxTest     0x00017501   0x170  Code  Gb  ll_patch.o [4]
+LL_Disconnect {Abs}     0x10005a39    0x66  Code  Gb  ble_rom_patch.symbols [2]
+LL_DisconnectCback {Abs}
+                        0x10009005    0x80  Code  Gb  ble_rom_patch.symbols [2]
+LL_DoorbellErrorCback   0x0001d933    0x10  Code  Gb  ll_isr.o [4]
+LL_ENC_AES128_Decrypt {Abs}
+                        0x1000b639    0x40  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_AES128_Encrypt {Abs}
+                        0x1000b5f5    0x42  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_Decrypt          0x0001c36b    0x9e  Code  Gb  ll_enc_patch.o [4]
+LL_ENC_DecryptMsg {Abs}
+                        0x1000b851   0x112  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_Encrypt          0x0001c2fd    0x6e  Code  Gb  ll_enc_patch.o [4]
+LL_ENC_EncryptMsg {Abs}
+                        0x1000b721   0x12e  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_GenDeviceIV {Abs}
+                        0x1000b555    0x14  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_GenDeviceSKD {Abs}
+                        0x1000b541    0x12  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_GenerateNonce {Abs}
+                        0x1000b569    0x22  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_GeneratePseudoRandNum {Abs}
+                        0x1000b50d    0x10  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_GenerateTrueRandNum {Abs}
+                        0x1000b51d    0x22  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_Init {Abs}       0x1000b4c9    0x22  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_LoadKey {Abs}    0x1000b58d    0x68  Code  Gb  ble_rom_patch.symbols [2]
+LL_ENC_ReverseBytes {Abs}
+                        0x1000b4ed    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_BuildRevision    0x00017f55    0x28  Code  Gb  ll_patch.o [4]
+LL_EXT_ClkDivOnHalt {Abs}
+                        0x10006b7d     0x4  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_ConnEventNotice  0x00017ef1    0x24  Code  Gb  ll_patch.o [4]
+LL_EXT_DeclareNvUsage {Abs}
+                        0x10006b81     0x4  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_Decrypt {Abs}    0x10006b85    0x20  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_DelaySleep {Abs}
+                        0x100070a1    0x32  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_EndModemTest     0x000174c7    0x26  Code  Gb  ll_patch.o [4]
+LL_EXT_ExtendRfRange {Abs}
+                        0x1000701d     0x4  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_ExtendRfRangeCback {Abs}
+                        0x1000a2ad    0x10  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_GetConnInfo      0x00016fb9    0xa4  Code  Gb  ll_patch.o [4]
+LL_EXT_HaltDuringRf {Abs}
+                        0x10007021     0x4  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_MapPmIoPort {Abs}
+                        0x10006f49     0x4  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_ModemHopTestTx   0x00017311    0x9a  Code  Gb  ll_patch.o [4]
+LL_EXT_ModemTestRx      0x0001742f    0x70  Code  Gb  ll_patch.o [4]
+LL_EXT_ModemTestTx      0x000173ab    0x7e  Code  Gb  ll_patch.o [4]
+LL_EXT_NumComplPktsLimit
+                        0x00017f2d    0x22  Code  Gb  ll_patch.o [4]
+LL_EXT_OnePacketPerEvent {Abs}
+                        0x10006b59    0x20  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_OverlappedProcessing {Abs}
+                        0x10007109     0x4  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_PERbyChan {Abs}  0x10006fed    0x1e  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_PacketErrorRate {Abs}
+                        0x10006f99    0x52  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_PacketErrorRateCback {Abs}
+                        0x1000a259    0x52  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_ResetSystem {Abs}
+                        0x100070d5    0x34  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_SaveFreqTune {Abs}
+                        0x10006efd     0x4  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_SetBDADDR {Abs}  0x10006e01    0x82  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_SetFreqTune {Abs}
+                        0x10006ef9     0x4  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_SetLocalSupportedFeatures
+                        0x000171a1    0x32  Code  Gb  ll_patch.o [4]
+LL_EXT_SetMaxDtmTxPower
+                        0x00017205    0x16  Code  Gb  ll_patch.o [4]
+LL_EXT_SetRxGain {Abs}  0x10006ad9     0xe  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_SetRxGainCback {Abs}
+                        0x1000a201    0x10  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_SetSCA {Abs}     0x10006e85    0x74  Code  Gb  ble_rom_patch.symbols [2]
+LL_EXT_SetTxPower       0x000171d3    0x2c  Code  Gb  ll_patch.o [4]
+LL_EXT_SetTxPowerCback {Abs}
+                        0x1000a211    0x10  Code  Gb  ble_rom_patch.symbols [2]
+LL_EncChangeCback {Abs}
+                        0x1000933d    0x6a  Code  Gb  ble_rom_patch.symbols [2]
+LL_EncKeyRefreshCback {Abs}
+                        0x100093dd    0x6a  Code  Gb  ble_rom_patch.symbols [2]
+LL_Encrypt {Abs}        0x100057d5    0x20  Code  Gb  ble_rom_patch.symbols [2]
+LL_EnhancedConnectionCompleteCback
+                        0x00018349   0x1de  Code  Gb  hci_event_patch.o [4]
+LL_GetNumActiveConns    0x00017e8d     0xc  Code  Gb  ll_patch.o [4]
+LL_Init                 0x00016ad5   0x2da  Code  Gb  ll_patch.o [4]
+LL_LastCmdDoneCback     0x0001d945   0x20e  Code  Gb  ll_isr.o [4]
+LL_NumEmptyWlEntries {Abs}
+                        0x100057b9    0x14  Code  Gb  ble_rom_patch.symbols [2]
+LL_PM_Enter_AES         0x0001bc01    0x16  Code  Gb  ll_sleep.o [4]
+LL_PM_Exit_AES          0x0001bc17    0x12  Code  Gb  ll_sleep.o [4]
+LL_PM_GetRfCoreState    0x0001bbfd     0x4  Code  Gb  ll_sleep.o [4]
+LL_PM_PowerOffRfCore    0x0001bc41     0x2  Code  Gb  ll_sleep.o [4]
+LL_ProcessEvent         0x00016ddf   0x10e  Code  Gb  ll_patch.o [4]
+LL_PseudoRand {Abs}     0x10005801    0x2c  Code  Gb  ble_rom_patch.symbols [2]
+LL_RX_bm_alloc {Abs}    0x1000556d    0x22  Code  Gb  ble_rom_patch.symbols [2]
+LL_Rand {Abs}           0x100057f5     0xc  Code  Gb  ble_rom_patch.symbols [2]
+LL_RandCback {Abs}      0x1000a1d5    0x2a  Code  Gb  ble_rom_patch.symbols [2]
+LL_ReadBDADDR {Abs}     0x100056c9    0x20  Code  Gb  ble_rom_patch.symbols [2]
+LL_ReadChanMap {Abs}    0x100059a1    0x34  Code  Gb  ble_rom_patch.symbols [2]
+LL_ReadLocalSupportedFeatures {Abs}
+                        0x10005879    0x24  Code  Gb  ble_rom_patch.symbols [2]
+LL_ReadLocalVersionInfo {Abs}
+                        0x1000589d    0x38  Code  Gb  ble_rom_patch.symbols [2]
+LL_ReadRemoteUsedFeatures
+                        0x00017153    0x4e  Code  Gb  ll_patch.o [4]
+LL_ReadRemoteUsedFeaturesCompleteCback
+                        0x000180b9    0x60  Code  Gb  hci_event_patch.o [4]
+LL_ReadRemoteVersionInfo {Abs}
+                        0x100058e9    0x6a  Code  Gb  ble_rom_patch.symbols [2]
+LL_ReadRemoteVersionInfoCback {Abs}
+                        0x100091e1    0x6a  Code  Gb  ble_rom_patch.symbols [2]
+LL_ReadRssi             0x00017e99    0x52  Code  Gb  ll_patch.o [4]
+LL_ReadSupportedStates  0x00017e6b    0x22  Code  Gb  ll_patch.o [4]
+LL_ReadTxPowerLevel     0x00017221    0x3e  Code  Gb  ll_patch.o [4]
+LL_ReadWlSize {Abs}     0x100057a1    0x16  Code  Gb  ble_rom_patch.symbols [2]
+LL_RemoteConnParamReqCback
+                        0x0001827b    0x9a  Code  Gb  hci_event_patch.o [4]
+LL_RemoteConnParamReqNegReply
+                        0x000178a5    0x3c  Code  Gb  ll_patch.o [4]
+LL_RemoteConnParamReqReply
+                        0x0001780d    0x84  Code  Gb  ll_patch.o [4]
+LL_RemoveWhiteListDevice {Abs}
+                        0x10005765    0x2c  Code  Gb  ble_rom_patch.symbols [2]
+LL_Reset                0x00016eed    0xcc  Code  Gb  ll_patch.o [4]
+LL_RxDataCompleteCback  0x0001c435    0xa8  Code  Gb  hci_data_patch.o [4]
+LL_RxEntryDoneCback     0x0001db6d   0x178  Code  Gb  ll_isr.o [4]
+LL_SetRandomAddress {Abs}
+                        0x100056e9    0x2e  Code  Gb  ble_rom_patch.symbols [2]
+LL_SetScanControl       0x00017a71    0xa4  Code  Gb  ll_patch.o [4]
+LL_SetScanParam         0x000179cd    0x8a  Code  Gb  ll_patch.o [4]
+LL_StartEncrypt         0x0001707d    0xcc  Code  Gb  ll_patch.o [4]
+LL_TX_bm_alloc {Abs}    0x10005549    0x22  Code  Gb  ble_rom_patch.symbols [2]
+LL_TaskID {Abs}         0x20004c84     0x1  Data  Gb  ble_rom_patch.symbols [2]
+LL_TxData               0x0001725f    0x9e  Code  Gb  ll_patch.o [4]
+LL_TxEntryDoneCback     0x0001db53    0x1a  Code  Gb  ll_isr.o [4]
+MixColumns_Sw {Abs}     0x10016c79    0x8a  Code  Gb  ble_rom_patch.symbols [2]
+NOROM_CPUcpsid          0x0001ccf5     0x8  Code  Gb  cpu.o [7]
+NOROM_CPUcpsie          0x0001ccfd     0x8  Code  Gb  cpu.o [7]
+NOROM_FlashProgram      0x0001863f     0xc  Code  Gb  flash.o [7]
+NOROM_FlashSectorErase  0x00018635     0xa  Code  Gb  flash.o [7]
+NOROM_IntDisable        0x0001cd77    0x4e  Code  Gb  interrupt.o [7]
+NOROM_IntEnable         0x0001cd29    0x4e  Code  Gb  interrupt.o [7]
+NOROM_TRNGConfigure     0x0001bbc5    0x2c  Code  Gb  trng.o [7]
+NOROM_VIMSModeGet       0x0001873d     0xe  Code  Gb  vims.o [7]
+NVOCOP_compactNV        0x000104eb    0x38  Code  Gb  osal_snv_wrapper.o [1]
+NVOCOP_initNV           0x000104a9    0x42  Code  Gb  osal_snv_wrapper.o [1]
+NVOCOP_readItem         0x00010523    0x30  Code  Gb  osal_snv_wrapper.o [1]
+NVOCOP_writeItem        0x00010553    0xda  Code  Gb  osal_snv_wrapper.o [1]
+NV_FLASH                0x0001e000  0x1000  Data  Gb  osal_snv_wrapper.o [1]
+OSAL_timeSeconds        0x20004794     0x4  Data  Gb  osal_clock.o [1]
+Onboard_rand            0x00010951    0x10  Code  Gb  onboard.o [1]
+Onboard_soft_reset      0x00010961     0x2  Code  Gb  onboard.o [1]
+P1_ro_1 {Abs}           0x10005004  0x89e8   --   Gb  ble_rom_patch.symbols [2]
+P1_ro_2 {Abs}           0x10019ffe           --   Gb  ble_rom_patch.symbols [2]
+P1_ro_2_1 {Abs}         0x1000dffe           --   Gb  ble_rom_patch.symbols [2]
+P2_rw {Abs}             0x20004f40           --   Gb  ble_rom_patch.symbols [2]
+P2_zi_1 {Abs}           0x200048fc   0x630   --   Gb  ble_rom_patch.symbols [2]
+PAGE_SIZE {Abs}         0x00001000          Data  Gb  command line/config [3]
+R2F_Flash_JT            0x0001c624    0xa8  Data  Gb  rom_jt.o [1]
+R2F_Flash_JT_CommonROM  0x0001cbe8    0x18  Data  Gb  rom_jt.o [1]
+R2R_Flash_JT            0x0001c6cc   0x51c  Data  Gb  rom_jt.o [1]
+R2R_Flash_JT_CommonROM  0x0001cc00    0xf4  Data  Gb  rom_jt.o [1]
+RAM_BASE_ADDR {Abs}     0x200048e8           --   Gb  ble_rom_patch.symbols [2]
+RFHAL_AddTxDataEntry    0x0001c217    0x60  Code  Gb  ble_patch.o [4]
+RFHAL_AllocDataEntry {Abs}
+                        0x100184f9    0x4e  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_AllocDataEntryQueue {Abs}
+                        0x100184a9    0x1a  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_AllocRatChan {Abs}
+                        0x10018315    0x26  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_BuildDataEntryRingBuffer {Abs}
+                        0x100185e1    0x7c  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_BuildLinkedBuffer {Abs}
+                        0x10018669    0x8e  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_BuildRingBuffer {Abs}
+                        0x10018551    0x90  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_FreeDataEntry {Abs}
+                        0x10018549     0x8  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_FreeDataEntryQueue {Abs}
+                        0x100184c5     0x8  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_FreeNextTxDataEntry {Abs}
+                        0x10018485    0x22  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_FreeRatChan {Abs}
+                        0x1001833d    0x2a  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_GetNextDataEntry {Abs}
+                        0x100184cd     0x4  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_GetTempDataEntry {Abs}
+                        0x100184d1     0x4  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_InitDataQueue {Abs}
+                        0x100183b9     0xc  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_InitRfHal         0x0001c1b3    0x64  Code  Gb  ble_patch.o [4]
+RFHAL_MapRatChansToInt {Abs}
+                        0x10018369    0x26  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_NextDataEntryDone {Abs}
+                        0x100184d5    0x24  Code  Gb  ble_rom_patch.symbols [2]
+RFHAL_RegisterRatChanCallback {Abs}
+                        0x10018391    0x26  Code  Gb  ble_rom_patch.symbols [2]
+ROCODE$$Base            0x0000db50           --   Gb  - Linker created -
+ROCODE$$Limit           0x0001dfd3           --   Gb  - Linker created -
+ROM_BASE_ADDR {Abs}     0x10005001           --   Gb  ble_rom_patch.symbols [2]
+ROM_Init                0x0001c5bf    0x1c  Code  Gb  rom_jt.o [1]
+ROM_Spinlock            0x0001c5ab    0x14  Code  Gb  rom_jt.o [1]
+ROSTK$$Base             0x0000db20           --   Gb  - Linker created -
+ROSTK$$Limit            0x0001f000           --   Gb  - Linker created -
+RWDATA$$Base            0x20004340           --   Gb  - Linker created -
+RWDATA$$Limit           0x200048e4           --   Gb  - Linker created -
+Region$$Table$$Base     0x0001de70           --   Gb  - Linker created -
+Region$$Table$$Limit    0x0001de90           --   Gb  - Linker created -
+RoundKey_Sw {Abs}       0x10016b79    0xb0  Code  Gb  ble_rom_patch.symbols [2]
+SM_CalcRandomAddr       0x000196ed    0x38  Code  Gb  sm_mgr.o [8]
+SM_GenerateAuthenSig    0x0001999b    0x9a  Code  Gb  sm_mgr.o [8]
+SM_Init                 0x0001a17d    0x1c  Code  Gb  sm_task.o [8]
+SM_InitiatorInit        0x000189b9    0x1a  Code  Gb  sm_intpairing.o [8]
+SM_PasskeyUpdate        0x00018f97    0x7e  Code  Gb  sm_pairing.o [8]
+SM_ProcessEvent         0x0001a199    0xbc  Code  Gb  sm_task.o [8]
+SM_ResolveRandomAddrs   0x00019725    0x44  Code  Gb  sm_mgr.o [8]
+SM_StartEncryption      0x000189d3    0x56  Code  Gb  sm_intpairing.o [8]
+SM_StartPairing         0x00018f09    0x8e  Code  Gb  sm_pairing.o [8]
+SM_VerifyAuthenSig      0x00019a35    0xd4  Code  Gb  sm_mgr.o [8]
+SNVSECT$$Base           0x0001e000           --   Gb  - Linker created -
+SNVSECT$$Limit          0x0001f000           --   Gb  - Linker created -
+SSP_CCM_Auth_Encrypt_Sw {Abs}
+                        0x10017895    0x5e  Code  Gb  ble_rom_patch.symbols [2]
+SSP_CCM_Auth_Sw {Abs}   0x10017365   0x156  Code  Gb  ble_rom_patch.symbols [2]
+SSP_CCM_Decrypt_Sw {Abs}
+                        0x1001767d    0xd8  Code  Gb  ble_rom_patch.symbols [2]
+SSP_CCM_Encrypt_Sw {Abs}
+                        0x100174fd    0xd4  Code  Gb  ble_rom_patch.symbols [2]
+SSP_CCM_InvAuth_Decrypt_Sw {Abs}
+                        0x100178f5    0x5a  Code  Gb  ble_rom_patch.symbols [2]
+SSP_CCM_InvAuth_Sw {Abs}
+                        0x10017839    0x5c  Code  Gb  ble_rom_patch.symbols [2]
+SSP_CTR_Decrypt_Sw {Abs}
+                        0x10017771    0x8a  Code  Gb  ble_rom_patch.symbols [2]
+SSP_CTR_Encrypt_Sw {Abs}
+                        0x100175ed    0x88  Code  Gb  ble_rom_patch.symbols [2]
+ShiftRows_Sw {Abs}      0x10016c45    0x32  Code  Gb  ble_rom_patch.symbols [2]
+SysBootMsg              0x20004360     0x4  Data  Gb  ll_patch.o [4]
+WL_AddEntry {Abs}       0x1000d2d9    0x94  Code  Gb  ble_rom_patch.symbols [2]
+WL_Clear                0x0001c4e5    0x24  Code  Gb  ll_wl_patch.o [4]
+WL_ClearEntry {Abs}     0x1000d1f5    0x32  Code  Gb  ble_rom_patch.symbols [2]
+WL_ClearIgnoreList      0x0001c575    0x1e  Code  Gb  ll_wl_patch.o [4]
+WL_FindEntry            0x0001c513    0x42  Code  Gb  ll_wl_patch.o [4]
+WL_GetNumFreeEntries    0x0001c509     0xa  Code  Gb  ll_wl_patch.o [4]
+WL_GetSize {Abs}        0x1000d229    0x12  Code  Gb  ble_rom_patch.symbols [2]
+WL_Init {Abs}           0x1000d189    0x22  Code  Gb  ble_rom_patch.symbols [2]
+WL_RemoveEntry {Abs}    0x1000d36d    0x5e  Code  Gb  ble_rom_patch.symbols [2]
+WL_SetWlIgnore          0x0001c555    0x20  Code  Gb  ll_wl_patch.o [4]
+__aeabi_ldiv0           0x0001bbc1          Code  Gb  I64DivZer.o [9]
+__aeabi_memclr          0x0001bbf5          Code  Gb  ABImemclr.o [9]
+__aeabi_memset          0x0001592d          Code  Gb  ABImemset.o [9]
+__aeabi_uldivmod        0x00019d81          Code  Gb  I64DivMod.o [9]
+__checksum_begin {Abs}  0x10005000           --   Gb  ble_rom_patch.symbols [2]
+__checksum_begin_CommonROM {Abs}
+                        0x10014c00           --   Gb  ble_rom_patch.symbols [2]
+__checksum_end {Abs}    0x1000dffd           --   Gb  ble_rom_patch.symbols [2]
+__checksum_end_CommonROM {Abs}
+                        0x10019ffd           --   Gb  ble_rom_patch.symbols [2]
+__checksum_value {Abs}  0x00005721          Data  Gb  ble_rom_patch.symbols [2]
+__checksum_value_CommonROM {Abs}
+                        0x0000e0ea          Data  Gb  ble_rom_patch.symbols [2]
+__exit {Abs}            0x10018ced          Code  Gb  ble_rom_patch.symbols [2]
+__iar_Memset            0x0001592d          Code  Gb  ABImemset.o [9]
+__iar_Memset_word       0x00015935          Code  Gb  ABImemset.o [9]
+__iar_data_init3        0x0001dd55    0x28  Code  Gb  data_init.o [9]
+__iar_packbits_init_single3
+                        0x0001de37    0x38  Code  Gb  packbits_init_single.o [9]
+__iar_unaligned___aeabi_memcpy
+                        0x00018661          Code  Gb  ABImemcpy_unaligned.o [9]
+__iar_unaligned___aeabi_memcpy4
+                        0x00018681          Code  Gb  ABImemcpy_unaligned.o [9]
+__iar_unaligned___aeabi_memcpy8
+                        0x00018681          Code  Gb  ABImemcpy_unaligned.o [9]
+__iar_unaligned_memcmp  0x000186d9          Code  Gb  memcmp_unaligned.o [9]
+__iar_zero_init3        0x0001ddf7    0x40  Code  Gb  zero_init3.o [9]
+activeConns             0x2000435c     0x4  Data  Gb  ll_patch.o [4]
+activeTaskID            0x2000449c     0x1  Data  Lc  osal.o [1]
+advPkt                  0x200048a0    0x28  Data  Gb  ll_scan_end_causes_patch.o [4]
+advPktSuffix            0x0000dba0     0x4  Data  Gb  ll_config.o [4]
+appForceBoot            0x00010963     0x2  Code  Gb  onboard.o [1]
+appTaskID               0x200046a6     0x1  Data  Gb  gattservapp.o [8]
+appearance              0x20004804     0x2  Data  Lc  gapgattserver.o [8]
+appearanceCharProps     0x200046ab     0x1  Data  Lc  gapgattserver.o [8]
+appearanceUUID          0x0001cd24     0x2  Data  Gb  gatt_uuid.o [8]
+assertSubcause          0x20004494     0x1  Data  Gb  hal_assert.o [1]
+attClientNotifyTxCB     0x200047b4     0x4  Data  Lc  att_client.o [8]
+attSendMsg              0x00016209    0x86  Code  Gb  att_util.o [8]
+attSendRspMsg           0x0000f27b    0x30  Code  Lc  att_server.o [8]
+attServerNotifyTxCB     0x200047b0     0x4  Data  Lc  att_server.o [8]
+attrLen                 0x200047e2     0x2  Data  Lc  gattservapp.o [8]
+autoSyncWhiteList       0x20004457     0x1  Data  Lc  gapbondmgr.o [1]
+baseTaskID              0x200044c0     0x2  Data  Gb  osal_cbtimer.o [1]
+bleDispatch_BMAlloc     0x0000e1e3    0x36  Code  Gb  ble_dispatch.o [1]
+bleDispatch_BMFree      0x0000e219    0x12  Code  Gb  ble_dispatch.o [1]
+bleDispatch_Init        0x0000dce9     0x8  Code  Gb  ble_dispatch.o [1]
+bleDispatch_ProcessEvent
+                        0x0000dcf1    0xba  Code  Gb  ble_dispatch.o [1]
+bleDispatch_TaskID      0x200048d4     0x1  Data  Gb  ble_dispatch.o [1]
+bleEvtMask {Abs}        0x20004f08     0x1  Data  Gb  ble_rom_patch.symbols [2]
+bm_desc_from_payload    0x000112e5    0x1c  Code  Lc  osal_bufmgr.o [1]
+bm_list_ptr             0x2000478c     0x4  Data  Lc  osal_bufmgr.o [1]
+bondIdx                 0x20004459     0x1  Data  Lc  gapbondmgr.o [1]
+bonds                   0x200046f0    0x8c  Data  Lc  gapbondmgr.o [1]
+bondsToDelete           0x2000445c     0xc  Data  Lc  gapbondmgr.o [1]
+btBaseUUID              0x00016350    0x10  Data  Gb  att_util.o [8]
+buildInfo {Abs}         0x20004c98     0x4  Data  Gb  ble_rom_patch.symbols [2]
+cachedTRNGdata {Abs}    0x20004ee8     0xc  Data  Gb  ble_rom_patch.symbols [2]
+cbTimerSetup            0x000188a1    0x8c  Code  Lc  osal_cbtimer.o [1]
+cbTimers                0x200044c4    0x78  Data  Gb  osal_cbtimer.o [1]
+characterUUID           0x0001cd18     0x2  Data  Gb  gatt_uuid.o [8]
+checkNVLen              0x0000e107    0x3a  Code  Lc  ble_dispatch.o [1]
+clientCharCfgUUID       0x0001cd1c     0x2  Data  Gb  gatt_uuid.o [8]
+clientInfoTbl           0x200047f8     0x4  Data  Gb  gatt_client.o [8]
+compactPage             0x00010713   0x110  Code  Lc  osal_snv_wrapper.o [1]
+connOutput {Abs}        0x20004e70    0x14  Data  Gb  ble_rom_patch.symbols [2]
+connReqData {Abs}       0x20004dc8    0x18  Data  Gb  ble_rom_patch.symbols [2]
+const_Rb                0x00019d04    0x10  Data  Gb  sm_mgr.o [8]
+ctrlToHostEnable {Abs}  0x20004f24     0x1  Data  Gb  ble_rom_patch.symbols [2]
+curTxPowerVal {Abs}     0x20004cb9     0x1  Data  Gb  ble_rom_patch.symbols [2]
+deviceFeatureSet {Abs}  0x20004ed0     0xc  Data  Gb  ble_rom_patch.symbols [2]
+deviceName              0x20004808    0x18  Data  Lc  gapgattserver.o [8]
+deviceNameCharProps     0x200046aa     0x1  Data  Lc  gapgattserver.o [8]
+deviceNameUUID          0x0001cd20     0x2  Data  Gb  gatt_uuid.o [8]
+disableCache            0x000108ad    0x2a  Code  Lc  osal_snv_wrapper.o [1]
+disconnectNext          0x00014be9    0x1a  Code  Lc  gap_linkmgr.o [8]
+dtmInfo {Abs}           0x20004edc     0xc  Data  Gb  ble_rom_patch.symbols [2]
+enableCache             0x0001089d    0x10  Code  Lc  osal_snv_wrapper.o [1]
+eraseAllBonds           0x20004458     0x1  Data  Lc  gapbondmgr.o [1]
+erasePage               0x00010659    0x3a  Code  Lc  osal_snv_wrapper.o [1]
+failF                   0x200046a0     0x1  Data  Lc  osal_snv_wrapper.o [1]
+failW                   0x200046a1     0x1  Data  Lc  osal_snv_wrapper.o [1]
+findItem                0x000106cd    0x46  Code  Lc  osal_snv_wrapper.o [1]
+findOffset              0x00010693    0x2a  Code  Lc  osal_snv_wrapper.o [1]
+flowCtrlTaskId          0x2000468f     0x1  Data  Lc  l2cap_task.o [8]
+fwInfoCmd {Abs}         0x20004fcc     0xc  Data  Gb  ble_rom_patch.symbols [2]
+gapAddAddrAdj           0x000144af    0x24  Code  Gb  gap_configmgr.o [8]
+gapAppTaskID            0x20004574     0x1  Data  Gb  gap_configmgr.o [8]
+gapAttrTbl              0x20004610    0x50  Data  Lc  gapgattserver.o [8]
+gapAutoAdvPrivateAddrChange
+                        0x20004577     0x1  Data  Gb  gap_configmgr.o [8]
+gapBondFreeAuthEvt      0x00010485    0x16  Code  Lc  gapbondmgr.o [1]
+gapBondMgrAddBond       0x0000fe4f   0x10c  Code  Lc  gapbondmgr.o [1]
+gapBondMgrAuthenticate  0x00010329    0xd2  Code  Lc  gapbondmgr.o [1]
+gapBondMgrBondReq       0x00010401    0x54  Code  Lc  gapbondmgr.o [1]
+gapBondMgrBondTotal     0x00010067    0x26  Code  Lc  gapbondmgr.o [1]
+gapBondMgrEraseAllBondings
+                        0x0001008d    0x18  Code  Lc  gapbondmgr.o [1]
+gapBondMgrEraseBonding  0x000100a5    0xcc  Code  Lc  gapbondmgr.o [1]
+gapBondMgrFindAddr      0x0000ffab    0x2a  Code  Lc  gapbondmgr.o [1]
+gapBondMgrFindCharCfgItem
+                        0x0000fe15    0x1c  Code  Lc  gapbondmgr.o [1]
+gapBondMgrGetPublicAddr
+                        0x0000ff7f    0x2c  Code  Lc  gapbondmgr.o [1]
+gapBondMgrGetStateFlags
+                        0x0000ff65    0x1a  Code  Lc  gapbondmgr.o [1]
+gapBondMgrInvertCharCfgItem
+                        0x0000fe31    0x1e  Code  Lc  gapbondmgr.o [1]
+gapBondMgrReadBonds     0x0000ffd5    0x48  Code  Lc  gapbondmgr.o [1]
+gapBondMgrUpdateCharCfg
+                        0x0000fd77    0x92  Code  Lc  gapbondmgr.o [1]
+gapBondMgrUpdateLruBondList
+                        0x0001001d    0x4a  Code  Lc  gapbondmgr.o [1]
+gapBondMgr_SyncCharCfg::pAttr
+                        0x20004478     0x4  Data  Lc  gapbondmgr.o [1]
+gapBondMgr_SyncCharCfg::service
+                        0x2000446a     0x2  Data  Lc  gapbondmgr.o [1]
+gapBondMgr_SyncWhiteList
+                        0x00010455    0x26  Code  Lc  gapbondmgr.o [1]
+gapBondMgr_TaskID       0x2000444c     0x1  Data  Lc  gapbondmgr.o [1]
+gapBondSetupPrivFlag    0x0001030b    0x1e  Code  Lc  gapbondmgr.o [1]
+gapBond_AutoFail        0x20004452     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_AutoFailReason  0x20004453     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_BondFailOption  0x20004456     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_Bonding         0x20004451     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_IOCap           0x2000444f     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_InitiateWait    0x20004468     0x2  Data  Lc  gapbondmgr.o [1]
+gapBond_KeyDistList     0x20004454     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_KeySize         0x20004455     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_MITM            0x2000444e     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_OOBData         0x2000447c    0x10  Data  Lc  gapbondmgr.o [1]
+gapBond_OOBDataFlag     0x20004450     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_PairingMode     0x2000444d     0x1  Data  Lc  gapbondmgr.o [1]
+gapBond_Passcode        0x2000446c     0x4  Data  Lc  gapbondmgr.o [1]
+gapBond_lruBondList     0x20004440     0xc  Data  Gb  gapbondmgr.o [1]
+gapBond_removeLRUBond   0x2000445a     0x1  Data  Gb  gapbondmgr.o [1]
+gapCBs                  0x2000448c     0x8  Data  Lc  gapbondmgr.o [1]
+gapCancelLinkReq        0x00014193    0x32  Code  Gb  gap_centlinkmgr.o [8]
+gapCentProcessConnEvt   0x00014135    0x5e  Code  Gb  gap_centlinkmgr.o [8]
+gapCentProcessConnUpdateCmdStatus
+                        0x00014211    0x12  Code  Gb  gap_centlinkmgr.o [8]
+gapCentProcessConnUpdateCompleteEvt
+                        0x00014223     0xe  Code  Gb  gap_centlinkmgr.o [8]
+gapCentProcessHCICmdEvt
+                        0x00013c15    0x76  Code  Lc  gap_centdevmgr.o [8]
+gapCentProcessSignalEvt
+                        0x00014237    0x4c  Code  Gb  gap_centlinkmgr.o [8]
+gapCentralCBs           0x200045dc     0x8  Data  Lc  gap_centdevmgr.o [8]
+gapCentralConnCBs       0x200045e4     0x8  Data  Lc  gap_centlinkmgr.o [8]
+gapClrState             0x00014fc5    0x1c  Code  Gb  gap_devmgr.o [8]
+gapCurrentRandomAddr    0x2000457c     0x8  Data  Lc  gap_configmgr.o [8]
+gapDeviceAddrMode       0x20004576     0x1  Data  Gb  gap_configmgr.o [8]
+gapFindADType           0x00014f67    0x54  Code  Gb  gap_devmgr.o [8]
+gapFindEmptyScanRec     0x00013dbb    0x28  Code  Gb  gap_centdevmgr.o [8]
+gapFindScanRec          0x00013de3    0x48  Code  Gb  gap_centdevmgr.o [8]
+gapFreeAuthLink         0x00014ce3    0x36  Code  Lc  gap_linkmgr.o [8]
+gapFreeEstLink          0x00014d19    0x1c  Code  Gb  gap_linkmgr.o [8]
+gapFreeScanRecs         0x00013d4b    0x70  Code  Lc  gap_centdevmgr.o [8]
+gapGetDevAddress        0x0001456b    0x1e  Code  Gb  gap_configmgr.o [8]
+gapGetDevAddressMode    0x00014565     0x6  Code  Gb  gap_configmgr.o [8]
+gapGetSRK               0x0001453d     0x6  Code  Gb  gap_configmgr.o [8]
+gapGetSignCounter       0x00014543     0x8  Code  Gb  gap_configmgr.o [8]
+gapHost2CtrlOwnAddrType
+                        0x000144d3     0xa  Code  Gb  gap_configmgr.o [8]
+gapIncSignCounter       0x0001454b    0x1a  Code  Gb  gap_configmgr.o [8]
+gapIsAdvertising        0x00014f45     0x4  Code  Gb  gap_devmgr.o [8]
+gapIsScanning           0x00014f49     0x2  Code  Gb  gap_devmgr.o [8]
+gapMaxScanResponses     0x200045d4     0x1  Data  Lc  gap_centdevmgr.o [8]
+gapPairingCompleteCB    0x00014def   0x130  Code  Gb  gap_linkmgr.o [8]
+gapParameters           0x20004584    0x50  Data  Lc  gap_configmgr.o [8]
+gapParams               0x20004558    0x1c  Data  Lc  gap_configmgr.o [8]
+gapPasskeyNeededCB      0x00014d87    0x60  Code  Gb  gap_linkmgr.o [8]
+gapPrivateAddrChangeTimeout
+                        0x20004578     0x2  Data  Gb  gap_configmgr.o [8]
+gapProcessAdvertDevInfo
+                        0x00013e2b    0xfe  Code  Lc  gap_centdevmgr.o [8]
+gapProcessAdvertisementReport
+                        0x00013ca3    0xa8  Code  Lc  gap_centdevmgr.o [8]
+gapProcessBLEEvents     0x000154d7    0x8c  Code  Lc  gap_task.o [8]
+gapProcessConnEvt       0x00015563    0x32  Code  Lc  gap_task.o [8]
+gapProcessConnectionCompleteEvt
+                        0x000149e5    0xae  Code  Gb  gap_linkmgr.o [8]
+gapProcessCreateLLConnCmdStatus
+                        0x000141c5    0x36  Code  Gb  gap_centlinkmgr.o [8]
+gapProcessDisconnectCompleteEvt
+                        0x00014abf    0x62  Code  Gb  gap_linkmgr.o [8]
+gapProcessNewAddr       0x00014481    0x2e  Code  Gb  gap_configmgr.o [8]
+gapProcessOSALMsg       0x000153c5   0x112  Code  Lc  gap_task.o [8]
+gapProcessRandomAddrComplete
+                        0x000144dd    0x60  Code  Gb  gap_configmgr.o [8]
+gapProcessRemoteConnParamReqEvt
+                        0x00014a93    0x2c  Code  Gb  gap_linkmgr.o [8]
+gapProcessScanningEvt   0x00013c8b    0x18  Code  Lc  gap_centdevmgr.o [8]
+gapProfileRole          0x20004575     0x1  Data  Gb  gap_configmgr.o [8]
+gapReadBD_ADDRStatus    0x00014401    0x3c  Code  Gb  gap_configmgr.o [8]
+gapReadBufSizeCmdStatus
+                        0x0001443d    0x44  Code  Gb  gap_configmgr.o [8]
+gapRegisterCentral      0x00015595     0x6  Code  Gb  gap_task.o [8]
+gapRegisterCentralConn  0x00014f1f     0x6  Code  Gb  gap_linkmgr.o [8]
+gapSendBondCompleteEvent
+                        0x00014d35    0x3e  Code  Gb  gap_linkmgr.o [8]
+gapSendDevDiscEvent     0x00013f29    0xd0  Code  Lc  gap_centdevmgr.o [8]
+gapSendDeviceInitDoneEvent
+                        0x00014589    0x42  Code  Lc  gap_configmgr.o [8]
+gapSendLinkUpdateEvent  0x00014ba5    0x44  Code  Gb  gap_linkmgr.o [8]
+gapSendScanEnable       0x0001400d    0x1c  Code  Lc  gap_centdevmgr.o [8]
+gapSendSlaveSecurityReqEvent
+                        0x000149a3    0x3a  Code  Gb  gap_linkmgr.o [8]
+gapService              0x0000db84     0x8  Data  Lc  gapgattserver.o [8]
+gapServiceCBs           0x000152d0     0xc  Data  Gb  gapgattserver.o [8]
+gapServiceUUID          0x0001cd04     0x2  Data  Gb  gatt_uuid.o [8]
+gapSetState             0x00014fbb     0xa  Code  Gb  gap_devmgr.o [8]
+gapState                0x200048d6     0x1  Data  Gb  gap_devmgr.o [8]
+gapTaskID               0x200045ec     0x1  Data  Gb  gap_task.o [8]
+gapUnwantedTaskID       0x200045ed     0x1  Data  Gb  gap_task.o [8]
+gapUpdateConnSignCounter
+                        0x00014951    0x52  Code  Gb  gap_linkmgr.o [8]
+gapValidADType          0x00014f53    0x14  Code  Gb  gap_devmgr.o [8]
+gattAppTaskID           0x200046a7     0x1  Data  Gb  gatt_task.o [8]
+gattAttrTbl             0x200045f8    0x10  Data  Lc  gattservapp.o [8]
+gattClientHandleConnStatusCB
+                        0x00011fc5    0x80  Code  Lc  gatt_client.o [8]
+gattClientHandleTimerCB
+                        0x00011f85    0x3e  Code  Lc  gatt_client.o [8]
+gattClientNotifyTxCB    0x00011f69    0x1a  Code  Lc  gatt_client.o [8]
+gattClientProcessMsgCB  0x00011849   0x156  Code  Lc  gatt_client.o [8]
+gattFindByTypeValue     0x0001161d    0x52  Code  Lc  gatt_client.o [8]
+gattFindClientInfo      0x00011e83    0x2a  Code  Lc  gatt_client.o [8]
+gattFindServerInfo      0x00012977    0x2a  Code  Lc  gatt_server.o [8]
+gattFindService         0x00012935    0x1a  Code  Lc  gatt_server.o [8]
+gattGetClientStatus     0x00011e5b    0x28  Code  Lc  gatt_client.o [8]
+gattGetPayload          0x00010b7d    0x54  Code  Gb  gatt_task.o [8]
+gattGetServerStatus     0x0001294f    0x28  Code  Lc  gatt_server.o [8]
+gattNotifyEvent         0x00010a97    0x56  Code  Gb  gatt_task.o [8]
+gattNumConns            0x200048d7     0x1  Data  Gb  gatt_task.o [8]
+gattParseReq            0x0001287f    0x5a  Code  Lc  gatt_server.o [8]
+gattPrepareWriteReq     0x00011801    0x46  Code  Lc  gatt_client.o [8]
+gattProcessExchangeMTUReq
+                        0x0001262f     0x4  Code  Lc  gatt_server.o [8]
+gattProcessExecuteWriteReq
+                        0x00012931     0x4  Code  Lc  gatt_server.o [8]
+gattProcessFindByTypeValueReq
+                        0x0001273b    0x22  Code  Lc  gatt_server.o [8]
+gattProcessFindInfo     0x00011b3b    0x60  Code  Lc  gatt_client.o [8]
+gattProcessFindInfoReq  0x00012633    0xf8  Code  Lc  gatt_server.o [8]
+gattProcessMultiReqs    0x0001199f   0x19c  Code  Lc  gatt_client.o [8]
+gattProcessReadByGrpTypeReq
+                        0x0001281d    0x3e  Code  Lc  gatt_server.o [8]
+gattProcessReadByType   0x00011b9b   0x12a  Code  Lc  gatt_client.o [8]
+gattProcessReadByTypeReq
+                        0x0001275d    0x22  Code  Lc  gatt_server.o [8]
+gattProcessReadMultiReq
+                        0x000127af    0x6e  Code  Lc  gatt_server.o [8]
+gattProcessReadReq      0x0001278b    0x24  Code  Lc  gatt_server.o [8]
+gattProcessReliableWrites
+                        0x00011d73    0x8a  Code  Lc  gatt_client.o [8]
+gattProcessReq          0x000128d9    0x58  Code  Lc  gatt_server.o [8]
+gattProcessRxData       0x000109f9    0x9e  Code  Lc  gatt_task.o [8]
+gattProcessWriteLong    0x00011d03    0x70  Code  Lc  gatt_client.o [8]
+gattProcessWriteReq     0x0001285b    0x24  Code  Lc  gatt_server.o [8]
+gattRead                0x000116f1    0x2c  Code  Lc  gatt_client.o [8]
+gattReadByType          0x0001166f    0x6a  Code  Lc  gatt_client.o [8]
+gattReadLong            0x00011727    0x2c  Code  Lc  gatt_client.o [8]
+gattRegisterClient      0x0001096b     0x6  Code  Gb  gatt_task.o [8]
+gattRegisterServer      0x00010965     0x6  Code  Gb  gatt_task.o [8]
+gattResetClientInfo     0x00011ef9    0x6e  Code  Lc  gatt_client.o [8]
+gattResetServerInfo     0x000129a1    0x10  Code  Lc  gatt_server.o [8]
+gattSendFlowCtrlEvt     0x00010b4f    0x20  Code  Gb  gatt_task.o [8]
+gattServApp_ClearPrepareWriteQ
+                        0x000136f7    0x42  Code  Lc  gattservapp.o [8]
+gattServApp_FindAuthorizeAttrCB
+                        0x0001374d     0xc  Code  Lc  gattservapp.o [8]
+gattServApp_FindCharCfgItem
+                        0x00018985    0x26  Code  Lc  gattservapp_util.o [1]
+gattServApp_FindPrepareWriteQ
+                        0x000136cd    0x2a  Code  Lc  gattservapp.o [8]
+gattServApp_FindServiceCBs
+                        0x00012d39    0x16  Code  Lc  gattservapp.o [8]
+gattServApp_HandleConnStatusCB
+                        0x000139f7    0x54  Code  Lc  gattservapp.o [8]
+gattServApp_IsWriteLong
+                        0x00013611    0xbc  Code  Lc  gattservapp.o [8]
+gattServApp_ProcessExecuteWriteReq
+                        0x00013547    0xca  Code  Lc  gattservapp.o [8]
+gattServApp_ProcessFindByTypeValueReq
+                        0x00012f53   0x108  Code  Lc  gattservapp.o [8]
+gattServApp_ProcessMsg  0x00012d4f   0x1fa  Code  Lc  gattservapp.o [8]
+gattServApp_ProcessPrepareWriteReq
+                        0x0001346b    0xdc  Code  Lc  gattservapp.o [8]
+gattServApp_ProcessReadByGrpTypeReq
+                        0x000132a1   0x142  Code  Lc  gattservapp.o [8]
+gattServApp_ProcessReadByTypeReq
+                        0x0001305b    0xbc  Code  Lc  gattservapp.o [8]
+gattServApp_ProcessReadMultiReq
+                        0x000131a1    0xd0  Code  Lc  gattservapp.o [8]
+gattServApp_ProcessWriteReq
+                        0x000133e9    0x82  Code  Lc  gattservapp.o [8]
+gattServApp_SetNumPrepareWrites
+                        0x00012c7d    0xa6  Code  Lc  gattservapp.o [8]
+gattServApp_buildReadByTypeRsp
+                        0x00013127    0x7a  Code  Lc  gattservapp.o [8]
+gattServerHandleConnStatusCB
+                        0x000129f9    0x80  Code  Lc  gatt_server.o [8]
+gattServerHandleTimerCB
+                        0x000129cd    0x2a  Code  Lc  gatt_server.o [8]
+gattServerNotifyTxCB    0x000129b1    0x1a  Code  Lc  gatt_server.o [8]
+gattServerProcessMsgCB  0x000124e5   0x14a  Code  Lc  gatt_server.o [8]
+gattService             0x0000db7c     0x8  Data  Lc  gattservapp.o [8]
+gattServiceLastHandle   0x000124cf    0x14  Code  Lc  gatt_server.o [8]
+gattServiceUUID         0x0001cd08     0x2  Data  Gb  gatt_uuid.o [8]
+gattStartTimer          0x00010aed    0x10  Code  Gb  gatt_task.o [8]
+gattStopTimer           0x00010afd    0x18  Code  Gb  gatt_task.o [8]
+gattStoreClientInfo     0x00011e1b    0x40  Code  Lc  gatt_client.o [8]
+gattTaskID              0x200048d8     0x1  Data  Gb  gatt_task.o [8]
+gattWrite               0x00011753    0x46  Code  Lc  gatt_client.o [8]
+gattWriteLong           0x00011799    0x68  Code  Lc  gatt_client.o [8]
+ggs_AppCBs              0x20004800     0x4  Data  Lc  gapgattserver.o [8]
+ggs_ReadAttrCB          0x000150ef    0xe0  Code  Lc  gapgattserver.o [8]
+ggs_SetAttrWPermit      0x0001509f    0x50  Code  Lc  gapgattserver.o [8]
+ggs_WriteAttrCB         0x000151cf    0xf4  Code  Lc  gapgattserver.o [8]
+halAssertCback          0x20004498     0x4  Data  Gb  hal_assert.o [1]
+halAssertHandler        0x00015895     0x2  Code  Gb  hal_assert.o [1]
+halAssertHandlerExt     0x00015897    0x14  Code  Gb  hal_assert.o [1]
+halAssertInit           0x00015885    0x10  Code  Gb  hal_assert.o [1]
+halAssertSpinlock       0x000158ad     0x2  Code  Gb  hal_assert.o [1]
+hciExtTaskID            0x200048e0     0x1  Data  Gb  hci_tl.o [5]
+hciGapTaskID            0x200048dd     0x1  Data  Gb  hci_tl.o [5]
+hciInitEventMasks       0x00017fe9    0x4c  Code  Gb  hci_event_patch.o [4]
+hciL2capTaskID          0x200048de     0x1  Data  Gb  hci_tl.o [5]
+hciPTMenabled {Abs}     0x20004f28     0x1  Data  Gb  ble_rom_patch.symbols [2]
+hciSmpTaskID            0x200048df     0x1  Data  Gb  hci_tl.o [5]
+hciTaskID               0x200048db     0x1  Data  Gb  hci_tl.o [5]
+hciTestTaskID           0x200048dc     0x1  Data  Gb  hci_tl.o [5]
+includeUUID             0x0001cd14     0x2  Data  Gb  gatt_uuid.o [8]
+indTaskId               0x200046a8     0x1  Data  Gb  gatt_client.o [8]
+initCmd {Abs}           0x20004db0    0x18  Data  Gb  ble_rom_patch.symbols [2]
+initInfo {Abs}          0x20004e58    0x18  Data  Gb  ble_rom_patch.symbols [2]
+initOutput {Abs}        0x20004eb8     0xc  Data  Gb  ble_rom_patch.symbols [2]
+initParam {Abs}         0x20004cf0    0x24  Data  Gb  ble_rom_patch.symbols [2]
+initPktSuffix           0x0000dba8     0x4  Data  Gb  ll_config.o [4]
+l2capAllocConnChannel   0x00011087    0x52  Code  Gb  l2cap_util.o [8]
+l2capBuildParamUpdateReq
+                        0x00010f67    0x2c  Code  Gb  l2cap_util.o [8]
+l2capChannels           0x20004690     0x4  Data  Gb  l2cap_task.o [8]
+l2capDisconnectAllChannels
+                        0x00011185    0x5a  Code  Gb  l2cap_util.o [8]
+l2capEncapSendData      0x00010de9    0xaa  Code  Gb  l2cap_util.o [8]
+l2capFindLocalId        0x000110e7    0x2a  Code  Gb  l2cap_util.o [8]
+l2capFixedChannels      0x20004858    0x30  Data  Gb  l2cap_task.o [8]
+l2capFlowCtrlMode       0x200048d9     0x1  Data  Lc  l2cap_if.o [8]
+l2capFreeChannel        0x000110d9     0xe  Code  Gb  l2cap_util.o [8]
+l2capFreePendingPkt     0x000111df    0x2c  Code  Lc  l2cap_util.o [8]
+l2capHandleConnStatusCB
+                        0x0001a151    0x2c  Code  Lc  l2cap_task.o [8]
+l2capHandleRxError      0x00011183     0x2  Code  Gb  l2cap_util.o [8]
+l2capHandleTimerCB      0x00011139    0x1e  Code  Lc  l2cap_util.o [8]
+l2capId                 0x200048da     0x1  Data  Gb  l2cap_util.o [8]
+l2capMtuSize            0x200046a4     0x2  Data  Gb  l2cap_task.o [8]
+l2capNotifyData         0x00010ff5    0x44  Code  Gb  l2cap_util.o [8]
+l2capNotifyEvent        0x00011157    0x2c  Code  Lc  l2cap_util.o [8]
+l2capNotifySignal       0x00011039    0x4e  Code  Gb  l2cap_util.o [8]
+l2capNumChannels        0x2000468d     0x1  Data  Gb  l2cap_task.o [8]
+l2capNumDataPkts        0x2000468e     0x1  Data  Gb  l2cap_task.o [8]
+l2capParseCmdReject     0x00010f27    0x40  Code  Gb  l2cap_util.o [8]
+l2capParsePacket        0x00010e93    0x56  Code  Gb  l2cap_util.o [8]
+l2capParseParamUpdateRsp
+                        0x00010fcf     0xa  Code  Gb  l2cap_util.o [8]
+l2capParseSignalHdr     0x00010c6d    0x14  Code  Gb  l2cap_util.o [8]
+l2capProcessOSALMsg     0x00019fa1    0xa0  Code  Lc  l2cap_task.o [8]
+l2capProcessSignal      0x0001a041   0x102  Code  Lc  l2cap_task.o [8]
+l2capSendCmd            0x00010ce5    0x70  Code  Gb  l2cap_util.o [8]
+l2capSendFCPkt          0x00010da1    0x48  Code  Lc  l2cap_util.o [8]
+l2capSendPkt            0x00010d7b    0x26  Code  Gb  l2cap_util.o [8]
+l2capSendReq            0x00010c81    0x64  Code  Gb  l2cap_util.o [8]
+l2capStartTimer         0x00011111    0x14  Code  Gb  l2cap_util.o [8]
+l2capStopTimer          0x00011125     0xa  Code  Gb  l2cap_util.o [8]
+l2capStoreFCPkt         0x00010d55    0x26  Code  Gb  l2cap_util.o [8]
+l2capTaskID             0x2000468c     0x1  Data  Gb  l2cap_task.o [8]
+lastTrngVal             0x2000477c     0x4  Data  Lc  hal_trng_wrapper.o [1]
+leftshift_onebit        0x00019ceb    0x18  Code  Lc  sm_mgr.o [8]
+legacyMode              0x20004495     0x1  Data  Gb  hal_assert.o [1]
+linkCBs                 0x20004828    0x30  Data  Lc  linkdb.o [8]
+linkCmd                 0x20004898     0x4  Data  Gb  ble_patch.o [4]
+linkDB                  0x20004824     0x4  Data  Lc  linkdb.o [8]
+linkDBNumConns          0x20004820     0x1  Data  Gb  linkdb.o [8]
+linkDB_Add              0x00015631    0x66  Code  Gb  linkdb.o [8]
+linkDB_Authen           0x00015813    0x4c  Code  Gb  linkdb.o [8]
+linkDB_Find             0x00015733    0x2a  Code  Gb  linkdb.o [8]
+linkDB_FindFirst        0x0001575d    0x32  Code  Gb  linkdb.o [8]
+linkDB_GetInfo          0x000156f3    0x40  Code  Gb  linkdb.o [8]
+linkDB_Init             0x000155c5    0x4e  Code  Gb  linkdb.o [8]
+linkDB_MTU              0x00015807     0xc  Code  Gb  linkdb.o [8]
+linkDB_NumActive        0x000157bd    0x28  Code  Gb  linkdb.o [8]
+linkDB_NumConns         0x000157e5     0x6  Code  Gb  linkdb.o [8]
+linkDB_Register         0x00015613    0x1e  Code  Gb  linkdb.o [8]
+linkDB_Remove           0x00015697    0x34  Code  Gb  linkdb.o [8]
+linkDB_Role             0x000157b1     0xc  Code  Gb  linkdb.o [8]
+linkDB_State            0x0001578f    0x22  Code  Gb  linkdb.o [8]
+linkDB_Update           0x000156cb    0x28  Code  Gb  linkdb.o [8]
+linkDB_UpdateMTU        0x000157eb    0x1c  Code  Gb  linkdb.o [8]
+linkDB_reportStatusChange
+                        0x0001585f    0x22  Code  Gb  linkdb.o [8]
+linkParam               0x2000489c     0x4  Data  Gb  ble_patch.o [4]
+llActiveTask            0x0001b747    0x28  Code  Gb  ll_scheduler_patch.o [4]
+llAllocConnId           0x0001a41b   0x14e  Code  Gb  ll_common_patch.o [4]
+llAllocTask             0x0001b6cb    0x5a  Code  Gb  ll_scheduler_patch.o [4]
+llAtLeastTwoChans {Abs}
+                        0x100082f1    0x3a  Code  Gb  ble_rom_patch.symbols [2]
+llCBTimer_AptoExpiredCback
+                        0x0001b00b    0x54  Code  Gb  ll_common_patch.o [4]
+llCheckRxBuffers        0x0001c157    0x26  Code  Gb  ble_patch.o [4]
+llCheckWhiteListUsage   0x0001b18d    0x30  Code  Gb  ll_common_patch.o [4]
+llClearRfInts {Abs}     0x100072e9     0x2  Code  Gb  ble_rom_patch.symbols [2]
+llCombinePDU            0x0001aedf   0x10e  Code  Gb  ll_common_patch.o [4]
+llCombinePDU::pEntry    0x2000469c     0x4  Data  Lc  ll_common_patch.o [4]
+llCombinePDU::pduSize   0x20004698     0x2  Data  Lc  ll_common_patch.o [4]
+llCombinePDU::size      0x20004696     0x2  Data  Lc  ll_common_patch.o [4]
+llCombinePDU::state     0x20004694     0x1  Data  Lc  ll_common_patch.o [4]
+llConfigTable           0x0000dbb8    0x30  Data  Gb  ll_config.o [4]
+llConnCleanup           0x0001a895    0xca  Code  Gb  ll_common_patch.o [4]
+llConnExists            0x0001b295    0xbc  Code  Gb  ll_common_patch.o [4]
+llConnTerminate {Abs}   0x10008631    0x34  Code  Gb  ble_rom_patch.symbols [2]
+llConnectionExt         0x20004354     0x4  Data  Gb  ll_patch.o [4]
+llConns {Abs}           0x20004cb0     0x8  Data  Gb  ble_rom_patch.symbols [2]
+llConvertCtrlProcTimeoutToEvent {Abs}
+                        0x10008741    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+llConvertLstoToEvent {Abs}
+                        0x10008721    0x20  Code  Gb  ble_rom_patch.symbols [2]
+llCreateRxBuffer        0x0001c129    0x2e  Code  Gb  ble_patch.o [4]
+llDequeueCtrlPkt        0x0001a977    0x32  Code  Gb  ll_common_patch.o [4]
+llDisableRfInts {Abs}   0x100072e5     0x2  Code  Gb  ble_rom_patch.symbols [2]
+llEnableRfInts {Abs}    0x100072ed     0x2  Code  Gb  ble_rom_patch.symbols [2]
+llEnqueueCtrlPkt {Abs}  0x100080bd    0x50  Code  Gb  ble_rom_patch.symbols [2]
+llEqAlreadyValidAddr {Abs}
+                        0x1000d795    0x2a  Code  Gb  ble_rom_patch.symbols [2]
+llEqSynchWord {Abs}     0x1000d6e5     0xe  Code  Gb  ble_rom_patch.symbols [2]
+llEqualBytes {Abs}      0x1000d709    0x28  Code  Gb  ble_rom_patch.symbols [2]
+llEventDelta {Abs}      0x10008719     0x6  Code  Gb  ble_rom_patch.symbols [2]
+llEventInRange {Abs}    0x100086f1    0x28  Code  Gb  ble_rom_patch.symbols [2]
+llFindNextSecTask {Abs}
+                        0x1000a939   0x198  Code  Gb  ble_rom_patch.symbols [2]
+llFindStartType {Abs}   0x1000a895    0xa2  Code  Gb  ble_rom_patch.symbols [2]
+llFragmentPDU           0x0001ae7d    0x62  Code  Gb  ll_common_patch.o [4]
+llFreeTask {Abs}        0x1000abed    0x4e  Code  Gb  ble_rom_patch.symbols [2]
+llGenerateCRC {Abs}     0x100086b9    0x32  Code  Gb  ble_rom_patch.symbols [2]
+llGenerateValidAccessAddr {Abs}
+                        0x1000d695    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+llGetActiveTasks {Abs}  0x1000aca9     0x6  Code  Gb  ble_rom_patch.symbols [2]
+llGetAdvChanPDU {Abs}   0x1000d4ad    0xc8  Code  Gb  ble_rom_patch.symbols [2]
+llGetCurrentTask {Abs}  0x1000ac3d     0xe  Code  Gb  ble_rom_patch.symbols [2]
+llGetCurrentTime        0x0001c41f     0xa  Code  Gb  ll_rat_patch.o [4]
+llGetMinCI              0x0001ae13    0x6a  Code  Gb  ll_common_patch.o [4]
+llGetNextConn           0x0001ac39   0x1da  Code  Gb  ll_common_patch.o [4]
+llGetNextDataChan       0x0001b201    0x4c  Code  Gb  ll_common_patch.o [4]
+llGetNumTasks {Abs}     0x1000ace1     0x6  Code  Gb  ble_rom_patch.symbols [2]
+llGetTask               0x0001b77d    0x30  Code  Gb  ll_scheduler_patch.o [4]
+llGetTaskState          0x0001b725    0x22  Code  Gb  ll_scheduler_patch.o [4]
+llGetTxPower            0x0001b175    0x18  Code  Gb  ll_common_patch.o [4]
+llGtSixConsecZerosOrOnes {Abs}
+                        0x1000d6b1    0x32  Code  Gb  ble_rom_patch.symbols [2]
+llGtTwentyFourTransitions {Abs}
+                        0x1000d731    0x30  Code  Gb  ble_rom_patch.symbols [2]
+llHaltRadio             0x0001b4c9    0x20  Code  Gb  ll_common_patch.o [4]
+llHardwareError         0x0001b56b     0x4  Code  Gb  ll_common_patch.o [4]
+llInitFeatureSet        0x0001a569    0x18  Code  Gb  ll_common_patch.o [4]
+llInitRAT               0x0001c41d     0x2  Code  Gb  ll_rat_patch.o [4]
+llInit_TaskConnect      0x0001cde5   0x292  Code  Gb  ll_init_end_causes_patch.o [4]
+llInit_TaskEnd          0x0001d099    0x38  Code  Gb  ll_init_end_causes_patch.o [4]
+llLtTwoChangesInLastSixBits {Abs}
+                        0x1000d761    0x32  Code  Gb  ble_rom_patch.symbols [2]
+llMaster_TaskEnd        0x0001d145   0x17a  Code  Gb  ll_master_end_causes_patch.o [4]
+llMemCopyDst {Abs}      0x100089f1    0x16  Code  Gb  ble_rom_patch.symbols [2]
+llMemCopySrc {Abs}      0x100089d9    0x18  Code  Gb  ble_rom_patch.symbols [2]
+llMoveTempTxDataEntries {Abs}
+                        0x1000afa1    0x68  Code  Gb  ble_rom_patch.symbols [2]
+llOctets2Time           0x0001b495    0x34  Code  Gb  ll_common_patch.o [4]
+llOneBitSynchWordDiffer {Abs}
+                        0x1000d6f5    0x12  Code  Gb  ble_rom_patch.symbols [2]
+llPatchCM0 {Abs}        0x1000adb1    0x16  Code  Gb  ble_rom_patch.symbols [2]
+llPendingUpdateParam {Abs}
+                        0x10008665    0x3a  Code  Gb  ble_rom_patch.symbols [2]
+llProcessChanMap        0x0001b1c1    0x40  Code  Gb  ll_common_patch.o [4]
+llProcessMasterControlPacket
+                        0x0001bc7d   0x400  Code  Gb  ble_patch.o [4]
+llProcessMasterControlProcedures
+                        0x0001d3eb   0x3ba  Code  Gb  ll_master_end_causes_patch.o [4]
+llProcessPostRfOps {Abs}
+                        0x100072f1    0x54  Code  Gb  ble_rom_patch.symbols [2]
+llProcessScanRxFIFO     0x0001d84d    0x96  Code  Gb  ll_scan_end_causes_patch.o [4]
+llProcessTxData         0x0001a82b    0x6a  Code  Gb  ll_common_patch.o [4]
+llRatChanCBack_A        0x0001c1b1     0x2  Code  Gb  ble_patch.o [4]
+llRatChanCBack_B {Abs}  0x1000ae41     0x2  Code  Gb  ble_rom_patch.symbols [2]
+llRatChanCBack_C {Abs}  0x1000ae45     0x2  Code  Gb  ble_rom_patch.symbols [2]
+llRatChanCBack_D {Abs}  0x1000ae49     0x2  Code  Gb  ble_rom_patch.symbols [2]
+llRealignConn           0x0001aa51   0x1da  Code  Gb  ll_common_patch.o [4]
+llReleaseAllConnId {Abs}
+                        0x10008461    0x32  Code  Gb  ble_rom_patch.symbols [2]
+llReleaseConnId {Abs}   0x10008429    0x34  Code  Gb  ble_rom_patch.symbols [2]
+llReplaceCtrlPkt        0x0001a9bd    0x26  Code  Gb  ll_common_patch.o [4]
+llResetRadio            0x0001b569     0x2  Code  Gb  ll_common_patch.o [4]
+llRfInit                0x0001b0ad    0x6e  Code  Gb  ll_common_patch.o [4]
+llRfSetup               0x0001b05f    0x48  Code  Gb  ll_common_patch.o [4]
+llRfStartFS             0x0001b4f1    0x78  Code  Gb  ll_common_patch.o [4]
+llScan_TaskEnd          0x0001d815    0x38  Code  Gb  ll_scan_end_causes_patch.o [4]
+llScheduleTask          0x0001b7ad    0x74  Code  Gb  ll_scheduler_patch.o [4]
+llScheduler {Abs}       0x1000a335   0x44a  Code  Gb  ble_rom_patch.symbols [2]
+llSchedulerInit         0x0001b699    0x32  Code  Gb  ll_scheduler_patch.o [4]
+llSendReject            0x0001b355    0x3e  Code  Gb  ll_common_patch.o [4]
+llSetFreqTune {Abs}     0x100072e1     0x2  Code  Gb  ble_rom_patch.symbols [2]
+llSetNextDataChan       0x0001b24d    0x48  Code  Gb  ll_common_patch.o [4]
+llSetTxPower            0x0001b125    0x50  Code  Gb  ll_common_patch.o [4]
+llSetupConn             0x0001b56f    0x36  Code  Gb  ll_common_patch.o [4]
+llSetupConnParamReq     0x0001a725    0x88  Code  Gb  ll_common_patch.o [4]
+llSetupConnRxDataEntryQueue
+                        0x0001c0a3    0x86  Code  Gb  ble_patch.o [4]
+llSetupEncReq {Abs}     0x10007aed    0x9c  Code  Gb  ble_rom_patch.symbols [2]
+llSetupFeatureSetReq    0x0001a581    0x4e  Code  Gb  ll_common_patch.o [4]
+llSetupFeatureSetRsp    0x0001a5cf    0x46  Code  Gb  ll_common_patch.o [4]
+llSetupInit {Abs}       0x100077b5   0x1d0  Code  Gb  ble_rom_patch.symbols [2]
+llSetupInitDataEntryQueue {Abs}
+                        0x1000ae95    0x1c  Code  Gb  ble_rom_patch.symbols [2]
+llSetupNextMasterEvent  0x0001d2bf   0x12c  Code  Gb  ll_master_end_causes_patch.o [4]
+llSetupPauseEncReq {Abs}
+                        0x10007cfd    0x38  Code  Gb  ble_rom_patch.symbols [2]
+llSetupPauseEncRsp {Abs}
+                        0x10007d55    0x64  Code  Gb  ble_rom_patch.symbols [2]
+llSetupPingReq          0x0001a627    0x24  Code  Gb  ll_common_patch.o [4]
+llSetupPingRsp          0x0001a655    0x24  Code  Gb  ll_common_patch.o [4]
+llSetupRATChanCompare   0x0001c17d    0x32  Code  Gb  ble_patch.o [4]
+llSetupRejectIndExt     0x0001a7b9    0x72  Code  Gb  ll_common_patch.o [4]
+llSetupScan {Abs}       0x100075fd   0x1aa  Code  Gb  ble_rom_patch.symbols [2]
+llSetupScanDataEntryQueue {Abs}
+                        0x1000ae4d    0x46  Code  Gb  ble_rom_patch.symbols [2]
+llSetupStartEncRsp {Abs}
+                        0x10007ca9    0x42  Code  Gb  ble_rom_patch.symbols [2]
+llSetupTermInd          0x0001b3a1    0x4e  Code  Gb  ll_common_patch.o [4]
+llSetupUnknownRsp {Abs}
+                        0x10008069    0x44  Code  Gb  ble_rom_patch.symbols [2]
+llSetupUpdateChanReq    0x0001a6a9    0x7c  Code  Gb  ll_common_patch.o [4]
+llSetupUpdateParamReq {Abs}
+                        0x100079c9    0x90  Code  Gb  ble_rom_patch.symbols [2]
+llSetupVersionIndReq {Abs}
+                        0x10007f29    0x6c  Code  Gb  ble_rom_patch.symbols [2]
+llSortActiveConns       0x0001a9e3    0x6e  Code  Gb  ll_common_patch.o [4]
+llState {Abs}           0x20004cb8     0x1  Data  Gb  ble_rom_patch.symbols [2]
+llTaskError {Abs}       0x1000d9e1     0xc  Code  Gb  ble_rom_patch.symbols [2]
+llTaskList {Abs}        0x20004ef4     0xc  Data  Gb  ble_rom_patch.symbols [2]
+llTimeCompare {Abs}     0x1000d8c9    0x1a  Code  Gb  ble_rom_patch.symbols [2]
+llTimeDelta {Abs}       0x1000d8f5     0x4  Code  Gb  ble_rom_patch.symbols [2]
+llUserConfig            0x20004660    0x20  Data  Gb  ll_config.o [4]
+llValidAccessAddr       0x0001ddb5    0x42  Code  Gb  ll_access_address_patch.o [4]
+llValidateConnParams    0x0001b5a9    0x7e  Code  Gb  ll_common_patch.o [4]
+llVerifyConnParamReqParams
+                        0x0001a399    0x82  Code  Gb  ll_common_patch.o [4]
+llWriteTxData           0x0001b419    0x7c  Code  Gb  ll_common_patch.o [4]
+ll_buildRevision        0x0000db7a     0x2  Data  Gb  ll_patch.o [4]
+mADD {Abs}              0x10016551          Code  Gb  ble_rom_patch.symbols [2]
+mMULT {Abs}             0x10015f81          Code  Gb  ble_rom_patch.symbols [2]
+mOUT {Abs}              0x10016749          Code  Gb  ble_rom_patch.symbols [2]
+mSUB {Abs}              0x1001664d          Code  Gb  ble_rom_patch.symbols [2]
+maxNumConns {Abs}       0x20004cbc     0x1  Data  Gb  ble_rom_patch.symbols [2]
+maxNumPrepareWrites     0x200047e1     0x1  Data  Lc  gattservapp.o [8]
+maxNumTxDataBufs        0x20004342     0x1  Data  Gb  ll_patch.o [4]
+maxPduSize              0x20004340     0x1  Data  Gb  ll_patch.o [4]
+maxPktsPerEvt           0x0000dbb0     0x4  Data  Gb  ll_config.o [4]
+maxTxPwrForDTM {Abs}    0x20004c85     0x1  Data  Gb  ble_rom_patch.symbols [2]
+nextConnId              0x200048e2     0x1  Data  Gb  ll_common_patch.o [4]
+nextHandle              0x20004608     0x2  Data  Lc  gatt_server.o [8]
+numComplPkts {Abs}      0x20004cba     0x1  Data  Gb  ble_rom_patch.symbols [2]
+numComplPktsFlush {Abs}
+                        0x20004c88     0x1  Data  Gb  ble_rom_patch.symbols [2]
+numComplPktsLimit {Abs}
+                        0x20004c87     0x1  Data  Gb  ble_rom_patch.symbols [2]
+numHostBufs {Abs}       0x20004f26     0x2  Data  Gb  ble_rom_patch.symbols [2]
+numTxDataBufs {Abs}     0x20004c8b     0x1  Data  Gb  ble_rom_patch.symbols [2]
+onePktPerEvt {Abs}      0x20004c86     0x1  Data  Gb  ble_rom_patch.symbols [2]
+osalAddTimer            0x000159c1    0x3c  Code  Gb  osal_timers.o [1]
+osalAdjustTimer         0x00019e71    0x4e  Code  Gb  osal_clock.o [1]
+osalDeleteTimer         0x00015a13     0x8  Code  Gb  osal_timers.o [1]
+osalFindTimer           0x000159fd    0x16  Code  Gb  osal_timers.o [1]
+osalInitTasks           0x00015cfd    0x7a  Code  Gb  osal_icall_ble.o [1]
+osalTimerInit           0x000159b1    0x10  Code  Gb  osal_timers.o [1]
+osalTimerUpdate         0x00015b29    0xce  Code  Gb  osal_timers.o [1]
+osal_CbTimerInit        0x0001874d    0x16  Code  Gb  osal_cbtimer.o [1]
+osal_CbTimerProcessEvent
+                        0x00018763    0x78  Code  Gb  osal_cbtimer.o [1]
+osal_CbTimerStart       0x000187db     0x8  Code  Gb  osal_cbtimer.o [1]
+osal_CbTimerStop        0x0001884f    0x52  Code  Gb  osal_cbtimer.o [1]
+osal_CbTimerUpdate      0x000187eb    0x64  Code  Gb  osal_cbtimer.o [1]
+osal_alien2proxy        0x0000eba9    0x2c  Code  Lc  osal.o [1]
+osal_bm_adjust_header   0x000112bd    0x28  Code  Gb  osal_bufmgr.o [1]
+osal_bm_alloc           0x00011245    0x2e  Code  Gb  osal_bufmgr.o [1]
+osal_bm_free            0x00011273    0x42  Code  Gb  osal_bufmgr.o [1]
+osal_clear_event        0x0000eab9    0x2c  Code  Gb  osal.o [1]
+osal_dispatch_entities  0x200044bc     0x4  Data  Lc  osal.o [1]
+osal_enroll_dispatchid  0x0000e80b    0x10  Code  Gb  osal.o [1]
+osal_enroll_senderid    0x0000e81b     0xc  Code  Gb  osal.o [1]
+osal_entity             0x200048d5     0x1  Data  Gb  osal.o [1]
+osal_eventloop_hook     0x200044a4     0x4  Data  Gb  osal.o [1]
+osal_get_timeoutEx      0x00015af7    0x22  Code  Gb  osal_timers.o [1]
+osal_init_system        0x0000eaeb    0x64  Code  Gb  osal.o [1]
+osal_isbufset           0x0000ed8b    0x20  Code  Gb  osal.o [1]
+osal_last_timestamp     0x200047a8     0x4  Data  Gb  osal_timers.o [1]
+osal_max_msecs          0x200044b0     0x4  Data  Gb  osal.o [1]
+osal_mem_alloc          0x000158ed    0x1a  Code  Gb  osal_memory_icall.o [1]
+osal_mem_free           0x00015907    0x14  Code  Gb  osal_memory_icall.o [1]
+osal_memcmp             0x0000e7d7    0x1c  Code  Gb  osal.o [1]
+osal_memcpy             0x0000e78f    0x14  Code  Gb  osal.o [1]
+osal_memdup             0x0000e7bb    0x1c  Code  Gb  osal.o [1]
+osal_memset             0x0000e7f3    0x14  Code  Gb  osal.o [1]
+osal_msec_timer_cback   0x0000ebed    0x1c  Code  Lc  osal.o [1]
+osal_msec_timer_seq     0x200044b8     0x4  Data  Lc  osal.o [1]
+osal_msg_allocate       0x0000e82d    0x24  Code  Gb  osal.o [1]
+osal_msg_deallocate     0x0000e851    0x1e  Code  Gb  osal.o [1]
+osal_msg_enqueue        0x0000e995    0x24  Code  Gb  osal.o [1]
+osal_msg_enqueue_push   0x0000e8c9    0x62  Code  Lc  osal.o [1]
+osal_msg_extract        0x0000e9df    0x28  Code  Gb  osal.o [1]
+osal_msg_push           0x0000e9c5    0x1a  Code  Gb  osal.o [1]
+osal_msg_receive        0x0000e92b    0x62  Code  Gb  osal.o [1]
+osal_msg_send           0x0000e86f    0x5a  Code  Gb  osal.o [1]
+osal_next_timeout       0x00015bf7    0x1c  Code  Gb  osal_timers.o [1]
+osal_notask_entity      0x2000449d     0x1  Data  Lc  osal.o [1]
+osal_proxy2alien        0x0000ebd5    0x16  Code  Lc  osal.o [1]
+osal_proxy_tasks        0x2000449e     0x2  Data  Lc  osal.o [1]
+osal_pwrmgr_init        0x00015c4f     0xc  Code  Gb  osal_pwrmgr.o [1]
+osal_pwrmgr_task_state  0x00015c5b    0x5c  Code  Gb  osal_pwrmgr.o [1]
+osal_qHead              0x200044a0     0x4  Data  Gb  osal.o [1]
+osal_rand               0x0000e807     0x4  Code  Gb  osal.o [1]
+osal_revmemcpy          0x0000e7a3    0x18  Code  Gb  osal.o [1]
+osal_run_system         0x0000ec37   0x14a  Code  Gb  osal.o [1]
+osal_semaphore          0x200044a8     0x4  Data  Gb  osal.o [1]
+osal_service_entry      0x0000ec13    0x24  Code  Gb  osal.o [1]
+osal_set_event          0x0000ea1b    0x9e  Code  Gb  osal.o [1]
+osal_snv_compact        0x00010931    0x18  Code  Gb  osal_snv_wrapper.o [1]
+osal_snv_init           0x000108f1     0x4  Code  Gb  osal_snv_wrapper.o [1]
+osal_snv_read           0x000108f5    0x20  Code  Gb  osal_snv_wrapper.o [1]
+osal_snv_write          0x00010915    0x1c  Code  Gb  osal_snv_wrapper.o [1]
+osal_start_reload_timer
+                        0x00015a99    0x2a  Code  Gb  osal_timers.o [1]
+osal_start_system       0x0000eb57    0x52  Code  Gb  osal.o [1]
+osal_start_timerEx      0x00015a69    0x30  Code  Gb  osal_timers.o [1]
+osal_stop_timerEx       0x00015acd    0x2a  Code  Gb  osal_timers.o [1]
+osal_strlen             0x0000e78b     0x4  Code  Gb  osal.o [1]
+osal_systemClock        0x200047ac     0x4  Data  Lc  osal_timers.o [1]
+osal_tickperiod         0x200044ac     0x4  Data  Gb  osal.o [1]
+osal_timer_refTimeUpdate
+                        0x00015a1b    0x4e  Code  Gb  osal_timers.o [1]
+osal_timerid_msec_timer
+                        0x200044b4     0x4  Data  Lc  osal.o [1]
+ownPublicAddr {Abs}     0x20004c6c     0x8  Data  Gb  ble_rom_patch.symbols [2]
+ownRandomAddr {Abs}     0x20004c74     0x8  Data  Gb  ble_rom_patch.symbols [2]
+ownSavedPublicAddr {Abs}
+                        0x20004c7c     0x8  Data  Gb  ble_rom_patch.symbols [2]
+pAttrValue              0x200047e8     0x4  Data  Lc  gattservapp.o [8]
+pAuthEvt                0x20004474     0x4  Data  Lc  gapbondmgr.o [1]
+pAuthLink               0x20004550     0x4  Data  Gb  gap_linkmgr.o [8]
+pBleEvtMask             0x20004888     0x8  Data  Gb  hci_event_patch.o [4]
+pEstLink                0x2000454c     0x4  Data  Gb  gap_linkmgr.o [8]
+pGapAdvertState         0x200047c4     0x4  Data  Gb  gap_devmgr.o [8]
+pGapBondCB              0x20004470     0x4  Data  Lc  gapbondmgr.o [1]
+pGapDiscReq             0x200047c0     0x4  Data  Gb  gap_devmgr.o [8]
+pGapScanRecs            0x200045d8     0x4  Data  Lc  gap_centdevmgr.o [8]
+pHciEvtMask {Abs}       0x20004f00     0x8  Data  Gb  ble_rom_patch.symbols [2]
+pHciEvtMask2            0x20004890     0x8  Data  Gb  hci_event_patch.o [4]
+pPairingParams          0x200048c8     0x4  Data  Gb  sm_pairing.o [8]
+pServiceList            0x2000460c     0x4  Data  Lc  gatt_server.o [8]
+patchBleRfe             0x000165e8   0x4ec  Data  Lc  ll_patch.o [4]
+patchImageBle           0x00016458   0x13c  Data  Lc  ll_patch.o [4]
+peerInfo {Abs}          0x20004c9c     0xc  Data  Gb  ble_rom_patch.symbols [2]
+pfnBondMgrCBs           0x200047bc     0x4  Data  Gb  gap_task.o [8]
+pfnCentralCBs           0x200045f4     0x4  Data  Lc  gap_task.o [8]
+pfnCentralConnCBs       0x20004554     0x4  Data  Gb  gap_linkmgr.o [8]
+pfnClientProcessMsgCB   0x200047f4     0x4  Data  Lc  gatt_task.o [8]
+pfnInitiatorCBs         0x200048d0     0x4  Data  Lc  sm_pairing.o [8]
+pfnPeripheralCBs        0x200045f0     0x4  Data  Gb  gap_task.o [8]
+pfnPeripheralConnCBs    0x200047b8     0x4  Data  Gb  gap_linkmgr.o [8]
+pfnResponderCBs         0x200048cc     0x4  Data  Gb  sm_pairing.o [8]
+pfnServerProcessMsgCB   0x200047f0     0x4  Data  Lc  gatt_task.o [8]
+pgOff                   0x200046a2     0x2  Data  Lc  osal_snv_wrapper.o [1]
+postRfOperations {Abs}  0x20004cbe     0x2  Data  Gb  ble_rom_patch.symbols [2]
+prepareWritesTbl        0x200047e4     0x4  Data  Lc  gattservapp.o [8]
+primaryServiceUUID      0x0001cd0c     0x2  Data  Gb  gatt_uuid.o [8]
+processDispGAPProfile   0x0000e64f    0xb2  Code  Lc  ble_dispatch.o [1]
+processDispMsg          0x0000e515   0x12e  Code  Lc  ble_dispatch.o [1]
+processICallGAP         0x0000e395   0x180  Code  Lc  ble_dispatch.o [1]
+processICallGATT        0x0000e22b   0x16a  Code  Lc  ble_dispatch.o [1]
+processICallHost        0x0000ddb9    0x9e  Code  Lc  ble_dispatch.o [1]
+processICallLL          0x0000de57   0x262  Code  Lc  ble_dispatch.o [1]
+processICallUTIL        0x0000e141    0x98  Code  Lc  ble_dispatch.o [1]
+pwrmgr_attribute        0x200047a0     0x4  Data  Gb  osal_pwrmgr.o [1]
+pwrmgr_initialized      0x2000479c     0x1  Data  Gb  osal_pwrmgr.o [1]
+ratChanInfo {Abs}       0x20004fac    0x20  Data  Gb  ble_rom_patch.symbols [2]
+reqTaskId               0x200046a9     0x1  Data  Gb  gatt_server.o [8]
+rfCallback              0x0001d909    0x2a  Code  Gb  ll_isr.o [4]
+rfCfgAdiVal {Abs}       0x20004c94     0x2  Data  Gb  ble_rom_patch.symbols [2]
+rfCfgVal                0x0000db98     0x4  Data  Gb  ll_config.o [4]
+rfCmdHandle             0x20004348     0x2  Data  Gb  ll_patch.o [4]
+rfDrvTblPtr             0x20004350     0x4  Data  Gb  ll_patch.o [4]
+rfEvent                 0x200046b0     0x8  Data  Gb  ll_patch.o [4]
+rfFeModeBias            0x20004341     0x1  Data  Gb  ll_patch.o [4]
+rfHandle                0x2000434c     0x4  Data  Gb  ll_patch.o [4]
+rfMode                  0x20004368    0x10  Data  Gb  ll_patch.o [4]
+rfObject                0x200043a8    0x98  Data  Gb  ll_patch.o [4]
+rfOpLoc                 0x0000dbb4     0x4  Data  Gb  ll_config.o [4]
+rfPUpCallback           0x0001d8fd     0xc  Code  Gb  ll_isr.o [4]
+rfParams                0x20004378    0x14  Data  Gb  ll_patch.o [4]
+rfSetup                 0x2000438c    0x18  Data  Gb  ll_patch.o [4]
+rf_patch_cpe_ble        0x00016421    0x38  Code  Lc  ll_patch.o [4]
+rf_patch_rfe_ble        0x00016595    0x52  Code  Lc  ll_patch.o [4]
+rsp                     0x200047c8    0x18  Data  Lc  gattservapp.o [8]
+rspBuf                  0x200046b8    0x38  Data  Gb  ble_dispatch.o [1]
+rssiCorrection {Abs}    0x20004cc0     0x1  Data  Gb  ble_rom_patch.symbols [2]
+rxDataQ {Abs}           0x20004f0c     0x4  Data  Gb  ble_rom_patch.symbols [2]
+rxFifoFlowCtrl {Abs}    0x20004c8a     0x1  Data  Gb  ble_rom_patch.symbols [2]
+rxModemTestCmd {Abs}    0x20004e40    0x18  Data  Gb  ble_rom_patch.symbols [2]
+rxPktSuffix             0x0000db9c     0x4  Data  Gb  ll_config.o [4]
+rxRingBuf {Abs}         0x20004f10     0x4  Data  Gb  ble_rom_patch.symbols [2]
+rxTestOut {Abs}         0x20004ec4     0xc  Data  Gb  ble_rom_patch.symbols [2]
+rxTestParam {Abs}       0x20004e84    0x14  Data  Gb  ble_rom_patch.symbols [2]
+scanCmd {Abs}           0x20004df8    0x18  Data  Gb  ble_rom_patch.symbols [2]
+scanInfo {Abs}          0x20004d94    0x1c  Data  Gb  ble_rom_patch.symbols [2]
+scanInfoExt             0x20004344     0x4  Data  Gb  ll_patch.o [4]
+scanParam {Abs}         0x20004d14    0x24  Data  Gb  ble_rom_patch.symbols [2]
+scanPktSuffix           0x0000dba4     0x4  Data  Gb  ll_config.o [4]
+sclkSrc                 0x20004364     0x4  Data  Gb  ll_patch.o [4]
+secondaryServiceUUID    0x0001cd10     0x2  Data  Gb  gatt_uuid.o [8]
+sendAuthEvent           0x00014c03    0xe0  Code  Lc  gap_linkmgr.o [8]
+sendEstLinkEvent        0x00014b21    0x5c  Code  Gb  gap_linkmgr.o [8]
+sendGapCmdStatus        0x0000e0b9    0x4e  Code  Lc  ble_dispatch.o [1]
+sendTerminateEvent      0x00014b7d    0x28  Code  Lc  gap_linkmgr.o [8]
+serverInfoTbl           0x200047fc     0x4  Data  Gb  gatt_server.o [8]
+serviceCBsList          0x200047ec     0x4  Data  Lc  gattservapp.o [8]
+setActivePage           0x00010639    0x10  Code  Lc  osal_snv_wrapper.o [1]
+setBleUserConfig        0x0001a265    0x74  Code  Gb  ble_user_config.o [1]
+setXferPage             0x00010649     0xa  Code  Lc  osal_snv_wrapper.o [1]
+setupInitiatorKeys      0x00018cd5    0x6a  Code  Lc  sm_intpairing.o [8]
+slaveConnHandle         0x20004548     0x2  Data  Gb  gap_linkmgr.o [8]
+slaveUpdateReq          0x20004540     0x8  Data  Gb  gap_linkmgr.o [8]
+sleepDelay {Abs}        0x20004c96     0x2  Data  Gb  ble_rom_patch.symbols [2]
+smAuthReqToUint8        0x00019925    0x2e  Code  Gb  sm_mgr.o [8]
+smDetermineKeySize      0x0001960d    0x22  Code  Gb  sm_pairing.o [8]
+smEncrypt               0x0001998f     0x8  Code  Lc  sm_mgr.o [8]
+smEncryptLocal          0x00019997     0x4  Code  Lc  sm_mgr.o [8]
+smEndPairing            0x000195dd    0x30  Code  Gb  sm_pairing.o [8]
+smFreePairingParams     0x00019593    0x4a  Code  Lc  sm_pairing.o [8]
+smGenerateConfirm       0x0001934f    0x18  Code  Gb  sm_pairing.o [8]
+smGeneratePairingReqRsp
+                        0x00019323    0x2c  Code  Gb  sm_pairing.o [8]
+smGenerateRandBuf       0x000198fb    0x2a  Code  Gb  sm_mgr.o [8]
+smGenerateRandMsg       0x00019367    0x16  Code  Gb  sm_pairing.o [8]
+smInitiatorCBs          0x20004680     0xc  Data  Lc  sm_intpairing.o [8]
+smInitiatorSendNextKeyInfo
+                        0x00018d41   0x1b8  Code  Lc  sm_intpairing.o [8]
+smLinkCheck             0x0001901d    0x22  Code  Gb  sm_pairing.o [8]
+smNextPairingState      0x000191e5    0x30  Code  Gb  sm_pairing.o [8]
+smPairingSendEncInfo    0x00019531     0x6  Code  Gb  sm_pairing.o [8]
+smPairingSendIdentityAddrInfo
+                        0x00019569    0x24  Code  Gb  sm_pairing.o [8]
+smPairingSendIdentityInfo
+                        0x0001955f     0x4  Code  Gb  sm_pairing.o [8]
+smPairingSendMasterID   0x00019537    0x28  Code  Gb  sm_pairing.o [8]
+smPairingSendSigningInfo
+                        0x0001958d     0x6  Code  Gb  sm_pairing.o [8]
+smProcessDataMsg        0x00019045    0xd4  Code  Gb  sm_pairing.o [8]
+smProcessEncryptChange  0x00019135    0xb0  Code  Gb  sm_pairing.o [8]
+smProcessPairingReq     0x000192b3    0x56  Code  Gb  sm_pairing.o [8]
+smRegisterInitiator     0x00019015     0x8  Code  Gb  sm_pairing.o [8]
+smSavePairInfo          0x00019391   0x1a0  Code  Gb  sm_pairing.o [8]
+smSendFailAndEnd        0x00019119    0x1c  Code  Gb  sm_pairing.o [8]
+smSendFailureEvt        0x0001969d    0x2c  Code  Gb  sm_pairing.o [8]
+smSendSMMsg             0x0001bb77    0x4a  Code  Gb  smp.o [8]
+smSetPairingReqRsp      0x0001962f    0x40  Code  Lc  sm_pairing.o [8]
+smStartEncryption       0x00019309    0x1a  Code  Gb  sm_pairing.o [8]
+smStartRspTimer         0x0001977b    0x1c  Code  Gb  sm_mgr.o [8]
+smStopRspTimer          0x00019797     0xa  Code  Gb  sm_mgr.o [8]
+smTaskID                0x200048e1     0x1  Data  Gb  sm_task.o [8]
+smTimedOut              0x0001903f     0x4  Code  Gb  sm_pairing.o [8]
+smUint8ToAuthReq        0x00019953    0x3c  Code  Gb  sm_mgr.o [8]
+sm_CMAC                 0x00019b0f   0x1ba  Code  Lc  sm_mgr.o [8]
+sm_ah                   0x000197b3    0x26  Code  Lc  sm_mgr.o [8]
+sm_c1                   0x00019215    0x9e  Code  Gb  sm_pairing.o [8]
+sm_c1new                0x000197ed    0xb8  Code  Gb  sm_mgr.o [8]
+sm_s1                   0x000198bb    0x20  Code  Gb  sm_mgr.o [8]
+sm_xor                  0x000198a5    0x16  Code  Lc  sm_mgr.o [8]
+smpBuildEncInfo         0x0001ba61    0x12  Code  Gb  smp.o [8]
+smpBuildIdentityAddrInfo
+                        0x0001bae3    0x1e  Code  Gb  smp.o [8]
+smpBuildIdentityInfo    0x0001bad1    0x12  Code  Gb  smp.o [8]
+smpBuildMasterID        0x0001ba89    0x24  Code  Gb  smp.o [8]
+smpBuildPairingConfirm  0x0001b9cb    0x12  Code  Gb  smp.o [8]
+smpBuildPairingFailed   0x0001ba2b    0x18  Code  Gb  smp.o [8]
+smpBuildPairingRandom   0x0001b9f3    0x10  Code  Gb  smp.o [8]
+smpBuildPairingReq      0x0001b841     0x8  Code  Gb  smp.o [8]
+smpBuildPairingReqRsp   0x0001b84f    0xa8  Code  Gb  smp.o [8]
+smpBuildPairingRsp      0x0001b849     0x6  Code  Gb  smp.o [8]
+smpBuildSigningInfo     0x0001bb33    0x12  Code  Gb  smp.o [8]
+smpInitiatorProcessIncoming
+                        0x00018a29   0x1e0  Code  Lc  sm_intpairing.o [8]
+smpInitiatorProcessPairingRsp
+                        0x00018c11    0xb8  Code  Lc  sm_intpairing.o [8]
+smpParseEncInfo         0x0001ba73    0x16  Code  Gb  smp.o [8]
+smpParseIdentityAddrInfo
+                        0x0001bb17    0x1c  Code  Gb  smp.o [8]
+smpParseIdentityInfo    0x0001bb01    0x16  Code  Gb  smp.o [8]
+smpParseMasterID        0x0001baad    0x24  Code  Gb  smp.o [8]
+smpParsePairingConfirm  0x0001b9dd    0x16  Code  Gb  smp.o [8]
+smpParsePairingFailed   0x0001ba43    0x1e  Code  Gb  smp.o [8]
+smpParsePairingRandom   0x0001ba15    0x16  Code  Gb  smp.o [8]
+smpParsePairingReq      0x0001b8f7    0xd4  Code  Gb  smp.o [8]
+smpParseSecurityReq     0x0001bb5b    0x1c  Code  Gb  smp.o [8]
+smpParseSigningInfo     0x0001bb45    0x16  Code  Gb  smp.o [8]
+sspAesDecrypt_Sw {Abs}  0x10016d29    0x78  Code  Gb  ble_rom_patch.symbols [2]
+sspAesEncryptBasic_Sw {Abs}
+                        0x10016af5    0x62  Code  Gb  ble_rom_patch.symbols [2]
+sspAesEncryptKeyExp_Sw {Abs}
+                        0x10016a99    0x4e  Code  Gb  ble_rom_patch.symbols [2]
+sspAesEncrypt_Sw {Abs}  0x10016979     0xc  Code  Gb  ble_rom_patch.symbols [2]
+sspKeyExpansion_Sw {Abs}
+                        0x10016985   0x114  Code  Gb  ble_rom_patch.symbols [2]
+ssp_KeyInit_Sw {Abs}    0x10016975     0x2  Code  Gb  ble_rom_patch.symbols [2]
+stack_main              0x00015d77    0x50  Code  Gb  osal_icall_ble.o [1]
+startup_entry           0x0000db21    0x30  Code  Gb  icall_startup.o [1]
+strlen                  0x000158b5          Code  Gb  strlen.o [9]
+supportedCmdsTable      0x0000f630    0x44  Data  Gb  hci_patch.o [4]
+taskEndAction {Abs}     0x20004cc4     0x4  Data  Gb  ble_rom_patch.symbols [2]
+taskEndStatus {Abs}     0x20004f0a     0x2  Data  Gb  ble_rom_patch.symbols [2]
+tasksArr                0x0000db50    0x28  Data  Gb  osal_icall_ble.o [1]
+tasksCnt                0x0000db78     0x1  Data  Gb  osal_icall_ble.o [1]
+tasksEvents             0x20004798     0x4  Data  Gb  osal_icall_ble.o [1]
+terminateAllTaskID      0x2000453c     0x1  Data  Lc  gap_linkmgr.o [8]
+terminateReason         0x2000453d     0x1  Data  Lc  gap_linkmgr.o [8]
+timeMSec                0x20004790     0x4  Data  Lc  osal_clock.o [1]
+timerHead               0x200047a4     0x4  Data  Gb  osal_timers.o [1]
+trngDrvTblPtr           0x20004358     0x4  Data  Gb  ll_patch.o [4]
+trxTestCmd {Abs}        0x20004e28    0x18  Data  Gb  ble_rom_patch.symbols [2]
+txDataQ {Abs}           0x20004f1c     0x4  Data  Gb  ble_rom_patch.symbols [2]
+txModemTestCmd {Abs}    0x20004d78    0x1c  Data  Gb  ble_rom_patch.symbols [2]
+txPowerTable            0x0000db8c     0x4  Data  Gb  ll_config.o [4]
+txPwrTbl                0x0000db90     0x8  Data  Gb  ll_config.o [4]
+txTestOut {Abs}         0x20004f20     0x4  Data  Gb  ble_rom_patch.symbols [2]
+txTestParam {Abs}       0x20004ea8    0x10  Data  Gb  ble_rom_patch.symbols [2]
+verInfo {Abs}           0x20004c8c     0x8  Data  Gb  ble_rom_patch.symbols [2]
+wlSize                  0x0000dbac     0x1  Data  Gb  ll_config.o [4]
+wlTable {Abs}           0x20004a8c    0x84  Data  Gb  ble_rom_patch.symbols [2]
+wlTableScan {Abs}       0x20004b10    0x84  Data  Gb  ble_rom_patch.symbols [2]
+writeWord               0x00010823    0x70  Code  Lc  osal_snv_wrapper.o [1]
+xor_128                 0x00019cd7    0x14  Code  Lc  sm_mgr.o [8]
+
+
+[1] = F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650em\simple_central\iar\stack\FlashROM\Obj
+[2] = F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\src\rom\ble_rom_releases\04242014
+[3] = command line
+[4] = cc2640_ctrl_xcxx_41c.a
+[5] = cc26xx_hci_tl_none_v41.a
+[6] = dl7M_tln.a
+[7] = driverlib.lib
+[8] = host_xcxx.a
+[9] = rt7M_tl.a
+
+  66 230 bytes of readonly  code memory
+   4 605 bytes of readonly  data memory
+   1 443 bytes of readwrite data memory
+
+Errors: none
+Warnings: none

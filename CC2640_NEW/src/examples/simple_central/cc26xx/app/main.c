@@ -113,7 +113,7 @@ bleUserCfg_t user0Cfg = BLE_USER_CFG;
 
 extern void AssertHandler(uint8 assertCause, uint8 assertSubcause);
 
-extern Display_Handle dispHandle;
+Display_Handle dispHandle = NULL;
 
 /*******************************************************************************
  * @fn          Main

@@ -78,7 +78,6 @@ extern "C"
  */
 extern void SimpleBLEPeripheral_createTask(void);
 
-static void simple_beacon_drivers_init(void);
 /*********************************************************************
 *********************************************************************/
 

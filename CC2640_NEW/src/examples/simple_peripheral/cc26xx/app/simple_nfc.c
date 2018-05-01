@@ -30,7 +30,7 @@
 #define NFC_TASK_STACK_SIZE (3720)
 #endif
 
-#define DEFAULT_TARGET_TIMEOUT    4000 //ms
+#define DEFAULT_TARGET_TIMEOUT    10000 //ms
 #define DEFAULT_INITIATOR_TIMEOUT 500 //ms
 
 nfc_device *pnd;
@@ -133,7 +133,6 @@ bool nfcChipInit(bool lastRes)
     }
     if (pnd != NULL && context != NULL)
     {
-        ledToggle(LED_INDEX_0);
         DEBUG_STRING("ChipInitSuccess\r\n");
     }
     return true;
@@ -168,14 +167,16 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
         {
             //Util_restartClock(&nfcTasksClock, 100);
         }
+        ledBlinkWithParameters(LED_INDEX_0, 100, 250 + 1000 , 1);
         lastRes = scheduleNfcTask();
         if (lastRes == true)
         {
-            ledBlinkWithParameters(LED_INDEX_0, 100, 50 ,2);
+            ledBlinkWithParameters(LED_INDEX_0, 100, 250 + 1000 , 3);
             //Util_restartClock(&nfcTasksClock, restartTime);
         }
         else
         {
+            //ledBlinkWithParameters(LED_INDEX_0, 100, 250 + 1000 , 5);
             //controlNFC(false);
             //Util_restartClock(&nfcTasksClock, restartTime);
         }
