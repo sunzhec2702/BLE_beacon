@@ -620,9 +620,7 @@ static void SimpleBLEPeripheral_taskFxn(UArg a0, UArg a1)
     if (events & SBP_PERIODIC_EVT)
     {
       events &= ~SBP_PERIODIC_EVT;
-
       Util_startClock(&periodicClock);
-
       // Perform periodic application task
       SimpleBLEPeripheral_performPeriodicTask();
     }
@@ -884,7 +882,7 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
       break;
 
     case GAPROLE_ADVERTISING:
-      Display_print0(dispHandle, 2, 0, "Advertising");
+      DEBUG_STRING("Advertising");
       break;
 
 #ifdef PLUS_BROADCASTER

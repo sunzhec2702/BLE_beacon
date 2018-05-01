@@ -22,7 +22,7 @@
 
 #define ENABLE_UART_EMULATOR 1
 #define ENABLE_NFC 0
-#define BLE_PRESET_ROLE BLE_PRESET_CENTRAL
+#define BLE_PRESET_ROLE BLE_PRESET_PERIPHERAL
 // LED Related Macro
 #define LED_BLINK_ON_PERIOD         100 //ms
 #define LED_BLINK_OFF_PERIOD        (250 + 1000) //ms
