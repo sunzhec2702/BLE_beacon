@@ -36,7 +36,6 @@ typedef struct
     uint16_t offScanPeriod; // The scan interval in OFF mode, default 1 hour when power on. Once start adv, change to 5s.
 } SYS_CONFIG;
 
-void simpleNVInit(void);
- 
+void simpleBleStatusInit(void);
 
 #endif
