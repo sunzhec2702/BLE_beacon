@@ -13,7 +13,7 @@ void retriveMacAddress()
 {
     for (uint8_t i = 0; i < B_ADDR_LEN; i++)
     {
-        bleSysConfig.mac[i] = BLE_MAC_ADDR + B_ADDR_LEN - 1 - i;
+        bleSysConfig.macAddr[i] = *(uint8_t *)(BLE_MAC_ADDR + B_ADDR_LEN - 1 - i) & 0xFF;
     }
 }
 
