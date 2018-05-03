@@ -81,7 +81,7 @@
 #include "board.h"
 
 #include "simple_peripheral.h"
-#include "simple_beacon_common.h"
+#include "simple_beacon.h"
 
 #include "simple_led.h"
 #include "simple_key.h"

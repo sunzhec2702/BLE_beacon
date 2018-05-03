@@ -75,7 +75,7 @@
 #include "board.h"
 
 #include "simple_central.h"
-#include "simple_beacon_common.h"
+#include "simple_beacon.h"
 
 #include "ble_user_config.h"
 

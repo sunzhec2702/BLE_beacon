@@ -24,6 +24,6 @@
 
 void simpleUartEmulatorCreateTask(void);
 void uartEmulatorWriteByte(uint8_t *buf, uint16_t len);
-void uartEmulatorWriteString(uint8_t *str);
+void uartEmulatorWriteString(char *str);
 void uartEmulatorWriteNumber(uint16_t val);
 #endif

@@ -1,4 +1,6 @@
 #include "bleUartCircleBuffer.h"
+#include "string.h"
+
 #define BUFFER_SIZE 64
 static uint8_t buffer[BUFFER_SIZE];
 static uint16_t tail = 0;

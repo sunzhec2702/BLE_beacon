@@ -44,7 +44,7 @@ int nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCon
     //print_nfc_target(&nt, false);
 
     DEBUG_STRING("Sending: ");
-    DEBUG_STRING(abtTx);
+    DEBUG_BYTE(abtTx, sizeof(abtTx));
     DEBUG_STRING("\r\n");
     int res;
     if ((res = nfc_initiator_transceive_bytes(pnd, abtTx, sizeof(abtTx), abtRx, sizeof(abtRx), timeout)) < 0)
@@ -57,7 +57,7 @@ int nfcWorkAsInitiator(uint16_t timeout, nfc_device *curPnd, nfc_context *curCon
 
     abtRx[res] = 0;
     DEBUG_STRING("Received: ");
-    DEBUG_STRING(abtRx);
+    DEBUG_BYTE(abtRx, res);
     DEBUG_STRING("\r\n");
 
     if (nfc_initiator_deselect_target(pnd) < 0)

@@ -350,6 +350,9 @@
           <state>$CC26XXWARE$</state>
           <state>$TI_RTOS_DRIVERS_BASE$</state>
           <state>$SRC_EX$/examples/simple_peripheral/cc26xx/app/nfcFiles</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\central</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -3020,57 +3023,108 @@
   <group>
     <name>Application</name>
     <group>
-      <name>pn532</name>
+      <name>Central</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\ble_uart.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_central\cc26xx\app\simple_central.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\bleUartCircleBuffer.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_central\cc26xx\app\simple_central.h</name>
+      </file>
+    </group>
+    <group>
+      <name>Common</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_key.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\conf.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_led.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\iso14443-subr.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_nv.c</name>
+      </file>
+    </group>
+    <group>
+      <name>NFC</name>
+      <group>
+        <name>pn532</name>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\ble_uart.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\bleUartCircleBuffer.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\conf.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\iso14443-subr.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\mirror-subr.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\nfc-device.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\nfc-emulation.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\nfc-internal.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\nfc.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\pn532_uart.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\pn53x.c</name>
+        </file>
+        <file>
+          <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\target-subr.c</name>
+        </file>
+      </group>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\simple_nfc.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\mirror-subr.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\simple_nfc_initiator.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\nfc-device.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\simple_nfc_target.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\nfc-emulation.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\simple_uart.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\nfc-internal.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\simple_uart_blocking.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\nfc.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\simple_uart_callback.c</name>
+      </file>
+    </group>
+    <group>
+      <name>Peripheral</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_peripheral.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\pn532_uart.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\pn53x.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\target-subr.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_peripheral.h</name>
       </file>
     </group>
     <group>
       <name>SensorController</name>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\scif.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\scif.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\scif_framework.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\scif_framework.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\scif_osal_tirtos.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\scif_osal_tirtos.c</name>
       </file>
       <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart_emulator.c</name>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_uart_emulator.c</name>
       </file>
     </group>
     <file>
@@ -3090,43 +3144,7 @@
       </excluded>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_beacon_common.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_central\cc26xx\app\simple_central.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_central\cc26xx\app\simple_central.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_key.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_led.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_nfc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_nfc_initiator.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_nfc_target.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_peripheral.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_peripheral.h</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart_blocking.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_uart_callback.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simple_beacon.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\simpleble.h</name>

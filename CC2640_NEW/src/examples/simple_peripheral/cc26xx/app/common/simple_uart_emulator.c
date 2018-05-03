@@ -12,7 +12,8 @@
 #include <ti/drivers/UART.h>
 #include <ti/drivers/uart/UARTCC26XX.h>
 #include <driverlib/aux_adc.h>
-
+#include "string.h"
+#include "stdio.h"
 #include "scif.h"
 
 #define BV(n)               (1 << (n))
@@ -94,15 +95,15 @@ void uartEmulatorWriteByte(uint8_t *buf, uint16_t len)
     }
 }
 
-void uartEmulatorWriteString(uint8_t *str)
+void uartEmulatorWriteString(char *str)
 {
     uint16_t strLen = strlen(str);
-    uartEmulatorWriteByte(str, strLen);
+    uartEmulatorWriteByte((uint8_t *)str, strLen);
 }
 
 void uartEmulatorWriteNumber(uint16_t val)
 {
-    uint8_t str[12] = "";
+    char str[12] = "";
     snprintf(str, sizeof(str)-1, "%d", val);
     uartEmulatorWriteString(str);
 }

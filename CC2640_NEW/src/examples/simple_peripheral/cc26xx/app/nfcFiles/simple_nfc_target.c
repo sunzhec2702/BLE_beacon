@@ -63,10 +63,10 @@ int nfcWorkAsTarget(uint16_t timeout, nfc_device *curPnd, nfc_context *curContex
     }
     abtRx[(size_t)szRx] = '\0';
     DEBUG_STRING("Received: ");
-    DEBUG_STRING(abtRx);
+    DEBUG_BYTE(abtRx, szRx);
     DEBUG_STRING("\r\n");
     DEBUG_STRING("Sending: ");
-    DEBUG_STRING(abtTx);
+    DEBUG_BYTE(abtTx, sizeof(abtTx));
     DEBUG_STRING("\r\n");
     if (nfc_target_send_bytes(pnd, abtTx, sizeof(abtTx), timeout) < 0)
     {
