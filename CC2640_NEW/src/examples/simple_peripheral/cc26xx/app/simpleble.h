@@ -7,7 +7,6 @@
 #include <comdef.h>
 #include <bcomdef.h>
 
-#include 
 // Debug Uart
 #include "simple_uart_emulator.h"
 #include "ICall.h"
