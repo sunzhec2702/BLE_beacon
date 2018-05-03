@@ -1,6 +1,7 @@
 #include "simple_beacon.h"
 #include "simple_led.h"
 #include "simple_key.h"
+#include "simple_beacon_status.h"
 #include "Board.h"
 
 

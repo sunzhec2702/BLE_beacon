@@ -5,7 +5,9 @@
 #include <stdint.h>
 #include <hal_types.h>
 #include <comdef.h>
+#include <bcomdef.h>
 
+#include 
 // Debug Uart
 #include "simple_uart_emulator.h"
 #include "ICall.h"
