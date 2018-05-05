@@ -716,6 +716,10 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
 
     case GAP_DEVICE_INFO_EVENT:
       {
+        DEBUG_STRING("DEVICE_INFO_EVENT\r\n");
+        DEBUG_STRING(Util_convertBdAddr2Str(pEvent->deviceInfo.addr));
+        DEBUG_STRING("\r\n");
+        /*
         //Print scan response data otherwise advertising data
         if(pEvent->deviceInfo.eventType == GAP_ADRPT_SCAN_RSP)
         {         
@@ -728,7 +732,7 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
           Display_print2(dispHandle, 6, 0, "Advertising Addr: %s Advertising Type: %s", Util_convertBdAddr2Str(pEvent->deviceInfo.addr), AdvTypeStrings[pEvent->deviceInfo.eventType]);
           Display_print1(dispHandle, 7, 0, "Advertising Data: %s", Util_convertBytes2Str(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen));
         }
-        
+        */
         ICall_free(pEvent->deviceInfo.pEvtData);
         ICall_free(pEvent);
       }
@@ -736,14 +740,17 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
 
     case GAP_DEVICE_DISCOVERY_EVENT:
       {
+        DEBUG_STRING("DISCOVERY_EVENT, Found ");
         // discovery complete
         scanningStarted = FALSE;
-        deviceInfoCnt = 0;
-
+        uint8_t scanNum = pEvent->discCmpl.numDevs;
+        DEBUG_NUMBER(scanNum);
+        DEBUG_STRING("\r\n");
+        /*
         //Display_print0(dispHandle, 7, 0, "GAP_DEVICE_DISC_EVENT");
         Display_print1(dispHandle, 5, 0, "Devices discovered: %d", pEvent->discCmpl.numDevs);
         Display_print0(dispHandle, 4, 0, "Scanning Off");
-
+        */
         ICall_free(pEvent->discCmpl.pDevList);
         ICall_free(pEvent);
 
@@ -989,45 +996,30 @@ static void SimpleBLEPeripheral_ObserverStateChangeCB(gapPeripheralObserverRoleE
     {
     case GAP_DEVICE_INFO_EVENT:
       {
-        DEBUG_STRING("DEVICE INFO EVENT\r\n");
-        /*
         gapDeviceInfoEvent_t *pDevInfoMsg;
         pDevInfoMsg = ICall_malloc(sizeof(gapDeviceInfoEvent_t));
         memcpy(pDevInfoMsg, pEvent, sizeof(gapDeviceInfoEvent_t));
         pDevInfoMsg->pEvtData = ICall_malloc(pEvent->deviceInfo.dataLen);
         memcpy(pDevInfoMsg->pEvtData, pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen);
         pMsg->pData = (uint8 *)pDevInfoMsg;
-        */
       }
       break;
     case GAP_DEVICE_DISCOVERY_EVENT:
       {
-        DEBUG_STRING("DEVICE DISCOVERY EVENT, Found ");
-        DEBUG_NUMBER(pEvent->discCmpl.numDevs);
-        DEBUG_STRING("\r\n");
-        scanningStarted = false;
-        /*
         gapDevDiscEvent_t *pDevDiscMsg;
-
         pDevDiscMsg = ICall_malloc(sizeof(gapDevDiscEvent_t));
         memcpy(pDevDiscMsg, pEvent, sizeof(gapDevDiscEvent_t));
-
         pDevDiscMsg->pDevList = ICall_malloc((pEvent->discCmpl.numDevs)*sizeof(gapDevRec_t));
         memcpy(pDevDiscMsg->pDevList, pEvent->discCmpl.pDevList, (pEvent->discCmpl.numDevs)*sizeof(gapDevRec_t));
-        
         pMsg->pData = (uint8 *)pDevDiscMsg;
-        */
       }
       break;
-
     default:
       break;
     }
-
     // Enqueue the message.
     Util_enqueueMsg(appMsgQueue, sem, (uint8*)pMsg);
   }
-
   // Free the stack message
   ICall_freeMsg(pEvent);
 }

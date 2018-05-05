@@ -20,12 +20,17 @@ static LedBlinkStruct ledBlinkStruct[BOARD_LED_NUM] =
 
 const PIN_Config ledPinList[BOARD_LED_NUM+1] = {
     Board_LED0 | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,
+#if (TARGET_BOARD == DEVELOP_BOARD)
     Board_LED1 | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+    Board_LED1 | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MAX,
+#endif
     PIN_TERMINATE
     };
 
 static void ledBlinkCallback(UArg ledIndex)
 {
+#if (TARGET_BOARD == DEVELOP_BOARD)
     if (ledBlinkStruct[ledIndex].ledBlinkTimes <= 0)
     {
         ledBlinkStruct[ledIndex].ledBlinkStatus = Board_LED_OFF;
@@ -53,6 +58,16 @@ static void ledBlinkCallback(UArg ledIndex)
         default:
         break;
     }
+#elif (TARGET_BOARD == PRODUCT_BOARD)
+    if (ledBlinkStruct[ledIndex].ledBlinkTimes <= 0)
+    {
+        return;
+    }
+    ledToggle(LED_INDEX_0);
+    ledToggle(LED_INDEX_1);
+    ledBlinkStruct[ledIndex].ledBlinkTimes--;
+    targetPeriod = ledBlinkStruct[ledIndex].ledBlinkOffPeriod;
+#endif
     Util_restartClock(&ledBlinkClock[ledIndex], targetPeriod);
 }
 
