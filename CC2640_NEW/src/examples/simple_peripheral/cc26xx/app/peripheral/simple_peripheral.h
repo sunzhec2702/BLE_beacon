@@ -77,6 +77,7 @@ extern "C"
  * Task creation function for the Simple BLE Peripheral.
  */
 extern void SimpleBLEPeripheral_createTask(void);
+extern void SimpleBLEPeripheral_scanControl(bool enable);
 
 /*********************************************************************
 *********************************************************************/

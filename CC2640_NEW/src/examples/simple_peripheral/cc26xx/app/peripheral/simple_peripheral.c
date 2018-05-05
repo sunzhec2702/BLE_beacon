@@ -63,7 +63,7 @@
 #include "devinfoservice.h"
 #include "simple_gatt_profile.h"
 
-#include "peripheral.h"
+#include "peripheral_observer.h"
 #include "gapbondmgr.h"
 
 #include "osal_snv.h"
@@ -125,13 +125,30 @@
 
 // Whether to enable automatic parameter update request when a connection is
 // formed
-#define DEFAULT_ENABLE_UPDATE_REQUEST         GAPROLE_LINK_PARAM_UPDATE_INITIATE_BOTH_PARAMS
+#define DEFAULT_ENABLE_UPDATE_REQUEST         TRUE
 
 // Connection Pause Peripheral time value (in seconds)
 #define DEFAULT_CONN_PAUSE_PERIPHERAL         6
 
 // How often to perform periodic event (in msec)
 #define SBP_PERIODIC_EVT_PERIOD               5000
+
+#ifdef PLUS_OBSERVER
+// Maximum number of scan responses
+#define DEFAULT_MAX_SCAN_RES                  50//8
+// Scan duration in ms
+#define DEFAULT_SCAN_DURATION                 5000
+// Scan interval in ms
+#define DEFAULT_SCAN_INTERVAL                 10
+// Scan interval in ms
+#define DEFAULT_SCAN_WINDOW                   5
+// Discovey mode (limited, general, all)
+#define DEFAULT_DISCOVERY_MODE                DEVDISC_MODE_ALL
+// TRUE to use active scan
+#define DEFAULT_DISCOVERY_ACTIVE_SCAN         TRUE
+// TRUE to use white list during discovery
+#define DEFAULT_DISCOVERY_WHITE_LIST          FALSE
+#endif //#ifdef PLUS_OBSERVER
 
 #ifdef FEATURE_OAD
 // The size of an OAD packet.
@@ -144,6 +161,18 @@
 
 #ifndef SBP_TASK_STACK_SIZE
 #define SBP_TASK_STACK_SIZE                   644
+
+
+// Internal Events for RTOS application
+#define SBP_STATE_CHANGE_EVT                  0x0001
+#define SBP_CHAR_CHANGE_EVT                   0x0002
+#define SBP_PERIODIC_EVT                      0x0004
+#define SBP_CONN_EVT_END_EVT                  0x0008
+#endif
+
+#ifdef PLUS_OBSERVER
+#define SBP_KEY_CHANGE_EVT                    0x0010
+#define SBP_OBSERVER_STATE_CHANGE_EVT         0x0020
 #endif
 
 /*********************************************************************
@@ -154,6 +183,9 @@
 typedef struct
 {
   appEvtHdr_t hdr;  // event header.
+#ifdef PLUS_OBSERVER
+  uint8 *pData; // event data pointer
+#endif
 } sbpEvt_t;
 
 /*********************************************************************
@@ -289,6 +321,11 @@ static uint8_t attDeviceName[GAP_DEVICE_NAME_LEN] = "Simple BLE Peripheral";
 static gattMsgEvent_t *pAttRsp = NULL;
 static uint8_t rspTxRetry = 0;
 
+#ifdef PLUS_OBSERVER
+static bool scanningStarted = FALSE;
+static uint8_t deviceInfoCnt = 0;
+#endif
+
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
@@ -303,6 +340,12 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
 static void SimpleBLEPeripheral_processCharValueChangeEvt(uint8_t paramID);
 static void SimpleBLEPeripheral_performPeriodicTask(void);
 static void SimpleBLEPeripheral_clockHandler(UArg arg);
+
+#ifdef PLUS_OBSERVER
+void SimpleBLEPeripheral_keyChangeHandler(uint8 keysPressed);
+static void SimpleBLEPeripheral_ObserverStateChangeCB(gapPeripheralObserverRoleEvent_t *pEvent);
+#endif
+
 static void SimpleBLEPeripheral_sendAttRsp(void);
 static void SimpleBLEPeripheral_freeAttRsp(uint8_t status);
 
@@ -310,7 +353,12 @@ static void SimpleBLEPeripheral_stateChangeCB(gaprole_States_t newState);
 #ifndef FEATURE_OAD_ONCHIP
 static void SimpleBLEPeripheral_charValueChangeCB(uint8_t paramID);
 #endif //!FEATURE_OAD_ONCHIP
+
+#ifdef PLUS_OBSERVER
+static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t *pData);
+#else
 static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state);
+#endif
 
 #ifdef FEATURE_OAD
 void SimpleBLEPeripheral_processOadWriteCB(uint8_t event, uint16_t connHandle,
@@ -326,6 +374,9 @@ void SimpleBLEPeripheral_processOadWriteCB(uint8_t event, uint16_t connHandle,
 static gapRolesCBs_t SimpleBLEPeripheral_gapRoleCBs =
 {
   SimpleBLEPeripheral_stateChangeCB     // Profile State Change Callbacks
+#ifdef PLUS_OBSERVER
+  ,SimpleBLEPeripheral_ObserverStateChangeCB
+#endif
 };
 
 // GAP Bond Manager Callbacks
@@ -414,6 +465,27 @@ static void SimpleBLEPeripheral_init(void)
 
   // Setup the GAP
   GAP_SetParamValue(TGAP_CONN_PAUSE_PERIPHERAL, DEFAULT_CONN_PAUSE_PERIPHERAL);
+
+#ifdef PLUS_OBSERVER
+  //Setup GAP Observer params
+  {
+    uint8_t scanRes = DEFAULT_MAX_SCAN_RES;
+
+    GAPRole_SetParameter(GAPROLE_MAX_SCAN_RES, sizeof(uint8_t),
+                                &scanRes);
+
+    // Set the GAP Characteristics
+    GAP_SetParamValue(TGAP_GEN_DISC_SCAN, DEFAULT_SCAN_DURATION); //how long to scan (in scan state)
+    GAP_SetParamValue(TGAP_LIM_DISC_SCAN, DEFAULT_SCAN_DURATION);
+
+    //Set scan interval
+    GAP_SetParamValue(TGAP_GEN_DISC_SCAN_INT, (DEFAULT_SCAN_INTERVAL)/(0.625)); //period for one scan channel
+
+    //Set scan window
+    GAP_SetParamValue(TGAP_GEN_DISC_SCAN_WIND, (DEFAULT_SCAN_WINDOW)/(0.625)); //active scanning time within scan interval
+
+  }
+#endif
 
   // Setup the GAP Peripheral Role Profile
   {
@@ -554,7 +626,7 @@ static void SimpleBLEPeripheral_taskFxn(UArg a0, UArg a1)
 {
   // Initialize application
   SimpleBLEPeripheral_init();
-
+  SimpleBLEPeripheral_scanControl(true);
   // Application main loop
   for (;;)
   {
@@ -627,6 +699,63 @@ static void SimpleBLEPeripheral_taskFxn(UArg a0, UArg a1)
   }
 }
 
+#ifdef PLUS_OBSERVER        
+/*********************************************************************
+ * @fn      SimpleBLECentral_processRoleEvent
+ *
+ * @brief   Central role event processing function.
+ *
+ * @param   pEvent - pointer to event structure
+ *
+ * @return  none
+ */
+static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRoleEvent_t *pEvent)
+{
+  switch (pEvent->gap.opcode)
+  {
+
+    case GAP_DEVICE_INFO_EVENT:
+      {
+        //Print scan response data otherwise advertising data
+        if(pEvent->deviceInfo.eventType == GAP_ADRPT_SCAN_RSP)
+        {         
+          Display_print1(dispHandle, 4, 0, "Scan Response Addr: %s", Util_convertBdAddr2Str(pEvent->deviceInfo.addr));
+          Display_print1(dispHandle, 5, 0, "Scan Response Data: %s", Util_convertBytes2Str(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen));
+        }
+        else
+        {
+          deviceInfoCnt++;
+          Display_print2(dispHandle, 6, 0, "Advertising Addr: %s Advertising Type: %s", Util_convertBdAddr2Str(pEvent->deviceInfo.addr), AdvTypeStrings[pEvent->deviceInfo.eventType]);
+          Display_print1(dispHandle, 7, 0, "Advertising Data: %s", Util_convertBytes2Str(pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen));
+        }
+        
+        ICall_free(pEvent->deviceInfo.pEvtData);
+        ICall_free(pEvent);
+      }
+      break;
+
+    case GAP_DEVICE_DISCOVERY_EVENT:
+      {
+        // discovery complete
+        scanningStarted = FALSE;
+        deviceInfoCnt = 0;
+
+        //Display_print0(dispHandle, 7, 0, "GAP_DEVICE_DISC_EVENT");
+        Display_print1(dispHandle, 5, 0, "Devices discovered: %d", pEvent->discCmpl.numDevs);
+        Display_print0(dispHandle, 4, 0, "Scanning Off");
+
+        ICall_free(pEvent->discCmpl.pDevList);
+        ICall_free(pEvent);
+
+      }
+      break;
+
+    default:
+      break;
+  }
+}
+#endif
+
 /*********************************************************************
  * @fn      SimpleBLEPeripheral_processStackMsg
  *
@@ -642,6 +771,12 @@ static uint8_t SimpleBLEPeripheral_processStackMsg(ICall_Hdr *pMsg)
 
   switch (pMsg->event)
   {
+#ifdef PLUS_OBSERVER
+    case GAP_MSG_EVENT:
+    // Process GATT message
+      SimpleBLEPeripheralObserver_processRoleEvent((gapPeripheralObserverRoleEvent_t *)pMsg);
+      break;
+#endif
     case GATT_MSG_EVENT:
       // Process GATT message
       safeToDealloc = SimpleBLEPeripheral_processGATTMsg((gattMsgEvent_t *)pMsg);
@@ -814,12 +949,87 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
     case SBP_CHAR_CHANGE_EVT:
       SimpleBLEPeripheral_processCharValueChangeEvt(pMsg->hdr.state);
       break;
+#ifdef PLUS_OBSERVER
+    case SBP_KEY_CHANGE_EVT:
+      //SimpleBLEPeripheral_handleKeys(0, pMsg->hdr.state);
+      break;
 
+    case SBP_OBSERVER_STATE_CHANGE_EVT:
+      SimpleBLEPeripheral_processStackMsg((ICall_Hdr *)pMsg->pData);
+      break;
+#endif
     default:
       // Do nothing.
       break;
   }
 }
+
+#ifdef PLUS_OBSERVER
+/*********************************************************************
+ * @fn      SimpleBLEPeripheral_ObserverStateChangeCB
+ *
+ * @brief   Peripheral observer event callback function.
+ *
+ * @param   pEvent - pointer to event structure
+ *
+ * @return  TRUE if safe to deallocate event message, FALSE otherwise.
+ */
+static void SimpleBLEPeripheral_ObserverStateChangeCB(gapPeripheralObserverRoleEvent_t *pEvent)
+{
+
+  sbpEvt_t *pMsg;
+
+  // Create dynamic pointer to message.
+  if ((pMsg = ICall_malloc(sizeof(sbpEvt_t))))
+  {
+    pMsg->hdr.event = SBP_OBSERVER_STATE_CHANGE_EVT;
+    pMsg->hdr.state = SUCCESS;
+    switch(pEvent->gap.opcode)
+    {
+    case GAP_DEVICE_INFO_EVENT:
+      {
+        DEBUG_STRING("DEVICE INFO EVENT\r\n");
+        /*
+        gapDeviceInfoEvent_t *pDevInfoMsg;
+        pDevInfoMsg = ICall_malloc(sizeof(gapDeviceInfoEvent_t));
+        memcpy(pDevInfoMsg, pEvent, sizeof(gapDeviceInfoEvent_t));
+        pDevInfoMsg->pEvtData = ICall_malloc(pEvent->deviceInfo.dataLen);
+        memcpy(pDevInfoMsg->pEvtData, pEvent->deviceInfo.pEvtData, pEvent->deviceInfo.dataLen);
+        pMsg->pData = (uint8 *)pDevInfoMsg;
+        */
+      }
+      break;
+    case GAP_DEVICE_DISCOVERY_EVENT:
+      {
+        DEBUG_STRING("DEVICE DISCOVERY EVENT, Found ");
+        DEBUG_NUMBER(pEvent->discCmpl.numDevs);
+        DEBUG_STRING("\r\n");
+        /*
+        gapDevDiscEvent_t *pDevDiscMsg;
+
+        pDevDiscMsg = ICall_malloc(sizeof(gapDevDiscEvent_t));
+        memcpy(pDevDiscMsg, pEvent, sizeof(gapDevDiscEvent_t));
+
+        pDevDiscMsg->pDevList = ICall_malloc((pEvent->discCmpl.numDevs)*sizeof(gapDevRec_t));
+        memcpy(pDevDiscMsg->pDevList, pEvent->discCmpl.pDevList, (pEvent->discCmpl.numDevs)*sizeof(gapDevRec_t));
+        
+        pMsg->pData = (uint8 *)pDevDiscMsg;
+        */
+      }
+      break;
+
+    default:
+      break;
+    }
+
+    // Enqueue the message.
+    Util_enqueueMsg(appMsgQueue, sem, (uint8*)pMsg);
+  }
+
+  // Free the stack message
+  ICall_freeMsg(pEvent);
+}
+#endif
 
 /*********************************************************************
  * @fn      SimpleBLEPeripheral_stateChangeCB
@@ -832,7 +1042,11 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
  */
 static void SimpleBLEPeripheral_stateChangeCB(gaprole_States_t newState)
 {
+#ifdef PLUS_OBSERVER
+  SimpleBLEPeripheral_enqueueMsg(SBP_STATE_CHANGE_EVT, newState, NULL);
+#else
   SimpleBLEPeripheral_enqueueMsg(SBP_STATE_CHANGE_EVT, newState);
+#endif
 }
 
 /*********************************************************************
@@ -1017,7 +1231,11 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
  */
 static void SimpleBLEPeripheral_charValueChangeCB(uint8_t paramID)
 {
+#ifdef PLUS_OBSERVER
+  SimpleBLEPeripheral_enqueueMsg(SBP_CHAR_CHANGE_EVT, paramID, NULL);
+#else
   SimpleBLEPeripheral_enqueueMsg(SBP_CHAR_CHANGE_EVT, paramID);
+#endif
 }
 #endif //!FEATURE_OAD_ONCHIP
 
@@ -1166,7 +1384,7 @@ static void SimpleBLEPeripheral_clockHandler(UArg arg)
  *
  * @return  None.
  */
-static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state)
+static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t *pData)
 {
   sbpEvt_t *pMsg;
 
@@ -1181,5 +1399,48 @@ static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state)
   }
 }
 
+void SimpleBLEPeripheral_scanControl(bool enable)
+{
+  if (enable)
+  {
+    uint8 status;
+    //Start scanning if not already scanning
+    if ((scanningStarted == FALSE))
+    {
+      status = GAPObserverRole_StartDiscovery(DEFAULT_DISCOVERY_MODE,
+                                              DEFAULT_DISCOVERY_ACTIVE_SCAN,
+                                              DEFAULT_DISCOVERY_WHITE_LIST);
+      if(status == SUCCESS)
+      {
+        scanningStarted = TRUE;
+        DEBUG_STRING("Scanning On\r\n");
+      }
+      else
+      {
+        DEBUG_STRING("Scanning failed\r\n");
+      }
+    }
+  }
+  else
+  {
+    uint8 status;
+
+    if(scanningStarted == TRUE)
+    {
+      status = GAPObserverRole_CancelDiscovery();
+
+      if(status == SUCCESS)
+      {
+        scanningStarted = FALSE;
+        DEBUG_STRING("Scanning Off\r\n");
+      }
+      else
+      {
+        DEBUG_STRING("Scanning Off Fail\r\n");
+      }
+    }
+  }
+  return;
+}
 /*********************************************************************
 *********************************************************************/

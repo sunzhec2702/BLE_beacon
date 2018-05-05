@@ -4,6 +4,7 @@
 #include "simple_led.h"
 #include "simple_nfc.h"
 #include "simple_nfc.h"
+#include "simple_peripheral.h"
 
 static void processKeyEvent(uint8_t keyPressed)
 {
@@ -12,8 +13,9 @@ static void processKeyEvent(uint8_t keyPressed)
         #if (ENABLE_NFC == 1)
         controlNfcTasks(true);
         #endif
+        //SimpleBLEPeripheral_scanControl(true);
+        DEBUG_STRING("Hello\r\n");
     }
-    DEBUG_STRING("Hello\r\n");
 }
 
 void keyInit()
