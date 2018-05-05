@@ -2,4 +2,5 @@
 #define __SIMPLE_NFC_H
 
 void simpleNFCcreateTask(void);
+void nfcKeyCallback(uint8_t keyStatus);
 #endif

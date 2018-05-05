@@ -340,6 +340,7 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
 static void SimpleBLEPeripheral_processCharValueChangeEvt(uint8_t paramID);
 static void SimpleBLEPeripheral_performPeriodicTask(void);
 static void SimpleBLEPeripheral_clockHandler(UArg arg);
+static void SimpleBLEPeripheral_scanControl(bool enable);
 
 #ifdef PLUS_OBSERVER
 void SimpleBLEPeripheral_keyChangeHandler(uint8 keysPressed);
@@ -626,7 +627,6 @@ static void SimpleBLEPeripheral_taskFxn(UArg a0, UArg a1)
 {
   // Initialize application
   SimpleBLEPeripheral_init();
-  SimpleBLEPeripheral_scanControl(true);
   // Application main loop
   for (;;)
   {
@@ -952,6 +952,7 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
 #ifdef PLUS_OBSERVER
     case SBP_KEY_CHANGE_EVT:
       //SimpleBLEPeripheral_handleKeys(0, pMsg->hdr.state);
+      SimpleBLEPeripheral_scanControl(true);
       break;
 
     case SBP_OBSERVER_STATE_CHANGE_EVT:
@@ -1004,6 +1005,7 @@ static void SimpleBLEPeripheral_ObserverStateChangeCB(gapPeripheralObserverRoleE
         DEBUG_STRING("DEVICE DISCOVERY EVENT, Found ");
         DEBUG_NUMBER(pEvent->discCmpl.numDevs);
         DEBUG_STRING("\r\n");
+        scanningStarted = false;
         /*
         gapDevDiscEvent_t *pDevDiscMsg;
 
@@ -1399,7 +1401,12 @@ static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t
   }
 }
 
-void SimpleBLEPeripheral_scanControl(bool enable)
+void SimpleBLEPeripheral_keyCallback(uint8_t keyStatus)
+{
+  SimpleBLEPeripheral_enqueueMsg(SBP_KEY_CHANGE_EVT, keyStatus, NULL);
+}
+
+static void SimpleBLEPeripheral_scanControl(bool enable)
 {
   if (enable)
   {

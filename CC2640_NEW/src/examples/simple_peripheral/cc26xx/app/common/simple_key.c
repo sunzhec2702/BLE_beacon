@@ -3,17 +3,14 @@
 #include "simple_uart.h"
 #include "simple_led.h"
 #include "simple_nfc.h"
-#include "simple_nfc.h"
 #include "simple_peripheral.h"
 
 static void processKeyEvent(uint8_t keyPressed)
 {
     if (keyPressed & KEY_SELECT)
     {
-        #if (ENABLE_NFC == 1)
-        controlNfcTasks(true);
-        #endif
-        //SimpleBLEPeripheral_scanControl(true);
+        SimpleBLEPeripheral_keyCallback(keyPressed);
+        nfcKeyCallback(keyPressed);
         DEBUG_STRING("Hello\r\n");
     }
 }

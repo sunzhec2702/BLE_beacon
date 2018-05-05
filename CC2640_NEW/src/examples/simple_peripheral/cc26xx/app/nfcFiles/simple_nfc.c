@@ -93,6 +93,12 @@ static void controlNFC(bool enable)
         PIN_setOutputValue(&nfcPinStatus, Board_NFC_ENABLE, Board_LED_OFF);
 }
 
+void nfcKeyCallback(uint8_t keyStatus)
+{
+    #if (ENABLE_NFC == 1)
+        controlNfcTasks(true);
+    #endif
+}
 void controlNfcTasks(bool enable)
 {
     enableNFC = enable;
@@ -176,7 +182,7 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
         }
         else
         {
-            //ledBlinkWithParameters(LED_INDEX_0, 100, 250 + 1000 , 5);
+            ledBlinkWithParameters(LED_INDEX_0, 100, 250 + 1000 , 5);
             //controlNFC(false);
             //Util_restartClock(&nfcTasksClock, restartTime);
         }
