@@ -56,7 +56,7 @@ bool scheduleNfcTask()
 {
     uint32_t randomNumber = HalTRNG_GetTRNG();
     //if ((randomNumber % 2) == 0)
-    if (0)
+    if (1)
     {
         DEBUG_STRING("Start Target\r\n");
         if (nfcWorkAsTarget(DEFAULT_TARGET_TIMEOUT, pnd, context) == NFC_ERROR)
@@ -99,6 +99,7 @@ void nfcKeyCallback(uint8_t keyStatus)
         controlNfcTasks(true);
     #endif
 }
+
 void controlNfcTasks(bool enable)
 {
     enableNFC = enable;

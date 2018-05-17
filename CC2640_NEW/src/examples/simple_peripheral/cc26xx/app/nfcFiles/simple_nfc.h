@@ -3,4 +3,5 @@
 
 void simpleNFCcreateTask(void);
 void nfcKeyCallback(uint8_t keyStatus);
+void controlNfcTasks(bool enable);
 #endif
