@@ -959,7 +959,7 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
 #ifdef PLUS_OBSERVER
     case SBP_KEY_CHANGE_EVT:
       //SimpleBLEPeripheral_handleKeys(0, pMsg->hdr.state);
-      SimpleBLEPeripheral_scanControl(true);
+      //SimpleBLEPeripheral_scanControl(true);
       break;
 
     case SBP_OBSERVER_STATE_CHANGE_EVT:

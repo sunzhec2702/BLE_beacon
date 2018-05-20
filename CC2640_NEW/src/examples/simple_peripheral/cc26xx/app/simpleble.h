@@ -19,10 +19,11 @@
 #define BLE_PRESET_PERIPHERAL   0
 #define BLE_PRESET_CENTRAL      1
 
+#define PLUS_OBSERVER           1
 #define BOARD_TYPE PRODUCT_BOARD
 
 #define ENABLE_UART_EMULATOR 1
-#define ENABLE_NFC 1
+#define ENABLE_NFC 0
 #define BLE_PRESET_ROLE BLE_PRESET_PERIPHERAL
 // LED Related Macro
 #define LED_BLINK_ON_PERIOD         100 //ms

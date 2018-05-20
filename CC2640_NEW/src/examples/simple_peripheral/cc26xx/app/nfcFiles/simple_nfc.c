@@ -56,7 +56,7 @@ bool scheduleNfcTask()
 {
     uint32_t randomNumber = HalTRNG_GetTRNG();
     //if ((randomNumber % 2) == 0)
-    if (1)
+    if (0)
     {
         DEBUG_STRING("Start Target\r\n");
         if (nfcWorkAsTarget(DEFAULT_TARGET_TIMEOUT, pnd, context) == NFC_ERROR)
@@ -163,12 +163,13 @@ static void simpleNFCTaskFxn(UArg a0, UArg a1)
     uint32_t restartTime = 0;
     // Initialize application
     simpleNFCInit();
-    controlNFC(true);
+    controlNFC(false);
     // Application main loop
     for (;;)
     {
         Semaphore_pend(nfcSem, BIOS_WAIT_FOREVER);
         DEBUG_STRING("Got a semaphore\r\n");
+        controlNFC(true);
         restartTime = (HalTRNG_GetTRNG() % 2000);
         if (nfcChipInit(lastRes) == false)
         {
