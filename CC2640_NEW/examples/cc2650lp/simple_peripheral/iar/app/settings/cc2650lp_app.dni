@@ -23,14 +23,14 @@ ShowSource=1
 Freq=10000000
 MultiCoreRunAll=1
 [XdsDriver]
-xds100v3serialNo=061UNFRX
+xds100v3serialNo=061UNCNF
 xds100v3foundProbes=
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
 xdsResetStyle=0
 xdsResetStrategy=3
 [DebugChecksum]
-Checksum=-1701284318
+Checksum=1717317023
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -103,6 +103,11 @@ ITMportsEnable=0
 ITMportsTermIO=0
 ITMportsLogFile=0
 ITMlogFile=$PROJ_DIR$\ITM.log
+[Disassemble mode]
+mode=0
+[Breakpoints2]
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\nfcFiles\simple_nfc.c}.114.5" 0 0 1 "" 0 "" 0
+Count=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
@@ -110,16 +115,12 @@ Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
-[CallStackLog]
-Enabled=0
-[CallStackStripe]
-ShowTiming=1
-[Disassemble mode]
-mode=0
-[Breakpoints2]
-Count=0
 [Aliases]
 A0=_ "C:\Jenkins\jobs\FWGroup-DriverLib\workspace\modules\output\cc26xx_cha_2_2_ext\driverlib\sys_ctrl.c" ""
 A1=_ "C:\Jenkins\jobs\FWGroup-DriverLib\workspace\modules\output\cc26xx_cha_2_2_ext\driverlib\trng.c" ""
 Count=2
 SuppressDialog=1
+[CallStackLog]
+Enabled=0
+[CallStackStripe]
+ShowTiming=1

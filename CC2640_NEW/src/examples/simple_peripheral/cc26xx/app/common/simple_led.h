@@ -14,7 +14,7 @@ typedef struct
 typedef enum
 {
     LED_INDEX_0 = 0,
-    LED_INDEX_1,
+    LED_INDEX_1 = 1,
     BOARD_LED_NUM,
 } Board_LED_Index;
 

@@ -18,11 +18,11 @@ static LedBlinkStruct ledBlinkStruct[BOARD_LED_NUM] =
     }
 };
 
-const PIN_Config ledPinList[BOARD_LED_NUM+1] = {
+const PIN_Config ledPinList[] = {
     Board_LED0 | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,
-#if (TARGET_BOARD == DEVELOP_BOARD)
+#if (BOARD_TYPE == DEVELOP_BOARD)
     Board_LED1 | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,
-#elif (TARGET_BOARD == PRODUCT_BOARD)
+#elif (BOARD_TYPE == PRODUCT_BOARD)
     Board_LED1 | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH | PIN_PUSHPULL | PIN_DRVSTR_MAX,
 #endif
     PIN_TERMINATE
@@ -30,7 +30,9 @@ const PIN_Config ledPinList[BOARD_LED_NUM+1] = {
 
 static void ledBlinkCallback(UArg ledIndex)
 {
-#if (TARGET_BOARD == DEVELOP_BOARD)
+    uint16_t targetPeriod = 0;
+#if (BOARD_TYPE == DEVELOP_BOARD)
+    return;
     if (ledBlinkStruct[ledIndex].ledBlinkTimes <= 0)
     {
         //ledBlinkStruct[ledIndex].ledBlinkStatus = Board_LED_OFF;
@@ -41,7 +43,7 @@ static void ledBlinkCallback(UArg ledIndex)
         // ledOff((Board_LED_Index)ledIndex);
         return;
     }
-    uint16_t targetPeriod = 0;
+
     switch (ledBlinkStruct[ledIndex].ledBlinkStatus)
     {
         case Board_LED_OFF:
@@ -58,11 +60,13 @@ static void ledBlinkCallback(UArg ledIndex)
         default:
         break;
     }
-#elif (TARGET_BOARD == PRODUCT_BOARD)
+#elif (BOARD_TYPE == PRODUCT_BOARD)
     if (ledBlinkStruct[ledIndex].ledBlinkTimes <= 0)
     {
+        ledBlinkStruct[ledIndex].ledBlinkStatus = Board_LED_OFF;
         return;
     }
+    ledBlinkStruct[ledIndex].ledBlinkStatus = Board_LED_ON;
     ledToggle(LED_INDEX_0);
     ledToggle(LED_INDEX_1);
     ledBlinkStruct[ledIndex].ledBlinkTimes--;
@@ -101,9 +105,12 @@ void ledToggle(Board_LED_Index ledIndex)
 
 void ledBlinkWithParameters(Board_LED_Index ledIndex, uint16_t ledOnPeriod, uint16_t ledOffPeriod, uint16_t ledBlinkTime)
 {
+    if (ledBlinkStruct[ledIndex].ledBlinkStatus == Board_LED_ON)
+        return;
     ledBlinkStruct[ledIndex].ledBlinkStatus = Board_LED_OFF;
     ledBlinkStruct[ledIndex].ledBlinkOnPeriod = ledOnPeriod;
     ledBlinkStruct[ledIndex].ledBlinkOffPeriod = ledOffPeriod;
     ledBlinkStruct[ledIndex].ledBlinkTimes = ledBlinkTime;
-    ledBlinkCallback(ledIndex);
+    Util_startClock(&ledBlinkClock[ledIndex]);
+    //ledBlinkCallback(ledIndex);
 }

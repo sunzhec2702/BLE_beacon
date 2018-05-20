@@ -13,7 +13,7 @@ static void processKeyEvent(uint8_t keyPressed)
         #if (ENABLE_NFC == 1)
         nfcKeyCallback(keyPressed);
         #endif
-        ledToggle(LED_INDEX_0);
+        //ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
         DEBUG_STRING("Hello\r\n");
     }
 }
