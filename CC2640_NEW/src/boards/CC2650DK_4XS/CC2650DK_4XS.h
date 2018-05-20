@@ -106,8 +106,8 @@ extern const PIN_Config BoardGpioInitTable[];
 #define Board_LED_OFF                       0
 #define Board_NFC_ON                        1
 #define Board_NFC_OFF                       0
-#define Board_DK_LED1                       IOID_1
-#define Board_DK_LED2                       IOID_2
+#define Board_DK_LED1                       IOID_0
+#define Board_DK_LED2                       IOID_1
 #define Board_DK_LED3                       PIN_UNASSIGNED
 #define Board_DK_LED4                       PIN_UNASSIGNED
 /* Button Board */

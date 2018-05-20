@@ -82,7 +82,11 @@ const PIN_Config BoardGpioInitTable[] = {
     #endif
     // Output PINs
     Board_DK_LED1       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW   | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
+    #if (BOARD_TYPE == DEVELOP_BOARD)
     Board_DK_LED2       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW   | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
+    #elif (BOARD_TYPE == PRODUCT_BOARD)
+    Board_DK_LED2       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH   | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
+    #endif
     Board_NFC_ENABLE | PIN_GPIO_OUTPUT_EN  | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,                     
     // System PINs
     Board_UART_TX    | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH   | PIN_PUSHPULL ,     /* UART TX pin at inactive level */
