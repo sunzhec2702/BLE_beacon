@@ -38,7 +38,7 @@
 #include <stdio.h>
 
 #ifndef NFC_BUFSIZE_CONNSTRING
-#define NFC_BUFSIZE_CONNSTRING 1024
+#define NFC_BUFSIZE_CONNSTRING 1
 #endif
 
 /**

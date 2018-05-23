@@ -153,6 +153,7 @@ static void simpleNFCInit(void)
     RCOSC_enableCalibration();
 #endif // USE_RCOSC
     ble_uart_init();
+    DEBUG_NFC_BYTE("AAAAAA", 6);
     nfcSem = Semaphore_create(0, NULL, NULL);
     Util_constructClock(&nfcTasksClock, nfcTasksTimerCallback, 0, 0, false, 0);
 }
