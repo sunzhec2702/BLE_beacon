@@ -7,6 +7,7 @@ extern "C"
 {
 #endif
 #include "hal_types.h"
+#include "hci.h"
 
 #define DEVELOP_BOARD 0
 #define PRODUCT_BOARD 1
@@ -50,7 +51,6 @@ typedef enum
 #define DEBUG_PRINT(x) {}
 #define DEBUG_VALUE(x,y,z) {}
 #endif
-
 
 // �����ӻ��¼����ö���
 #define START_DEVICE_EVT                               0x0001//���豸
@@ -133,6 +133,8 @@ typedef enum
 #define ADV_FLAG_BYTE 27
 #define ADV_BAT_BYTE 28
 
+
+#define DEFAULT_TX_POWER  HCI_EXT_TX_POWER_4_DBM
 
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------

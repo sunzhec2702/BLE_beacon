@@ -1,0 +1,18 @@
+BLEBeaconDeviceNewHW_FW1.hex
+	1. 60 days by default.
+	2. boot up directly with 2 blink
+	3. 2.7V battery check on the first power on and 2.2V check during working.
+	4. 650ms charging and 30ms after toggle.
+	
+
+BLEBeaconDeviceNewHW_FW2.hex
+	1. Boot up directly with 2 blink.
+	2. default wake up hour is 1 hour.
+	3. if vibra sensor is triggered within previous one hour, the wake up hour will NOT decrease 1. Or the wake up hour will decrease 1 every hour.
+	4. remove POWER off feature.
+	5. change the SW Version to 2.0.1 and HW to 0.4.
+	6. The advertise data will contain the wake up hour directly without any bit right move(previous is 3 bit right move).
+
+BLEBeaconDeviceNewHW_FW2_XdBm.hex
+	1. Same function with FW2.
+	2. The power means the TX power.

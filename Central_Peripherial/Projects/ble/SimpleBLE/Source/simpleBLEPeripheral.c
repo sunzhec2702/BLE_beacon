@@ -376,7 +376,7 @@ void SimpleBLEPeripheral_Init(uint8 task_id)
   //HCI_EXT_ClkDivOnHaltCmd( HCI_EXT_ENABLE_CLK_DIVIDE_ON_HALT );
 
   // �źŷ���ǿ��
-  HCI_EXT_SetTxPowerCmd(3 - sys_config.txPower);
+  HCI_EXT_SetTxPowerCmd(sys_config.txPower);
 
   // Setup a delayed profile startup
   osal_set_event(simpleBLETaskId, START_DEVICE_EVT);

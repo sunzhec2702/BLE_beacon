@@ -145,7 +145,7 @@ void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag)
 
     sys_config.rssi = 0; //  RSSI �ź�ֵ
     sys_config.rxGain = HCI_EXT_RX_GAIN_STD; //  ��������ǿ��
-    sys_config.txPower = 0;                  //  �����ź�ǿ��
+    sys_config.txPower = DEFAULT_TX_POWER;                  //  �����ź�ǿ��
   }
   GAPBondMgr_SetParameter(GAPBOND_ERASE_ALLBONDS, 0, NULL); //�������Ϣ
   simpleBLE_WriteAllDataToFlash();
@@ -271,7 +271,7 @@ void UpdateRxGain(void)
 // ���÷��书��
 void UpdateTxPower(void)
 {
-  HCI_EXT_SetTxPowerCmd(3 - sys_config.txPower);
+  HCI_EXT_SetTxPowerCmd(sys_config.txPower);
 }
 
 // ����led�Ƶ�״̬
