@@ -195,6 +195,7 @@ static uint8 key_pressed_count = 0;
 static uint8 key_processing = FALSE;
 //first boot up
 static bool first_boot = FALSE;
+static bool vibra_sensor_wake_flag = FALSE;
 // Low power status
 static bool low_power_state = FALSE;
 static bool key_pressed = FALSE;
@@ -430,7 +431,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       enter_low_battery_mode();
       return (events ^ SBP_WAKE_EVT);
     }
-    g_sleepFlag = FALSE;
+    g_sleepFlag = FALSE; // First Boot means LED blink but enter sleep mode directly.
     if (first_boot == TRUE)
     {
       first_boot = FALSE;
@@ -445,7 +446,12 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_INDEX_EVT, SBP_PERIODIC_INDEX_EVT_PERIOD);
       osal_start_timerEx(simpleBLETaskId, SBP_PERIODIC_PER_HOUR_EVT, SBP_PERIODIC_PER_HOUR_PERIOD);
       // LED
-      led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
+      if (vibra_sensor_wake_flag == FALSE)
+        led_toggle_set_param(PERIPHERAL_START_LED_TOGGLE_PERIOD_ON, PERIPHERAL_START_LED_TOGGLE_PERIOD_OFF, PERIPHERAL_WAKEUP_LED_TOGGLE_CNT, BUTTON_LEY_DELAY_IN_SLEEP);
+      else
+      {
+        vibra_sensor_wake_flag = FALSE;
+      }
     }
     return (events ^ SBP_WAKE_EVT);
   }
@@ -772,7 +778,9 @@ static void simpleBLEPeripheral_HandleKeys(uint8 shift, uint8 keys)
 #if (POWER_OFF_SUPPPORT == TRUE)
         if (g_long_press_flag == FALSE)
         {
+#endif
           osal_start_timerEx(simpleBLETaskId, SBP_KEY_CNT_EVT, PERIPHERAL_KEY_CALCULATE_PERIOD);
+#if (POWER_OFF_SUPPPORT == TRUE)
         }
 #endif
       }
@@ -969,8 +977,10 @@ static void enter_low_battery_mode()
 void wake_from_vibra_sensor()
 {
   first_boot = FALSE;
+  vibra_sensor_wake_flag = TRUE;
   exit_sleep_mode(FALSE);
 }
+
 void exit_sleep_mode(uint8 first_wake)
 {
   if (g_sleepFlag == TRUE)

@@ -9,24 +9,25 @@ TriggerName=main
 LimitSize=0
 ByteLimit=50
 [DebugChecksum]
-Checksum=-1247242400
+Checksum=-9950896
 [CallStack]
 ShowArgs=0
 [Disassembly]
 MixedMode=1
+[Log file]
+LoggingEnabled=_ 0
+LogFile=_ ""
+Category=_ 0
 [TermIOLog]
 LoggingEnabled=_ 0
 LogFile=_ ""
 [Breakpoints]
 Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\..\..\..\Components\hal\target\CC2540EB\hal_vibra_sensor.c}.29.9" 1 0 0 0 "" 0 ""
-Count=1
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\Source\simpleBLEPeripheral.c}.428.5" 1 0 0 0 "" 0 ""
+Count=2
 [ChipconEmu]
-Stop timers on halt=0
+Stop timers on halt=1
 Leave target running=1
-[Log file]
-LoggingEnabled=_ 0
-LogFile=_ ""
-Category=_ 0
 [Aliases]
 A0=_ "C:\Texas Instruments\BLE-CC254x-1.4.2.2Uart2Uart\Projects\ble\SimpleOneFW\Source\SimpleBLEPeripheral_Main.c" ""
 Count=1
