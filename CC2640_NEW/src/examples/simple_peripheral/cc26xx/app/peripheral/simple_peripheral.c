@@ -87,6 +87,11 @@
 #include "simple_key.h"
 #include "simple_uart.h"
 #include "ble_uart.h"
+#include "simple_scanProcess.h"
+#include "simple_stateControl.h"
+#include "simple_advData.h"
+
+
 /*********************************************************************
  * CONSTANTS
  */
@@ -228,94 +233,8 @@ Char sbpTaskStack[SBP_TASK_STACK_SIZE];
 // Profile state and parameters
 //static gaprole_States_t gapProfileState = GAPROLE_INIT;
 
-// GAP - SCAN RSP data (max size = 31 bytes)
-static uint8_t scanRspData[] =
-{
-  // complete name
-  0x14,   // length of this data
-  GAP_ADTYPE_LOCAL_NAME_COMPLETE,
-  'S',
-  'i',
-  'm',
-  'p',
-  'l',
-  'e',
-  'B',
-  'L',
-  'E',
-  'P',
-  'e',
-  'r',
-  'i',
-  'p',
-  'h',
-  'e',
-  'r',
-  'a',
-  'l',
-
-  // connection interval range
-  0x05,   // length of this data
-  GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE,
-  LO_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),   // 100ms
-  HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
-  LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),   // 1s
-  HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
-
-  // Tx power level
-  0x02,   // length of this data
-  GAP_ADTYPE_POWER_LEVEL,
-  0       // 0dBm
-};
-
-// GAP - Advertisement data (max size = 31 bytes, though this is
-// best kept short to conserve power while advertisting)
-static uint8_t advertData[] =
-{
-  // Flags; this sets the device to use limited discoverable
-  // mode (advertises for 30 seconds at a time) instead of general
-  // discoverable mode (advertises indefinitely)
-  0x02,   // length of this data
-  GAP_ADTYPE_FLAGS,
-  DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
-  0x1A,
-  GAP_ADTYPE_MANUFACTURER_SPECIFIC,
-  /*Apple Pre-Amble*/
-  0x4C, // 5
-  0x00, // 6
-  0x02, // 7
-  0x15, // 8
-  /*Device UUID (16 Bytes)*/
-  0x53, 0x4D, 0x54, // SMT 3 Bytes.
-  0x00, // 12 reserved
-  0x00, // 13 reserved.
-
-  0xFF, 0xFF, 0xFF, // 14, 15, 16, HW/SW version
-  0xFF, // 17 Device Type 3 bytes.
-
-  0xFF, //18
-
-  0xFF, //19 How often the beacon will scan for the station in power on mode.
-  0xFF, //20 The period which the device keeps poweron even without scanning any data.
-  0xFF, //21 How often the beacon will scan for the station in power off mode.
-  0xFF, //22 The Data will be ((SEC_1 << 8) + SEC_2)
-
-  /*Specific Data*/
-  0x00, // 23
-  0x00, // 24, Station Index
-  /*Major Value (2 Bytes)*/
-  0x00, // 25 for min left
-  0x00, // 26 for index 
-  /*Minor Value (2 Bytes)*/
-  0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
-  0x00, // 28 Battery Value
-
-  0xCD //29  /*Measured Power*/
-
-};
-
 // GAP GATT Attributes
-static uint8_t attDeviceName[GAP_DEVICE_NAME_LEN] = "Simple BLE Peripheral";
+static uint8_t attDeviceName[GAP_DEVICE_NAME_LEN] = "IsSmart";
 
 // Globals used for ATT Response retransmission
 static gattMsgEvent_t *pAttRsp = NULL;
@@ -451,6 +370,7 @@ static void SimpleBLEPeripheral_init(void)
   ICall_registerApp(&selfEntity, &sem);
 
   simple_beacon_drivers_init();
+
 #ifdef USE_RCOSC
   RCOSC_enableCalibration();
 #endif // USE_RCOSC
@@ -471,49 +391,37 @@ static void SimpleBLEPeripheral_init(void)
   //Setup GAP Observer params
   {
     uint8_t scanRes = DEFAULT_MAX_SCAN_RES;
-
     GAPRole_SetParameter(GAPROLE_MAX_SCAN_RES, sizeof(uint8_t),
                                 &scanRes);
-
     // Set the GAP Characteristics
     GAP_SetParamValue(TGAP_GEN_DISC_SCAN, DEFAULT_SCAN_DURATION); //how long to scan (in scan state)
     GAP_SetParamValue(TGAP_LIM_DISC_SCAN, DEFAULT_SCAN_DURATION);
-
     //Set scan interval
     GAP_SetParamValue(TGAP_GEN_DISC_SCAN_INT, (DEFAULT_SCAN_INTERVAL)/(0.625)); //period for one scan channel
-
     //Set scan window
     GAP_SetParamValue(TGAP_GEN_DISC_SCAN_WIND, (DEFAULT_SCAN_WINDOW)/(0.625)); //active scanning time within scan interval
-
   }
 #endif
 
   // Setup the GAP Peripheral Role Profile
   {
-    // For all hardware platforms, device starts advertising upon initialization
-    uint8_t initialAdvertEnable = TRUE;
-
     // By setting this to zero, the device will go into the waiting state after
     // being discoverable for 30.72 second, and will not being advertising again
     // until the enabler is set back to TRUE
     uint16_t advertOffTime = 0;
+    bleAdvControl(true);
+    // Set the GAP Role Parameters
+    bleSetTxPower(DEFAULT_TX_POWER);
+    applyAdvData();
+    applyResData();
 
     uint8_t enableUpdateRequest = DEFAULT_ENABLE_UPDATE_REQUEST;
     uint16_t desiredMinInterval = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
     uint16_t desiredMaxInterval = DEFAULT_DESIRED_MAX_CONN_INTERVAL;
     uint16_t desiredSlaveLatency = DEFAULT_DESIRED_SLAVE_LATENCY;
     uint16_t desiredConnTimeout = DEFAULT_DESIRED_CONN_TIMEOUT;
-
-    // Set the GAP Role Parameters
-    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t),
-                         &initialAdvertEnable);
     GAPRole_SetParameter(GAPROLE_ADVERT_OFF_TIME, sizeof(uint16_t),
                          &advertOffTime);
-
-    GAPRole_SetParameter(GAPROLE_SCAN_RSP_DATA, sizeof(scanRspData),
-                         scanRspData);
-    GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData), advertData);
-
     GAPRole_SetParameter(GAPROLE_PARAM_UPDATE_ENABLE, sizeof(uint8_t),
                          &enableUpdateRequest);
     GAPRole_SetParameter(GAPROLE_MIN_CONN_INTERVAL, sizeof(uint16_t),
@@ -528,7 +436,6 @@ static void SimpleBLEPeripheral_init(void)
 
   // Set the GAP Characteristics
   GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName);
-
   // Set advertising interval
   {
     uint16_t advInt = DEFAULT_ADVERTISING_INTERVAL;
@@ -555,7 +462,7 @@ static void SimpleBLEPeripheral_init(void)
     GAPBondMgr_SetParameter(GAPBOND_BONDING_ENABLED, sizeof(uint8_t), &bonding);
   }
 
-   // Initialize GATT attributes
+  // Initialize GATT attributes
   GGS_AddService(GATT_ALL_SERVICES);           // GAP
   GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
   DevInfo_AddService();                        // Device Information Service
@@ -588,30 +495,15 @@ static void SimpleBLEPeripheral_init(void)
   // Register callback with SimpleGATTprofile
   SimpleProfile_RegisterAppCBs(&SimpleBLEPeripheral_simpleProfileCBs);
 #endif //!FEATURE_OAD_ONCHIP
-
   // Start the Device
   VOID GAPRole_StartDevice(&SimpleBLEPeripheral_gapRoleCBs);
-
   // Start Bond Manager
   VOID GAPBondMgr_Register(&simpleBLEPeripheral_BondMgrCBs);
-
   // Register with GAP for HCI/Host messages
   GAP_RegisterForMsgs(selfEntity);
-
   // Register for GATT local events and ATT Responses pending for transmission
   GATT_RegisterForMsgs(selfEntity);
-
   HCI_LE_ReadMaxDataLenCmd();
-
-#if defined FEATURE_OAD
-#if defined (HAL_IMAGE_A)
-  Display_print0(dispHandle, 0, 0, "BLE Peripheral A");
-#else
-  Display_print0(dispHandle, 0, 0, "BLE Peripheral B");
-#endif // HAL_IMAGE_A
-#else
-  Display_print0(dispHandle, 0, 0, "BLE Peripheral");
-#endif // FEATURE_OAD
 }
 
 /*********************************************************************
@@ -753,7 +645,6 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
         */
         ICall_free(pEvent->discCmpl.pDevList);
         ICall_free(pEvent);
-
       }
       break;
 
@@ -795,6 +686,7 @@ static uint8_t SimpleBLEPeripheral_processStackMsg(ICall_Hdr *pMsg)
         switch(pMsg->status)
         {
           case HCI_COMMAND_COMPLETE_EVENT_CODE:
+            DEBUG_STRING("Process HCI command done\r\n");
             // Process HCI Command Complete Event
             break;
 
@@ -956,12 +848,16 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
     case SBP_CHAR_CHANGE_EVT:
       SimpleBLEPeripheral_processCharValueChangeEvt(pMsg->hdr.state);
       break;
-#ifdef PLUS_OBSERVER
     case SBP_KEY_CHANGE_EVT:
       //SimpleBLEPeripheral_handleKeys(0, pMsg->hdr.state);
+      ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
+      bleSetTxPower(MAX_TX_POWER);
+#ifdef PLUS_OBSERVER
       //SimpleBLEPeripheral_scanControl(true);
+#endif
       break;
 
+#ifdef PLUS_OBSERVER
     case SBP_OBSERVER_STATE_CHANGE_EVT:
       SimpleBLEPeripheral_processStackMsg((ICall_Hdr *)pMsg->pData);
       break;
@@ -1057,7 +953,9 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
 #ifdef PLUS_BROADCASTER
   static bool firstConnFlag = false;
 #endif // PLUS_BROADCASTER
-
+  DEBUG_STRING("newState: ");
+  DEBUG_NUMBER(newState);
+  DEBUG_STRING("\r\n");
   switch ( newState )
   {
     case GAPROLE_STARTED:
@@ -1090,7 +988,8 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
       break;
 
     case GAPROLE_ADVERTISING:
-      DEBUG_STRING("Advertising");
+      Util_startClock(&periodicClock);
+      DEBUG_STRING("Advertising\r\n");
       break;
 
 #ifdef PLUS_BROADCASTER
@@ -1172,17 +1071,12 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
       break;
 
     case GAPROLE_CONNECTED_ADV:
-      Display_print0(dispHandle, 2, 0, "Connected Advertising");
+      DEBUG_STRING("Connected Advertising\r\n");
       break;
 
     case GAPROLE_WAITING:
       Util_stopClock(&periodicClock);
       SimpleBLEPeripheral_freeAttRsp(bleNotConnected);
-
-      Display_print0(dispHandle, 2, 0, "Disconnected");
-
-      // Clear remaining lines
-      Display_clearLines(dispHandle, 3, 5);
       break;
 
     case GAPROLE_WAITING_AFTER_TIMEOUT:
@@ -1292,7 +1186,7 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
   uint8_t ack[100];
   uart_receive(ack, 14, NULL, 1000);
   */
-  //DEBUG_STRING("PeriodTask\r\n");
+  DEBUG_STRING("PeriodTask\r\n");
 #ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
 

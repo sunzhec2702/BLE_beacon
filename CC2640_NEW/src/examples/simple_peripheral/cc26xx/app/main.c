@@ -161,15 +161,8 @@ int main()
   ICall_createRemoteTasks();
 
   /* Kick off profile - Priority 3 */
-  
-
-#if (BLE_PRESET_ROLE == BLE_PRESET_PERIPHERAL)
   GAPRole_createTask();
   SimpleBLEPeripheral_createTask();
-#elif (BLE_PRESET_ROLE == BLE_PRESET_CENTRAL)
-  GAPCentralRole_createTask();
-  SimpleBLECentral_createTask();
-#endif
 
 #if (ENABLE_UART_EMULATOR == 1)
   simpleUartEmulatorCreateTask();

@@ -32,7 +32,6 @@ static void ledBlinkCallback(UArg ledIndex)
 {
     uint16_t targetPeriod = 0;
 #if (BOARD_TYPE == DEVELOP_BOARD)
-    return;
     if (ledBlinkStruct[ledIndex].ledBlinkTimes <= 0)
     {
         //ledBlinkStruct[ledIndex].ledBlinkStatus = Board_LED_OFF;

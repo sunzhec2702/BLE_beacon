@@ -6,28 +6,29 @@
 #include <hal_types.h>
 #include <comdef.h>
 #include <bcomdef.h>
+#include "hci.h"
 
 // Debug Uart
 #include "simple_uart_emulator.h"
 #include "ICall.h"
+
 /* Board Type 
  * DEVELOP_BOARD
  * PRODUCT_BOARD
  */
 #define DEVELOP_BOARD 0
 #define PRODUCT_BOARD 1
-#define BLE_PRESET_PERIPHERAL   0
-#define BLE_PRESET_CENTRAL      1
 
 #define PLUS_OBSERVER           1
-#define BOARD_TYPE PRODUCT_BOARD
+#define BOARD_TYPE DEVELOP_BOARD
 
 #define ENABLE_UART_EMULATOR 1
-#define ENABLE_NFC 1
-#define BLE_PRESET_ROLE BLE_PRESET_PERIPHERAL
+#define ENABLE_NFC 0
+
 // LED Related Macro
 #define LED_BLINK_ON_PERIOD         100 //ms
 #define LED_BLINK_OFF_PERIOD        (200) //ms
 
-
+#define DEFAULT_TX_POWER    HCI_EXT_TX_POWER_MINUS_6_DBM
+#define MAX_TX_POWER        HCI_EXT_TX_POWER_0_DBM
 #endif
