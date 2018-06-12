@@ -136,7 +136,7 @@
 #define DEFAULT_CONN_PAUSE_PERIPHERAL         6
 
 // How often to perform periodic event (in msec)
-#define SBP_PERIODIC_EVT_PERIOD               5000
+#define SBP_PERIODIC_EVT_PERIOD               60000
 
 #ifdef PLUS_OBSERVER
 // Maximum number of scan responses
@@ -605,12 +605,14 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
 {
   switch (pEvent->gap.opcode)
   {
-
     case GAP_DEVICE_INFO_EVENT:
       {
+        scanDevInfoCB(&pEvent->deviceInfo);
+        /*
         DEBUG_STRING("DEVICE_INFO_EVENT\r\n");
         DEBUG_STRING(Util_convertBdAddr2Str(pEvent->deviceInfo.addr));
         DEBUG_STRING("\r\n");
+        */
         /*
         //Print scan response data otherwise advertising data
         if(pEvent->deviceInfo.eventType == GAP_ADRPT_SCAN_RSP)
@@ -632,17 +634,19 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
 
     case GAP_DEVICE_DISCOVERY_EVENT:
       {
+        /*
         DEBUG_STRING("DISCOVERY_EVENT, Found ");
         // discovery complete
-        scanningStarted = FALSE;
         uint8_t scanNum = pEvent->discCmpl.numDevs;
         DEBUG_NUMBER(scanNum);
         DEBUG_STRING("\r\n");
+        */
         /*
         //Display_print0(dispHandle, 7, 0, "GAP_DEVICE_DISC_EVENT");
         Display_print1(dispHandle, 5, 0, "Devices discovered: %d", pEvent->discCmpl.numDevs);
         Display_print0(dispHandle, 4, 0, "Scanning Off");
         */
+        scanningStarted = FALSE;
         ICall_free(pEvent->discCmpl.pDevList);
         ICall_free(pEvent);
       }
@@ -849,12 +853,20 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
       SimpleBLEPeripheral_processCharValueChangeEvt(pMsg->hdr.state);
       break;
     case SBP_KEY_CHANGE_EVT:
-      //SimpleBLEPeripheral_handleKeys(0, pMsg->hdr.state);
-      ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
-      bleSetTxPower(MAX_TX_POWER);
+      switch(pMsg->hdr.state)
+      {
+        case KEY_SELECT:
+        ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
+        bleSetTxPower(MAX_TX_POWER);
+        bleChangeBeaconState(BEACON_RAPID);
 #ifdef PLUS_OBSERVER
-      //SimpleBLEPeripheral_scanControl(true);
+        SimpleBLEPeripheral_scanControl(true);
 #endif
+        break;
+        case KEY_SELECT_LONG:
+        ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 3);
+        break;
+      }
       break;
 
 #ifdef PLUS_OBSERVER

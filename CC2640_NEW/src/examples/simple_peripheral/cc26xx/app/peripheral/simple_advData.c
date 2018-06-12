@@ -43,7 +43,7 @@ static uint8_t advertData[] =
   0x00, // 25 for min left
   0x00, // 26 for index 
   /*Minor Value (2 Bytes)*/
-  0x00, // 27 FlagByte. bit7 rapid bit6 low_bat
+  0x00, // 27 FlagByte. bit7 rapid, bit6 low_bat, bit5 Comms.
   0x00, // 28 Battery Value
 
   0xCD //29  /*Measured Power*/
@@ -110,4 +110,20 @@ uint8_t* getAdvData()
 uint8_t* getResData()
 {
     return scanRspData;
+}
+
+void updateRapidBit(uint8_t enable)
+{
+    if (enable)
+        advertData[ADV_FLAG_BYTE] |= (0x1 << ADV_FLAG_RAPID_BIT);
+    else
+        advertData[ADV_FLAG_BYTE] &= ~(0x1 << ADV_FLAG_RAPID_BIT);
+}
+
+void updateComBit(uint8_t enable)
+{
+    if (enable)
+        advertData[ADV_FLAG_BYTE] |= (0x01 << ADV_FLAG_COMMS_BIT);
+    else
+        advertData[ADV_FLAG_BYTE] &= ~(0x01 << ADV_FLAG_COMMS_BIT);
 }

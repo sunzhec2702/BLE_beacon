@@ -68,6 +68,7 @@ extern "C" {
 #define KEY_DOWN              0x0004
 #define KEY_LEFT              0x0008
 #define KEY_RIGHT             0x0010
+#define KEY_SELECT_LONG       0x0020
 
 #if (BOARD_TYPE == PRODUCT_BOARD)
 #define KEY_PRESSED           1
