@@ -38,7 +38,7 @@ void keyInit()
 
 void keyLongPressCallback(UArg arg)
 {
-    if (pressCnt == 0)
+    if (pressCnt == 0 && PIN_getInputValue(Board_KEY_SELECT) != KEY_PRESSED)
     {
         SimpleBLEPeripheral_keyCallback(KEY_SELECT);
     }

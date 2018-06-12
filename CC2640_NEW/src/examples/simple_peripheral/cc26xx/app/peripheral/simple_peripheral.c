@@ -856,15 +856,13 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
       switch(pMsg->hdr.state)
       {
         case KEY_SELECT:
-        ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
-        bleSetTxPower(MAX_TX_POWER);
         bleChangeBeaconState(BEACON_RAPID);
+        break;
+        case KEY_SELECT_LONG:
+        bleChangeBeaconState(BEACON_COMMUNICATION);
 #ifdef PLUS_OBSERVER
         SimpleBLEPeripheral_scanControl(true);
 #endif
-        break;
-        case KEY_SELECT_LONG:
-        ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 3);
         break;
       }
       break;

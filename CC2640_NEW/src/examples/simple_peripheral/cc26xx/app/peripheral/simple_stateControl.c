@@ -17,15 +17,18 @@ void bleChangeBeaconState(BEACON_STATUS state)
         case BEACON_NORMAL:
         break;
         case BEACON_RAPID:
+        ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
         bleAdvControl(false);
         updateRapidBit(true);
         applyAdvData();
         bleAdvControl(true);
         break;
         case BEACON_COMMUNICATION:
+        ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 3);
         bleAdvControl(false);
         updateComBit(true);
         applyAdvData();
+        bleSetTxPower(MAX_TX_POWER);
         bleAdvControl(true);
         break;
         case BEACON_SLEEP:
