@@ -11,9 +11,6 @@ void peripheralKeyCallback(uint16_t key)
         break;
     case KEY_SELECT_LONG:
         bleChangeBeaconState(BEACON_COMMUNICATION, COMMS_STATE_PERIOD);
-#ifdef PLUS_OBSERVER
-        SimpleBLEPeripheral_scanControl(true);
-#endif
         break;
     }
 }

@@ -64,6 +64,10 @@ extern "C"
 /*********************************************************************
  * CONSTANTS
  */
+// Other APP evt should only start from here.
+#define SBP_KEY_CHANGE_EVT                    0x0010
+#define SBP_OBSERVER_STATE_CHANGE_EVT         0x0020
+#define SBP_BEACON_STATE_CHANGE_EVT           0x0040
 
 /*********************************************************************
  * MACROS
@@ -78,6 +82,7 @@ extern "C"
  */
 extern void SimpleBLEPeripheral_createTask(void);
 extern void SimpleBLEPeripheral_keyCallback(uint8_t keyStatus);
+extern void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t *pData);
 
 /*********************************************************************
 *********************************************************************/

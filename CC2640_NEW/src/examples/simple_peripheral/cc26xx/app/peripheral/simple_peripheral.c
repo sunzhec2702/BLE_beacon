@@ -155,11 +155,6 @@
 #define SBP_CONN_EVT_END_EVT                  0x0008
 #endif
 
-#ifdef PLUS_OBSERVER
-#define SBP_KEY_CHANGE_EVT                    0x0010
-#define SBP_OBSERVER_STATE_CHANGE_EVT         0x0020
-#endif
-
 /*********************************************************************
  * TYPEDEFS
  */
@@ -249,9 +244,9 @@ static void SimpleBLEPeripheral_charValueChangeCB(uint8_t paramID);
 #endif //!FEATURE_OAD_ONCHIP
 
 #ifdef PLUS_OBSERVER
-static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t *pData);
+void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t *pData);
 #else
-static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state);
+void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state);
 #endif
 
 #ifdef FEATURE_OAD
@@ -383,11 +378,11 @@ static void SimpleBLEPeripheral_init(void)
     // being discoverable for 30.72 second, and will not being advertising again
     // until the enabler is set back to TRUE
     uint16_t advertOffTime = 0;
-    bleAdvControl(true);
+    //bleAdvControl(true);
     // Set the GAP Role Parameters
-    bleSetTxPower(DEFAULT_TX_POWER);
-    applyAdvData();
-    applyResData();
+    //bleSetTxPower(DEFAULT_TX_POWER);
+    //applyAdvData();
+    //applyResData();
 
     uint8_t enableUpdateRequest = DEFAULT_ENABLE_UPDATE_REQUEST;
     uint16_t desiredMinInterval = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
@@ -412,8 +407,9 @@ static void SimpleBLEPeripheral_init(void)
   GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName);
   // Set advertising interval
   {
-    updateAdvInterval(DEFAULT_ADVERTISING_INTERVAL);
     /*
+    updateAdvInterval(DEFAULT_ADVERTISING_INTERVAL);
+
     uint16_t advInt = DEFAULT_ADVERTISING_INTERVAL;
 
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, advInt);
@@ -612,8 +608,7 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
 
     case GAP_DEVICE_DISCOVERY_EVENT:
       {
-        DEBUG_STRING("Done Scan\r\n");
-        SimpleBLEPeripheral_scanControl(false);
+        scanDoneCB(&pEvent->discCmpl);
         ICall_free(pEvent->discCmpl.pDevList);
         ICall_free(pEvent);
       }
@@ -815,12 +810,14 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
       SimpleBLEPeripheral_processStateChangeEvt((gaprole_States_t)pMsg->
                                                 hdr.state);
       break;
-
     case SBP_CHAR_CHANGE_EVT:
       SimpleBLEPeripheral_processCharValueChangeEvt(pMsg->hdr.state);
       break;
     case SBP_KEY_CHANGE_EVT:
       peripheralKeyCallback(pMsg->hdr.state);
+      break;
+    case SBP_BEACON_STATE_CHANGE_EVT:
+      bleChangeBeaconState(pMsg->hdr.state, *((uint16_t *)pMsg->pData));
       break;
 #ifdef PLUS_OBSERVER
     case SBP_OBSERVER_STATE_CHANGE_EVT:
@@ -918,9 +915,6 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
 #ifdef PLUS_BROADCASTER
   static bool firstConnFlag = false;
 #endif // PLUS_BROADCASTER
-  DEBUG_STRING("newState: ");
-  DEBUG_NUMBER(newState);
-  DEBUG_STRING("\r\n");
   switch ( newState )
   {
     case GAPROLE_STARTED:
@@ -1151,9 +1145,7 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
   uint8_t ack[100];
   uart_receive(ack, 14, NULL, 1000);
   */
-  SimpleBLEPeripheral_scanControl(true);
   updateBeaconIndex();
-  DEBUG_STRING("PeriodTask\r\n");
 #ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
 
@@ -1239,7 +1231,7 @@ static void SimpleBLEPeripheral_clockHandler(UArg arg)
  *
  * @return  None.
  */
-static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t *pData)
+void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t *pData)
 {
   sbpEvt_t *pMsg;
 
@@ -1248,16 +1240,12 @@ static void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t
   {
     pMsg->hdr.event = event;
     pMsg->hdr.state = state;
-
+    pMsg->pData = pData;
     // Enqueue the message.
     Util_enqueueMsg(appMsgQueue, sem, (uint8*)pMsg);
   }
 }
 
-void SimpleBLEPeripheral_keyCallback(uint8_t keyStatus)
-{
-  SimpleBLEPeripheral_enqueueMsg(SBP_KEY_CHANGE_EVT, keyStatus, NULL);
-}
 
 /*********************************************************************
 *********************************************************************/

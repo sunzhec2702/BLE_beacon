@@ -131,7 +131,6 @@ void updateComBit(uint8_t enable)
 
 void updateAdvInterval(uint16_t advInterval)
 {
-    uint16_t advInt = DEFAULT_ADVERTISING_INTERVAL;
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, advInterval);
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, advInterval);
     GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, advInterval);
@@ -140,9 +139,6 @@ void updateAdvInterval(uint16_t advInterval)
 
 void updateBeaconIndex()
 {
-    if (getCurState() == BEACON_NORMAL)
-    {
-        advertData[ADV_INDEX_BYTE] += 1;
-        applyAdvData();
-    }
+    advertData[ADV_INDEX_BYTE] += 1;
+    applyAdvData();
 }

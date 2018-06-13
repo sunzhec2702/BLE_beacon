@@ -27,9 +27,12 @@
 #define ENABLE_NFC 0
 
 // LED Related Macro
-#define LED_BLINK_ON_PERIOD         100 //ms
+#define LED_BLINK_ON_PERIOD         (100) //ms
 #define LED_BLINK_OFF_PERIOD        (200) //ms
+#define LED_BLINK_RAPID_OFF_PERIOD  (80) //ms
 
-#define DEFAULT_TX_POWER    HCI_EXT_TX_POWER_MINUS_6_DBM
-#define MAX_TX_POWER        HCI_EXT_TX_POWER_0_DBM
+
+
+#define DEF_TX_POWER    HCI_EXT_TX_POWER_MINUS_6_DBM
+#define MAX_TX_POWER        HCI_EXT_TX_POWER_2_DBM
 #endif
