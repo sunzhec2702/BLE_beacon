@@ -1,5 +1,5 @@
-#ifndef __SIMPLE_ADV_DATA_H
-#define __SIMPLE_ADV_DATA_H
+#ifndef __SIMPLE_ADV_CONTROL_H
+#define __SIMPLE_ADV_CONTROL_H
 
 // Adv index
 #define BEACON_START_INDEX 5

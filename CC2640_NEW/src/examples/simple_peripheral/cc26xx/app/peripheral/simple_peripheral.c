@@ -89,16 +89,13 @@
 #include "ble_uart.h"
 #include "simple_scanProcess.h"
 #include "simple_stateControl.h"
-#include "simple_advData.h"
+#include "simple_advControl.h"
+#include "simple_keyCallback.h"
 
 
 /*********************************************************************
  * CONSTANTS
  */
-
-// Advertising interval when device is discoverable (units of 625us, 160=100ms)
-#define DEFAULT_ADVERTISING_INTERVAL          160
-
 // Limited discoverable mode advertises for 30.72s, and then stops
 // General discoverable mode advertises indefinitely
 #define DEFAULT_DISCOVERABLE_MODE             GAP_ADTYPE_FLAGS_GENERAL
@@ -136,7 +133,7 @@
 #define DEFAULT_CONN_PAUSE_PERIPHERAL         6
 
 // How often to perform periodic event (in msec)
-#define SBP_PERIODIC_EVT_PERIOD               60000
+#define SBP_PERIODIC_EVT_PERIOD               1000
 
 #ifdef PLUS_OBSERVER
 // Maximum number of scan responses
@@ -240,11 +237,6 @@ static uint8_t attDeviceName[GAP_DEVICE_NAME_LEN] = "IsSmart";
 static gattMsgEvent_t *pAttRsp = NULL;
 static uint8_t rspTxRetry = 0;
 
-#ifdef PLUS_OBSERVER
-static bool scanningStarted = FALSE;
-static uint8_t deviceInfoCnt = 0;
-#endif
-
 /*********************************************************************
  * LOCAL FUNCTIONS
  */
@@ -259,7 +251,6 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
 static void SimpleBLEPeripheral_processCharValueChangeEvt(uint8_t paramID);
 static void SimpleBLEPeripheral_performPeriodicTask(void);
 static void SimpleBLEPeripheral_clockHandler(UArg arg);
-static void SimpleBLEPeripheral_scanControl(bool enable);
 
 #ifdef PLUS_OBSERVER
 void SimpleBLEPeripheral_keyChangeHandler(uint8 keysPressed);
@@ -370,7 +361,7 @@ static void SimpleBLEPeripheral_init(void)
   ICall_registerApp(&selfEntity, &sem);
 
   simple_beacon_drivers_init();
-
+  bleStateInit();
 #ifdef USE_RCOSC
   RCOSC_enableCalibration();
 #endif // USE_RCOSC
@@ -438,12 +429,15 @@ static void SimpleBLEPeripheral_init(void)
   GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName);
   // Set advertising interval
   {
+    updateAdvInterval(DEFAULT_ADVERTISING_INTERVAL);
+    /*
     uint16_t advInt = DEFAULT_ADVERTISING_INTERVAL;
 
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, advInt);
     GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, advInt);
     GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, advInt);
     GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, advInt);
+    */
   }
 
   // Setup the GAP Bond Manager
@@ -504,6 +498,7 @@ static void SimpleBLEPeripheral_init(void)
   // Register for GATT local events and ATT Responses pending for transmission
   GATT_RegisterForMsgs(selfEntity);
   HCI_LE_ReadMaxDataLenCmd();
+  bleChangeBeaconState(BEACON_NORMAL, 0);
 }
 
 /*********************************************************************
@@ -634,19 +629,7 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
 
     case GAP_DEVICE_DISCOVERY_EVENT:
       {
-        /*
-        DEBUG_STRING("DISCOVERY_EVENT, Found ");
-        // discovery complete
-        uint8_t scanNum = pEvent->discCmpl.numDevs;
-        DEBUG_NUMBER(scanNum);
-        DEBUG_STRING("\r\n");
-        */
-        /*
-        //Display_print0(dispHandle, 7, 0, "GAP_DEVICE_DISC_EVENT");
-        Display_print1(dispHandle, 5, 0, "Devices discovered: %d", pEvent->discCmpl.numDevs);
-        Display_print0(dispHandle, 4, 0, "Scanning Off");
-        */
-        scanningStarted = FALSE;
+        SimpleBLEPeripheral_scanControl(false);
         ICall_free(pEvent->discCmpl.pDevList);
         ICall_free(pEvent);
       }
@@ -853,25 +836,8 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
       SimpleBLEPeripheral_processCharValueChangeEvt(pMsg->hdr.state);
       break;
     case SBP_KEY_CHANGE_EVT:
-      switch(pMsg->hdr.state)
-      {
-        case KEY_SELECT:
-        bleChangeBeaconState(BEACON_RAPID);
-        break;
-        case KEY_SELECT_LONG:
-        bleChangeBeaconState(BEACON_COMMUNICATION);
-#ifdef PLUS_OBSERVER
-        SimpleBLEPeripheral_scanControl(true);
-#endif
-        break;
-      }
+      peripheralKeyCallback(pMsg->hdr.state);
       break;
-
-#ifdef PLUS_OBSERVER
-    case SBP_OBSERVER_STATE_CHANGE_EVT:
-      SimpleBLEPeripheral_processStackMsg((ICall_Hdr *)pMsg->pData);
-      break;
-#endif
     default:
       // Do nothing.
       break;
@@ -1196,7 +1162,8 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
   uint8_t ack[100];
   uart_receive(ack, 14, NULL, 1000);
   */
-  DEBUG_STRING("PeriodTask\r\n");
+  updateBeaconIndex();
+  //DEBUG_STRING("PeriodTask\r\n");
 #ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
 
@@ -1302,48 +1269,5 @@ void SimpleBLEPeripheral_keyCallback(uint8_t keyStatus)
   SimpleBLEPeripheral_enqueueMsg(SBP_KEY_CHANGE_EVT, keyStatus, NULL);
 }
 
-static void SimpleBLEPeripheral_scanControl(bool enable)
-{
-  if (enable)
-  {
-    uint8 status;
-    //Start scanning if not already scanning
-    if ((scanningStarted == FALSE))
-    {
-      status = GAPObserverRole_StartDiscovery(DEFAULT_DISCOVERY_MODE,
-                                              DEFAULT_DISCOVERY_ACTIVE_SCAN,
-                                              DEFAULT_DISCOVERY_WHITE_LIST);
-      if(status == SUCCESS)
-      {
-        scanningStarted = TRUE;
-        DEBUG_STRING("Scanning On\r\n");
-      }
-      else
-      {
-        DEBUG_STRING("Scanning failed\r\n");
-      }
-    }
-  }
-  else
-  {
-    uint8 status;
-
-    if(scanningStarted == TRUE)
-    {
-      status = GAPObserverRole_CancelDiscovery();
-
-      if(status == SUCCESS)
-      {
-        scanningStarted = FALSE;
-        DEBUG_STRING("Scanning Off\r\n");
-      }
-      else
-      {
-        DEBUG_STRING("Scanning Off Fail\r\n");
-      }
-    }
-  }
-  return;
-}
 /*********************************************************************
 *********************************************************************/

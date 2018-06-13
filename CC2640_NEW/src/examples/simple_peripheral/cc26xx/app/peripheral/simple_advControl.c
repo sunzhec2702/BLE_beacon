@@ -1,5 +1,6 @@
-#include "simple_advData.h"
+#include "simple_advControl.h"
 #include "peripheral_observer.h"
+#include "simple_stateControl.h"
 #include "gap.h"
 
 #define DEFAULT_DISCOVERABLE_MODE             GAP_ADTYPE_FLAGS_GENERAL
@@ -126,4 +127,22 @@ void updateComBit(uint8_t enable)
         advertData[ADV_FLAG_BYTE] |= (0x01 << ADV_FLAG_COMMS_BIT);
     else
         advertData[ADV_FLAG_BYTE] &= ~(0x01 << ADV_FLAG_COMMS_BIT);
+}
+
+void updateAdvInterval(uint16_t advInterval)
+{
+    uint16_t advInt = DEFAULT_ADVERTISING_INTERVAL;
+    GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MIN, advInterval);
+    GAP_SetParamValue(TGAP_LIM_DISC_ADV_INT_MAX, advInterval);
+    GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MIN, advInterval);
+    GAP_SetParamValue(TGAP_GEN_DISC_ADV_INT_MAX, advInterval);
+}
+
+void updateBeaconIndex()
+{
+    if (getCurState() == BEACON_NORMAL)
+    {
+        advertData[ADV_INDEX_BYTE] += 1;
+        applyAdvData();
+    }
 }

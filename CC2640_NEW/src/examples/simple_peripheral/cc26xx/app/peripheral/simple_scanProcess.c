@@ -1,6 +1,6 @@
 #include "simple_scanProcess.h"
 #include "util.h"
-#include "simple_advData.h"
+#include "simple_advControl.h"
 
 #define COMMS_RSSI_THRES    (-35)
 
@@ -25,7 +25,6 @@ void scanDevInfoCB(gapDeviceInfoEvent_t* devInfo)
 
 bool filterCommFlag(uint8_t *data)
 {
-    return true;
     if ((data[ADV_FLAG_BYTE] & (0x1 << ADV_FLAG_COMMS_BIT)) == 0x1)
         return true;
     else

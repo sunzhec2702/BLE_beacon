@@ -7,6 +7,7 @@
 #include <comdef.h>
 #include <bcomdef.h>
 #include "hci.h"
+#include "simple_beacon_configuration.h"
 
 // Debug Uart
 #include "simple_uart_emulator.h"
