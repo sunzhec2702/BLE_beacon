@@ -135,23 +135,6 @@
 // How often to perform periodic event (in msec)
 #define SBP_PERIODIC_EVT_PERIOD               1000
 
-#ifdef PLUS_OBSERVER
-// Maximum number of scan responses
-#define DEFAULT_MAX_SCAN_RES                  50//8
-// Scan duration in ms
-#define DEFAULT_SCAN_DURATION                 5000
-// Scan interval in ms
-#define DEFAULT_SCAN_INTERVAL                 10
-// Scan interval in ms
-#define DEFAULT_SCAN_WINDOW                   5
-// Discovey mode (limited, general, all)
-#define DEFAULT_DISCOVERY_MODE                DEVDISC_MODE_ALL
-// TRUE to use active scan
-#define DEFAULT_DISCOVERY_ACTIVE_SCAN         TRUE
-// TRUE to use white list during discovery
-#define DEFAULT_DISCOVERY_WHITE_LIST          FALSE
-#endif //#ifdef PLUS_OBSERVER
-
 #ifdef FEATURE_OAD
 // The size of an OAD packet.
 #define OAD_PACKET_SIZE                       ((OAD_BLOCK_SIZE) + 2)
@@ -629,6 +612,7 @@ static void SimpleBLEPeripheralObserver_processRoleEvent(gapPeripheralObserverRo
 
     case GAP_DEVICE_DISCOVERY_EVENT:
       {
+        DEBUG_STRING("Done Scan\r\n");
         SimpleBLEPeripheral_scanControl(false);
         ICall_free(pEvent->discCmpl.pDevList);
         ICall_free(pEvent);
@@ -838,6 +822,11 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
     case SBP_KEY_CHANGE_EVT:
       peripheralKeyCallback(pMsg->hdr.state);
       break;
+#ifdef PLUS_OBSERVER
+    case SBP_OBSERVER_STATE_CHANGE_EVT:
+      SimpleBLEPeripheral_processStackMsg((ICall_Hdr *)pMsg->pData);
+      break;
+#endif
     default:
       // Do nothing.
       break;
@@ -1162,8 +1151,9 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
   uint8_t ack[100];
   uart_receive(ack, 14, NULL, 1000);
   */
+  SimpleBLEPeripheral_scanControl(true);
   updateBeaconIndex();
-  //DEBUG_STRING("PeriodTask\r\n");
+  DEBUG_STRING("PeriodTask\r\n");
 #ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
 

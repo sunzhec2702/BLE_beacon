@@ -1,8 +1,10 @@
 #include "simple_stateControl.h"
+#include "simple_peripheral.h"
 #include "peripheral_observer.h"
 #include "simple_advControl.h"
 #include <ti/sysbios/knl/Clock.h>
 #include <Board.h>
+#include "simple_led.h"
 #include "util.h"
 #include "hci.h"
 #include "gap.h"
@@ -30,7 +32,7 @@ void bleStateInit()
 
 void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
 {
-    DEBUG_STRING("CurStatus: ");DEBUG_NUMBER(curstate);DEBUG_STRING("\r\n");
+    DEBUG_STRING("CurStatus: ");DEBUG_NUMBER(curState);DEBUG_STRING("\r\n");
     DEBUG_STRING("TarStatus: ");DEBUG_NUMBER(state);DEBUG_STRING("\r\n");
     if (state > curState)
     {
@@ -92,7 +94,7 @@ void bleSetTxPower(uint8_t level)
 }
 
 #ifdef PLUS_OBSERVER
-void SimpleBLEPeripheral_scanControl(bool enable)
+void SimpleBLEPeripheral_scanControl(uint8_t enable)
 {
     if (enable)
     {
