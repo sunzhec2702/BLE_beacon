@@ -6,11 +6,12 @@
 #include "peripheral_observer.h"
 #include "simple_peripheral.h"
 
+#define DEFAULT_SCAN_TIME   20
 #define COMMS_RSSI_THRES    (-35)
 
 #ifdef PLUS_OBSERVER
 static bool scanningStarted = false;
-static uint8_t deviceInfoCnt = 0;
+static uint8_t scanTimeLeft = DEFAULT_SCAN_TIME;
 
 void scanProcessInit()
 {
@@ -52,13 +53,14 @@ void SimpleBLEPeripheral_scanControl(uint8_t enable)
             status = GAPObserverRole_CancelDiscovery();
             if (status == SUCCESS)
             {
-                scanningStarted = FALSE;
+                scanningStarted = false;
                 DEBUG_STRING("Scanning Off\r\n");
             }
             else
             {
                 DEBUG_STRING("Scanning Off Fail\r\n");
             }
+            scanTimeLeft = DEFAULT_SCAN_TIME;
         }
     }
     return;
@@ -81,15 +83,30 @@ void scanDevInfoCB(gapDeviceInfoEvent_t* devInfo)
             static uint16_t targetKeepTime = 0;
             DEBUG_STRING("Got a pair\r\n");
             ledBlinkWithParameters(LED_INDEX_0,LED_BLINK_ON_PERIOD, LED_BLINK_RAPID_OFF_PERIOD, 3);
-            SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, (uint8_t*)&targetKeepTime);
+            SimpleBLEPeripheral_scanControl(false);
+            //SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, (uint8_t*)&targetKeepTime);
         }
     }
 }
 
 void scanDoneCB(gapDevDiscEvent_t *data)
 {
-    DEBUG_STRING("scanDone\r\n");
+    if (scanningStarted == false)
+    {
+        scanTimeLeft = DEFAULT_SCAN_TIME;
+        return;
+    }
     scanningStarted = false;
+    if (scanTimeLeft == 0)
+    {
+        DEBUG_STRING("scanDone\r\n");
+        scanTimeLeft = DEFAULT_SCAN_TIME;
+    }
+    else
+    {
+        scanTimeLeft--;
+        SimpleBLEPeripheral_scanControl(true);
+    }
 }
 
 bool filterCommFlag(uint8_t *data)

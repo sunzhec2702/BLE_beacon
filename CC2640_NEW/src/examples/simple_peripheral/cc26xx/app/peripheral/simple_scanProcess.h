@@ -7,11 +7,11 @@
 // Maximum number of scan responses
 #define DEFAULT_MAX_SCAN_RES                  8//8
 // Scan duration in ms
-#define DEFAULT_SCAN_DURATION                 10000
+#define DEFAULT_SCAN_DURATION                 400
 // Scan interval in ms
-#define DEFAULT_SCAN_INTERVAL                 200
+#define DEFAULT_SCAN_INTERVAL                 400
 // Scan interval in ms
-#define DEFAULT_SCAN_WINDOW                   200
+#define DEFAULT_SCAN_WINDOW                   400
 // Discovey mode (limited, general, all)
 #define DEFAULT_DISCOVERY_MODE                DEVDISC_MODE_ALL
 // TRUE to use active scan

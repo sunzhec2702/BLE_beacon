@@ -29,7 +29,7 @@
 // LED Related Macro
 #define LED_BLINK_ON_PERIOD         (100) //ms
 #define LED_BLINK_OFF_PERIOD        (200) //ms
-#define LED_BLINK_RAPID_OFF_PERIOD  (80) //ms
+#define LED_BLINK_RAPID_OFF_PERIOD  (100) //ms
 
 
 

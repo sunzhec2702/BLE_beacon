@@ -104,12 +104,14 @@ void ledToggle(Board_LED_Index ledIndex)
 
 void ledBlinkWithParameters(Board_LED_Index ledIndex, uint16_t ledOnPeriod, uint16_t ledOffPeriod, uint16_t ledBlinkTime)
 {
+    /*
     if (ledBlinkStruct[ledIndex].ledBlinkTimes > 0)
     {
         DEBUG_STRING("Still Blinking\r\n");
         return;
     }
-
+    */
+   
     ledBlinkStruct[ledIndex].ledBlinkStatus = Board_LED_OFF;
     ledBlinkStruct[ledIndex].ledBlinkOnPeriod = ledOnPeriod;
     ledBlinkStruct[ledIndex].ledBlinkOffPeriod = ledOffPeriod;
