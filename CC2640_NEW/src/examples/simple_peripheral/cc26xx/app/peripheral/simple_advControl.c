@@ -142,3 +142,17 @@ void updateBeaconIndex()
     advertData[ADV_INDEX_BYTE] += 1;
     applyAdvData();
 }
+
+void updateBeaconTouchInfo(uint8_t *macAddr)
+{
+    advertData[TOUCH_BEACON_MAC] = macAddr[2];
+    advertData[TOUCH_BEACON_MAC + 1] = macAddr[1];
+    advertData[TOUCH_BEACON_MAC + 2] = macAddr[0];
+}
+
+void resetBeaconTouchInfo()
+{
+    advertData[TOUCH_BEACON_MAC] = 0;
+    advertData[TOUCH_BEACON_MAC + 1] = 0;
+    advertData[TOUCH_BEACON_MAC + 2] = 0;
+}
