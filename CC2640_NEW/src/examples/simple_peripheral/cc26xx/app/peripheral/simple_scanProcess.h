@@ -5,7 +5,7 @@
 
 #ifdef PLUS_OBSERVER
 // Maximum number of scan responses
-#define DEFAULT_MAX_SCAN_RES                  8//8
+#define DEFAULT_MAX_SCAN_RES                  50 //8
 // Scan duration in ms
 #define DEFAULT_SCAN_DURATION                 400
 // Scan interval in ms
