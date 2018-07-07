@@ -152,7 +152,7 @@ void updateBeaconTouchInfo(uint8_t *macAddr)
 
 void resetBeaconTouchInfo()
 {
-    advertData[TOUCH_BEACON_MAC] = 0;
-    advertData[TOUCH_BEACON_MAC + 1] = 0;
-    advertData[TOUCH_BEACON_MAC + 2] = 0;
+    advertData[TOUCH_BEACON_MAC] = 0xFF;
+    advertData[TOUCH_BEACON_MAC + 1] = 0xFF;
+    advertData[TOUCH_BEACON_MAC + 2] = 0xFF;
 }

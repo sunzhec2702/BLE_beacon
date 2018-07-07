@@ -81,16 +81,17 @@ const PIN_Config BoardGpioInitTable[] = {
     Board_KEY_SELECT | PIN_INPUT_EN  | PIN_PULLUP | PIN_HYSTERESIS,                             /* Button is active low          */
     #endif
     // Output PINs
-    Board_DK_LED1       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW   | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
-    #if (BOARD_TYPE == DEVELOP_BOARD)
-    Board_DK_LED2       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW   | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
-    #elif (BOARD_TYPE == PRODUCT_BOARD)
-    Board_DK_LED2       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH   | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
+    /*
+    Board_DK_LED1       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW   | PIN_PUSHPULL | PIN_DRVSTR_MAX,
+#if (BOARD_TYPE == DEVELOP_BOARD)
+    Board_DK_LED2       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW   | PIN_PUSHPULL | PIN_DRVSTR_MAX,
+    */
+    Board_PWM_LED    | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW   | PIN_PUSHPULL | PIN_DRVSTR_MAX,   
+    #if (BOARD_TYPE == PRODUCT_BOARD)
+    Board_PWM_LED_IO       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH   | PIN_PUSHPULL | PIN_DRVSTR_MAX,     /* LED initially off             */
     #endif
-    Board_NFC_ENABLE | PIN_GPIO_OUTPUT_EN  | PIN_GPIO_LOW | PIN_PUSHPULL | PIN_DRVSTR_MAX,                     
     // System PINs
     Board_UART_TX    | PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH   | PIN_PUSHPULL ,     /* UART TX pin at inactive level */
-    Board_UART_NFC_TX| PIN_GPIO_OUTPUT_EN | PIN_GPIO_HIGH   | PIN_PUSHPULL ,     /* UART NFC TX pin at inactive level */
     PIN_TERMINATE                                                                               /* Terminate list                */
 };
 
@@ -143,8 +144,8 @@ const UARTCC26XX_HWAttrsV1 uartCC26XXHWAttrs[CC2650DK_4XS_UARTCOUNT] = {
         .intNum         = INT_UART0_COMB,
         .intPriority    = ~0,
         .swiPriority    = 0,
-        .txPin          = Board_UART_NFC_TX,
-        .rxPin          = Board_UART_NFC_RX,
+        .txPin          = PIN_UNASSIGNED,
+        .rxPin          = PIN_UNASSIGNED,
         .ctsPin         = PIN_UNASSIGNED,
         .rtsPin         = PIN_UNASSIGNED
     }

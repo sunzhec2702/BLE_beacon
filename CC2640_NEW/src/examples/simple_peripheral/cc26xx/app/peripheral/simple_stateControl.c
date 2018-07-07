@@ -35,7 +35,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
     switch (state)
     {
     case BEACON_RAPID:
-        ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
+        pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
         bleAdvControl(false);
         updateRapidBit(true);
         applyAdvData();
@@ -44,8 +44,9 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         bleAdvControl(true);
         break;
     case BEACON_COMMUNICATION:
-        ledBlinkWithParameters(LED_INDEX_0, LED_BLINK_ON_PERIOD, 0, 1);
+        pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, 0, 1);
         bleAdvControl(false);
+        resetBeaconTouchInfo();
         updateComBit(true);
         applyAdvData();
         bleSetTxPower(MAX_TX_POWER);

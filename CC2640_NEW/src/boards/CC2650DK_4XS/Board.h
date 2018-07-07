@@ -45,7 +45,8 @@ extern "C" {
 #define     Board_LED0              Board_DK_LED1
 #define     Board_LED1              Board_DK_LED2
 #define     Board_LED2              Board_LED0
-
+#define     Board_PWM_LED           Board_DK_LED1
+#define     Board_PWM_LED_IO        Board_DK_LED2
 #define     Board_BUTTON0           Board_KEY_SELECT
 #define     Board_BUTTON1           Board_BUTTON0
 

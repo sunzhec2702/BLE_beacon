@@ -1,6 +1,7 @@
 #include "simple_keyCallback.h"
 #include "simple_stateControl.h"
 #include "simple_beacon_configuration.h"
+#include "simple_led.h"
 
 void peripheralKeyCallback(uint16_t key)
 {

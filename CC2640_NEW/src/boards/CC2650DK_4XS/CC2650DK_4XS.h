@@ -78,8 +78,6 @@ extern const PIN_Config BoardGpioInitTable[];
 /* Leds */
 #define Board_LED_ON                        1 /* LEDs on CC2650 are active high */
 #define Board_LED_OFF                       0
-#define Board_NFC_ON                        1
-#define Board_NFC_OFF                       0
 #define Board_DK_LED1                       IOID_0
 #define Board_DK_LED2                       Board_DK_LED1
 #define Board_DK_LED3                       PIN_UNASSIGNED
@@ -91,14 +89,15 @@ extern const PIN_Config BoardGpioInitTable[];
 #define Board_KEY_LEFT                      PIN_UNASSIGNED
 #define Board_KEY_RIGHT                     PIN_UNASSIGNED
 /* UART Board */
-#define Board_UART_NFC_RX                   IOID_5
-#define Board_UART_NFC_TX                   IOID_6
 #define Board_UART_RX                       IOID_1
 #define Board_UART_TX                       IOID_2
 #define Board_UART_CTS                      PIN_UNASSIGNED
 #define Board_UART_RTS                      PIN_UNASSIGNED
+/* I2C Flash */
+#define Board_I2C_SCL                       IOID_6
+#define Board_I2C_SDA                       IOID_5
 /* NFC GPIO */
-#define Board_NFC_ENABLE                    IOID_3
+//#define Board_NFC_ENABLE                    IOID_3
 
 #elif (BOARD_TYPE == PRODUCT_BOARD)
 /* Leds */
@@ -106,25 +105,28 @@ extern const PIN_Config BoardGpioInitTable[];
 #define Board_LED_OFF                       0
 #define Board_NFC_ON                        1
 #define Board_NFC_OFF                       0
-#define Board_DK_LED1                       IOID_0
-#define Board_DK_LED2                       IOID_1
+#define Board_DK_LED1                       IOID_1
+#define Board_DK_LED2                       IOID_2
 #define Board_DK_LED3                       PIN_UNASSIGNED
 #define Board_DK_LED4                       PIN_UNASSIGNED
 /* Button Board */
 #define Board_KEY_SELECT                    IOID_4
+/*
 #define Board_KEY_UP                        PIN_UNASSIGNED
 #define Board_KEY_DOWN                      PIN_UNASSIGNED
 #define Board_KEY_LEFT                      PIN_UNASSIGNED
 #define Board_KEY_RIGHT                     PIN_UNASSIGNED
+*/
 /* UART Board */
-#define Board_UART_NFC_RX                   IOID_5
-#define Board_UART_NFC_TX                   IOID_6
 #define Board_UART_RX                       IOID_9          /* P1.7  */
 #define Board_UART_TX                       IOID_8          /* P1.9  */
 #define Board_UART_CTS                      PIN_UNASSIGNED
 #define Board_UART_RTS                      PIN_UNASSIGNED
+/* I2C Flash */
+#define Board_I2C_SCL                       IOID_5
+#define Board_I2C_SDA                       IOID_6
 /* NFC GPIO */
-#define Board_NFC_ENABLE                    IOID_3
+// #define Board_NFC_ENABLE                    IOID_3
 
 #endif
 
@@ -140,7 +142,7 @@ extern const PIN_Config BoardGpioInitTable[];
 #define Board_SPI0_CLK                      PIN_UNASSIGNED          /* P1.16 */
 #define Board_SPI0_CSN                      PIN_UNASSIGNED
 /* PWM outputs */
-#define Board_PWMPIN0                       PIN_UNASSIGNED
+#define Board_PWMPIN0                       Board_DK_LED1
 #define Board_PWMPIN1                       PIN_UNASSIGNED
 #define Board_PWMPIN2                       PIN_UNASSIGNED
 #define Board_PWMPIN3                       PIN_UNASSIGNED

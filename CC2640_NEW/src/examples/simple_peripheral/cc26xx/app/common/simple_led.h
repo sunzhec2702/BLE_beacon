@@ -2,6 +2,9 @@
 #define __SIMPLE_LED_H
 #include <stdint.h>
 
+#ifdef PWM_LED
+#include "simple_pwm_led.h"
+#else
 typedef struct
 {
     uint32_t ledBlinkIO;
@@ -23,4 +26,5 @@ void ledOn(Board_LED_Index ledIndex);
 void ledOff(Board_LED_Index ledIndex);
 void ledToggle(Board_LED_Index ledIndex);
 void ledBlinkWithParameters(Board_LED_Index ledIndex, uint16_t ledOnPeriod, uint16_t ledOffPeriod, uint16_t ledBlinkTime);
+#endif
 #endif

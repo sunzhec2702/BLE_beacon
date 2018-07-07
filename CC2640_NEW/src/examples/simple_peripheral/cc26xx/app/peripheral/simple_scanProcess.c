@@ -7,7 +7,7 @@
 #include "simple_peripheral.h"
 
 #define DEFAULT_SCAN_TIME   20
-#define COMMS_RSSI_THRES    (-35)
+#define COMMS_RSSI_THRES    (-40)
 
 static bool scanningStarted = false;
 static uint8_t scanTimeLeft = DEFAULT_SCAN_TIME;
@@ -82,7 +82,7 @@ void scanDevInfoCB(gapDeviceInfoEvent_t* devInfo)
             static uint16_t targetKeepTime = 0;
             DEBUG_STRING("Got a pair\r\n");
             updateBeaconTouchInfo(devInfo->addr);
-            ledBlinkWithParameters(LED_INDEX_0,LED_BLINK_ON_PERIOD, LED_BLINK_RAPID_OFF_PERIOD, 3);
+            pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_RAPID_OFF_PERIOD, 3);
             SimpleBLEPeripheral_scanControl(false);
             //SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, (uint8_t*)&targetKeepTime);
         }
