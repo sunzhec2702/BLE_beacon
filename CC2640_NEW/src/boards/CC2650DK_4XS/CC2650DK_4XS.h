@@ -110,7 +110,7 @@ extern const PIN_Config BoardGpioInitTable[];
 #define Board_DK_LED3                       PIN_UNASSIGNED
 #define Board_DK_LED4                       PIN_UNASSIGNED
 /* Button Board */
-#define Board_KEY_SELECT                    IOID_4
+#define Board_KEY_SELECT                    IOID_7
 /*
 #define Board_KEY_UP                        PIN_UNASSIGNED
 #define Board_KEY_DOWN                      PIN_UNASSIGNED
@@ -129,6 +129,9 @@ extern const PIN_Config BoardGpioInitTable[];
 // #define Board_NFC_ENABLE                    IOID_3
 
 #endif
+
+/* Vibra Sensor */
+#define Board_Vibra_IO                      IOID_4
 
 /* LCD  Board */
 #define Board_3V3_EN                        PIN_UNASSIGNED
