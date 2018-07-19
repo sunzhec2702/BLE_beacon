@@ -28,12 +28,5 @@
 
 // LED Related Macro
 #define PWM_LED
-#define LED_BLINK_ON_PERIOD         (100) //ms
-#define LED_BLINK_OFF_PERIOD        (200) //ms
-#define LED_BLINK_RAPID_OFF_PERIOD  (100) //ms
 
-#define VIBRA_SENSOR_CHECK_PERIOD   (60000) //ms
-
-#define DEF_TX_POWER    HCI_EXT_TX_POWER_MINUS_6_DBM
-#define MAX_TX_POWER        HCI_EXT_TX_POWER_2_DBM
 #endif

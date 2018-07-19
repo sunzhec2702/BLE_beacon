@@ -80,7 +80,7 @@ const PIN_Config BoardGpioInitTable[] = {
     #elif (BOARD_TYPE == DEVELOP_BOARD)
     Board_KEY_SELECT | PIN_INPUT_EN  | PIN_PULLUP | PIN_HYSTERESIS,                             /* Button is active low          */
     #endif
-    Board_Vibra_IO | PIN_INPUT_EN | PIN_PULLDOWN,
+    Board_Vibra_IO | PIN_INPUT_EN | PIN_NOPULL,
     // Output PINs
     /*
     Board_DK_LED1       | PIN_GPIO_OUTPUT_EN | PIN_GPIO_LOW   | PIN_PUSHPULL | PIN_DRVSTR_MAX,

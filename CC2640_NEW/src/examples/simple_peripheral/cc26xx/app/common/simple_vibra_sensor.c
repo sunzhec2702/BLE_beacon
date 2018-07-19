@@ -19,7 +19,7 @@ static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId)
 // PIN configuration structure to set all KEY pins as inputs with pullups enabled
 PIN_Config vibraIOCfg[] =
     {
-        Board_Vibra_IO | PIN_GPIO_OUTPUT_DIS | PIN_INPUT_EN | PIN_PULLDOWN,
+        Board_Vibra_IO | PIN_GPIO_OUTPUT_DIS | PIN_INPUT_EN | PIN_NOPULL,
         PIN_TERMINATE};
 
 PIN_State vibraSensorIO;
