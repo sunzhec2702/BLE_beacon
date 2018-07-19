@@ -6,7 +6,11 @@
 #include <Board.h>
 #include <simple_pwm.h>
 
+#if (BOARD_TYPE == PRODUCT_BOARD)
 #define DEFAULT_PWM_LED_PERCENT 50
+#elif (BOARD_TYPE == DEVELOP_BOARD)
+#define DEFAULT_PWM_LED_PERCENT 100
+#endif
 
 static PIN_State pwmLedPinStatus;
 static Clock_Struct pwmLedBlinkClock;
