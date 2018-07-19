@@ -31,7 +31,15 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
     DEBUG_STRING("CurStatus: ");DEBUG_NUMBER(curState);DEBUG_STRING("\r\n");
     DEBUG_STRING("TarStatus: ");DEBUG_NUMBER(state);DEBUG_STRING("\r\n");
     if (state == curState)
-        return;
+    {
+        switch (state)
+        {
+        case BEACON_RAPID:
+            break;
+        default:
+            return;
+        }
+    }
     switch (state)
     {
     case BEACON_RAPID:
@@ -44,7 +52,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         bleAdvControl(true);
         break;
     case BEACON_COMMUNICATION:
-        pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, 0, 1);
+        pwmLedBlinkWithParameters(LED_BLINK_COMMUNICATE_ON_PERIOD, LED_BLINK_COMMUNICATE_OFF_PERIOD, COMMS_STATE_PERIOD / (LED_BLINK_COMMUNICATE_ON_PERIOD + LED_BLINK_COMMUNICATE_OFF_PERIOD));
         bleAdvControl(false);
         resetBeaconTouchInfo();
         updateComBit(true);

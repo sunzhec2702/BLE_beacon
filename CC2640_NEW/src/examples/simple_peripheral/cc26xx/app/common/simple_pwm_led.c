@@ -16,6 +16,7 @@ static PIN_State pwmLedPinStatus;
 static Clock_Struct pwmLedBlinkClock;
 static LedBlinkStruct pwmLedBlinkStruct;
 static PWM_Handle ledPwm;
+static PIN_Handle pwmLedPinHandle;
 static void pwmLedBlinkCallback(UArg ledIndex);
 
 const PIN_Config pwmLedPinList[] = {
@@ -34,7 +35,7 @@ void pwmLedInit()
     ledPwm = PWM_open(Board_PWM0, &params);
     //PWM_start(ledPwm);
     //PWM_setDuty(ledPwm, ((uint32_t) ~0)/2);
-    PIN_open(&pwmLedPinStatus, pwmLedPinList);
+    pwmLedPinHandle = PIN_open(&pwmLedPinStatus, pwmLedPinList);
     pwmLedBlinkStruct.ledBlinkStatus = Board_LED_OFF;
     pwmLedBlinkStruct.ledBlinkTimes = 0;
     pwmLedBlinkStruct.ledBlinkOnPeriod = 0;
@@ -82,7 +83,7 @@ void pwmLedOn()
 void pwmLedOff()
 {
 #if (BOARD_TYPE == PRODUCT_BOARD)
-    PIN_setOutputValue(&pwmLedPinStatus, Board_PWM_LED_IO, Board_LED_ON);
+    PIN_setOutputValue(pwmLedPinHandle, Board_PWM_LED_IO, Board_LED_ON);
 #endif
     PWM_setDuty(ledPwm, 0);
     PWM_stop(ledPwm);
@@ -91,7 +92,7 @@ void pwmLedOff()
 void pwmLedOnPercent(uint8_t percent)
 {
 #if (BOARD_TYPE == PRODUCT_BOARD)
-    PIN_setOutputValue(&pwmLedPinStatus, Board_PWM_LED_IO, Board_LED_OFF);
+    PIN_setOutputValue(pwmLedPinHandle, Board_PWM_LED_IO, Board_LED_OFF);
 #endif
     PWM_start(ledPwm);
     PWM_setDuty(ledPwm, calDutyValue(percent));
