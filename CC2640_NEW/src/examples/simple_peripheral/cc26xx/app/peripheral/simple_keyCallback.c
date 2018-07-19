@@ -3,9 +3,9 @@
 #include "simple_beacon_configuration.h"
 #include "simple_led.h"
 
-void peripheralKeyCallback(uint16_t key)
+void peripheralKeyCallback(uint16_t keyEvent)
 {
-    switch (key)
+    switch (keyEvent)
     {
     case KEY_SELECT:
         bleChangeBeaconState(BEACON_RAPID, RAPID_STATE_PERIOD);

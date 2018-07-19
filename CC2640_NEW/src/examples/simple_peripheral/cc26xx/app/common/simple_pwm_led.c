@@ -6,7 +6,7 @@
 #include <Board.h>
 #include <simple_pwm.h>
 
-#define DEFAULT_PWM_LED_PERCENT 100
+#define DEFAULT_PWM_LED_PERCENT 50
 
 static PIN_State pwmLedPinStatus;
 static Clock_Struct pwmLedBlinkClock;
@@ -54,7 +54,7 @@ static void pwmLedBlinkCallback(UArg ledIndex)
     switch (pwmLedBlinkStruct.ledBlinkStatus)
     {
         case Board_LED_OFF:
-        pwmLedOnPercent(DEFAULT_PWM_LED_PERCENT);
+        pwmLedOn();
         pwmLedBlinkStruct.ledBlinkStatus = Board_LED_ON;
         targetPeriod = pwmLedBlinkStruct.ledBlinkOnPeriod;
         break;
@@ -72,11 +72,7 @@ static void pwmLedBlinkCallback(UArg ledIndex)
 
 void pwmLedOn()
 {
-#if (BOARD_TYPE == PRODUCT_BOARD)
-    PIN_setOutputValue(&pwmLedPinStatus, Board_PWM_LED_IO, Board_LED_OFF);
-#endif
-    PWM_start(ledPwm);
-    PWM_setDuty(ledPwm, (uint32_t) ~0);
+    pwmLedOnPercent(DEFAULT_PWM_LED_PERCENT);
 }
 
 void pwmLedOff()

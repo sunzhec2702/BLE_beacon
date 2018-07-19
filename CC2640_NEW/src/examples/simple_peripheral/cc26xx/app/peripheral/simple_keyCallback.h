@@ -3,6 +3,6 @@
 
 #include "board_key.h"
 
-void peripheralKeyCallback(uint16_t key);
+void peripheralKeyCallback(uint16_t keyEvent);
 
 #endif

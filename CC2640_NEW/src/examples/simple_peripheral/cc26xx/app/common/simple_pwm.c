@@ -11,7 +11,7 @@ static int PWM_count = 1;
 /* Default PWM parameters structure */
 const PWM_Params PWM_defaultParams = {
     .periodUnits = PWM_PERIOD_HZ,             /* Period is defined in Hz */
-    .periodValue = 1e3,                       /* 1MHz */
+    .periodValue = 1e3,                       /* 1KHz */
     .dutyUnits   = PWM_DUTY_FRACTION,         /* Duty is fraction of period */
     .dutyValue   = 0,                         /* 0% duty cycle */
     .idleLevel   = PWM_IDLE_LOW,              /* Low idle level */
