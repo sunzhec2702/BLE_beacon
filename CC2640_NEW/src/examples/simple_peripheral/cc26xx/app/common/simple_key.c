@@ -1,8 +1,6 @@
 #include "simple_key.h"
 #include "board_key.h"
-#include "simple_uart.h"
 #include "simple_led.h"
-#include "simple_nfc.h"
 #include <ti/sysbios/knl/Clock.h>
 #include "util.h"
 #include "simple_peripheral.h"

@@ -61,7 +61,6 @@
 #include "simple_peripheral.h"
 #include "central.h"
 #include "simple_uart_emulator.h"
-#include "simple_nfc.h"
 
 /* Header files required to enable instruction fetch cache */
 #include <inc/hw_memmap.h>

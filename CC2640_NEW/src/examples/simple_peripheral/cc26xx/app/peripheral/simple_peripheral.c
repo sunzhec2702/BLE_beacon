@@ -85,8 +85,6 @@
 
 #include "simple_led.h"
 #include "simple_key.h"
-#include "simple_uart.h"
-#include "ble_uart.h"
 #include "simple_scanProcess.h"
 #include "simple_stateControl.h"
 #include "simple_advControl.h"
