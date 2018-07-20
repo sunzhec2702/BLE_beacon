@@ -51,6 +51,7 @@
 #include <ti/drivers/timer/GPTimerCC26XX.h>
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerCC26XX.h>
+#include <ti/drivers/i2c/I2CCC26XX.h>
 
 #include <inc/hw_memmap.h>
 #include <inc/hw_ints.h>
@@ -440,6 +441,44 @@ const PWM_Config PWM_config[CC2650DK_4XS_PWMCOUNT + 1] = {
 
 /*
  *  ============================= PWM end ======================================
+ */
+
+/*
+ *  ============================= I2C Begin=====================================
+*/
+/* Place into subsections to allow the TI linker to remove items properly */
+#if defined(__TI_COMPILER_VERSION__)
+#pragma DATA_SECTION(I2C_config, ".const:I2C_config")
+#pragma DATA_SECTION(i2cCC26xxHWAttrs, ".const:i2cCC26xxHWAttrs")
+#endif
+
+/* I2C objects */
+I2CCC26XX_Object i2cCC26xxObjects[CC2650DK_4XS_I2CCOUNT];
+
+/* I2C configuration structure, describing which pins are to be used */
+const I2CCC26XX_HWAttrsV1 i2cCC26xxHWAttrs[CC2650DK_4XS_I2CCOUNT] = {
+    {
+        .baseAddr = I2C0_BASE,
+        .powerMngrId = PowerCC26XX_PERIPH_I2C0,
+        .intNum = INT_I2C_IRQ,
+        .intPriority = ~0,
+        .swiPriority = 0,
+        .sdaPin = Board_I2C_SDA,
+        .sclPin = Board_I2C_SCL,
+    }
+};
+
+/* I2C configuration structure */
+const I2C_Config I2C_config[] = {
+    {
+        .fxnTablePtr = &I2CCC26XX_fxnTable,
+        .object = &i2cCC26xxObjects[0],
+        .hwAttrs = &i2cCC26xxHWAttrs[0]
+    },
+    {NULL, NULL, NULL}
+};
+/*
+ *  ========================== I2C end =========================================
  */
 
 /*

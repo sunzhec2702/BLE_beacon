@@ -137,6 +137,8 @@ int main()
 {
   /* Register Application callback to trap asserts raised in the Stack */
   RegisterAssertCback(AssertHandler);
+  
+  Power_init();
 
   PIN_init(BoardGpioInitTable);
   
@@ -149,8 +151,8 @@ int main()
 #if !defined( POWER_SAVING ) || defined( USE_FPGA )
   /* Set constraints for Standby, powerdown and idle mode */
   // PowerCC26XX_SB_DISALLOW may be redundant
-  Power_setConstraint(PowerCC26XX_SB_DISALLOW);
-  Power_setConstraint(PowerCC26XX_IDLE_PD_DISALLOW);
+  // Power_setConstraint(PowerCC26XX_SB_DISALLOW);
+  // Power_setConstraint(PowerCC26XX_IDLE_PD_DISALLOW);
 #endif // POWER_SAVING | USE_FPGA
 
   /* Initialize ICall module */

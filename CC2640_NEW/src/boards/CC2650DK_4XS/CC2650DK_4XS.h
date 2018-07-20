@@ -158,6 +158,7 @@ extern const PIN_Config BoardGpioInitTable[];
 /** ============================================================================
  *  Instance identifiers
  *  ==========================================================================*/
+#define Board_I2C                   CC2650DK_4Xs_I2C0
 /* Generic SPI instance identifiers */
 #define Board_SPI0                  CC2650DK_4XS_SPI0
 /* Generic UART instance identifiers */
@@ -188,6 +189,14 @@ extern const PIN_Config BoardGpioInitTable[];
 /** ============================================================================
  *  Number of peripherals and their names
  *  ==========================================================================*/
+/*!
+ *  @def    CC2650DK_4XS_I2CName
+ *  @brief  Enum of I2C names on the CC2650 dev board
+ */
+typedef enum CC2650DK_4XS_I2CName {
+    CC2650DK_4XS_I2C0 = 0,
+    CC2650DK_4XS_I2CCOUNT
+} CC2650DK_4XS_I2CName;
 
 /*!
  *  @def    CC2650DK_4XS_CryptoName
