@@ -158,7 +158,7 @@ extern const PIN_Config BoardGpioInitTable[];
 /** ============================================================================
  *  Instance identifiers
  *  ==========================================================================*/
-#define Board_I2C                   CC2650DK_4Xs_I2C0
+#define Board_I2C                   CC2650DK_4XS_I2C0
 /* Generic SPI instance identifiers */
 #define Board_SPI0                  CC2650DK_4XS_SPI0
 /* Generic UART instance identifiers */

@@ -41,7 +41,6 @@ void keyLongPressCallback(UArg arg)
         SimpleBLEPeripheral_enqueueMsg(SBP_KEY_CHANGE_EVT, KEY_SELECT, NULL);
         return;
     }
-
     if (pressCnt++ < LONG_PRESS_CNT)
     {
         if (PIN_getInputValue(Board_KEY_SELECT) != KEY_PRESSED)

@@ -3473,16 +3473,13 @@
   <group>
     <name>Application</name>
     <group>
-      <name>Central</name>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_central\cc26xx\app\simple_central.c</name>
-      </file>
-      <file>
-        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_central\cc26xx\app\simple_central.h</name>
-      </file>
-    </group>
-    <group>
       <name>Common</name>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_flashI2C.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_i2c.c</name>
+      </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_key.c</name>
       </file>
@@ -3491,6 +3488,9 @@
       </file>
       <file>
         <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_pwm_led.c</name>
+      </file>
+      <file>
+        <name>$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\common\simple_vibra_sensor.c</name>
       </file>
     </group>
     <group>

@@ -11,16 +11,18 @@
 #include <inc/hw_ints.h>
 
 //static void Board_keyChangeHandler(UArg a0);
-static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId)
+static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId);
+static void vibraSensorCheckHandler(UArg a0);
 
-    // Memory for the GPIO module to construct a Hwi
-    Hwi_Struct callbackHwiKeys;
+// Memory for the GPIO module to construct a Hwi
+// Hwi_Struct callbackHwiKeys;
 
 // PIN configuration structure to set all KEY pins as inputs with pullups enabled
 PIN_Config vibraIOCfg[] =
-    {
-        Board_Vibra_IO | PIN_GPIO_OUTPUT_DIS | PIN_INPUT_EN | PIN_NOPULL,
-        PIN_TERMINATE};
+{
+    Board_Vibra_IO | PIN_GPIO_OUTPUT_DIS | PIN_INPUT_EN | PIN_NOPULL,
+    PIN_TERMINATE
+};
 
 PIN_State vibraSensorIO;
 PIN_Handle hVibraSensorIO;
@@ -32,8 +34,7 @@ void vibraIntControl(bool enable)
     if (enable)
     {
         PIN_setConfig(hVibraSensorIO, PIN_BM_IRQ, Board_Vibra_IO | PINCC26XX_IRQ_BOTHEDGES); // Both Edge
-        
-    }
+        }
     else
     {
         PIN_setConfig(hVibraSensorIO, PIN_BM_IRQ, Board_Vibra_IO | PINCC26XX_IRQ_DIS); // Both Edge
@@ -62,6 +63,7 @@ static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId)
 static void vibraSensorCheckHandler(UArg a0)
 {
     //TODO: reset the wake up time left and start the interrupt again.
+    //TODO: Sleep mode need to check the timer. or increase the timer period.
     vibraIntControl(true);
 }
 /*********************************************************************

@@ -2,8 +2,10 @@
 #define __SIMPLE_UART_EMULATOR_H
 
 // Choose only one from below two.
-//#define DEBUG_EMULATOR
+#if (ENABLE_UART_EMULATOR == 1)
+#define DEBUG_EMULATOR
 //#define DEBUG_NFC
+#endif
 
 #if defined (DEBUG_EMULATOR)
 #define DEBUG_BYTE(x, y)    uartEmulatorWriteByte(x, y)

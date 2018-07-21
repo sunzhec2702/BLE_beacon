@@ -23,10 +23,10 @@
 #define PLUS_OBSERVER           1
 #define BOARD_TYPE PRODUCT_BOARD
 
-#define ENABLE_UART_EMULATOR 1
+#define ENABLE_UART_EMULATOR 0
 #define ENABLE_NFC 0
 
 // LED Related Macro
-#define PWM_LED
+#define PWM_LED     1
 
 #endif
