@@ -6,12 +6,9 @@
 #include <ti/drivers/i2c/I2CCC26XX.h>
 #include <ti/sysbios/knl/Clock.h>
 
-/* -----------------------------------------------------------------------------
-*  Constants
-* ------------------------------------------------------------------------------
-*/
-#define MS_2_TICKS(ms)   (((ms) * 1000) / Clock_tickPeriod)
+#define ADDR_24C08       0x50   // 7-bit address
 #define I2C_TIMEOUT 500 //ms
+#define MS_2_TICKS(ms)   (((ms) * 1000) / Clock_tickPeriod)
 /* I2C driver interface */
 static I2C_Handle i2cHandle;
 static I2C_Params i2cParams;
@@ -175,7 +172,7 @@ bool i2cFlashOpen()
 {
     i2cHandle = I2C_open(Board_I2C, &i2cParams);
     // Initialize local variables
-    slaveAddr = 0xFF;
+    slaveAddr = ADDR_24C08;
     interface = FLASH_I2C_0;
     return i2cHandle != NULL;
 }

@@ -30,7 +30,7 @@ LeaveTargetRunning=_ 0
 xdsResetStyle=0
 xdsResetStrategy=3
 [DebugChecksum]
-Checksum=1530850321
+Checksum=2131908970
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -106,7 +106,8 @@ ITMlogFile=$PROJ_DIR$\ITM.log
 [Disassemble mode]
 mode=0
 [Breakpoints2]
-Count=0
+Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_touchRecord.c}.32.9" 0 0 1 "" 0 "" 0
+Count=1
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
