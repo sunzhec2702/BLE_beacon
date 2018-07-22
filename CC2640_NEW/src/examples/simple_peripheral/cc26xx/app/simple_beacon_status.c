@@ -4,7 +4,7 @@
 
 #define NV_STATUS_ID    0x80 // It is the start id of custom sector.
 #define BLE_MAC_ADDR    0x500012E8
-static SYS_CONFIG bleSysConfig;
+SYS_CONFIG bleSysConfig;
 
 
 static void simpleNVFactoryReset(void);
@@ -36,11 +36,11 @@ static void simpleNVFactoryReset()
     bleSysConfig.rssi = 0;
     bleSysConfig.rxGain = 0;
     bleSysConfig.txPower = 0;
-    bleSysConfig.bootupBlink = true;
+    bleSysConfig.bootUpBlink = true;
     bleSysConfig.stationIndex = 0;
     bleSysConfig.beaconIndex = 0;
-    bleSysConfig.minLeft = DEFAULT_WAKE_TIME_MINS;
-    bleSysConfig.keyPressedInScan = false;
+    bleSysConfig.wakeUpSecLeft = DEFAULT_WAKE_TIME_SECOND;
+
     bleSysConfig.onScanAdvTransPeriod = DEFAULT_SCAN_ADV_TRANS_MINS; 
     bleSysConfig.onPeriod = DEFAULT_WAKE_TIME_MINS;
     bleSysConfig.offScanPeriod = DEFAULT_OFF_SCAN_PERIOD_x00MS; // The scan interval in OFF mode, default 1 hour when power on. Once start adv, change to 5s.

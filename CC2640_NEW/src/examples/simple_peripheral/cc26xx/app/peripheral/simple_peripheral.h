@@ -81,9 +81,9 @@ extern "C"
  * Task creation function for the Simple BLE Peripheral.
  */
 extern void SimpleBLEPeripheral_createTask(void);
-extern void SimpleBLEPeripheral_keyCallback(uint8_t keyStatus);
+//extern void SimpleBLEPeripheral_keyCallback(uint8_t keyStatus);
 extern void SimpleBLEPeripheral_enqueueMsg(uint8_t event, uint8_t state, uint8_t *pData);
-
+extern void SimpleBLEPeripheral_periodTaskControl(bool enable);
 /*********************************************************************
 *********************************************************************/
 

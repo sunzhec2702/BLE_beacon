@@ -25,11 +25,13 @@ typedef struct
     uint8_t rxGain;
     uint8_t txPower;
     // Current Status of Beacon.
-    uint8_t bootupBlink;
-    uint16_t stationIndex;
+    uint8_t bootUpBlink;
+
+    // Need to update dynamically.
     uint8_t beaconIndex;
-    uint8_t minLeft;
-    bool keyPressedInScan;
+    uint16_t stationIndex;
+    uint32_t wakeUpSecLeft;
+
     // Configuration From Station ADV
     uint8_t onScanAdvTransPeriod; // ON_SCAN/ON_ADV trans interval. default 10 mins.
     uint8_t onPeriod; // Without new adv data, how long will it last in ON status. default 30 mins.

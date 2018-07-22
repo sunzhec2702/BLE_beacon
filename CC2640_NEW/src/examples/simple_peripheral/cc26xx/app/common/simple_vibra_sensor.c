@@ -1,4 +1,7 @@
 #include "simple_vibra_sensor.h"
+#include "simple_stateControl.h"
+#include "simple_peripheral.h"
+
 #include <stdbool.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/family/arm/m3/Hwi.h>
@@ -10,10 +13,12 @@
 #endif
 #include <inc/hw_ints.h>
 
+#define VIBRA_TRIGGER_THRESHOLD     5
+
 //static void Board_keyChangeHandler(UArg a0);
 static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId);
 static void vibraSensorCheckHandler(UArg a0);
-
+static uint8_t vibraTimes = 0;
 // Memory for the GPIO module to construct a Hwi
 // Hwi_Struct callbackHwiKeys;
 
@@ -29,25 +34,33 @@ PIN_Handle hVibraSensorIO;
 static Clock_Struct vibraCheckClock;
 static bool vibraTriggered = false;
 
+bool getVibraStatus()
+{
+    return vibraTriggered;
+}
+
 void vibraIntControl(bool enable)
 {
     if (enable)
     {
+        vibraTriggered = false;
         PIN_setConfig(hVibraSensorIO, PIN_BM_IRQ, Board_Vibra_IO | PINCC26XX_IRQ_BOTHEDGES); // Both Edge
-        }
+    }
     else
     {
-        PIN_setConfig(hVibraSensorIO, PIN_BM_IRQ, Board_Vibra_IO | PINCC26XX_IRQ_DIS); // Both Edge
+        PIN_setConfig(hVibraSensorIO, PIN_BM_IRQ, Board_Vibra_IO | PINCC26XX_IRQ_DIS);
+        Util_stopClock(&vibraCheckClock);
     }
 }
 
 void vibraSensorInit()
 {
+    vibraTriggered = false;
     // Initialize vibra snesor pin. Enable int after callback registered
     hVibraSensorIO = PIN_open(&vibraSensorIO, vibraIOCfg);
     PIN_registerIntCb(hVibraSensorIO, vibraSensorCallback);
     PIN_setConfig(hVibraSensorIO, PINCC26XX_BM_WAKEUP, Board_Vibra_IO | PINCC26XX_WAKEUP_POSEDGE);
-    vibraIntControl(true);
+    vibraIntControl(false);
     // Setup keycallback for keys
     Util_constructClock(&vibraCheckClock, vibraSensorCheckHandler,
                         VIBRA_SENSOR_CHECK_PERIOD, 0, false, 0);
@@ -55,9 +68,23 @@ void vibraSensorInit()
 
 static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId)
 {
-    vibraTriggered = true;
-    vibraIntControl(false);
-    Util_startClock(&vibraCheckClock);
+    if (vibraTimes < VIBRA_TRIGGER_THRESHOLD)
+    {
+        vibraTimes++;
+        return;
+    }
+    else
+    {
+        vibraTimes = 0;
+        vibraTriggered = true;
+        vibraIntControl(false);
+        Util_startClock(&vibraCheckClock);
+        if (getCurState() == BEACON_SLEEP)
+        {
+            SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, NULL);
+        }
+            
+    }
 }
 
 static void vibraSensorCheckHandler(UArg a0)

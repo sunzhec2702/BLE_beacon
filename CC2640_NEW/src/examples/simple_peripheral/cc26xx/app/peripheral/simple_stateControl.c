@@ -3,6 +3,7 @@
 #include "peripheral_observer.h"
 #include "simple_advControl.h"
 #include "simple_scanProcess.h"
+#include "simple_vibra_sensor.h"
 #include <ti/sysbios/knl/Clock.h>
 #include <Board.h>
 #include "simple_led.h"
@@ -65,6 +66,8 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
 #endif
         break;
     case BEACON_NORMAL:
+        vibraIntControl(false);
+        SimpleBLEPeripheral_periodTaskControl(true);
         if(Util_isActive(&bleStateResetClock) == true)
         {
             DEBUG_STRING("Enter Normal Direct\r\n");
@@ -82,6 +85,16 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         bleAdvControl(true);
         break;
     case BEACON_SLEEP:
+        // Stop advertising.
+        bleAdvControl(false);
+        updateRapidBit(false);
+        updateComBit(false);
+        applyAdvData();
+        // Stop Period Task Clock.
+        SimpleBLEPeripheral_periodTaskControl(false);
+        Util_stopClock(&bleStateResetClock);
+        // Enable Vibra Sensor
+        vibraIntControl(true);
         break;
     default:
         DEBUG_STRING("Wrong State\r\n");

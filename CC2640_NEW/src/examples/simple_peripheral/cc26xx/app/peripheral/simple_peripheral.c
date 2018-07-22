@@ -131,7 +131,7 @@
 #define DEFAULT_CONN_PAUSE_PERIPHERAL         6
 
 // How often to perform periodic event (in msec)
-#define SBP_PERIODIC_EVT_PERIOD               1000
+// #define SBP_PERIODIC_EVT_PERIOD               1000
 
 #ifdef FEATURE_OAD
 // The size of an OAD packet.
@@ -815,7 +815,10 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
       peripheralKeyCallback(pMsg->hdr.state);
       break;
     case SBP_BEACON_STATE_CHANGE_EVT:
-      bleChangeBeaconState(pMsg->hdr.state, *((uint16_t *)pMsg->pData));
+      if (pMsg->pData != NULL)
+        bleChangeBeaconState(pMsg->hdr.state, *((uint16_t *)pMsg->pData));
+      else
+        bleChangeBeaconState(pMsg->hdr.state, 0);
       break;
 #ifdef PLUS_OBSERVER
     case SBP_OBSERVER_STATE_CHANGE_EVT:
@@ -945,7 +948,7 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
       break;
 
     case GAPROLE_ADVERTISING:
-      Util_startClock(&periodicClock);
+      SimpleBLEPeripheral_periodTaskControl(true);
       DEBUG_STRING("Advertising\r\n");
       break;
 
@@ -1135,15 +1138,10 @@ static void SimpleBLEPeripheral_processCharValueChangeEvt(uint8_t paramID)
  */
 static void SimpleBLEPeripheral_performPeriodicTask(void)
 {
-  /*
-  uint8_t debugInfo[] = 
-  {0x55, 0x55, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00, 0x00, 0xFF, 0x03, 0xFD, 0xD4, 0x14, 0x01, 0x17, 0x00};
-  uart_send(debugInfo, sizeof(debugInfo), 0);
-  uint8_t ack[100];
-  uart_receive(ack, 14, NULL, 1000);
-  */
   updateBeaconIndex();
+  updateWakeUpSecLeft();
+  //TODO: Scan period
+  //TODO: decide whether need to add vibra sensor.
 #ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
 
@@ -1160,6 +1158,17 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
 #endif //!FEATURE_OAD_ONCHIP
 }
 
+void SimpleBLEPeripheral_periodTaskControl(bool enable)
+{
+  if (enable)
+  {
+    Util_startClock(&periodicClock);
+  }
+  else
+  {
+    Util_stopClock(&periodicClock);
+  }
+}
 
 #ifdef FEATURE_OAD
 /*********************************************************************

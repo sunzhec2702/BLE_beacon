@@ -4,5 +4,7 @@
 #include "util.h"
 
 void vibraSensorInit(void);
+bool getVibraStatus(void);
+void vibraIntControl(bool enable);
 
 #endif

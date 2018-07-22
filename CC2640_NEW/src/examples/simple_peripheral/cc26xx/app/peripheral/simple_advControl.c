@@ -141,6 +141,7 @@ void updateBeaconIndex()
 {
     advertData[ADV_INDEX_BYTE] += 1;
     applyAdvData();
+    bleSysConfig.beaconIndex = advertData[ADV_INDEX_BYTE];
 }
 
 void updateBeaconTouchInfo(uint8_t *macAddr)
