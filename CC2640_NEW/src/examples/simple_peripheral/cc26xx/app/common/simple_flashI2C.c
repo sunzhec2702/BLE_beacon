@@ -6,9 +6,9 @@
 #include <ti/drivers/i2c/I2CCC26XX.h>
 #include <ti/sysbios/knl/Clock.h>
 
-#define ADDR_24C08       0x50   // 7-bit address
+#define ADDR_24C08 0x50 // 7-bit address
 #define I2C_TIMEOUT 500 //ms
-#define MS_2_TICKS(ms)   (((ms) * 1000) / Clock_tickPeriod)
+#define MS_2_TICKS(ms) (((ms)*1000) / Clock_tickPeriod)
 /* I2C driver interface */
 static I2C_Handle i2cHandle;
 static I2C_Params i2cParams;
@@ -23,10 +23,10 @@ bool flashI2CWrite(uint8_t *data, uint8_t len)
 {
     I2C_Transaction masterTransaction;
 
-    masterTransaction.writeCount   = len;
-    masterTransaction.writeBuf     = data;
-    masterTransaction.readCount    = 0;
-    masterTransaction.readBuf      = NULL;
+    masterTransaction.writeCount = len;
+    masterTransaction.writeBuf = data;
+    masterTransaction.readCount = 0;
+    masterTransaction.readBuf = NULL;
     masterTransaction.slaveAddress = slaveAddr;
 
     return I2C_transfer(i2cHandle, &masterTransaction) == TRUE;
@@ -79,7 +79,7 @@ bool flashI2CWriteRead(uint8_t *wdata, uint8_t wlen, uint8_t *rdata, uint8_t rle
 ******************************************************************************/
 bool flashI2CReadReg(uint8_t addr, uint8_t *pBuf, uint8_t nBytes)
 {
-    return flashI2CWriteRead(&addr,1,pBuf,nBytes);
+    return flashI2CWriteRead(&addr, 1, pBuf, nBytes);
 }
 
 /*******************************************************************************
@@ -107,9 +107,10 @@ bool flashI2CWriteReg(uint8_t addr, uint8_t *pBuf, uint8_t nBytes)
     nBytes++;
 
     /* Send data */
-    return flashI2CWrite(buffer,nBytes);
+    return flashI2CWrite(buffer, nBytes);
 }
 
+/*
 bool flashI2CSelect(uint8_t newInterface, uint8_t address)
 {
     // Acquire I2C resource
@@ -151,21 +152,20 @@ void flashI2CDeselect(void)
     // Release I2C resource
     Semaphore_post(Semaphore_handle(&mutex));
 }
-
+*/
 
 void i2cFlashInit()
 {
+    /*
     Semaphore_Params semParamsMutex;
-
     // Create protection semaphore
     Semaphore_Params_init(&semParamsMutex);
     semParamsMutex.mode = Semaphore_Mode_BINARY;
     Semaphore_construct(&mutex, 1, &semParamsMutex);
-
+    */
     // Initialize I2C bus
     I2C_init();
     I2C_Params_init(&i2cParams);
-    i2cParams.bitRate = I2C_400kHz;
 }
 
 bool i2cFlashOpen()

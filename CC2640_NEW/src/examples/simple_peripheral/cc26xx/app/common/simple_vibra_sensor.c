@@ -31,7 +31,6 @@ PIN_Config vibraIOCfg[] =
 
 PIN_State vibraSensorIO;
 PIN_Handle hVibraSensorIO;
-static Clock_Struct vibraCheckClock;
 static bool vibraTriggered = false;
 
 bool getVibraStatus()
@@ -49,7 +48,6 @@ void vibraIntControl(bool enable)
     else
     {
         PIN_setConfig(hVibraSensorIO, PIN_BM_IRQ, Board_Vibra_IO | PINCC26XX_IRQ_DIS);
-        Util_stopClock(&vibraCheckClock);
     }
 }
 
@@ -60,10 +58,7 @@ void vibraSensorInit()
     hVibraSensorIO = PIN_open(&vibraSensorIO, vibraIOCfg);
     PIN_registerIntCb(hVibraSensorIO, vibraSensorCallback);
     PIN_setConfig(hVibraSensorIO, PINCC26XX_BM_WAKEUP, Board_Vibra_IO | PINCC26XX_WAKEUP_POSEDGE);
-    vibraIntControl(false);
-    // Setup keycallback for keys
-    Util_constructClock(&vibraCheckClock, vibraSensorCheckHandler,
-                        VIBRA_SENSOR_CHECK_PERIOD, 0, false, 0);
+    vibraIntControl(true);
 }
 
 static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId)
@@ -78,7 +73,6 @@ static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId)
         vibraTimes = 0;
         vibraTriggered = true;
         vibraIntControl(false);
-        Util_startClock(&vibraCheckClock);
         if (getCurState() == BEACON_SLEEP)
         {
             SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, NULL);
@@ -87,11 +81,11 @@ static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId)
     }
 }
 
+/*
 static void vibraSensorCheckHandler(UArg a0)
 {
     //TODO: reset the wake up time left and start the interrupt again.
     //TODO: Sleep mode need to check the timer. or increase the timer period.
     vibraIntControl(true);
 }
-/*********************************************************************
-*********************************************************************/
+*/
