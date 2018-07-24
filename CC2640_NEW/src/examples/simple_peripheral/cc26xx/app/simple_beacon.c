@@ -14,7 +14,8 @@ void simple_beacon_drivers_init()
     // LED related initial.
     //ledInit();
     pwmLedInit();
-    pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 3);
+    //pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 3);
+    powerControlInit();
     // Key Setup.
     keyInit();
     // Vibra Sensor

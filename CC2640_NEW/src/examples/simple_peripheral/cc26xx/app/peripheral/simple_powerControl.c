@@ -1,13 +1,40 @@
 #include "simple_powerControl.h"
 #include "simple_stateControl.h"
 #include "simple_vibra_sensor.h"
+#include "simple_led.h"
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
 
 #define HOUR_CHECK_SEC (1 * 60 * 60) // 1 Hour
 static uint32_t wakeUpSecLeft = DEFAULT_WAKE_TIME_SECOND;
 
+// Power Notify Object for wake-up callbacks
+static Power_NotifyObj powerEventNotifyObj;
+static uint32_t tempEvent = 0;
+uint32_t powerEventCallback(uint32_t eventType, uint32_t clientArg)
+{
+  tempEvent = eventType;
+  if (eventType == PowerCC26XX_ENTERING_STANDBY)
+  {
+    pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
+    return 0;
+  }
+  else if (eventType == PowerCC26XX_AWAKE_STANDBY_LATE)
+  {
+    //pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
+    return 0;
+  }
+  else
+    return 0;
+}
+
 void powerControlInit()
 {
     // TODO: maybe need to restore from SNV.
+        // Receive callback when device wakes up from Standby Mode.
+    Power_registerNotify(&powerEventNotifyObj, PowerCC26XX_ENTERING_STANDBY|PowerCC26XX_AWAKE_STANDBY_LATE, 
+                         (Power_NotifyFxn)powerEventCallback, 
+                         NULL);
 }
 
 void resetWakeUpSecLeft()
