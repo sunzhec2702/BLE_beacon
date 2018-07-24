@@ -3,7 +3,7 @@
 
 // Choose only one from below two.
 #if (ENABLE_UART_EMULATOR == 1)
-#define DEBUG_EMULATOR
+//#define DEBUG_EMULATOR
 //#define DEBUG_NFC
 #endif
 

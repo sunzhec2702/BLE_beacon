@@ -37,6 +37,8 @@ void updateCurTimeLeft(void);
 void updateAdvInterval(uint16_t advInterval);
 void updateBeaconIndex(void);
 void updateBeaconTouchInfo(uint8_t *macAddr);
+void bleAdvControl(uint8_t enable);
+void bleSetTxPower(uint8_t level);
 
 uint8_t* getAdvData(void);
 uint8_t* getResData(void);

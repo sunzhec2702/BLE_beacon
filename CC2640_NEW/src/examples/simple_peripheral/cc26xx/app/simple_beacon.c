@@ -10,6 +10,7 @@
 void simple_beacon_drivers_init()
 {
     simpleBleStatusInit();
+    bleStateInit();
     // LED related initial.
     //ledInit();
     pwmLedInit();
@@ -17,8 +18,8 @@ void simple_beacon_drivers_init()
     // Key Setup.
     keyInit();
     // Vibra Sensor
-    vibraSensorInit();
+    //vibraSensorInit();
     // Touch Record
-    touchRecordInit();
+    // touchRecordInit();
     return;
 }

@@ -337,7 +337,7 @@ static void SimpleBLEPeripheral_init(void)
   ICall_registerApp(&selfEntity, &sem);
 
   simple_beacon_drivers_init();
-  bleStateInit();
+  
 #ifdef USE_RCOSC
   RCOSC_enableCalibration();
 #endif // USE_RCOSC

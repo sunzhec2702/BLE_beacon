@@ -25,9 +25,9 @@ void hourEventCheck()
         {
             DEBUG_STRING("Vibra Triggered\r\n");
             wakeUpSecLeft += HOUR_CHECK_SEC;
-            // Re-enable the vibra sensor.
-            vibraIntControl(true);
         }
+        if (getVibraEnableStatus() == false)
+            vibraIntControl(true);
     }
 }
 

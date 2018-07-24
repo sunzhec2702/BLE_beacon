@@ -32,15 +32,22 @@ PIN_Config vibraIOCfg[] =
 PIN_State vibraSensorIO;
 PIN_Handle hVibraSensorIO;
 static bool vibraTriggered = false;
+static bool vibraEnabled = false;
 
 bool getVibraStatus()
 {
     return vibraTriggered;
 }
 
+bool getVibraEnableStatus()
+{
+    return vibraEnabled;
+}
+
 void vibraIntControl(bool enable)
 {
-    if (enable)
+    vibraEnabled = enable;
+    if (enable == true)
     {
         vibraTriggered = false;
         PIN_setConfig(hVibraSensorIO, PIN_BM_IRQ, Board_Vibra_IO | PINCC26XX_IRQ_BOTHEDGES); // Both Edge

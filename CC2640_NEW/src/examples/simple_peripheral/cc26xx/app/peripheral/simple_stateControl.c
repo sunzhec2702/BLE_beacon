@@ -5,6 +5,8 @@
 #include "simple_scanProcess.h"
 #include "simple_vibra_sensor.h"
 #include <ti/sysbios/knl/Clock.h>
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
 #include <Board.h>
 #include "simple_led.h"
 #include "util.h"
@@ -13,7 +15,6 @@
 
 static Clock_Struct bleStateResetClock;
 static BEACON_STATUS curState = BEACON_INVALID;
-static uint8_t advEnable = false;
 static uint16_t targetKeepTime = 0;
 static void bleStateResetClockCallback(UArg arg);
 
@@ -66,7 +67,6 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
 #endif
         break;
     case BEACON_NORMAL:
-        vibraIntControl(false);
         SimpleBLEPeripheral_periodTaskControl(true);
         if(Util_isActive(&bleStateResetClock) == true)
         {
@@ -105,22 +105,6 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
     curState = state;
     if (keepTime > 0)
         Util_restartClock(&bleStateResetClock, keepTime);
-}
-
-void bleAdvControl(uint8_t enable)
-{
-    advEnable = enable;
-    // Set the GAP Role Parameters
-    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t),
-                         &advEnable);
-}
-
-void bleSetTxPower(uint8_t level)
-{
-    uint8_t status = advEnable;
-    bleAdvControl(false);
-    HCI_EXT_SetTxPowerCmd(level);
-    bleAdvControl(status);
 }
 
 static void bleStateResetClockCallback(UArg arg)

@@ -1,9 +1,15 @@
 #include "simple_advControl.h"
 #include "peripheral_observer.h"
 #include "simple_stateControl.h"
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
 #include "gap.h"
+#include "util.h"
+#include "hci.h"
 
 #define DEFAULT_DISCOVERABLE_MODE             GAP_ADTYPE_FLAGS_GENERAL
+
+static uint8_t advEnable = false;
 
 // GAP - Advertisement data (max size = 31 bytes, though this is
 // best kept short to conserve power while advertisting)
@@ -156,4 +162,28 @@ void resetBeaconTouchInfo()
     advertData[TOUCH_BEACON_MAC] = 0xFF;
     advertData[TOUCH_BEACON_MAC + 1] = 0xFF;
     advertData[TOUCH_BEACON_MAC + 2] = 0xFF;
+}
+
+void bleAdvControl(uint8_t enable)
+{
+  /*
+    if (enable != advEnable)
+    {
+        (enable == true) ? 
+            Power_setDependency(PowerCC26XX_DOMAIN_RFCORE) : 
+            Power_releaseDependency(PowerCC26XX_DOMAIN_RFCORE);
+    }
+  */
+    advEnable = enable;
+    // Set the GAP Role Parameters
+    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t),
+                         &advEnable);
+}
+
+void bleSetTxPower(uint8_t level)
+{
+    uint8_t status = advEnable;
+    bleAdvControl(false);
+    HCI_EXT_SetTxPowerCmd(level);
+    bleAdvControl(status);
 }

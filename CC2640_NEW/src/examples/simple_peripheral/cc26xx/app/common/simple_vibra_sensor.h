@@ -5,6 +5,7 @@
 
 void vibraSensorInit(void);
 bool getVibraStatus(void);
+bool getVibraEnableStatus(void);
 void vibraIntControl(bool enable);
 
 #endif

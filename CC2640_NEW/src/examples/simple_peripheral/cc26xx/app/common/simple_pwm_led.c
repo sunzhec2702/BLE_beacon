@@ -5,6 +5,8 @@
 #include <inc/hw_ints.h>
 #include <Board.h>
 #include <simple_pwm.h>
+#include <ti/drivers/Power.h>
+#include <ti/drivers/power/PowerCC26XX.h>
 
 #if (BOARD_TYPE == PRODUCT_BOARD)
 #define DEFAULT_PWM_LED_PERCENT 50
@@ -54,6 +56,7 @@ static void pwmLedBlinkCallback(UArg ledIndex)
         pwmLedBlinkStruct.ledBlinkOffPeriod = 0;
         // make sure the LED is off.
         pwmLedOff();
+        //Power_releaseConstraint(PowerCC26XX_SB_DISALLOW);
         return;
     }
     switch (pwmLedBlinkStruct.ledBlinkStatus)
@@ -121,6 +124,7 @@ void pwmLedBlinkWithParameters(uint16_t ledOnPeriod, uint16_t ledOffPeriod, uint
         return;
     }
     */
+    //Power_setConstraint(PowerCC26XX_SB_DISALLOW);
     pwmLedBlinkStruct.ledBlinkStatus = Board_LED_OFF;
     pwmLedBlinkStruct.ledBlinkOnPeriod = ledOnPeriod;
     pwmLedBlinkStruct.ledBlinkOffPeriod = ledOffPeriod;
