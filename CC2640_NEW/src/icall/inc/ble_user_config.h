@@ -288,8 +288,8 @@ extern "C"
 
 #elif defined( CC2650EM_4XS )
 
-  #define RF_FE_MODE_AND_BIAS           ( RF_FE_SINGLE_ENDED_RFP |             \
-                                          RF_FE_EXT_BIAS )
+  #define RF_FE_MODE_AND_BIAS           ( RF_FE_DIFFERENTIAL |             \
+                                          RF_FE_INT_BIAS )
 
   #else // unknown device package
 
