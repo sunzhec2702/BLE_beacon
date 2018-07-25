@@ -45,6 +45,8 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
     switch (state)
     {
     case BEACON_RAPID:
+        if (curState == BEACON_COMMUNICATION)
+            return;
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
         bleAdvControl(false);
         updateRapidBit(true);
