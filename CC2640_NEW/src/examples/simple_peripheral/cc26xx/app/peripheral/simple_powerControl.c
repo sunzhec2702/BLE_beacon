@@ -32,9 +32,9 @@ void powerControlInit()
 {
     // TODO: maybe need to restore from SNV.
         // Receive callback when device wakes up from Standby Mode.
-    Power_registerNotify(&powerEventNotifyObj, PowerCC26XX_ENTERING_STANDBY|PowerCC26XX_AWAKE_STANDBY_LATE, 
-                         (Power_NotifyFxn)powerEventCallback, 
-                         NULL);
+    //Power_registerNotify(&powerEventNotifyObj, PowerCC26XX_ENTERING_STANDBY|PowerCC26XX_AWAKE_STANDBY_LATE, 
+                         //(Power_NotifyFxn)powerEventCallback, 
+                         //NULL);
 }
 
 void resetWakeUpSecLeft()
@@ -62,11 +62,11 @@ void updateWakeUpSecLeft()
 {
     wakeUpSecLeft--;
     bleSysConfig.wakeUpSecLeft = wakeUpSecLeft;
+    hourEventCheck();
     if (wakeUpSecLeft <= 0)
     {
         DEBUG_STRING("WakeUpLeft=0, Sleeping\r\n");
         resetWakeUpSecLeft();
         bleChangeBeaconState(BEACON_SLEEP, 0);
     }
-    hourEventCheck();
 }

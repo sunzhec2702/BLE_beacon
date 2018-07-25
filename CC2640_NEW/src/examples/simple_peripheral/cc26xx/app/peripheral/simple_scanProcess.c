@@ -82,7 +82,7 @@ void scanDevInfoCB(gapDeviceInfoEvent_t* devInfo)
             //static uint16_t targetKeepTime = 0;
             DEBUG_STRING("Got a pair\r\n");
             updateBeaconTouchInfo(devInfo->addr);
-            pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_RAPID_OFF_PERIOD, (2000) / (LED_BLINK_ON_PERIOD+LED_BLINK_RAPID_OFF_PERIOD));
+            pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, (2000) / (LED_BLINK_ON_PERIOD + LED_BLINK_OFF_PERIOD));
             SimpleBLEPeripheral_scanControl(false);
             //SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, (uint8_t*)&targetKeepTime);
         }

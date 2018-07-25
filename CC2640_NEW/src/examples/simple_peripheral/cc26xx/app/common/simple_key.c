@@ -5,12 +5,13 @@
 #include "util.h"
 #include "simple_peripheral.h"
 
-#define LONG_PRESS_CHK_PERIOD   50
-#define LONG_PRESS_POST_PERIOD  200
-#define LONG_PRESS_CNT      40
+#define LONG_PRESS_CHK_PERIOD   10
+#define LONG_PRESS_POST_PERIOD  800 // LED blink after press.
+#define LONG_PRESS_PERIOD       2000 // hold 2s to trigger long press
+#define LONG_PRESS_CNT          ((LONG_PRESS_PERIOD - LONG_PRESS_POST_PERIOD) / LONG_PRESS_CHK_PERIOD)
+
 static uint8_t pressCnt = 0;
 static Clock_Struct keyLongPressClock;
-
 
 static void processKeyEvent(uint8_t keyPressed)
 {
@@ -41,7 +42,7 @@ void keyLongPressCallback(UArg arg)
         SimpleBLEPeripheral_enqueueMsg(SBP_KEY_CHANGE_EVT, KEY_SELECT, NULL);
         return;
     }
-    if (pressCnt++ < LONG_PRESS_CNT)
+    if (++pressCnt < LONG_PRESS_CNT)
     {
         if (PIN_getInputValue(Board_KEY_SELECT) != KEY_PRESSED)
         {

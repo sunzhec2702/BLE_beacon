@@ -287,10 +287,13 @@ extern "C"
                                           RF_FE_EXT_BIAS)
 
 #elif defined( CC2650EM_4XS )
-
+  #if (BOARD_TYPE == PRODUCT_BOARD)
   #define RF_FE_MODE_AND_BIAS           ( RF_FE_DIFFERENTIAL |             \
                                           RF_FE_INT_BIAS )
-
+  #elif (BOARD_TYPE == DEVELOP_BOARD)
+  #define RF_FE_MODE_AND_BIAS           ( RF_FE_SINGLE_ENDED_RFP |             \
+                                          RF_FE_EXT_BIAS )
+  #endif
   #else // unknown device package
 
   #error "***BLE USER CONFIG BUILD ERROR*** Unknown package type!"
