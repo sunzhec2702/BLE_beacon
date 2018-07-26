@@ -15,6 +15,7 @@
 
 static Clock_Struct bleStateResetClock;
 static BEACON_STATUS curState = BEACON_INVALID;
+static BEACON_STATUS restoreState = BEACON_NORMAL;
 static uint16_t targetKeepTime = 0;
 static void bleStateResetClockCallback(UArg arg);
 
@@ -28,25 +29,59 @@ void bleStateInit()
     Util_constructClock(&bleStateResetClock, bleStateResetClockCallback, 0, 0, false, 0);
 }
 
-void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
+// return TRUE to do further process.
+static bool bleStateCheck(BEACON_STATUS targetState)
 {
-    DEBUG_STRING("CurStatus: ");DEBUG_NUMBER(curState);DEBUG_STRING("\r\n");
-    DEBUG_STRING("TarStatus: ");DEBUG_NUMBER(state);DEBUG_STRING("\r\n");
-    if (state == curState)
+    // Process same state situation.
+    if (curState == targetState)
     {
-        switch (state)
+        switch (targetState)
         {
         case BEACON_RAPID:
+            return true;
             break;
         default:
-            return;
+            return false;
         }
     }
-    switch (state)
+    // Process priority issue.
+    switch (targetState)
     {
     case BEACON_RAPID:
         if (curState == BEACON_COMMUNICATION)
-            return;
+            return false;
+        break;
+    case BEACON_SLEEP:
+        if (curState == BEACON_COMMUNICATION)
+        {
+            // Retry after COMMS_STATE_PERIOD.
+            restoreState = BEACON_SLEEP;
+            Util_restartClock(&bleStateResetClock, COMMS_STATE_PERIOD);
+            return false;
+        }
+        break;
+    case BEACON_COMMUNICATION:
+    case BEACON_NORMAL:
+    default:
+        return true;
+    }
+    return true;
+}
+
+void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
+{
+    DEBUG_STRING("CurStatus: ");
+    DEBUG_NUMBER(curState);
+    DEBUG_STRING("\r\n");
+    DEBUG_STRING("TarStatus: ");
+    DEBUG_NUMBER(state);
+    DEBUG_STRING("\r\n");
+    if (bleStateCheck(state) == false)
+        return;
+    switch (state)
+    {
+    case BEACON_RAPID:
+        restoreState = BEACON_NORMAL;
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
         bleAdvControl(false);
         updateRapidBit(true);
@@ -56,6 +91,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         bleAdvControl(true);
         break;
     case BEACON_COMMUNICATION:
+        restoreState = BEACON_NORMAL;
         pwmLedBlinkWithParameters(LED_BLINK_COMMUNICATE_ON_PERIOD, LED_BLINK_COMMUNICATE_OFF_PERIOD, COMMS_STATE_PERIOD / (LED_BLINK_COMMUNICATE_ON_PERIOD + LED_BLINK_COMMUNICATE_OFF_PERIOD));
         bleAdvControl(false);
         resetBeaconTouchInfo();
@@ -69,8 +105,9 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
 #endif
         break;
     case BEACON_NORMAL:
+        restoreState = BEACON_NORMAL;
         SimpleBLEPeripheral_periodTaskControl(true);
-        if(Util_isActive(&bleStateResetClock) == true)
+        if (Util_isActive(&bleStateResetClock) == true)
         {
             DEBUG_STRING("Enter Normal Direct\r\n");
             Util_stopClock(&bleStateResetClock);
@@ -87,6 +124,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         bleAdvControl(true);
         break;
     case BEACON_SLEEP:
+        restoreState = BEACON_NORMAL;
         // Stop advertising.
         bleAdvControl(false);
         updateRapidBit(false);
@@ -99,9 +137,9 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         vibraIntControl(true);
         break;
     default:
-        DEBUG_STRING("Wrong State\r\n");
         curState = BEACON_INVALID;
-        return;
+        restoreState = BEACON_NORMAL;
+        DEBUG_STRING("Wrong State\r\n");
         break;
     }
     curState = state;
@@ -112,5 +150,5 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
 static void bleStateResetClockCallback(UArg arg)
 {
     targetKeepTime = 0;
-    SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, (uint8_t*)&targetKeepTime);
+    SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, restoreState, (uint8_t *)&targetKeepTime);
 }
