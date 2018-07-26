@@ -130,10 +130,10 @@ void Board_initKeys(keysPressedCB_t appKeyCB)
   PIN_registerIntCb(hKeyPins, Board_keyCallback);
 
   #if (BOARD_TYPE == PRODUCT_BOARD)
-  PIN_setConfig(hKeyPins, PIN_BM_IRQ, Board_KEY_SELECT | PIN_IRQ_BOTHEDGES); // Rising Edge
+  PIN_setConfig(hKeyPins, PIN_BM_IRQ, Board_KEY_SELECT | PIN_IRQ_POSEDGE); // Rising Edge
   PIN_setConfig(hKeyPins, PINCC26XX_BM_WAKEUP, Board_KEY_SELECT | PINCC26XX_WAKEUP_POSEDGE);
   #elif (BOARD_TYPE == DEVELOP_BOARD)
-  PIN_setConfig(hKeyPins, PIN_BM_IRQ, Board_KEY_SELECT | PIN_IRQ_BOTHEDGES); // Falling Edge.
+  PIN_setConfig(hKeyPins, PIN_BM_IRQ, Board_KEY_SELECT | PIN_IRQ_NEGEDGE); // Falling Edge.
   PIN_setConfig(hKeyPins, PINCC26XX_BM_WAKEUP, Board_KEY_SELECT | PINCC26XX_WAKEUP_NEGEDGE);
   #endif
   

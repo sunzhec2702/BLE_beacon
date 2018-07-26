@@ -177,7 +177,7 @@ bool i2cFlashOpen()
     return i2cHandle != NULL;
 }
 
-void i2cFlashClose(void)
+void i2cFlashClose()
 {
     if (i2cHandle != NULL)
     {

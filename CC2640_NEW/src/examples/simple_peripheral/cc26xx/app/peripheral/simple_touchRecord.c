@@ -1,9 +1,10 @@
 #include "simple_touchRecord.h"
 #include "simple_flashI2C.h"
+#include "simple_led.h"
 
 #define RECORD_NUM_REG      0x00
 
-static uint8_t recordNum = 10;
+static uint8_t recordNum = 3;
 
 
 uint32_t touchRecordGetMacNum()
@@ -18,10 +19,9 @@ void touchRecordWriteNumToFlash()
         DEBUG_STRING("I2C Open failed\r\n");
         return;
     }
-    if (flashI2CWriteSingle(&recordNum) == true)
+    if (flashI2CWriteReg(0x00, &recordNum, 1) == true)
     {
         DEBUG_STRING("RecordNum Set\r\n");
-        recordNum++;
     }
     i2cFlashClose();
 }
@@ -34,12 +34,14 @@ void touchRecordReadNumFromFlash()
         DEBUG_STRING("I2C Open failed\r\n");
         return;
     }
-    if (flashI2CRead(&data) == true)
+    //
+    if (flashI2CWriteSingle(0x00) == false)
+        return;
+    if (flashI2CReadReg(0x00, &data, 1) == true)
     {
-        DEBUG_STRING("Read data ");
-        DEBUG_NUMBER(data);
-        DEBUG_STRING("\r\n");
-        recordNum++;
+        recordNum = data;
+        pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, recordNum);
+        //recordNum++;
     }
     i2cFlashClose();
 }
@@ -59,7 +61,7 @@ void touchRecordInit()
 {
     //TODO: read structure from the flash and to know the number.
     i2cFlashInit();
-    touchRecordWriteNumToFlash();
+    //touchRecordWriteNumToFlash();
     touchRecordReadNumFromFlash();
     return;
 }
