@@ -39,10 +39,10 @@ static bool bleStateCheck(BEACON_STATUS targetState)
         {
         case BEACON_RAPID:
             return true;
-            break;
         default:
-            return false;
+            break;
         }
+        return false;
     }
     // Process priority issue.
     switch (targetState)
@@ -50,7 +50,6 @@ static bool bleStateCheck(BEACON_STATUS targetState)
     case BEACON_RAPID:
         if (curState == BEACON_COMMUNICATION)
             return false;
-        break;
     case BEACON_SLEEP:
         if (curState == BEACON_COMMUNICATION)
         {
@@ -63,7 +62,7 @@ static bool bleStateCheck(BEACON_STATUS targetState)
     case BEACON_COMMUNICATION:
     case BEACON_NORMAL:
     default:
-        return true;
+        break;
     }
     return true;
 }

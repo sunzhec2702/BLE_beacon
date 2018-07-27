@@ -9,6 +9,7 @@
 #define ADDR_24C08 0x50 // 7-bit address
 #define I2C_TIMEOUT 500 //ms
 #define MS_2_TICKS(ms) (((ms)*1000) / Clock_tickPeriod)
+
 /* I2C driver interface */
 static I2C_Handle i2cHandle;
 static I2C_Params i2cParams;
@@ -55,13 +56,11 @@ bool flashI2CRead(uint8_t *data, uint8_t len)
 bool flashI2CWriteRead(uint8_t *wdata, uint8_t wlen, uint8_t *rdata, uint8_t rlen)
 {
     I2C_Transaction masterTransaction;
-
     masterTransaction.writeCount = wlen;
     masterTransaction.writeBuf = wdata;
     masterTransaction.readCount = rlen;
     masterTransaction.readBuf = rdata;
     masterTransaction.slaveAddress = slaveAddr;
-
     return I2C_transfer(i2cHandle, &masterTransaction) == TRUE;
 }
 
@@ -168,12 +167,12 @@ void i2cFlashInit()
     I2C_Params_init(&i2cParams);
 }
 
-bool i2cFlashOpen()
+bool i2cFlashOpen(uint8_t targetSlaveAddr)
 {
     i2cHandle = I2C_open(Board_I2C, &i2cParams);
-    // Initialize local variables
-    slaveAddr = ADDR_24C08;
     interface = FLASH_I2C_0;
+    // Initialize local variables
+    slaveAddr = targetSlaveAddr;
     return i2cHandle != NULL;
 }
 
@@ -183,5 +182,6 @@ void i2cFlashClose()
     {
         I2C_close(i2cHandle);
     }
+    slaveAddr = ADDR_24C08;
     i2cHandle = NULL;
 }
