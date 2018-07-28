@@ -2,10 +2,12 @@
 #include "simple_flashI2C.h"
 #include "simple_led.h"
 
+#define MAC_RECORD_UPDATE_PERIOD            
 #define RECORD_NUM_INDEX 0x00
 #define BASE_SLAVE_ADDR 0x50
 #define MAC2REG(x) (x << 2)
 #define MACADDRSIZE 4
+#define MAX_TOUCH_PEOPLE    10
 /*
  * We use 4 bytes to record the Mac Address. (A-B-C-D-E-F)
  * SUM(A+B+C)-D-E-F
@@ -16,19 +18,20 @@
  */
 
 static uint8_t recordNum = 0;
+static uint8_t latesRecords[MACADDRSIZE*MAX_TOUCH_PEOPLE];
 
 uint8_t touchRecordGetMacNum()
 {
     return recordNum;
 }
 
-void calSlaveAddrRegAddr(uint8_t macIndex, uint8_t *slaveAddr, uint8_t *regAddr)
+static void calSlaveAddrRegAddr(uint8_t macIndex, uint8_t *devAddr, uint8_t *regAddr)
 {
-    *slaveAddr = BASE_SLAVE_ADDR + (MAC2REG(macIndex) >> 8) & 0x3;
+    *devAddr = BASE_SLAVE_ADDR + ((MAC2REG(macIndex) >> 8) & 0x3);
     *regAddr = MAC2REG(macIndex) & 0xFF;
 }
 
-void macAddr2Data(uint8_t *macAddr, uint8_t *macData)
+static void macAddr2Data(uint8_t *macAddr, uint8_t *macData)
 {
     macData[MACADDRSIZE - 1] = (macAddr[5] + macAddr[4] + macAddr[3]) & 0xFF;
     macData[MACADDRSIZE - 2] = macAddr[2];
@@ -36,14 +39,17 @@ void macAddr2Data(uint8_t *macAddr, uint8_t *macData)
     macData[MACADDRSIZE - 4] = macAddr[0];
 }
 
-bool writeMac2Flash(uint8_t macIndex, uint8_t *macAddr)
+static bool writeMac2Flash(uint8_t macIndex, uint8_t *macAddr)
 {
-    uint8_t slaveAddr = 0, regAddr = 0;
+#if (BOARD_TYPE == DEVELOP_BOARD)
+    return true;
+#else
+    uint8_t devAddr = 0, regAddr = 0;
     uint8_t macData[MACADDRSIZE];
     bool ret = true;
-    calSlaveAddrRegAddr(macIndex, &slaveAddr, &regAddr);
+    calSlaveAddrRegAddr(macIndex, &devAddr, &regAddr);
     macAddr2Data(macAddr, macData);
-    ret = i2cFlashOpen(slaveAddr);
+    ret = i2cFlashOpen(devAddr);
     if (ret == false)
     {
         DEBUG_STRING("mac open i2c failed\r\n");
@@ -56,27 +62,23 @@ bool writeMac2Flash(uint8_t macIndex, uint8_t *macAddr)
     }
     i2cFlashClose();
     return ret;
+#endif
 }
 
-bool readMacFromFlash(uint8_t macIndex, uint8_t *macData)
+static bool readMacFromFlash(uint8_t macIndex, uint8_t *macData)
 {
-    uint8_t slaveAddr = 0, regAddr = 0;
+#if (BOARD_TYPE == DEVELOP_BOARD)
+    return true;
+#else
+    uint8_t devAddr = 0, regAddr = 0;
     bool ret = true;
-    calSlaveAddrRegAddr(macIndex, &slaveAddr, &regAddr);
-    ret = i2cFlashOpen(slaveAddr);
+    calSlaveAddrRegAddr(macIndex, &devAddr, &regAddr);
+    ret = i2cFlashOpen(devAddr);
     if (ret == false)
     {
         DEBUG_STRING("I2C Open failed\r\n");
         return ret;
     }
-    /*
-    if (flashI2CWriteSingle(RECORD_NUM_REG) == false)
-    {
-        DEBUG_STRING("Write Reg failed\r\n");
-        i2cFlashClose();
-        return;
-    }
-    */
     ret = flashI2CReadReg(regAddr, macData, MACADDRSIZE);
     if (ret == false)
     {
@@ -84,35 +86,42 @@ bool readMacFromFlash(uint8_t macIndex, uint8_t *macData)
     }
     i2cFlashClose();
     return ret;
+#endif
 }
 
-void touchRecordWriteNumToFlash()
+static bool writeNum2Flash(uint8_t number)
 {
-    if (i2cFlashOpen() == false)
-    {
-        DEBUG_STRING("I2C Open failed\r\n");
-        return;
-    }
-    if (flashI2CWriteReg(RECORD_NUM_REG, &recordNum, 1) == true)
-    {
-        DEBUG_STRING("RecordNum Set\r\n");
-    }
-    i2cFlashClose();
+    uint8_t data[B_ADDR_LEN] = {0, 0, 0, 0, 0, number};
+    return writeMac2Flash(RECORD_NUM_INDEX, data);
 }
 
-bool touchRecordAddMac(uint8_t macAddr)
+static uint8_t readNumFromFlash()
 {
-    recordNum++;
+    uint8_t data[MACADDRSIZE] = {0};
+    readMacFromFlash(RECORD_NUM_INDEX, data);
+    return data[MACADDRSIZE-1];
 }
 
 bool touchRecordReset()
 {
     recordNum = 0;
-    return;
+    return true;
 }
 
 void touchRecordInit()
 {
     i2cFlashInit();
+    recordNum = 0;
     return;
+}
+
+bool touchRecordAddMac(uint8_t *macAddr)
+{
+    recordNum++;
+    return writeMac2Flash(recordNum, macAddr);
+}
+
+void touchRecordSecEvent()
+{
+
 }

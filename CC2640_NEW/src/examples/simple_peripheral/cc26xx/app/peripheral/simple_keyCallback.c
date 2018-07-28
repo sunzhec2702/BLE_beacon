@@ -3,7 +3,7 @@
 #include "simple_beacon_configuration.h"
 #include "simple_led.h"
 
-void peripheralKeyCallback(uint16_t keyEvent)
+void peripheralKeyCallback(uint16_t keyEvent, uint8_t pressCnt)
 {
     switch (keyEvent)
     {

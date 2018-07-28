@@ -17,7 +17,6 @@
 
 //static void Board_keyChangeHandler(UArg a0);
 static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId);
-static void vibraSensorCheckHandler(UArg a0);
 static uint8_t vibraTimes = 0;
 // Memory for the GPIO module to construct a Hwi
 // Hwi_Struct callbackHwiKeys;
@@ -87,12 +86,3 @@ static void vibraSensorCallback(PIN_Handle hPin, PIN_Id pinId)
             
     }
 }
-
-/*
-static void vibraSensorCheckHandler(UArg a0)
-{
-    //TODO: reset the wake up time left and start the interrupt again.
-    //TODO: Sleep mode need to check the timer. or increase the timer period.
-    vibraIntControl(true);
-}
-*/

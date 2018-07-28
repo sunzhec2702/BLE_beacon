@@ -8,9 +8,9 @@
 #define HOUR_CHECK_SEC (1 * 60 * 60) // 1 Hour
 static uint32_t wakeUpSecLeft = DEFAULT_WAKE_TIME_SECOND;
 
+/*
 // Power Notify Object for wake-up callbacks
 static Power_NotifyObj powerEventNotifyObj;
-static uint32_t tempEvent = 0;
 uint32_t powerEventCallback(uint32_t eventType, uint32_t clientArg)
 {
   tempEvent = eventType;
@@ -27,7 +27,7 @@ uint32_t powerEventCallback(uint32_t eventType, uint32_t clientArg)
   else
     return 0;
 }
-
+*/
 void powerControlInit()
 {
     // TODO: maybe need to restore from SNV.

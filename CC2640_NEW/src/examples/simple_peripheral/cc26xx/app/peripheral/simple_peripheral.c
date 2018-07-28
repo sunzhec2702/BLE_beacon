@@ -89,7 +89,8 @@
 #include "simple_stateControl.h"
 #include "simple_advControl.h"
 #include "simple_keyCallback.h"
-
+#include "simple_touchRecord.h"
+#include "simple_powerControl.h"
 
 /*********************************************************************
  * CONSTANTS
@@ -328,7 +329,6 @@ void SimpleBLEPeripheral_createTask(void)
  */
 static void SimpleBLEPeripheral_init(void)
 {
-  uint8_t res = 0;
   // ******************************************************************
   // N0 STACK API CALLS CAN OCCUR BEFORE THIS CALL TO ICall_registerApp
   // ******************************************************************
@@ -812,13 +812,13 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
       SimpleBLEPeripheral_processCharValueChangeEvt(pMsg->hdr.state);
       break;
     case SBP_KEY_CHANGE_EVT:
-      peripheralKeyCallback(pMsg->hdr.state);
+      peripheralKeyCallback(pMsg->hdr.state, *((uint8_t *)pMsg->pData));
       break;
     case SBP_BEACON_STATE_CHANGE_EVT:
       if (pMsg->pData != NULL)
-        bleChangeBeaconState(pMsg->hdr.state, *((uint16_t *)pMsg->pData));
+        bleChangeBeaconState((BEACON_STATUS)pMsg->hdr.state, *((uint16_t *)pMsg->pData));
       else
-        bleChangeBeaconState(pMsg->hdr.state, 0);
+        bleChangeBeaconState((BEACON_STATUS)pMsg->hdr.state, 0);
       break;
 #ifdef PLUS_OBSERVER
     case SBP_OBSERVER_STATE_CHANGE_EVT:
@@ -1140,6 +1140,7 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
 {
   updateBeaconIndex();
   updateWakeUpSecLeft();
+  touchRecordSecEvent();
   //TODO: Scan period
   //TODO: decide whether need to add vibra sensor.
 #ifndef FEATURE_OAD_ONCHIP

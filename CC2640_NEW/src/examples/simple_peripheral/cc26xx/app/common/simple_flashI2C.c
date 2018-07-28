@@ -5,20 +5,27 @@
 #include <ti/sysbios/knl/Task.h>
 #include <ti/drivers/i2c/I2CCC26XX.h>
 #include <ti/sysbios/knl/Clock.h>
+#include "util.h"
 
 #define ADDR_24C08 0x50 // 7-bit address
-#define I2C_TIMEOUT 500 //ms
+#define I2C_TIMEOUT 100 //ms
 #define MS_2_TICKS(ms) (((ms)*1000) / Clock_tickPeriod)
 
 /* I2C driver interface */
 static I2C_Handle i2cHandle;
 static I2C_Params i2cParams;
 static Semaphore_Struct mutex;
+static Clock_Struct resourceClock;
 
 /* Module state */
-static volatile uint8_t interface;
 static volatile uint8_t slaveAddr;
 static uint8_t buffer[32];
+
+
+void resourceClockCallback(UArg arg)
+{
+    Semaphore_post(Semaphore_handle(&mutex)); 
+}
 
 bool flashI2CWrite(uint8_t *data, uint8_t len)
 {
@@ -155,13 +162,12 @@ void flashI2CDeselect(void)
 
 void i2cFlashInit()
 {
-    /*
     Semaphore_Params semParamsMutex;
     // Create protection semaphore
     Semaphore_Params_init(&semParamsMutex);
     semParamsMutex.mode = Semaphore_Mode_BINARY;
     Semaphore_construct(&mutex, 1, &semParamsMutex);
-    */
+    Util_constructClock(&resourceClock, resourceClockCallback, 0, 0, false, 0);
     // Initialize I2C bus
     I2C_init();
     I2C_Params_init(&i2cParams);
@@ -169,9 +175,14 @@ void i2cFlashInit()
 
 bool i2cFlashOpen(uint8_t targetSlaveAddr)
 {
+    if (!Semaphore_pend(Semaphore_handle(&mutex), MS_2_TICKS(I2C_TIMEOUT*2)))
+        return false;
+    if (i2cHandle != NULL)
+    {
+        DEBUG_STRING("I2C is in use\r\n");
+        return false;
+    }
     i2cHandle = I2C_open(Board_I2C, &i2cParams);
-    interface = FLASH_I2C_0;
-    // Initialize local variables
     slaveAddr = targetSlaveAddr;
     return i2cHandle != NULL;
 }
@@ -184,4 +195,5 @@ void i2cFlashClose()
     }
     slaveAddr = ADDR_24C08;
     i2cHandle = NULL;
+    Util_restartClock(&resourceClock, I2C_TIMEOUT);
 }
