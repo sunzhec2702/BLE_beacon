@@ -30,14 +30,12 @@ static uint8_t advertData[] =
   0x15, // 8
   /*Device UUID (16 Bytes)*/
   0x53, 0x4D, 0x54, // SMT 3 Bytes.
-  0x00, // 12 reserved
-  0x00, // 13 reserved.
+  0xFF, 0xFF, 0xFF, 0xFF, // 12~15 for advertise MAC.
+  0xFF, // Version(higher 4 bits for HW, lower 4 bit for SW)
 
-  0xFF, 0xFF, 0xFF, // 14, 15, 16, HW/SW version
   0xFF, // 17 Device Type 3 bytes.
 
   0xFF, //18
-
   0xFF, //19 How often the beacon will scan for the station in power on mode.
   0xFF, //20 The period which the device keeps poweron even without scanning any data.
   0xFF, //21 How often the beacon will scan for the station in power off mode.
@@ -150,11 +148,20 @@ void updateBeaconIndex()
     bleSysConfig.beaconIndex = advertData[ADV_INDEX_BYTE];
 }
 
-void updateBeaconTouchInfo(uint8_t *macAddr)
+void updateBeaconTouchData(uint8_t *macData)
 {
-    advertData[TOUCH_BEACON_MAC] = macAddr[2];
-    advertData[TOUCH_BEACON_MAC + 1] = macAddr[1];
-    advertData[TOUCH_BEACON_MAC + 2] = macAddr[0];
+    advertData[TOUCH_BEACON_MAC] = (macData[3]);
+    advertData[TOUCH_BEACON_MAC + 1] = macData[2];
+    advertData[TOUCH_BEACON_MAC + 2] = macData[1];
+    advertData[TOUCH_BEACON_MAC + 3] = macData[0];
+}
+
+void updateBeaconTouchMac(uint8_t *macAddr)
+{
+    advertData[TOUCH_BEACON_MAC] = (macAddr[5] + macAddr[4] + macAddr[3]) & 0xFF;
+    advertData[TOUCH_BEACON_MAC + 1] = macAddr[2];
+    advertData[TOUCH_BEACON_MAC + 2] = macAddr[1];
+    advertData[TOUCH_BEACON_MAC + 3] = macAddr[0];
 }
 
 void resetBeaconTouchInfo()
@@ -162,6 +169,7 @@ void resetBeaconTouchInfo()
     advertData[TOUCH_BEACON_MAC] = 0xFF;
     advertData[TOUCH_BEACON_MAC + 1] = 0xFF;
     advertData[TOUCH_BEACON_MAC + 2] = 0xFF;
+    advertData[TOUCH_BEACON_MAC + 3] = 0xFF;
 }
 
 void bleAdvControl(uint8_t enable)

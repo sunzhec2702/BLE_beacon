@@ -6,5 +6,6 @@ uint8_t touchRecordGetMacNum(void);
 bool touchRecordAddMac(uint8_t *macAddr);
 bool touchRecordReset(void);
 void touchRecordInit(void);
+void touchSecEventReset(void);
 void touchRecordSecEvent(void);
 #endif

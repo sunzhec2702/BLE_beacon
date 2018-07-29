@@ -82,15 +82,12 @@ void scanDevInfoCB(gapDeviceInfoEvent_t* devInfo)
         {
             //static uint16_t targetKeepTime = 0;
             DEBUG_STRING("Got a pair\r\n");
-            updateBeaconTouchInfo(devInfo->addr);
+            /* Got a pair process */
+            updateBeaconTouchMac(devInfo->addr);
             if (touchRecordAddMac(devInfo->addr) == true)
-            {
                 pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, (2000) / (LED_BLINK_ON_PERIOD + LED_BLINK_OFF_PERIOD));
-            }
             else
-            {
                 pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 2);
-            }
             SimpleBLEPeripheral_scanControl(false);
             //SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, (uint8_t*)&targetKeepTime);
         }

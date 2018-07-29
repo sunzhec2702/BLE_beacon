@@ -4,8 +4,8 @@
 // Adv index
 #define BEACON_START_INDEX 5
 #define BEACON_ISSMART_INDEX 9
-#define ADV_STATION_MAC_CRC_BYTE 12
-#define TOUCH_BEACON_MAC        14
+//#define ADV_STATION_MAC_CRC_BYTE 12
+#define TOUCH_BEACON_MAC        12
 
 #define BEACON_DEVICE_TYPE_INDEX 17
 #define ADV_STATION_CMD_INDEX 18
@@ -36,7 +36,8 @@ void updateComBit(uint8_t enable);
 void updateCurTimeLeft(void);
 void updateAdvInterval(uint16_t advInterval);
 void updateBeaconIndex(void);
-void updateBeaconTouchInfo(uint8_t *macAddr);
+void updateBeaconTouchData(uint8_t *macData);
+void updateBeaconTouchMac(uint8_t *macAddr);
 void resetBeaconTouchInfo(void);
 void bleAdvControl(uint8_t enable);
 void bleSetTxPower(uint8_t level);

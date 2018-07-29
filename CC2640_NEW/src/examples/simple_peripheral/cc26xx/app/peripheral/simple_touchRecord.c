@@ -2,7 +2,7 @@
 #include "simple_flashI2C.h"
 #include "simple_led.h"
 
-#define MAC_RECORD_UPDATE_PERIOD            
+#define MAC_RECORD_UPDATE_SEC_PERIOD        60
 #define RECORD_NUM_INDEX 0x00
 #define BASE_SLAVE_ADDR 0x50
 #define MAC2REG(x) (x << 2)
@@ -11,6 +11,7 @@
 /*
  * We use 4 bytes to record the Mac Address. (A-B-C-D-E-F)
  * SUM(A+B+C)-D-E-F
+ * macData[3] = SUM, macData[2~0] = D-E-F;
  * eeprom 0x00-0x03 is used to record the num.
  * 0x04~0x07,0x08~0x0B, 0x0C~0x0F.
  * the first 8 bits of the 10 bits register address are the page index.
@@ -18,7 +19,9 @@
  */
 
 static uint8_t recordNum = 0;
-static uint8_t latesRecords[MACADDRSIZE*MAX_TOUCH_PEOPLE];
+//static uint8_t latesRecords[MACADDRSIZE*MAX_TOUCH_PEOPLE];
+static uint8_t macUpdateSec = MAC_RECORD_UPDATE_SEC_PERIOD;
+static uint8_t curAdvMacIndex = 0;
 
 uint8_t touchRecordGetMacNum()
 {
@@ -117,11 +120,38 @@ void touchRecordInit()
 
 bool touchRecordAddMac(uint8_t *macAddr)
 {
+    bool ret = true;
     recordNum++;
-    return writeMac2Flash(recordNum, macAddr);
+    ret = writeMac2Flash(recordNum, macAddr);
+    if (ret == true)
+        touchSecEventReset();
+    return ret;
+}
+
+void touchSecEventReset()
+{
+    macUpdateSec = MAC_RECORD_UPDATE_SEC_PERIOD;
+    curAdvMacIndex = recordNum;
 }
 
 void touchRecordSecEvent()
 {
-
+    bool ret = true;
+    uint8_t readMacData[MACADDRSIZE];
+    if (recordNum == 0)
+        return;
+    macUpdateSec--;
+    if (macUpdateSec == 0)
+    {
+        macUpdateSec = MAC_RECORD_UPDATE_SEC_PERIOD;
+        ret = readMacFromFlash(curAdvMacIndex, readMacData);
+        if (ret == true)
+        {
+            updateBeaconTouchData(readMacData);
+            if (curAdvMacIndex == recordNum)
+                curAdvMacIndex = 1;
+            else
+                curAdvMacIndex += 1;
+        }
+    }
 }
