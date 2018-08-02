@@ -16,7 +16,7 @@ extern SYS_CONFIG bleSysConfig;
 #define DEFAULT_ADVERTISING_INTERVAL    (160 * 20) //100ms * 20 = 2s
 #define RAPID_ADVERTISING_INTERVAL      (160 * 2) //100ms * 2 = 200ms
 
-#define RAPID_STATE_PERIOD              (10000) //10s
+#define RAPID_STATE_PERIOD              (2000) //2s
 #define COMMS_STATE_PERIOD              (10000) //10s
 
 #define LED_BLINK_ON_PERIOD         (60) //ms
