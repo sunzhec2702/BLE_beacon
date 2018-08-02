@@ -9,11 +9,13 @@ void peripheralKeyCallback(uint16_t keyEvent, uint8_t pressCnt)
     switch (keyEvent)
     {
     case KEY_SELECT:
+        /*
         if (pressCnt == 3)
         {
             touchRecordReset();
             resetBeaconTouchInfo();
         }
+        */
         bleChangeBeaconState(BEACON_RAPID, RAPID_STATE_PERIOD);
         break;
     case KEY_SELECT_LONG:
