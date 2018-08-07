@@ -1,8 +1,8 @@
 #include "simple_touchRecord.h"
+#include "simple_advControl.h"
 #include "simple_flashI2C.h"
 #include "simple_led.h"
 
-#define MAC_RECORD_UPDATE_SEC_PERIOD        60
 #define RECORD_NUM_INDEX 0x00
 #define BASE_SLAVE_ADDR 0x50
 #define MAC2REG(x) (x << 2)
@@ -19,7 +19,8 @@
  */
 
 static uint8_t recordNum = 0;
-//static uint8_t latesRecords[MACADDRSIZE*MAX_TOUCH_PEOPLE];
+static uint8_t oneTimeNum = 0;
+static uint8_t oneTimeRecords[MACADDRSIZE*MAX_TOUCH_PEOPLE];
 static uint8_t macUpdateSec = MAC_RECORD_UPDATE_SEC_PERIOD;
 static uint8_t curAdvMacIndex = 0;
 
@@ -128,10 +129,32 @@ bool touchRecordAddMac(uint8_t *macAddr)
     return ret;
 }
 
+bool touchRecordOneTimeMacCheck(uint8_t *macAddr)
+{
+    for (uint8_t i = 0; i < oneTimeNum; i++)
+    {
+        if (memcmp(&oneTimeRecords[i * MACADDRSIZE], macAddr, MACADDRSIZE) == 0)
+            return false;
+    }
+    return true;
+}
+
 void touchSecEventReset()
 {
     macUpdateSec = MAC_RECORD_UPDATE_SEC_PERIOD;
     curAdvMacIndex = recordNum;
+}
+
+void touchRecordGotAPair(uint8_t *macAddr)
+{
+    if (touchRecordOneTimeMacCheck(macAddr) == false)
+        return;
+    updateBeaconTouchMac(devInfo->addr);
+    if (touchRecordAddMac(devInfo->addr) == true)
+        pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, (2000) / (LED_BLINK_ON_PERIOD + LED_BLINK_OFF_PERIOD));
+    else
+        pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 2);
+    SimpleBLEPeripheral_scanControl(false);
 }
 
 void touchRecordSecEvent()
