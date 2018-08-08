@@ -114,6 +114,11 @@ uint8_t* getResData()
     return scanRspData;
 }
 
+void updateMacCRCByte(uint8_t crcByte)
+{
+    advertData[MAC_CRC_BYTE] = crcByte;
+}
+
 void updateRapidBit(uint8_t enable)
 {
     if (enable)
@@ -151,6 +156,7 @@ void updateBeaconTouchData(uint8_t *macData)
     advertData[TOUCH_BEACON_MAC + 1] = macData[2];
     advertData[TOUCH_BEACON_MAC + 2] = macData[1];
     advertData[TOUCH_BEACON_MAC + 3] = macData[0];
+    applyAdvData();
 }
 
 void updateBeaconTouchMac(uint8_t *macAddr)
@@ -159,6 +165,7 @@ void updateBeaconTouchMac(uint8_t *macAddr)
     advertData[TOUCH_BEACON_MAC + 1] = macAddr[2];
     advertData[TOUCH_BEACON_MAC + 2] = macAddr[1];
     advertData[TOUCH_BEACON_MAC + 3] = macAddr[0];
+    applyAdvData();
 }
 
 void resetBeaconTouchInfo()
@@ -167,6 +174,7 @@ void resetBeaconTouchInfo()
     advertData[TOUCH_BEACON_MAC + 1] = 0xFF;
     advertData[TOUCH_BEACON_MAC + 2] = 0xFF;
     advertData[TOUCH_BEACON_MAC + 3] = 0xFF;
+    applyAdvData();
 }
 
 void bleAdvControl(uint8_t enable)

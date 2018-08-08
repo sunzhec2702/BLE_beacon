@@ -14,7 +14,7 @@
 #include <ti/sysbios/knl/Task.h>
 
 #define COMMS_RSSI_THRES (-40)
-#define SCAN_STATUS_TIMEOUT (200)
+#define SCAN_STATUS_TIMEOUT (1000)
 
 static Semaphore_Struct scanStateMutex;
 static bool scanningStarted = false;
@@ -51,16 +51,8 @@ void updateScanInterval(uint16_t scanDuration, uint16_t scanInterval, uint16_t s
 // We can only enable/disable from here. Or the scan will be always on as default interval.
 void scanProcessControl(uint8_t enable)
 {
-    if (!Semaphore_pend(Semaphore_handle(&scanStateMutex), MS_2_TICKS(SCAN_STATUS_TIMEOUT)))
-    {
-        enableScan = enable;
-        Semaphore_post(Semaphore_handle(&scanStateMutex));
-        SimpleBLEPeripheral_scanControl(enableScan);
-    }
-    else
-    {
-        DEBUG_STRING("scan process failed\r\n");
-    }
+    enableScan = enable;
+    SimpleBLEPeripheral_scanControl(enableScan);
 }
 
 static void SimpleBLEPeripheral_scanControl(uint8_t enable)
@@ -92,7 +84,6 @@ static void SimpleBLEPeripheral_scanControl(uint8_t enable)
             {
                 scanningStarted = false;
                 DEBUG_STRING("Scanning Off\r\n");
-                touchRecordScanDoneCallback();
             }
             else
             {
@@ -141,13 +132,9 @@ void scanDoneCB(gapDevDiscEvent_t *data)
     else
     {
         scanTimeLeft--;
-        if (!Semaphore_pend(Semaphore_handle(&scanStateMutex), MS_2_TICKS(SCAN_STATUS_TIMEOUT)))
+        if (enableScan == true)
         {
-            if (enableScan == true)
-            {
-                Semaphore_post(Semaphore_handle(&scanStateMutex));
-                SimpleBLEPeripheral_scanControl(true);
-            }
+            SimpleBLEPeripheral_scanControl(true);
         }
     }
 }
@@ -158,4 +145,17 @@ bool filterCommFlag(uint8_t *data)
         return true;
     else
         return false;
+}
+
+bool filterMacCRC(uint8_t *data, uint8_t *macAddr)
+{
+    uint8_t crc = 0x00;
+    for (uint8_t i = 0; i < B_ADDR_LEN; i++)
+    {
+        crc += macAddr[i];
+    }
+    crc += MAC_CRC_KEY;
+    if (data[MAC_CRC_BYTE] == crc)
+        return true;
+    return false;
 }

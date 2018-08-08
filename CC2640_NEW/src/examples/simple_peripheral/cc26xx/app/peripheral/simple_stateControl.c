@@ -4,9 +4,12 @@
 #include "simple_advControl.h"
 #include "simple_scanProcess.h"
 #include "simple_vibra_sensor.h"
+#include "simple_touchRecord.h"
+
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerCC26XX.h>
+
 #include <Board.h>
 #include "simple_led.h"
 #include "util.h"
@@ -61,7 +64,14 @@ static bool bleStateCheck(BEACON_STATUS targetState)
         }
         break;
     case BEACON_COMMUNICATION:
+        break;
     case BEACON_NORMAL:
+        if (curState == BEACON_COMMUNICATION)
+        {
+            touchRecordScanDoneCallback();
+            return true;
+        }
+        break;
     default:
         break;
     }
@@ -96,7 +106,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         pwmLedReset();
         pwmLedBlinkWithParameters(LED_BLINK_COMMUNICATE_ON_PERIOD, LED_BLINK_COMMUNICATE_OFF_PERIOD, COMMS_STATE_PERIOD / (LED_BLINK_COMMUNICATE_ON_PERIOD + LED_BLINK_COMMUNICATE_OFF_PERIOD));
         bleAdvControl(false);
-        resetBeaconTouchInfo();
+        //resetBeaconTouchInfo();
         updateComBit(true);
         applyAdvData();
         bleSetTxPower(MAX_TX_POWER);

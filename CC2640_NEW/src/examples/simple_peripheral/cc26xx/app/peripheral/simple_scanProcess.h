@@ -28,6 +28,7 @@ bool filterStationCRC(uint8_t *data);
 uint8_t filterCMD(uint8_t *data);
 uint8_t checkSendSource(uint8_t *data);
 bool filterCommFlag(uint8_t *data);
+bool filterMacCRC(uint8_t *data, uint8_t *macAddr);
 void scanDoneCB(gapDevDiscEvent_t *data);
 void scanProcessInit(void);
 void scanProcessControl(uint8_t enable);

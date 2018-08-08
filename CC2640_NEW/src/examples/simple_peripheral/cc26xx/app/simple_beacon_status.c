@@ -1,6 +1,6 @@
 #include "simple_beacon_status.h"
 #include "osal_snv.h"
-#include "simple_beacon_configuration.h"
+#include "simple_advControl.h"
 
 #define NV_STATUS_ID    0x80 // It is the start id of custom sector.
 #define BLE_MAC_ADDR    0x500012E8
@@ -11,10 +11,13 @@ static void simpleNVFactoryReset(void);
 
 void retriveMacAddress()
 {
+    uint8_t macCRC = 0x00;
     for (uint8_t i = 0; i < B_ADDR_LEN; i++)
     {
         bleSysConfig.macAddr[i] = *(uint8_t *)(BLE_MAC_ADDR + B_ADDR_LEN - 1 - i) & 0xFF;
+        macCRC = (macCRC + bleSysConfig.macAddr[i]) & 0xFF;
     }
+    bleSysConfig.macAddrCRC = (macCRC + 0xBF) & 0xFF;
 }
 
 void simpleBleStatusInit()
@@ -27,6 +30,7 @@ void simpleBleStatusInit()
         simpleNVFactoryReset();
     }
     retriveMacAddress();
+    updateMacCRCByte(bleSysConfig.macAddrCRC);
 }
 
 static void simpleNVFactoryReset()

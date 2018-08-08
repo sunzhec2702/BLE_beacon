@@ -21,6 +21,7 @@ typedef struct
     BLE_STATUS status;
     BLE_ROLE role;
     uint8_t macAddr[B_ADDR_LEN];
+    uint8_t macAddrCRC;
     int8_t rssi;
     uint8_t rxGain;
     uint8_t txPower;

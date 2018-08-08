@@ -6,6 +6,8 @@ extern SYS_CONFIG bleSysConfig;
 #define SBP_PERIODIC_EVT_PERIOD         1000 // 1s for release
 //#define SBP_PERIODIC_EVT_PERIOD         1 // 1ms for debug
 
+#define MAC_CRC_KEY                     0xBF
+
 // General
 #define DEFAULT_BOOT_UP_BLINK           true
 #define DEFAULT_WAKE_TIME_MINS          (1 * 60) //1 Hours

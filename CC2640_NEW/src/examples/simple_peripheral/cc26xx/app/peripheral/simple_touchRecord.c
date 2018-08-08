@@ -11,7 +11,7 @@
 #define BASE_SLAVE_ADDR 0x50
 #define MAC2REG(x) (x << 2)
 #define MACADDRSIZE 4
-#define MAX_TOUCH_PEOPLE    10
+#define MAX_TOUCH_PEOPLE    5
 #define RECORD_MUTEX_TIMEOUT    500
 
 /*
@@ -26,7 +26,7 @@
 
 static uint8_t recordNum = 0;
 static uint8_t oneTimeNum = 0;
-static uint8_t oneTimeRecords[MACADDRSIZE*MAX_TOUCH_PEOPLE];
+static uint8_t oneTimeRecords[B_ADDR_LEN * MAX_TOUCH_PEOPLE];
 static uint8_t macUpdateSec = MAC_RECORD_UPDATE_SEC_PERIOD;
 static uint8_t curAdvMacIndex = 0;
 static Semaphore_Struct oneTimeRecordMutex;
@@ -147,7 +147,7 @@ bool touchRecordOneTimeAddMac(uint8_t *macAddr)
         return false;
     if (!Semaphore_pend(Semaphore_handle(&oneTimeRecordMutex), MS_2_TICKS(RECORD_MUTEX_TIMEOUT)))
         return false;
-    memcpy(&oneTimeRecords[oneTimeNum], macAddr, MACADDRSIZE);
+    memcpy(&oneTimeRecords[oneTimeNum * B_ADDR_LEN], macAddr, B_ADDR_LEN);
     oneTimeNum++;
     Semaphore_post(Semaphore_handle(&oneTimeRecordMutex));
     return true;
@@ -161,7 +161,7 @@ void touchRecordFlushOneTimeRecord()
         return;
     for (uint8_t i = 0; i < oneTimeNum; i++)
     {
-        if (touchRecordAddMac(&oneTimeRecords[i * MACADDRSIZE]) == false)
+        if (touchRecordAddMac(&oneTimeRecords[i * B_ADDR_LEN]) == false)
         {
             DEBUG_STRING("Flush Mac failed\r\n");
         }
@@ -169,6 +169,7 @@ void touchRecordFlushOneTimeRecord()
     pwmLedReset();
     pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, oneTimeNum);
     oneTimeNum = 0;
+    memset(oneTimeRecords, 0, B_ADDR_LEN * MAX_TOUCH_PEOPLE);
     Semaphore_post(Semaphore_handle(&oneTimeRecordMutex));
 }
 
@@ -177,7 +178,7 @@ bool touchRecordOneTimeMacCheck(uint8_t *macAddr)
     return true;
     for (uint8_t i = 0; i < oneTimeNum; i++)
     {
-        if (memcmp(&oneTimeRecords[i * MACADDRSIZE], macAddr, MACADDRSIZE) == 0)
+        if (memcmp(&oneTimeRecords[i * B_ADDR_LEN], macAddr, B_ADDR_LEN) == 0)
             return false;
     }
     return true;
@@ -198,7 +199,6 @@ void touchRecordGotAPair(uint8_t *macAddr)
 {
     if (touchRecordOneTimeMacCheck(macAddr) == false)
         return;
-    updateBeaconTouchMac(macAddr);
     if (touchRecordOneTimeAddMac(macAddr) == true)
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, (ADD_MAC_SUCCESS_BLINK_PERIOD) / (LED_BLINK_ON_PERIOD + LED_BLINK_OFF_PERIOD));
     else

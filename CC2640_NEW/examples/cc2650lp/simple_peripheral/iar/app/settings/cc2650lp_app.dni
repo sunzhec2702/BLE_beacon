@@ -23,14 +23,14 @@ ShowSource=1
 Freq=10000000
 MultiCoreRunAll=1
 [XdsDriver]
-xds100v3serialNo=061UNCNF
+xds100v3serialNo=061UNFRX
 xds100v3foundProbes=061UNCNF:061UNFRX:
 CStepIntDis=_ 0
 LeaveTargetRunning=_ 0
 xdsResetStyle=0
 xdsResetStrategy=3
 [DebugChecksum]
-Checksum=2050988354
+Checksum=534844570
 [Exceptions]
 StopOnUncaught=_ 0
 StopOnThrow=_ 0
@@ -107,16 +107,14 @@ ITMlogFile=$PROJ_DIR$\ITM.log
 mode=0
 [Breakpoints2]
 Bp0=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_touchRecord.c}.170.5" 0 0 1 "" 0 "" 0
-Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_touchRecord.c}.170.5" 0 0 1 "" 0 "" 0
-Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_touchRecord.c}.195.5" 0 0 1 "" 0 "" 0
-Count=3
+Bp1=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_touchRecord.c}.202.9" 0 0 1 "" 0 "" 0
+Bp2=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_scanProcess.c}.114.13" 0 0 1 "" 0 "" 0
+Bp3=_ 1 "EMUL_CODE" "{$PROJ_DIR$\..\..\..\..\..\src\examples\simple_peripheral\cc26xx\app\peripheral\simple_peripheral.c}.847.9" 0 0 1 "" 0 "" 0
+Count=4
 [Log file]
 LoggingEnabled=_ 0
 LogFile=_ ""
 Category=_ 0
-[TermIOLog]
-LoggingEnabled=_ 0
-LogFile=_ ""
 [Aliases]
 A0=_ "/db/vtree/ademars/git_trees/avala-y/src/ti/sysbios/rom/cortexm/cc26xx/package/cfg/ti.sysbios.hal.Hwi_config.c" ""
 A1=_ "C:\Jenkins\jobs\FWGroup-DriverLib\workspace\modules\output\cc26xx_cha_2_2_ext\driverlib\sys_ctrl.c" ""
@@ -127,3 +125,6 @@ SuppressDialog=1
 Enabled=0
 [CallStackStripe]
 ShowTiming=1
+[TermIOLog]
+LoggingEnabled=_ 0
+LogFile=_ ""
