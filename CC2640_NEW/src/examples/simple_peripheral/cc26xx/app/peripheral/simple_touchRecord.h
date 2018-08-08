@@ -10,4 +10,5 @@ void touchRecordScanDoneCallback(void);
 bool touchRecordOneTimeMacCheck(uint8_t *macAddr);
 void touchSecEventReset(void);
 void touchRecordSecEvent(void);
+void touchRecordGotAPair(uint8_t *macAddr);
 #endif

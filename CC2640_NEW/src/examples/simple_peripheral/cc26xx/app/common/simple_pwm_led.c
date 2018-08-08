@@ -97,7 +97,7 @@ void pwmLedOnPercent(uint8_t percent)
 
 uint32_t calDutyValue(uint8_t percent)
 {
-    if (percent > 100 || percent < 0)
+    if (percent > 100)
     {
         return 0;
     }
