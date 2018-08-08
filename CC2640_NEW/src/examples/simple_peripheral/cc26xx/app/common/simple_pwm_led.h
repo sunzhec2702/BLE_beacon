@@ -15,5 +15,6 @@ void pwmLedOn(void);
 void pwmLedOff(void);
 void pwmLedOnPercent(uint8_t percent);
 uint32_t calDutyValue(uint8_t percent);
+void pwmLedReset(void);
 void pwmLedBlinkWithParameters(uint16_t ledOnPeriod, uint16_t ledOffPeriod, uint16_t ledBlinkTime);
 #endif

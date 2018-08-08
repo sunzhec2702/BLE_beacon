@@ -38,6 +38,7 @@ static bool bleStateCheck(BEACON_STATUS targetState)
         switch (targetState)
         {
         case BEACON_RAPID:
+        case BEACON_COMMUNICATION:
             return true;
         default:
             break;
@@ -81,6 +82,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
     {
     case BEACON_RAPID:
         restoreState = BEACON_NORMAL;
+        pwmLedReset();
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
         bleAdvControl(false);
         updateRapidBit(true);
@@ -91,6 +93,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         break;
     case BEACON_COMMUNICATION:
         restoreState = BEACON_NORMAL;
+        pwmLedReset();
         pwmLedBlinkWithParameters(LED_BLINK_COMMUNICATE_ON_PERIOD, LED_BLINK_COMMUNICATE_OFF_PERIOD, COMMS_STATE_PERIOD / (LED_BLINK_COMMUNICATE_ON_PERIOD + LED_BLINK_COMMUNICATE_OFF_PERIOD));
         bleAdvControl(false);
         resetBeaconTouchInfo();

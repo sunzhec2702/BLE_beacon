@@ -7,7 +7,7 @@
 #include "simple_peripheral.h"
 #include "simple_touchRecord.h"
 
-#define DEFAULT_SCAN_TIME   20
+#define DEFAULT_SCAN_TIME   (0xFFFF)
 #define COMMS_RSSI_THRES    (-40)
 
 static bool scanningStarted = false;
@@ -55,6 +55,7 @@ void SimpleBLEPeripheral_scanControl(uint8_t enable)
             {
                 scanningStarted = false;
                 DEBUG_STRING("Scanning Off\r\n");
+                touchRecordScanDoneCallback();
             }
             else
             {

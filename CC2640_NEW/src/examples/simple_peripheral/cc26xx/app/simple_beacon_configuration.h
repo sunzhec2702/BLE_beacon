@@ -39,5 +39,7 @@ extern SYS_CONFIG bleSysConfig;
 
 // Touch Recrod
 #define MAC_RECORD_UPDATE_SEC_PERIOD    30 // 60 sec
+#define ADD_MAC_SUCCESS_BLINK_PERIOD    2000 // 2s
+
 #endif
 

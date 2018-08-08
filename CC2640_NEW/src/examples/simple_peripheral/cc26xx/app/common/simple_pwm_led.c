@@ -50,12 +50,7 @@ static void pwmLedBlinkCallback(UArg ledIndex)
     uint16_t targetPeriod = 0;
     if (pwmLedBlinkStruct.ledBlinkTimes <= 0)
     {
-        pwmLedBlinkStruct.ledBlinkStatus = Board_LED_OFF;
-        pwmLedBlinkStruct.ledBlinkTimes = 0;
-        pwmLedBlinkStruct.ledBlinkOnPeriod = 0;
-        pwmLedBlinkStruct.ledBlinkOffPeriod = 0;
-        // make sure the LED is off.
-        pwmLedOff();
+        pwmLedReset();
         return;
     }
     switch (pwmLedBlinkStruct.ledBlinkStatus)
@@ -112,6 +107,19 @@ uint32_t calDutyValue(uint8_t percent)
         return 0;
     else
         return ((uint32_t) ~0) / 100 * percent;
+}
+
+void pwmLedReset()
+{
+    if (Util_isActive(&pwmLedBlinkClock))
+        Util_stopClock(&pwmLedBlinkClock);
+    // Reset PWM and power off the LED.
+    pwmLedBlinkStruct.ledBlinkStatus = Board_LED_OFF;
+    pwmLedBlinkStruct.ledBlinkTimes = 0;
+    pwmLedBlinkStruct.ledBlinkOnPeriod = 0;
+    pwmLedBlinkStruct.ledBlinkOffPeriod = 0;
+    // make sure the LED is off.
+    pwmLedOff();
 }
 
 void pwmLedBlinkWithParameters(uint16_t ledOnPeriod, uint16_t ledOffPeriod, uint16_t ledBlinkTime)
