@@ -30,12 +30,9 @@ static uint8_t advertData[] =
   0x15, // 8
   /*Device UUID (16 Bytes)*/
   0x53, 0x4D, 0x54, // SMT 3 Bytes.
-  0xFF, 0xFF, 0xFF, 0xFF, // 12~15 for advertise MAC.
-  0xFF, // Version(higher 4 bits for HW, lower 4 bit for SW)
+  0xFF, 0xFF, 0xFF, // 12 MAC CRC, 13 Device Type, 14 Version (higher 4 bits for HW, lower 4 bit for SW)
+  0xFF, 0xFF, 0xFF, 0xFF, // 15~18 for advertise MAC.
 
-  0xFF, // 17 Device Type 3 bytes.
-
-  0xFF, //18
   0xFF, //19 How often the beacon will scan for the station in power on mode.
   0xFF, //20 The period which the device keeps poweron even without scanning any data.
   0xFF, //21 How often the beacon will scan for the station in power off mode.
