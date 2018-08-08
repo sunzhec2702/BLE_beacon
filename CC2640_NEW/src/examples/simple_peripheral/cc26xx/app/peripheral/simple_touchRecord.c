@@ -11,7 +11,7 @@
 #define BASE_SLAVE_ADDR 0x50
 #define MAC2REG(x) (x << 2)
 #define MACADDRSIZE 4
-#define MAX_TOUCH_PEOPLE    5
+#define MAX_TOUCH_PEOPLE    10
 #define RECORD_MUTEX_TIMEOUT    500
 
 /*
