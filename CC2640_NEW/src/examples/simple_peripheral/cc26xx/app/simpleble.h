@@ -13,6 +13,9 @@
 #include "simple_uart_emulator.h"
 #include "ICall.h"
 
+#include <ti/sysbios/knl/Clock.h>
+#define MS_2_TICKS(ms) (((ms)*1000) / Clock_tickPeriod)
+
 /* Board Type 
  * DEVELOP_BOARD
  * PRODUCT_BOARD

@@ -6,6 +6,7 @@
 #include "simple_touchRecord.h"
 #include "simple_stateControl.h"
 #include "simple_powerControl.h"
+#include "simple_scanProcess.h"
 #include "Board.h"
 #include <ti/drivers/power/PowerCC26XX.h>
 
@@ -13,6 +14,8 @@ void simple_beacon_drivers_init()
 {
     simpleBleStatusInit();
     bleStateInit();
+    scanProcessInit();
+
     // LED related initial.
     //ledInit();
     pwmLedInit();

@@ -14,6 +14,5 @@ typedef enum
 BEACON_STATUS getCurState(void);
 void bleStateInit(void);
 void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime);
-void SimpleBLEPeripheral_scanControl(uint8_t enable);
 
 #endif

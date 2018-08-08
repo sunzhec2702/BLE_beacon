@@ -103,7 +103,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         updateAdvInterval(RAPID_ADVERTISING_INTERVAL);
         bleAdvControl(true);
 #ifdef PLUS_OBSERVER
-        SimpleBLEPeripheral_scanControl(true);
+        scanProcessControl(true);
 #endif
         break;
     case BEACON_NORMAL:
@@ -115,7 +115,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
             Util_stopClock(&bleStateResetClock);
         }
 #ifdef PLUS_OBSERVER
-        SimpleBLEPeripheral_scanControl(false);
+        scanProcessControl(false);
 #endif
         bleAdvControl(false);
         updateRapidBit(false);

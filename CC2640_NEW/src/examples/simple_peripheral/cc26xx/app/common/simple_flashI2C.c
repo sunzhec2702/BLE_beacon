@@ -9,7 +9,6 @@
 
 #define ADDR_24C08 0x50 // 7-bit address
 #define I2C_TIMEOUT 100 //ms
-#define MS_2_TICKS(ms) (((ms)*1000) / Clock_tickPeriod)
 
 /* I2C driver interface */
 static I2C_Handle i2cHandle;

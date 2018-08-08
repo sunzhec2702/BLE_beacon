@@ -5,7 +5,6 @@
 #include "simple_stateControl.h"
 #include <string.h>
 #include <ti/sysbios/knl/Semaphore.h>
-#include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
 
 #define RECORD_NUM_INDEX 0x00
@@ -14,7 +13,7 @@
 #define MACADDRSIZE 4
 #define MAX_TOUCH_PEOPLE    10
 #define RECORD_MUTEX_TIMEOUT    500
-#define MS_2_TICKS(ms) (((ms)*1000) / Clock_tickPeriod)
+
 /*
  * We use 4 bytes to record the Mac Address. (A-B-C-D-E-F)
  * SUM(A+B+C)-D-E-F
@@ -204,7 +203,6 @@ void touchRecordGotAPair(uint8_t *macAddr)
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, (ADD_MAC_SUCCESS_BLINK_PERIOD) / (LED_BLINK_ON_PERIOD + LED_BLINK_OFF_PERIOD));
     else
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 2);
-    // SimpleBLEPeripheral_scanControl(false);
     // Restart COMMUNICATION. last 10 seconds.
     Task_sleep(MS_2_TICKS(ADD_MAC_SUCCESS_BLINK_PERIOD));
     bleChangeBeaconState(BEACON_COMMUNICATION, COMMS_STATE_PERIOD);

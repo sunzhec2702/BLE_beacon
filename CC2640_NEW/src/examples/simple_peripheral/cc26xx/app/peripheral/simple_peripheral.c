@@ -355,19 +355,7 @@ static void SimpleBLEPeripheral_init(void)
   GAP_SetParamValue(TGAP_CONN_PAUSE_PERIPHERAL, DEFAULT_CONN_PAUSE_PERIPHERAL);
 
 #ifdef PLUS_OBSERVER
-  //Setup GAP Observer params
-  {
-    uint8_t scanRes = DEFAULT_MAX_SCAN_RES;
-    GAPRole_SetParameter(GAPROLE_MAX_SCAN_RES, sizeof(uint8_t),
-                                &scanRes);
-    // Set the GAP Characteristics
-    GAP_SetParamValue(TGAP_GEN_DISC_SCAN, DEFAULT_SCAN_DURATION); //how long to scan (in scan state)
-    GAP_SetParamValue(TGAP_LIM_DISC_SCAN, DEFAULT_SCAN_DURATION);
-    //Set scan interval
-    GAP_SetParamValue(TGAP_GEN_DISC_SCAN_INT, (DEFAULT_SCAN_INTERVAL)/(0.625)); //period for one scan channel
-    //Set scan window
-    GAP_SetParamValue(TGAP_GEN_DISC_SCAN_WIND, (DEFAULT_SCAN_WINDOW)/(0.625)); //active scanning time within scan interval
-  }
+  updateScanInterval(DEFAULT_SCAN_DURATION, DEFAULT_SCAN_INTERVAL, DEFAULT_SCAN_WINDOW);
 #endif
 
   // Setup the GAP Peripheral Role Profile

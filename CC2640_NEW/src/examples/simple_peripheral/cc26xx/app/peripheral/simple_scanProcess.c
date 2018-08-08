@@ -1,5 +1,7 @@
 #include "simple_scanProcess.h"
 #include "util.h"
+#include "gap.h"
+#include "hci.h"
 #include "simple_led.h"
 #include "simple_advControl.h"
 #include "simple_stateControl.h"
@@ -7,33 +9,69 @@
 #include "simple_peripheral.h"
 #include "simple_touchRecord.h"
 
-#define DEFAULT_SCAN_TIME   (0xFFFF)
-#define COMMS_RSSI_THRES    (-40)
+#include <ti/sysbios/knl/Semaphore.h>
+#include <ti/sysbios/knl/Clock.h>
+#include <ti/sysbios/knl/Task.h>
 
+#define COMMS_RSSI_THRES (-40)
+#define SCAN_STATUS_TIMEOUT (200)
+
+static Semaphore_Struct scanStateMutex;
 static bool scanningStarted = false;
+static bool enableScan = false;
 static uint8_t scanTimeLeft = DEFAULT_SCAN_TIME;
+static void SimpleBLEPeripheral_scanControl(uint8_t enable);
+
 
 void scanProcessInit()
 {
-    
+    Semaphore_Params semParamsMutex;
+    // Create protection semaphore
+    Semaphore_Params_init(&semParamsMutex);
+    semParamsMutex.mode = Semaphore_Mode_BINARY;
+    Semaphore_construct(&scanStateMutex, 1, &semParamsMutex);
 }
 
-void updateScanInterval()
+void updateScanInterval(uint16_t scanDuration, uint16_t scanInterval, uint16_t scanWindow)
 {
-
+    //Setup GAP Observer params
+    {
+        uint8_t scanRes = DEFAULT_MAX_SCAN_RES;
+        GAPRole_SetParameter(GAPROLE_MAX_SCAN_RES, sizeof(uint8_t), &scanRes);
+        // Set the GAP Characteristics
+        GAP_SetParamValue(TGAP_GEN_DISC_SCAN, scanDuration); //how long to scan (in scan state)
+        GAP_SetParamValue(TGAP_LIM_DISC_SCAN, scanDuration);
+        //Set scan interval
+        GAP_SetParamValue(TGAP_GEN_DISC_SCAN_INT, (scanInterval) / (0.625)); //period for one scan channel
+        //Set scan window
+        GAP_SetParamValue(TGAP_GEN_DISC_SCAN_WIND, (scanWindow) / (0.625)); //active scanning time within scan interval
+    }
 }
 
-void SimpleBLEPeripheral_scanControl(uint8_t enable)
+// We can only enable/disable from here. Or the scan will be always on as default interval.
+void scanProcessControl(uint8_t enable)
 {
+    if (!Semaphore_pend(Semaphore_handle(&scanStateMutex), MS_2_TICKS(SCAN_STATUS_TIMEOUT)))
+    {
+        enableScan = enable;
+        Semaphore_post(Semaphore_handle(&scanStateMutex));
+        SimpleBLEPeripheral_scanControl(enableScan);
+    }
+    else
+    {
+        DEBUG_STRING("scan process failed\r\n");
+    }
+}
+
+static void SimpleBLEPeripheral_scanControl(uint8_t enable)
+{
+    uint8_t status;
     if (enable)
     {
-        uint8 status;
         //Start scanning if not already scanning
         if ((scanningStarted == false))
         {
-            status = GAPObserverRole_StartDiscovery(DEFAULT_DISCOVERY_MODE,
-                                                    DEFAULT_DISCOVERY_ACTIVE_SCAN,
-                                                    DEFAULT_DISCOVERY_WHITE_LIST);
+            status = GAPObserverRole_StartDiscovery(DEFAULT_DISCOVERY_MODE, DEFAULT_DISCOVERY_ACTIVE_SCAN, DEFAULT_DISCOVERY_WHITE_LIST);
             if (status == SUCCESS)
             {
                 scanningStarted = true;
@@ -47,7 +85,6 @@ void SimpleBLEPeripheral_scanControl(uint8_t enable)
     }
     else
     {
-        uint8 status;
         if (scanningStarted == true)
         {
             status = GAPObserverRole_CancelDiscovery();
@@ -67,7 +104,7 @@ void SimpleBLEPeripheral_scanControl(uint8_t enable)
     return;
 }
 
-void scanDevInfoCB(gapDeviceInfoEvent_t* devInfo)
+void scanDevInfoCB(gapDeviceInfoEvent_t *devInfo)
 {
     DEBUG_STRING("DEVINFO_CB\r\n");
     if (devInfo->dataLen != 30)
@@ -98,13 +135,20 @@ void scanDoneCB(gapDevDiscEvent_t *data)
     scanningStarted = false;
     if (scanTimeLeft == 0)
     {
-        DEBUG_STRING("scanDone\r\n");
+        DEBUG_STRING("scanDone, should no be here\r\n");
         scanTimeLeft = DEFAULT_SCAN_TIME;
     }
     else
     {
         scanTimeLeft--;
-        SimpleBLEPeripheral_scanControl(true);
+        if (!Semaphore_pend(Semaphore_handle(&scanStateMutex), MS_2_TICKS(SCAN_STATUS_TIMEOUT)))
+        {
+            if (enableScan == true)
+            {
+                Semaphore_post(Semaphore_handle(&scanStateMutex));
+                SimpleBLEPeripheral_scanControl(true);
+            }
+        }
     }
 }
 
@@ -115,4 +159,3 @@ bool filterCommFlag(uint8_t *data)
     else
         return false;
 }
-

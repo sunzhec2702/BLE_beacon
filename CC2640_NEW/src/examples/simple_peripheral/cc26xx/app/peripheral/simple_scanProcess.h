@@ -4,6 +4,10 @@
 
 
 #ifdef PLUS_OBSERVER
+
+#define DEFAULT_SCAN_PERIOD (60000) // 1 min
+#define DEFAULT_SCAN_TIME   (DEFAULT_SCAN_PERIOD / DEFAULT_SCAN_DURATION)
+
 // Maximum number of scan responses
 #define DEFAULT_MAX_SCAN_RES                  50 //8
 // Scan duration in ms
@@ -26,7 +30,8 @@ uint8_t checkSendSource(uint8_t *data);
 bool filterCommFlag(uint8_t *data);
 void scanDoneCB(gapDevDiscEvent_t *data);
 void scanProcessInit(void);
-
+void scanProcessControl(uint8_t enable);
+void updateScanInterval(uint16_t scanDuration, uint16_t scanInterval, uint16_t scanWindow);
 #endif //#ifdef PLUS_OBSERVER
 
 #endif
