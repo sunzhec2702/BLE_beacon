@@ -13,7 +13,7 @@
 #define MACADDRSIZE 4
 #define MAX_TOUCH_PEOPLE    10
 #define RECORD_MUTEX_TIMEOUT    500
-
+#define UPDATE_ADV_AFTER_SEC    5
 /*
  * We use 4 bytes to record the Mac Address. (A-B-C-D-E-F)
  * SUM(A+B+C)-D-E-F
@@ -175,7 +175,6 @@ void touchRecordFlushOneTimeRecord()
 
 bool touchRecordOneTimeMacCheck(uint8_t *macAddr)
 {
-    return true;
     for (uint8_t i = 0; i < oneTimeNum; i++)
     {
         if (memcmp(&oneTimeRecords[i * B_ADDR_LEN], macAddr, B_ADDR_LEN) == 0)
@@ -186,7 +185,7 @@ bool touchRecordOneTimeMacCheck(uint8_t *macAddr)
 
 void touchSecEventReset()
 {
-    macUpdateSec = MAC_RECORD_UPDATE_SEC_PERIOD;
+    macUpdateSec = UPDATE_ADV_AFTER_SEC;
     curAdvMacIndex = recordNum;
 }
 
@@ -222,7 +221,7 @@ void touchRecordSecEvent()
         if (ret == true)
         {
             updateBeaconTouchData(readMacData);
-            if (curAdvMacIndex == recordNum)
+            if (curAdvMacIndex >= recordNum)
                 curAdvMacIndex = 1;
             else
                 curAdvMacIndex += 1;
