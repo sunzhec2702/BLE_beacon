@@ -23,6 +23,9 @@
 #define DEVELOP_BOARD 0
 #define PRODUCT_BOARD 1
 
+#define BLE_DEV_BEACON          0x01
+#define BLE_DEV_STATION_ADV     0x02
+
 #define PLUS_OBSERVER           1
 #define BOARD_TYPE PRODUCT_BOARD
 
