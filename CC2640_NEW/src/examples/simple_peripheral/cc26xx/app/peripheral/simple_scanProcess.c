@@ -9,6 +9,7 @@
 #include "simple_peripheral.h"
 #include "simple_touchRecord.h"
 
+#include "string.h"
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Clock.h>
 #include <ti/sysbios/knl/Task.h>
@@ -21,7 +22,6 @@ static bool scanningStarted = false;
 static bool enableScan = false;
 static uint8_t scanTimeLeft = DEFAULT_SCAN_TIME;
 static void SimpleBLEPeripheral_scanControl(uint8_t enable);
-
 
 void scanProcessInit()
 {
@@ -104,14 +104,20 @@ void scanDevInfoCB(gapDeviceInfoEvent_t *devInfo)
     DEBUG_STRING("\r\n");
     DEBUG_NUMBER(devInfo->rssi);
     DEBUG_STRING("\r\n");
-    if (filterCommFlag(devInfo->pEvtData))
+    if (filterBeacon(devInfo->pEvtData))
     {
-        DEBUG_STRING("COMMSFLAG\r\n");
-        if (devInfo->rssi > COMMS_RSSI_THRES)
+        if (filterMacCRC(devInfo->pEvtData, devInfo->addr) == true)
         {
-            //static uint16_t targetKeepTime = 0;
-            DEBUG_STRING("Got a pair\r\n");
-            touchRecordGotAPair(devInfo->addr);
+            if (filterCommFlag(devInfo->pEvtData))
+            {
+                DEBUG_STRING("COMMSFLAG\r\n");
+                if (devInfo->rssi > COMMS_RSSI_THRES)
+                {
+                    //static uint16_t targetKeepTime = 0;
+                    DEBUG_STRING("Got a pair\r\n");
+                    touchRecordGotAPair(devInfo->addr);
+                }
+            }
         }
     }
 }
@@ -137,6 +143,14 @@ void scanDoneCB(gapDevDiscEvent_t *data)
             SimpleBLEPeripheral_scanControl(true);
         }
     }
+}
+
+static uint8_t beaconData[] = {0x4C, 0x00, 0x02, 0x15};
+bool filterBeacon(uint8_t *data)
+{
+    if (memcmp(beaconData, &data[BEACON_START_INDEX], sizeof(beaconData)) == 0)
+        return true;
+    return false;
 }
 
 bool filterCommFlag(uint8_t *data)
