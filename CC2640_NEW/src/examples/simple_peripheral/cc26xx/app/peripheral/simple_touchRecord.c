@@ -199,12 +199,16 @@ void touchRecordGotAPair(uint8_t *macAddr)
     if (touchRecordOneTimeMacCheck(macAddr) == false)
         return;
     if (touchRecordOneTimeAddMac(macAddr) == true)
+    {
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, (ADD_MAC_SUCCESS_BLINK_PERIOD) / (LED_BLINK_ON_PERIOD + LED_BLINK_OFF_PERIOD));
+        // Restart COMMUNICATION. last 10 seconds.
+        Task_sleep(MS_2_TICKS(ADD_MAC_SUCCESS_BLINK_PERIOD));
+        bleChangeBeaconState(BEACON_COMMUNICATION, COMMS_STATE_PERIOD);
+    }
     else
+    {
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 2);
-    // Restart COMMUNICATION. last 10 seconds.
-    Task_sleep(MS_2_TICKS(ADD_MAC_SUCCESS_BLINK_PERIOD));
-    bleChangeBeaconState(BEACON_COMMUNICATION, COMMS_STATE_PERIOD);
+    }
 }
 
 void touchRecordSecEvent()
