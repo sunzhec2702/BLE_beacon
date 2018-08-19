@@ -8,6 +8,7 @@
 #include <ti/sysbios/knl/Task.h>
 
 #define RECORD_NUM_INDEX 0x00
+#define MAX_RECORD_NUM  (250)
 #define BASE_SLAVE_ADDR 0x50
 #define MAC2REG(x) (x << 2)
 #define MACADDRSIZE 4
@@ -52,6 +53,8 @@ static void macAddr2Data(uint8_t *macAddr, uint8_t *macData)
 
 static bool writeMac2Flash(uint8_t macIndex, uint8_t *macAddr)
 {
+    if (maxIndex > MAX_RECORD_NUM)
+        return false;
 #if (BOARD_TYPE == DEVELOP_BOARD)
     return true;
 #else
@@ -78,6 +81,8 @@ static bool writeMac2Flash(uint8_t macIndex, uint8_t *macAddr)
 
 static bool readMacFromFlash(uint8_t macIndex, uint8_t *macData)
 {
+    if (maxIndex > MAX_RECORD_NUM)
+        return false;
 #if (BOARD_TYPE == DEVELOP_BOARD)
     return true;
 #else
@@ -134,10 +139,12 @@ void touchRecordInit()
 bool touchRecordAddMac(uint8_t *macAddr)
 {
     bool ret = true;
-    recordNum++;
-    ret = writeMac2Flash(recordNum, macAddr);
+    ret = writeMac2Flash(recordNum + 1, macAddr);
     if (ret == true)
-        touchSecEventReset();
+    {
+        recordNum++;
+        touchSecEventToLatest();
+    }
     return ret;
 }
 
@@ -183,7 +190,7 @@ bool touchRecordOneTimeMacCheck(uint8_t *macAddr)
     return true;
 }
 
-void touchSecEventReset()
+void touchSecEventToLatest()
 {
     macUpdateSec = UPDATE_ADV_AFTER_SEC;
     curAdvMacIndex = recordNum;
@@ -220,15 +227,20 @@ void touchRecordSecEvent()
     macUpdateSec--;
     if (macUpdateSec == 0)
     {
+        if (curAdvMacIndex <= 0)
+        {
+            touchSecEventToLatest();
+            return;
+        }
         macUpdateSec = MAC_RECORD_UPDATE_SEC_PERIOD;
         ret = readMacFromFlash(curAdvMacIndex, readMacData);
         if (ret == true)
         {
             updateBeaconTouchData(readMacData);
-            if (curAdvMacIndex >= recordNum)
-                curAdvMacIndex = 1;
+            if (curAdvMacIndex == 1)
+                curAdvMacIndex = recordNum;
             else
-                curAdvMacIndex += 1;
+                curAdvMacIndex--;
         }
     }
 }
