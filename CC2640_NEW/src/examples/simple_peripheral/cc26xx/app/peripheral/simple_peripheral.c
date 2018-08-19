@@ -393,7 +393,7 @@ static void SimpleBLEPeripheral_init(void)
   GGS_SetParameter(GGS_DEVICE_NAME_ATT, GAP_DEVICE_NAME_LEN, attDeviceName);
   // Set advertising interval
   {
-    /*
+    /* Handled in normal status file
     updateAdvInterval(DEFAULT_ADVERTISING_INTERVAL);
 
     uint16_t advInt = DEFAULT_ADVERTISING_INTERVAL;
@@ -424,6 +424,8 @@ static void SimpleBLEPeripheral_init(void)
   // Initialize GATT attributes
   GGS_AddService(GATT_ALL_SERVICES);           // GAP
   GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
+  
+  // TODO: Connected.
   DevInfo_AddService();                        // Device Information Service
 
 #ifndef FEATURE_OAD_ONCHIP
