@@ -9,8 +9,6 @@
 #include "hci.h"
 #include "simple_beacon_configuration.h"
 
-// Debug Uart
-#include "simple_uart_emulator.h"
 #include "ICall.h"
 
 #include <ti/sysbios/knl/Clock.h>
@@ -29,8 +27,9 @@
 #define PLUS_OBSERVER           1
 #define BOARD_TYPE DEVELOP_BOARD
 
-#define ENABLE_UART_EMULATOR 0
-#define ENABLE_NFC 0
+// Debug Uart
+#define ENABLE_UART_EMULATOR    1
+#include "simple_uart_emulator.h"
 
 // LED Related Macro
 #define PWM_LED     1

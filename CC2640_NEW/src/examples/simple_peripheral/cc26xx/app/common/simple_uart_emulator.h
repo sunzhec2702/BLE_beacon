@@ -1,23 +1,26 @@
 #ifndef __SIMPLE_UART_EMULATOR_H
 #define __SIMPLE_UART_EMULATOR_H
+#include "simpleble.h"
 
-// Choose only one from below two.
-#if (ENABLE_UART_EMULATOR == 1)
-//#define DEBUG_EMULATOR
-//#define DEBUG_NFC
-#endif
+void simpleUartEmulatorCreateTask(void);
+void uartEmulatorWriteByte(uint8_t *buf, uint16_t len);
+void uartEmulatorWriteString(char *str);
+void uartEmulatorWriteNumber(uint16_t val);
 
-#if defined (DEBUG_EMULATOR)
+#define DEBUG_EMULATOR_ENABLE  1
+#define DEBUG_NFC_ENABLE       0
+
+#if ((ENABLE_UART_EMULATOR == 1) && (DEBUG_EMULATOR_ENABLE == 1))
 #define DEBUG_BYTE(x, y)    uartEmulatorWriteByte(x, y)
 #define DEBUG_STRING(x)    uartEmulatorWriteString(x)
 #define DEBUG_NUMBER(x)    uartEmulatorWriteNumber(x)
 #else
-#define DEBUG_BYTE(x, y)   {}
-#define DEBUG_STRING(x)    {}
-#define DEBUG_NUMBER(x)    {}
+//#define DEBUG_BYTE(x, y)   {}
+//#define DEBUG_STRING(x)    {}
+//#define DEBUG_NUMBER(x)    {}
 #endif
 
-#if defined (DEBUG_NFC)
+#if (ENABLE_UART_EMULATOR == 1 && DEBUG_NFC_ENABLE == 1)
 #define DEBUG_NFC_BYTE(x, y)    uartEmulatorWriteByte(x, y)
 #define DEBUG_NFC_NUMBER(x)    uartEmulatorWriteNumber(x)
 #else
@@ -25,8 +28,4 @@
 #define DEBUG_NFC_NUMBER(x)    {}
 #endif
 
-void simpleUartEmulatorCreateTask(void);
-void uartEmulatorWriteByte(uint8_t *buf, uint16_t len);
-void uartEmulatorWriteString(char *str);
-void uartEmulatorWriteNumber(uint16_t val);
 #endif

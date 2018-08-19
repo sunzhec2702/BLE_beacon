@@ -57,9 +57,8 @@ static uint8_t advertData[] =
 static uint8_t scanRspData[] =
 {
   // complete name
-  0x1,   // length of this data
+  0x14,   // length of this data
   GAP_ADTYPE_LOCAL_NAME_COMPLETE,
-  /*
   'S',
   'i',
   'm',
@@ -79,7 +78,6 @@ static uint8_t scanRspData[] =
   'r',
   'a',
   'l',
-  */
   /*
   // connection interval range
   0x05,   // length of this data
@@ -88,11 +86,11 @@ static uint8_t scanRspData[] =
   HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
   LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),   // 1s
   HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
+  */
   // Tx power level
   0x02,   // length of this data
   GAP_ADTYPE_POWER_LEVEL,
   0       // 0dBm
-  */
 };
 
 void applyAdvData()
@@ -190,7 +188,11 @@ void bleAdvControl(uint8_t enable)
   */
     advEnable = enable;
     // Set the GAP Role Parameters
+    /*
     GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t),
+                         &advEnable);
+                         */
+    GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t),
                          &advEnable);
 }
 
