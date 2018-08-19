@@ -53,7 +53,7 @@ static void macAddr2Data(uint8_t *macAddr, uint8_t *macData)
 
 static bool writeMac2Flash(uint8_t macIndex, uint8_t *macAddr)
 {
-    if (maxIndex > MAX_RECORD_NUM)
+    if (macIndex > MAX_RECORD_NUM)
         return false;
 #if (BOARD_TYPE == DEVELOP_BOARD)
     return true;
@@ -81,7 +81,7 @@ static bool writeMac2Flash(uint8_t macIndex, uint8_t *macAddr)
 
 static bool readMacFromFlash(uint8_t macIndex, uint8_t *macData)
 {
-    if (maxIndex > MAX_RECORD_NUM)
+    if (macIndex > MAX_RECORD_NUM)
         return false;
 #if (BOARD_TYPE == DEVELOP_BOARD)
     return true;

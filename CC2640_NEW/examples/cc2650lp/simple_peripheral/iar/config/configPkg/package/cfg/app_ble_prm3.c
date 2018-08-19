@@ -1724,7 +1724,7 @@ __FAR__ const xdc_SizeT ti_sysbios_knl_Task_Module_State_terminatedQ__O = offset
  *  Define absolute path prefix for this executable's
  *  configuration generated files.
  */
-xdc__META(__ASM__, "@(#)__ASM__ = C:/Users/Darren/Documents/projects/BLE_beacon_CC2640/CC2640_NEW/examples/cc2650lp/simple_peripheral/iar/config/configPkg/package/cfg/app_ble_prm3");
+xdc__META(__ASM__, "@(#)__ASM__ = F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640_NEW/examples/cc2650lp/simple_peripheral/iar/config/configPkg/package/cfg/app_ble_prm3");
 
 /*
  *  ======== __ISA__ ========

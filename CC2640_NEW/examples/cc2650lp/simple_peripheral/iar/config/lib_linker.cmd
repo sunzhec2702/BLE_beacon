@@ -3,6 +3,6 @@
  *                step by the lib_search utility
  */
 
-"C:\Users\Darren\Documents\projects\BLE_beacon_CC2640\CC2640_NEW\blelib\host\host_pcxx.a"
-"C:\Users\Darren\Documents\projects\BLE_beacon_CC2640\CC2640_NEW\blelib\ctrl\cc2640\cc2640_ctrl_pcxx.a"
-"C:\Users\Darren\Documents\projects\BLE_beacon_CC2640\CC2640_NEW\blelib\hci_tl\cc26xx\cc26xx_hci_tl_none.a"
+"F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\blelib\host\host_pcxx.a"
+"F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\blelib\ctrl\cc2640\cc2640_ctrl_pcxx.a"
+"F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\blelib\hci_tl\cc26xx\cc26xx_hci_tl_none.a"
