@@ -94,24 +94,24 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         restoreState = BEACON_NORMAL;
         pwmLedReset();
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
-        bleAdvControl(false);
+        bleAdvControl(false, false);
         updateRapidBit(true);
         applyAdvData();
         bleSetTxPower(MAX_TX_POWER);
         updateAdvInterval(RAPID_ADVERTISING_INTERVAL);
-        bleAdvControl(true);
+        bleAdvControl(true, false);
         break;
     case BEACON_COMMUNICATION:
         restoreState = BEACON_NORMAL;
         pwmLedReset();
         pwmLedBlinkWithParameters(LED_BLINK_COMMUNICATE_ON_PERIOD, LED_BLINK_COMMUNICATE_OFF_PERIOD, COMMS_STATE_PERIOD / (LED_BLINK_COMMUNICATE_ON_PERIOD + LED_BLINK_COMMUNICATE_OFF_PERIOD));
-        bleAdvControl(false);
+        bleAdvControl(false, true);
         //resetBeaconTouchInfo();
         updateComBit(true);
         applyAdvData();
         bleSetTxPower(MAX_TX_POWER);
         updateAdvInterval(RAPID_ADVERTISING_INTERVAL);
-        bleAdvControl(true);
+        bleAdvControl(true, true);
 #ifdef PLUS_OBSERVER
         scanProcessControl(true);
 #endif
@@ -127,18 +127,19 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
 #ifdef PLUS_OBSERVER
         scanProcessControl(false);
 #endif
-        bleAdvControl(false);
+        bleAdvControl(false, false);
         updateRapidBit(false);
         updateComBit(false);
         applyAdvData();
+        //applyResData();
         bleSetTxPower(DEF_TX_POWER);
         updateAdvInterval(DEFAULT_ADVERTISING_INTERVAL);
-        bleAdvControl(true);
+        bleAdvControl(true, false);
         break;
     case BEACON_SLEEP:
         restoreState = BEACON_NORMAL;
         // Stop advertising.
-        bleAdvControl(false);
+        bleAdvControl(false, false);
         updateRapidBit(false);
         updateComBit(false);
         applyAdvData();

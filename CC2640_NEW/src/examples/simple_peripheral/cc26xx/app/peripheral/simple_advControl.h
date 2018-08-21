@@ -45,7 +45,7 @@ void updateBeaconIndex(void);
 void updateBeaconTouchData(uint8_t *macData);
 void updateBeaconTouchMac(uint8_t *macAddr);
 void resetBeaconTouchInfo(void);
-void bleAdvControl(uint8_t enable);
+void bleAdvControl(uint8_t enable, bool connectable);
 void bleSetTxPower(uint8_t level);
 
 uint8_t* getAdvData(void);

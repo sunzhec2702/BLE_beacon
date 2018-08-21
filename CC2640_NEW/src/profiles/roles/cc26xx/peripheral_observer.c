@@ -189,8 +189,8 @@ static uint8_t  gapRole_IRK[KEYLEN];
 static uint8_t  gapRole_SRK[KEYLEN];
 static uint32_t gapRole_signCounter;
 static uint8_t  gapRole_bdAddr[B_ADDR_LEN];
-static uint8_t  gapRole_AdvEnabled = TRUE;
-static uint8_t  gapRole_AdvNonConnEnabled = TRUE;
+static uint8_t  gapRole_AdvEnabled = FALSE;
+static uint8_t  gapRole_AdvNonConnEnabled = FALSE;
 static uint16_t gapRole_AdvertOffTime = DEFAULT_ADVERT_OFF_TIME;
 static uint8_t  gapRole_AdvertDataLen = 3;
 

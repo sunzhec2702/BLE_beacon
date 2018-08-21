@@ -176,30 +176,24 @@ void resetBeaconTouchInfo()
     applyAdvData();
 }
 
-void bleAdvControl(uint8_t enable)
+void bleAdvControl(uint8_t enable, bool connectable)
 {
-  /*
-    if (enable != advEnable)
-    {
-        (enable == true) ? 
-            Power_setDependency(PowerCC26XX_DOMAIN_RFCORE) : 
-            Power_releaseDependency(PowerCC26XX_DOMAIN_RFCORE);
-    }
-  */
+    uint8_t disableOther = false;
     advEnable = enable;
     // Set the GAP Role Parameters
-    /*
-    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t),
-                         &advEnable);
-                         */
-    GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t),
-                         &advEnable);
+    if (connectable)
+    {
+        GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &disableOther);
+        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &advEnable);
+    }
+    else
+    {
+        GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &disableOther);
+        GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &advEnable);
+    }
 }
 
 void bleSetTxPower(uint8_t level)
 {
-    uint8_t status = advEnable;
-    bleAdvControl(false);
     HCI_EXT_SetTxPowerCmd(level);
-    bleAdvControl(status);
 }
