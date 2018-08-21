@@ -906,10 +906,14 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
 #ifdef PLUS_BROADCASTER
   static bool firstConnFlag = false;
 #endif // PLUS_BROADCASTER
+  DEBUG_STRING("New State: ");
+  DEBUG_NUMBER(newState);
+  DEBUG_STRING("\r\n");
   switch ( newState )
   {
     case GAPROLE_STARTED:
       {
+        DEBUG_STRING("Started\r\n");
         uint8_t ownAddress[B_ADDR_LEN];
         uint8_t systemId[DEVINFO_SYSTEM_ID_LEN];
 
@@ -938,7 +942,6 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
       break;
 
     case GAPROLE_ADVERTISING:
-      SimpleBLEPeripheral_periodTaskControl(true);
       DEBUG_STRING("Advertising\r\n");
       break;
 
@@ -972,6 +975,7 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
 
     case GAPROLE_CONNECTED:
       {
+        DEBUG_STRING("Device Connected\r\n");
         linkDBInfo_t linkInfo;
         uint8_t numActive = 0;
 
