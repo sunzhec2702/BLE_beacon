@@ -660,6 +660,13 @@ static bStatus_t devInfo_ReadAttrCB( uint16 connHandle, gattAttribute_t *pAttr,
   // If the value offset of the Read Blob Request is greater than the
   // length of the attribute value, an Error Response shall be sent with
   // the error code Invalid Offset.
+  DEBUG_STRING("Read UUID: ");
+  DEBUG_NUMBER(uuid);
+  DEBUG_STRING("; pLen: ");
+  DEBUG_NUMBER(*pLen);
+  DEBUG_STRING("; offset: ");
+  DEBUG_NUMBER(offset);
+  DEBUG_STRING("\r\n");
   switch (uuid)
   {
     case SYSTEM_ID_UUID:

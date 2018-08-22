@@ -1,4 +1,5 @@
-#include "simple_profileControl.h"
+#include "simple_connectControl.h"
+#include "simple_gatt_profile.h"
 
 // TODO: add a disconnect clock.
 bool beaconConnected = false;

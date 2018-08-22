@@ -69,7 +69,7 @@
  * CONSTANTS
  */
 
-#define SERVAPP_NUM_ATTR_SUPPORTED        17
+#define SERVAPP_NUM_ATTR_SUPPORTED        18
 
 /*********************************************************************
  * TYPEDEFS
@@ -396,7 +396,7 @@ bStatus_t SimpleProfile_AddService( uint32 services )
                                                             linkDBNumConns );
   if ( simpleProfileChar5Config == NULL )
   {     
-    iCall_free(simpleProfileChar4Config);
+    ICall_free(simpleProfileChar4Config);
     return ( bleMemAllocError );
   }
 
@@ -517,7 +517,7 @@ bStatus_t SimpleProfile_SetParameter( uint8 param, uint8 len, void *value )
       {
         VOID memcpy( simpleProfileChar5, value, SIMPLEPROFILE_CHAR5_LEN );
         // See if Notification has been enabled
-        GATTServApp_ProcessCharCfg( simpleProfileChar5Config, &simpleProfileChar5, FALSE,
+        GATTServApp_ProcessCharCfg( simpleProfileChar5Config, simpleProfileChar5, FALSE,
                                     simpleProfileAttrTbl, GATT_NUM_ATTRS( simpleProfileAttrTbl ),
                                     INVALID_TASK_ID, simpleProfile_ReadAttrCB );
       }

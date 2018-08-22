@@ -7,7 +7,7 @@
 #include "simple_stateControl.h"
 #include "simple_powerControl.h"
 #include "simple_scanProcess.h"
-#include "simple_profileControl.h"
+#include "simple_connectControl.h"
 
 #include "Board.h"
 #include <ti/drivers/power/PowerCC26XX.h>
