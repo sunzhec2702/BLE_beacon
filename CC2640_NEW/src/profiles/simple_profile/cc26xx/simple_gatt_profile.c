@@ -137,59 +137,49 @@ static CONST gattAttrType_t simpleProfileService = { ATT_BT_UUID_SIZE, simplePro
 
 
 // Simple Profile Characteristic 1 Properties
-static uint8 simpleProfileChar1Props = GATT_PROP_READ | GATT_PROP_WRITE;
-
+static uint8 simpleProfileChar1Props = GATT_PROP_READ;
 // Characteristic 1 Value
 static uint8 simpleProfileChar1 = 0;
-
 // Simple Profile Characteristic 1 User Description
-static uint8 simpleProfileChar1UserDesp[17] = "Characteristic 1";
+static uint8 simpleProfileChar1UserDesp[17] = "TouchRecordNum";
 
 
 // Simple Profile Characteristic 2 Properties
-static uint8 simpleProfileChar2Props = GATT_PROP_READ;
-
+static uint8 simpleProfileChar2Props = GATT_PROP_WRITE | GATT_PROP_READ;
 // Characteristic 2 Value
 static uint8 simpleProfileChar2 = 0;
-
 // Simple Profile Characteristic 2 User Description
-static uint8 simpleProfileChar2UserDesp[17] = "Characteristic 2";
+static uint8 simpleProfileChar2UserDesp[17] = "RecordQueryInx";
 
 
 // Simple Profile Characteristic 3 Properties
 static uint8 simpleProfileChar3Props = GATT_PROP_WRITE;
-
 // Characteristic 3 Value
 static uint8 simpleProfileChar3 = 0;
-
 // Simple Profile Characteristic 3 User Description
-static uint8 simpleProfileChar3UserDesp[17] = "Characteristic 3";
+static uint8 simpleProfileChar3UserDesp[17] = "TestWriteChar3";
 
 
 // Simple Profile Characteristic 4 Properties
 static uint8 simpleProfileChar4Props = GATT_PROP_NOTIFY;
-
 // Characteristic 4 Value
 static uint8 simpleProfileChar4 = 0;
-
 // Simple Profile Characteristic 4 Configuration Each client has its own
 // instantiation of the Client Characteristic Configuration. Reads of the
 // Client Characteristic Configuration only shows the configuration for
 // that client and writes only affect the configuration of that client.
 static gattCharCfg_t *simpleProfileChar4Config;
-                                        
 // Simple Profile Characteristic 4 User Description
-static uint8 simpleProfileChar4UserDesp[17] = "Characteristic 4";
+static uint8 simpleProfileChar4UserDesp[17] = "TestReadChar4";
 
 
 // Simple Profile Characteristic 5 Properties
-static uint8 simpleProfileChar5Props = GATT_PROP_READ;
-
+static uint8 simpleProfileChar5Props = GATT_PROP_READ | GATT_PROP_INDICATE;
 // Characteristic 5 Value
-static uint8 simpleProfileChar5[SIMPLEPROFILE_CHAR5_LEN] = { 0, 0, 0, 0, 0 };
-
+static uint8 simpleProfileChar5[SIMPLEPROFILE_CHAR5_LEN] = {0, 0, 0, 0};
+static gattCharCfg_t *simpleProfileChar5Config;
 // Simple Profile Characteristic 5 User Description
-static uint8 simpleProfileChar5UserDesp[17] = "Characteristic 5";
+static uint8 simpleProfileChar5UserDesp[17] = "QueriedMacData";
 
 /*********************************************************************
  * Profile Attributes - Table
@@ -216,7 +206,7 @@ static gattAttribute_t simpleProfileAttrTbl[SERVAPP_NUM_ATTR_SUPPORTED] =
       // Characteristic Value 1
       { 
         { ATT_BT_UUID_SIZE, simpleProfilechar1UUID },
-        GATT_PERMIT_READ | GATT_PERMIT_WRITE, 
+        GATT_PERMIT_READ, 
         0, 
         &simpleProfileChar1 
       },
@@ -240,7 +230,7 @@ static gattAttribute_t simpleProfileAttrTbl[SERVAPP_NUM_ATTR_SUPPORTED] =
       // Characteristic Value 2
       { 
         { ATT_BT_UUID_SIZE, simpleProfilechar2UUID },
-        GATT_PERMIT_READ, 
+        GATT_PERMIT_READ | GATT_PERMIT_WRITE, 
         0, 
         &simpleProfileChar2 
       },
@@ -320,9 +310,17 @@ static gattAttribute_t simpleProfileAttrTbl[SERVAPP_NUM_ATTR_SUPPORTED] =
       // Characteristic Value 5
       { 
         { ATT_BT_UUID_SIZE, simpleProfilechar5UUID },
-        GATT_PERMIT_AUTHEN_READ, 
+        GATT_PERMIT_READ, 
         0, 
         simpleProfileChar5 
+      },
+
+      // Characteristic 5 configuration
+      { 
+        { ATT_BT_UUID_SIZE, clientCharCfgUUID },
+        GATT_PERMIT_READ | GATT_PERMIT_WRITE, 
+        0, 
+        (uint8 *)&simpleProfileChar5Config 
       },
 
       // Characteristic 5 User Description
@@ -392,10 +390,20 @@ bStatus_t SimpleProfile_AddService( uint32 services )
   {     
     return ( bleMemAllocError );
   }
-  
+
+  // Allocate Client Characteristic Configuration table
+  simpleProfileChar5Config = (gattCharCfg_t *)ICall_malloc( sizeof(gattCharCfg_t) *
+                                                            linkDBNumConns );
+  if ( simpleProfileChar5Config == NULL )
+  {     
+    iCall_free(simpleProfileChar4Config);
+    return ( bleMemAllocError );
+  }
+
   // Initialize Client Characteristic Configuration attributes
   GATTServApp_InitCharCfg( INVALID_CONNHANDLE, simpleProfileChar4Config );
-  
+  GATTServApp_InitCharCfg( INVALID_CONNHANDLE, simpleProfileChar5Config );
+
   if ( services & SIMPLEPROFILE_SERVICE )
   {
     // Register GATT attribute list and CBs with GATT Server App
@@ -508,6 +516,10 @@ bStatus_t SimpleProfile_SetParameter( uint8 param, uint8 len, void *value )
       if ( len == SIMPLEPROFILE_CHAR5_LEN ) 
       {
         VOID memcpy( simpleProfileChar5, value, SIMPLEPROFILE_CHAR5_LEN );
+        // See if Notification has been enabled
+        GATTServApp_ProcessCharCfg( simpleProfileChar5Config, &simpleProfileChar5, FALSE,
+                                    simpleProfileAttrTbl, GATT_NUM_ATTRS( simpleProfileAttrTbl ),
+                                    INVALID_TASK_ID, simpleProfile_ReadAttrCB );
       }
       else
       {
@@ -618,12 +630,10 @@ static bStatus_t simpleProfile_ReadAttrCB(uint16_t connHandle,
         *pLen = 1;
         pValue[0] = *pAttr->pValue;
         break;
-
       case SIMPLEPROFILE_CHAR5_UUID:
         *pLen = SIMPLEPROFILE_CHAR5_LEN;
         VOID memcpy( pValue, pAttr->pValue, SIMPLEPROFILE_CHAR5_LEN );
         break;
-        
       default:
         // Should never get here! (characteristics 3 and 4 do not have read permissions)
         *pLen = 0;

@@ -274,13 +274,10 @@ static gapBondCBs_t simpleBLEPeripheral_BondMgrCBs =
   NULL  // Pairing / Bonding state Callback (not used by application)
 };
 
-// Simple GATT Profile Callbacks
-#ifndef FEATURE_OAD_ONCHIP
 static simpleProfileCBs_t SimpleBLEPeripheral_simpleProfileCBs =
 {
   SimpleBLEPeripheral_charValueChangeCB // Characteristic value change callback
 };
-#endif //!FEATURE_OAD_ONCHIP
 
 #ifdef FEATURE_OAD
 static oadTargetCBs_t simpleBLEPeripheral_oadCBs =
@@ -421,25 +418,29 @@ static void SimpleBLEPeripheral_init(void)
     GAPBondMgr_SetParameter(GAPBOND_BONDING_ENABLED, sizeof(uint8_t), &bonding);
   }
 
+  /*
+  // Enable this will receive notify and indicate event.
+  // Initialize GATT Client.
+  VOID GATT_InitClient();
+  // Register to receive incoming ATT Indications/Notifications.
+  GATT_RegisterForInd(selfEntity);
+  */
+
   // Initialize GATT attributes
   GGS_AddService(GATT_ALL_SERVICES);           // GAP
   GATTServApp_AddService(GATT_ALL_SERVICES);   // GATT attributes
   
-  // TODO: Connected.
+  // TODO: Add all the services.
   DevInfo_AddService();                        // Device Information Service
-
-#ifndef FEATURE_OAD_ONCHIP
   SimpleProfile_AddService(GATT_ALL_SERVICES); // Simple GATT Profile
-#endif //!FEATURE_OAD_ONCHIP
 
-#ifndef FEATURE_OAD_ONCHIP
   // Setup the SimpleProfile Characteristic Values
   {
     uint8_t charValue1 = 1;
     uint8_t charValue2 = 2;
     uint8_t charValue3 = 3;
     uint8_t charValue4 = 4;
-    uint8_t charValue5[SIMPLEPROFILE_CHAR5_LEN] = { 1, 2, 3, 4, 5 };
+    uint8_t charValue5[SIMPLEPROFILE_CHAR5_LEN] = {0xFF, 0xFF, 0xFF, 0xFF};
 
     SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR1, sizeof(uint8_t),
                                &charValue1);
@@ -452,10 +453,10 @@ static void SimpleBLEPeripheral_init(void)
     SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR5, SIMPLEPROFILE_CHAR5_LEN,
                                charValue5);
   }
-
   // Register callback with SimpleGATTprofile
   SimpleProfile_RegisterAppCBs(&SimpleBLEPeripheral_simpleProfileCBs);
-#endif //!FEATURE_OAD_ONCHIP
+
+
   // Start the Device
   VOID GAPRole_StartDevice(&SimpleBLEPeripheral_gapRoleCBs);
   // Start Bond Manager
@@ -799,7 +800,7 @@ static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg)
                                                 hdr.state);
       break;
     case SBP_CHAR_CHANGE_EVT:
-      SimpleBLEPeripheral_processCharValueChangeEvt(pMsg->hdr.state);
+      profileCharValueChangeCB(pMsg->hdr.state);
       break;
     case SBP_KEY_CHANGE_EVT:
       peripheralKeyCallback(pMsg->hdr.state, *((uint8_t *)pMsg->pData));
@@ -1082,42 +1083,6 @@ static void SimpleBLEPeripheral_charValueChangeCB(uint8_t paramID)
 #endif //!FEATURE_OAD_ONCHIP
 
 /*********************************************************************
- * @fn      SimpleBLEPeripheral_processCharValueChangeEvt
- *
- * @brief   Process a pending Simple Profile characteristic value change
- *          event.
- *
- * @param   paramID - parameter ID of the value that was changed.
- *
- * @return  None.
- */
-static void SimpleBLEPeripheral_processCharValueChangeEvt(uint8_t paramID)
-{
-#ifndef FEATURE_OAD_ONCHIP
-  uint8_t newValue;
-
-  switch(paramID)
-  {
-    case SIMPLEPROFILE_CHAR1:
-      SimpleProfile_GetParameter(SIMPLEPROFILE_CHAR1, &newValue);
-
-      Display_print1(dispHandle, 4, 0, "Char 1: %d", (uint16_t)newValue);
-      break;
-
-    case SIMPLEPROFILE_CHAR3:
-      SimpleProfile_GetParameter(SIMPLEPROFILE_CHAR3, &newValue);
-
-      Display_print1(dispHandle, 4, 0, "Char 3: %d", (uint16_t)newValue);
-      break;
-
-    default:
-      // should not reach here!
-      break;
-  }
-#endif //!FEATURE_OAD_ONCHIP
-}
-
-/*********************************************************************
  * @fn      SimpleBLEPeripheral_performPeriodicTask
  *
  * @brief   Perform a periodic application task. This function gets called
@@ -1136,8 +1101,6 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
   updateWakeUpSecLeft();
   touchRecordSecEvent();
   //TODO: Scan period
-  //TODO: decide whether need to add vibra sensor.
-#ifndef FEATURE_OAD_ONCHIP
   uint8_t valueToCopy;
 
   // Call to retrieve the value of the third characteristic in the profile
@@ -1147,10 +1110,8 @@ static void SimpleBLEPeripheral_performPeriodicTask(void)
     // Note that if notifications of the fourth characteristic have been
     // enabled by a GATT client device, then a notification will be sent
     // every time this function is called.
-    SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR4, sizeof(uint8_t),
-                               &valueToCopy);
+    SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR4, sizeof(uint8_t), &valueToCopy);
   }
-#endif //!FEATURE_OAD_ONCHIP
 }
 
 void SimpleBLEPeripheral_periodTaskControl(bool enable)
