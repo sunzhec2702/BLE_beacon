@@ -52,10 +52,10 @@ static bool bleStateCheck(BEACON_STATUS targetState)
     switch (targetState)
     {
     case BEACON_RAPID:
-        if (curState == BEACON_COMMUNICATION)
+        if (curState == BEACON_COMMUNICATION || curState == BEACON_CONNECTED)
             return false;
     case BEACON_SLEEP:
-        if (curState == BEACON_COMMUNICATION)
+        if (curState == BEACON_COMMUNICATION || curState == BEACON_CONNECTED)
         {
             // Retry after COMMS_STATE_PERIOD.
             restoreState = BEACON_SLEEP;
@@ -64,11 +64,18 @@ static bool bleStateCheck(BEACON_STATUS targetState)
         }
         break;
     case BEACON_COMMUNICATION:
+        if (curState == BEACON_CONNECTED)
+            return false;
         break;
     case BEACON_NORMAL:
         if (curState == BEACON_COMMUNICATION)
         {
             touchRecordScanDoneCallback();
+            return true;
+        }
+        else if (curState == BEACON_CONNECTED)
+        {
+            //TODO: more process?
             return true;
         }
         break;
@@ -135,6 +142,19 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         bleSetTxPower(DEF_TX_POWER);
         updateAdvInterval(DEFAULT_ADVERTISING_INTERVAL);
         bleAdvControl(true, false);
+        break;
+    case BEACON_CONNECTED:
+        restoreState = BEACON_NORMAL;
+        SimpleBLEPeripheral_periodTaskControl(true);
+        if (Util_isActive(&bleStateResetClock) == true)
+        {
+            DEBUG_STRING("Enter CONNECT mode directly\r\n");
+            Util_stopClock(&bleStateResetClock);
+        }
+#ifdef PLUS_OBSERVER
+        scanProcessControl(false);
+#endif
+        bleAdvControl(false, false);
         break;
     case BEACON_SLEEP:
         restoreState = BEACON_NORMAL;

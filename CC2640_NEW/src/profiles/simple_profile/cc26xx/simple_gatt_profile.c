@@ -157,7 +157,7 @@ static uint8 simpleProfileChar3Props = GATT_PROP_WRITE;
 // Characteristic 3 Value
 static uint8 simpleProfileChar3 = 0;
 // Simple Profile Characteristic 3 User Description
-static uint8 simpleProfileChar3UserDesp[17] = "TestWriteChar3";
+static uint8 simpleProfileChar3UserDesp[17] = "BeaconCommand";
 
 
 // Simple Profile Characteristic 4 Properties
@@ -174,9 +174,9 @@ static uint8 simpleProfileChar4UserDesp[17] = "TestReadChar4";
 
 
 // Simple Profile Characteristic 5 Properties
-static uint8 simpleProfileChar5Props = GATT_PROP_READ | GATT_PROP_INDICATE;
+static uint8 simpleProfileChar5Props = GATT_PROP_READ | GATT_PROP_NOTIFY;
 // Characteristic 5 Value
-static uint8 simpleProfileChar5[SIMPLEPROFILE_CHAR5_LEN] = {0, 0, 0, 0};
+static uint8 simpleProfileChar5[SIMPLEPROFILE_CHAR5_LEN] = {0, 0, 0, 0, 0};
 static gattCharCfg_t *simpleProfileChar5Config;
 // Simple Profile Characteristic 5 User Description
 static uint8 simpleProfileChar5UserDesp[17] = "QueriedMacData";
@@ -680,6 +680,7 @@ static bStatus_t simpleProfile_WriteAttrCB(uint16_t connHandle,
     switch ( uuid )
     {
       case SIMPLEPROFILE_CHAR1_UUID:
+      case SIMPLEPROFILE_CHAR2_UUID:
       case SIMPLEPROFILE_CHAR3_UUID:
 
         //Validate the value
@@ -706,12 +707,15 @@ static bStatus_t simpleProfile_WriteAttrCB(uint16_t connHandle,
           {
             notifyApp = SIMPLEPROFILE_CHAR1;        
           }
+          else if ( pAttr->pValue == &simpleProfileChar2 )
+          {
+            notifyApp = SIMPLEPROFILE_CHAR2;           
+          }
           else
           {
-            notifyApp = SIMPLEPROFILE_CHAR3;           
+            notifyApp = SIMPLEPROFILE_CHAR3;
           }
         }
-             
         break;
 
       case GATT_CLIENT_CHAR_CFG_UUID:

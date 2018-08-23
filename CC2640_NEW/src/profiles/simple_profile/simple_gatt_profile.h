@@ -60,14 +60,18 @@ extern "C"
 /*********************************************************************
  * CONSTANTS
  */
-
 // Profile Parameters
 #define SIMPLEPROFILE_CHAR1                   0  // RW uint8 - Profile Characteristic 1 value 
 #define SIMPLEPROFILE_CHAR2                   1  // RW uint8 - Profile Characteristic 2 value
 #define SIMPLEPROFILE_CHAR3                   2  // RW uint8 - Profile Characteristic 3 value
 #define SIMPLEPROFILE_CHAR4                   3  // RW uint8 - Profile Characteristic 4 value
 #define SIMPLEPROFILE_CHAR5                   4  // RW uint8 - Profile Characteristic 5 value
-  
+
+#define PROFILE_TOUCH_NUMBER_CHAR             (SIMPLEPROFILE_CHAR1)
+#define PROFILE_QUERY_INDEX_CHAR              (SIMPLEPROFILE_CHAR2)
+#define PROFILE_COMMAND_CHAR                  (SIMPLEPROFILE_CHAR3)
+#define PROFILE_MAC_RECORD_CHAR               (SIMPLEPROFILE_CHAR5)
+
 // Simple Profile Service UUID
 #define SIMPLEPROFILE_SERV_UUID               0xFFF0
     
@@ -81,8 +85,8 @@ extern "C"
 // Simple Keys Profile Services bit fields
 #define SIMPLEPROFILE_SERVICE               0x00000001
 
-// Length of Characteristic 4 in bytes
-#define SIMPLEPROFILE_CHAR5_LEN           4  
+// Length of Characteristic 5 in bytes
+#define SIMPLEPROFILE_CHAR5_LEN           5  
 
 /*********************************************************************
  * TYPEDEFS

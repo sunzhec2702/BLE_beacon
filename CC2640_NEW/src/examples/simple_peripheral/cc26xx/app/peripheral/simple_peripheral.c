@@ -436,11 +436,11 @@ static void SimpleBLEPeripheral_init(void)
 
   // Setup the SimpleProfile Characteristic Values
   {
-    uint8_t charValue1 = 1;
-    uint8_t charValue2 = 2;
-    uint8_t charValue3 = 3;
-    uint8_t charValue4 = 4;
-    uint8_t charValue5[SIMPLEPROFILE_CHAR5_LEN] = {0xFF, 0xFF, 0xFF, 0xFF};
+    uint8_t charValue1 = 0;
+    uint8_t charValue2 = 0;
+    uint8_t charValue3 = 0;
+    uint8_t charValue4 = 0;
+    uint8_t charValue5[SIMPLEPROFILE_CHAR5_LEN] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
     SimpleProfile_SetParameter(SIMPLEPROFILE_CHAR1, sizeof(uint8_t),
                                &charValue1);
@@ -979,11 +979,8 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
         DEBUG_STRING("Device Connected\r\n");
         linkDBInfo_t linkInfo;
         uint8_t numActive = 0;
-
         Util_startClock(&periodicClock);
-
         numActive = linkDB_NumActive();
-
         // Use numActive to determine the connection handle of the last
         // connection
         if ( linkDB_GetInfo( numActive - 1, &linkInfo ) == SUCCESS )
@@ -1000,7 +997,7 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
           Display_print0(dispHandle, 2, 0, "Connected");
           Display_print0(dispHandle, 3, 0, Util_convertBdAddr2Str(peerAddress));
         }
-
+        SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_CONNECTED, NULL);
         #ifdef PLUS_BROADCASTER
           // Only turn advertising on for this state when we first connect
           // otherwise, when we go from connected_advertising back to this state
@@ -1030,18 +1027,22 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
       break;
 
     case GAPROLE_WAITING:
-      Util_stopClock(&periodicClock);
       SimpleBLEPeripheral_freeAttRsp(bleNotConnected);
+      if (getCurState() == BEACON_CONNECTED)
+      {
+        DEBUG_STRING("Back to Normal\r\n");
+        SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, NULL);
+      }
       break;
 
     case GAPROLE_WAITING_AFTER_TIMEOUT:
       SimpleBLEPeripheral_freeAttRsp(bleNotConnected);
-
-      Display_print0(dispHandle, 2, 0, "Timed Out");
-
-      // Clear remaining lines
-      Display_clearLines(dispHandle, 3, 5);
-
+      DEBUG_STRING("Waiting after timeout.\r\n");
+      if (getCurState() == BEACON_CONNECTED)
+      {
+        DEBUG_STRING("Back to Normal\r\n");
+        SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_NORMAL, NULL);
+      }
       #ifdef PLUS_BROADCASTER
         // Reset flag for next connection.
         firstConnFlag = false;
@@ -1049,7 +1050,7 @@ static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState)
       break;
 
     case GAPROLE_ERROR:
-      Display_print0(dispHandle, 2, 0, "Error");
+      DEBUG_STRING("Error\r\n");
       break;
 
     default:

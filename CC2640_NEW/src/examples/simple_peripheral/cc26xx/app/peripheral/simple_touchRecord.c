@@ -3,6 +3,7 @@
 #include "simple_flashI2C.h"
 #include "simple_led.h"
 #include "simple_stateControl.h"
+#include "simple_gatt_profile.h"
 #include <string.h>
 #include <ti/sysbios/knl/Semaphore.h>
 #include <ti/sysbios/knl/Task.h>
@@ -79,13 +80,17 @@ static bool writeMac2Flash(uint8_t macIndex, uint8_t *macAddr)
 #endif
 }
 
-static bool readMacFromFlash(uint8_t macIndex, uint8_t *macData)
+bool readMacFromFlash(uint8_t macIndex, uint8_t *macData)
 {
-    if (macIndex > MAX_RECORD_NUM)
-        return false;
 #if (BOARD_TYPE == DEVELOP_BOARD)
+    macData[0] = 0x0A;
+    macData[1] = 0x0B;
+    macData[2] = 0x0C;
+    macData[3] = 0x0D;
     return true;
 #else
+    if (macIndex > MAX_RECORD_NUM || macIndex > recordNum)
+        return false;
     uint8_t devAddr = 0, regAddr = 0;
     bool ret = true;
     calSlaveAddrRegAddr(macIndex, &devAddr, &regAddr);
@@ -144,6 +149,7 @@ bool touchRecordAddMac(uint8_t *macAddr)
     {
         recordNum++;
         touchSecEventToLatest();
+        SimpleProfile_SetParameter(PROFILE_TOUCH_NUMBER_CHAR, 1, &recordNum);
     }
     return ret;
 }

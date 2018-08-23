@@ -2,6 +2,7 @@
 #include "simple_stateControl.h"
 #include "simple_vibra_sensor.h"
 #include "simple_led.h"
+#include "simple_peripheral.h"
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerCC26XX.h>
 
@@ -67,6 +68,6 @@ void updateWakeUpSecLeft()
     {
         DEBUG_STRING("WakeUpLeft=0, Sleeping\r\n");
         resetWakeUpSecLeft();
-        bleChangeBeaconState(BEACON_SLEEP, 0);
+        SimpleBLEPeripheral_enqueueMsg(SBP_BEACON_STATE_CHANGE_EVT, BEACON_SLEEP, NULL);
     }
 }

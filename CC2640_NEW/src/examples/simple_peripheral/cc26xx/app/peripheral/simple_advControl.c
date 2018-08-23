@@ -180,6 +180,9 @@ void bleAdvControl(uint8_t enable, bool connectable)
 {
     uint8_t disableOther = false;
     advEnable = enable;
+    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &advEnable);
+
+    /*
     // Set the GAP Role Parameters
     if (connectable)
     {
@@ -191,6 +194,7 @@ void bleAdvControl(uint8_t enable, bool connectable)
         GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &disableOther);
         GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &advEnable);
     }
+    */
 }
 
 void bleSetTxPower(uint8_t level)
