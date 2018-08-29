@@ -23,7 +23,7 @@ extern SYS_CONFIG bleSysConfig;
 
 // Beacon Status
 #define RAPID_STATE_PERIOD              (2000) //2s
-#define COMMS_STATE_PERIOD              (10000) //10s
+#define COMMS_STATE_PERIOD              (15000) //15s
 
 // LED
 #define LED_BLINK_ON_PERIOD         (60) //ms

@@ -1,6 +1,7 @@
 #include "simple_advControl.h"
 #include "peripheral_observer.h"
 #include "simple_stateControl.h"
+#include "simple_touchRecord.h"
 #include <ti/drivers/Power.h>
 #include <ti/drivers/power/PowerCC26XX.h>
 #include "gap.h"
@@ -9,6 +10,7 @@
 
 #define DEFAULT_DISCOVERABLE_MODE             GAP_ADTYPE_FLAGS_GENERAL
 
+static ADV_TYPE tarAdvType = NORMAL_ADV;
 static uint8_t advEnable = false;
 
 // GAP - Advertisement data (max size = 31 bytes, though this is
@@ -99,25 +101,25 @@ static uint8_t scanRspData[] =
   // complete name
   0x14,   // length of this data
   GAP_ADTYPE_LOCAL_NAME_COMPLETE,
+  'I',
   'S',
-  'i',
-  'm',
-  'p',
-  'l',
-  'e',
+  'S',
+  'M',
+  'A',
+  'R',
+  'T',
   'B',
-  'L',
   'E',
-  'P',
-  'e',
-  'r',
-  'i',
-  'p',
-  'h',
-  'e',
-  'r',
-  'a',
-  'l',
+  'A',
+  'C',
+  'O',
+  'N',
+  'B',
+  'A',
+  'D',
+  'G',
+  'E',
+  '!',
   /*
   // connection interval range
   0x05,   // length of this data
@@ -133,15 +135,30 @@ static uint8_t scanRspData[] =
   0       // 0dBm
 };
 
-void updateFixUUID(uint8_t *macAddr, uint8_t cycByte)
+void updateFixUUID(uint8_t *macAddr, uint8_t crcByte)
 {
     fixUUIDAdvData[MAC_CRC_BYTE] = crcByte;
-    
+    for (uint8_t i = 0; i < B_ADDR_LEN; i++)
+    {
+        fixUUIDAdvData[MAX_XOR_BYTE + i] = (~macAddr[i]) & 0xFF;
+    }
+}
+
+void updateTargetAdv(ADV_TYPE type)
+{
+    tarAdvType = type;
+    return;
 }
 
 void applyAdvData()
 {
-    GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData), advertData);
+    if (tarAdvType == NORMAL_ADV)
+        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData), advertData);
+    else if (tarAdvType == FIXUUID_ADV)
+    {
+        fixUUIDAdvData[ADV_RECORD_NUM_BYTE] = touchRecordGetMacNum();
+        GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(fixUUIDAdvData), fixUUIDAdvData);
+    }
 }
 
 void applyResData()
@@ -175,9 +192,15 @@ void updateRapidBit(uint8_t enable)
 void updateComBit(uint8_t enable)
 {
     if (enable)
+    {
         advertData[ADV_FLAG_BYTE] |= (0x01 << ADV_FLAG_COMMS_BIT);
+        fixUUIDAdvData[ADV_FLAG_BYTE] |= (0x01 << ADV_FLAG_COMMS_BIT);
+    }
     else
+    {
         advertData[ADV_FLAG_BYTE] &= ~(0x01 << ADV_FLAG_COMMS_BIT);
+        fixUUIDAdvData[ADV_FLAG_BYTE] &= ~ (0x01 << ADV_FLAG_COMMS_BIT);
+    }
 }
 
 void updateAdvInterval(uint16_t advInterval)
@@ -226,9 +249,9 @@ void bleAdvControl(uint8_t enable, bool connectable)
 {
     uint8_t disableOther = false;
     advEnable = enable;
-    GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &advEnable);
+    //GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &advEnable);
 
-    /*
+
     // Set the GAP Role Parameters
     if (connectable)
     {
@@ -240,7 +263,7 @@ void bleAdvControl(uint8_t enable, bool connectable)
         GAPRole_SetParameter(GAPROLE_ADVERT_ENABLED, sizeof(uint8_t), &disableOther);
         GAPRole_SetParameter(GAPROLE_ADV_NONCONN_ENABLED, sizeof(uint8_t), &advEnable);
     }
-    */
+
 }
 
 void bleSetTxPower(uint8_t level)
