@@ -50,8 +50,48 @@ static uint8_t advertData[] =
   0x00, // 28 Battery Value
 
   0xCD //29  /*Measured Power*/
-
 };
+
+// GAP - Advertisement data (max size = 31 bytes, though this is
+// best kept short to conserve power while advertisting)
+static uint8_t fixUUIDAdvData[] =
+{
+  // Flags; this sets the device to use limited discoverable
+  // mode (advertises for 30 seconds at a time) instead of general
+  // discoverable mode (advertises indefinitely)
+  0x02,   // length of this data
+  GAP_ADTYPE_FLAGS,
+  DEFAULT_DISCOVERABLE_MODE | GAP_ADTYPE_FLAGS_BREDR_NOT_SUPPORTED,
+  0x1A,
+  GAP_ADTYPE_MANUFACTURER_SPECIFIC,
+  /*Apple Pre-Amble*/
+  0x4C, // 5
+  0x00, // 6
+  0x02, // 7
+  0x15, // 8
+  /*Device UUID (16 Bytes)*/
+  0x53, 0x4D, 0x54, // SMT 3 Bytes. 9~11
+  0xFF, // 12 MAC CRC,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, //13~18 MAC XOR
+  0xFF, // 19
+  0xFF, // 20
+  0xFF, // 21
+  0xFF, // 22
+
+  /*Specific Data*/
+  0x00, // 23
+  0x00, // 24, 
+
+  /*Major Value (2 Bytes)*/
+  0x00, // 25 Record Number.
+  0x00, // 26.
+  /*Minor Value (2 Bytes)*/
+  0x00, // 27 FlagByte. bit7 rapid, bit6 low_bat, bit5 Comms.
+  0x00, // 28 Battery Value
+
+  0xCD //29  /*Measured Power*/
+};
+
 
 // GAP - SCAN RSP data (max size = 31 bytes)
 static uint8_t scanRspData[] =
@@ -92,6 +132,12 @@ static uint8_t scanRspData[] =
   GAP_ADTYPE_POWER_LEVEL,
   0       // 0dBm
 };
+
+void updateFixUUID(uint8_t *macAddr, uint8_t cycByte)
+{
+    fixUUIDAdvData[MAC_CRC_BYTE] = crcByte;
+    
+}
 
 void applyAdvData()
 {
