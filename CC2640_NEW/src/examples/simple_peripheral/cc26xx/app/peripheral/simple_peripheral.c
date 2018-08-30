@@ -91,7 +91,7 @@
 #include "simple_keyCallback.h"
 #include "simple_touchRecord.h"
 #include "simple_powerControl.h"
-
+#include "simple_connectControl.h"
 /*********************************************************************
  * CONSTANTS
  */
@@ -225,7 +225,6 @@ static uint8_t SimpleBLEPeripheral_processStackMsg(ICall_Hdr *pMsg);
 static uint8_t SimpleBLEPeripheral_processGATTMsg(gattMsgEvent_t *pMsg);
 static void SimpleBLEPeripheral_processAppMsg(sbpEvt_t *pMsg);
 static void SimpleBLEPeripheral_processStateChangeEvt(gaprole_States_t newState);
-static void SimpleBLEPeripheral_processCharValueChangeEvt(uint8_t paramID);
 static void SimpleBLEPeripheral_performPeriodicTask(void);
 static void SimpleBLEPeripheral_clockHandler(UArg arg);
 

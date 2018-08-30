@@ -1,6 +1,7 @@
 #ifndef __SIMPLE_TOUCH_RECORD_H
 #define __SIMPLE_TOUCH_RECORD_H
 #include "hal_types.h"
+#define MACADDRSIZE 4
 
 bool readMacFromFlash(uint8_t macIndex, uint8_t *macData);
 uint8_t touchRecordGetMacNum(void);

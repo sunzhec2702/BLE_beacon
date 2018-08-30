@@ -25,10 +25,10 @@
 #define BLE_DEV_STATION_ADV     0x02
 
 #define PLUS_OBSERVER           1
-#define BOARD_TYPE DEVELOP_BOARD
+#define BOARD_TYPE PRODUCT_BOARD
 
 // Debug Uart
-#define ENABLE_UART_EMULATOR    1
+#define ENABLE_UART_EMULATOR    0
 #include "simple_uart_emulator.h"
 
 // LED Related Macro

@@ -38,17 +38,22 @@ void profileCharValueChangeCB(uint8_t value)
     {
     case PROFILE_QUERY_INDEX_CHAR:
         SimpleProfile_GetParameter(PROFILE_QUERY_INDEX_CHAR, &newValue);
-        uint8_t macData[SIMPLEPROFILE_CHAR5_LEN] = {0};
+        uint8_t char5data[SIMPLEPROFILE_CHAR5_LEN] = {0};
+        uint8_t macData[MACADDRSIZE] = {0};
         bool ret = 0;
-        ret = readMacFromFlash(newValue, &macData[1]);
+        ret = readMacFromFlash(newValue, macData);
         if (ret == false)
         {
             DEBUG_STRING("Read Mac index fail\r\n");
         }
         else
         {
-            macData[0] = newValue;
-            SimpleProfile_SetParameter(PROFILE_MAC_RECORD_CHAR, SIMPLEPROFILE_CHAR5_LEN, macData);
+            char5data[0] = newValue;
+            char5data[1] = macData[3];
+            char5data[2] = macData[2];
+            char5data[3] = macData[1];
+            char5data[4] = macData[0];
+            SimpleProfile_SetParameter(PROFILE_MAC_RECORD_CHAR, SIMPLEPROFILE_CHAR5_LEN, char5data);
         }
         break;
     case PROFILE_COMMAND_CHAR:

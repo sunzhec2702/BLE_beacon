@@ -15,9 +15,9 @@ void uartEmulatorWriteNumber(uint16_t val);
 #define DEBUG_STRING(x)    uartEmulatorWriteString(x)
 #define DEBUG_NUMBER(x)    uartEmulatorWriteNumber(x)
 #else
-//#define DEBUG_BYTE(x, y)   {}
-//#define DEBUG_STRING(x)    {}
-//#define DEBUG_NUMBER(x)    {}
+#define DEBUG_BYTE(x, y)   {}
+#define DEBUG_STRING(x)    {}
+#define DEBUG_NUMBER(x)    {}
 #endif
 
 #if (ENABLE_UART_EMULATOR == 1 && DEBUG_NFC_ENABLE == 1)
