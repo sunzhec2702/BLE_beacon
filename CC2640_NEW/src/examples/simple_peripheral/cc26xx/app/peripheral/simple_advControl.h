@@ -7,6 +7,7 @@
 
 #define MAC_CRC_BYTE            12
 #define MAX_XOR_BYTE            13
+#define MAC_XOR_ADV_BYTE        19
 #define BEACON_DEVICE_TYPE_INDEX 13
 #define TOUCH_BEACON_MAC        15
 

@@ -36,14 +36,14 @@ static uint8_t advertData[] =
   BLE_DEV_BEACON, 0xFF, // 13 Device Type, 14 Version (higher 4 bits for HW, lower 4 bit for SW)
   0xFF, 0xFF, 0xFF, 0xFF, // 15~18 for advertise MAC.
 
+
   0xFF, //19 How often the beacon will scan for the station in power on mode.
   0xFF, //20 The period which the device keeps poweron even without scanning any data.
   0xFF, //21 How often the beacon will scan for the station in power off mode.
   0xFF, //22 The Data will be ((SEC_1 << 8) + SEC_2)
+  0xFF, // 23
+  0xFF, // 24, Station Index
 
-  /*Specific Data*/
-  0x00, // 23
-  0x00, // 24, Station Index
   /*Major Value (2 Bytes)*/
   0x00, // 25 for min left
   0x00, // 26 for index 
@@ -135,6 +135,16 @@ static uint8_t scanRspData[] =
   0       // 0dBm
 };
 
+void updateAdvMac(uint8_t *macAddr, uint8_t crcByte)
+{
+
+    advertData[MAC_CRC_BYTE] = crcByte;
+    for (uint8_t i = 0; i < B_ADDR_LEN; i++)
+    {
+        advertData[MAC_XOR_ADV_BYTE + i] = (~macAddr[i]) & 0xFF;
+    }
+}
+
 void updateFixUUID(uint8_t *macAddr, uint8_t crcByte)
 {
     fixUUIDAdvData[MAC_CRC_BYTE] = crcByte;
@@ -174,11 +184,6 @@ uint8_t* getAdvData()
 uint8_t* getResData()
 {
     return scanRspData;
-}
-
-void updateMacCRCByte(uint8_t crcByte)
-{
-    advertData[MAC_CRC_BYTE] = crcByte;
 }
 
 void updateRapidBit(uint8_t enable)

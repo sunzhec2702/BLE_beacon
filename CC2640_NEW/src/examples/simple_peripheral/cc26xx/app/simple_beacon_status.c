@@ -30,8 +30,8 @@ void simpleBleStatusInit()
         simpleNVFactoryReset();
     }
     retriveMacAddress();
-    updateMacCRCByte(bleSysConfig.macAddrCRC);
     updateFixUUID(bleSysConfig.macAddr ,bleSysConfig.macAddrCRC);
+    updateAdvMac(bleSysConfig.macAddr ,bleSysConfig.macAddrCRC);
 }
 
 static void simpleNVFactoryReset()
