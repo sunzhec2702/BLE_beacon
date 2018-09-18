@@ -11,7 +11,7 @@ var makeAssembly = false;
 var Executable = xdc.module('xdc.bld.Executable');
 
 var exeOpts = new Executable.Attrs({
-        cfgScript: 'F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640_NEW/examples/cc2650lp/simple_peripheral/iar/config/app_ble.cfg',
+        cfgScript: 'G:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640_NEW/examples/cc2650lp/simple_peripheral/iar/config/app_ble.cfg',
         profile: 'release',
         cfgHome: 'configPkg',
 });
@@ -40,8 +40,8 @@ else {
 }
 
 var thisObj = {
-    cfg:        'F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640_NEW/examples/cc2650lp/simple_peripheral/iar/app/../config/app_ble.cfg',
-    outputPath: 'F:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640_NEW/examples/cc2650lp/simple_peripheral/iar/config/configPkg',
+    cfg:        'G:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640_NEW/examples/cc2650lp/simple_peripheral/iar/app/../config/app_ble.cfg',
+    outputPath: 'G:/PersonalProject/BLE-CC2541/BLE_Meeting/CC2640_NEW/examples/cc2650lp/simple_peripheral/iar/config/configPkg',
     exeName:    'app_ble' + suffix,
     exeIntName: 'app_ble' + suffix.replace('.', '_'),
     targ:       targ,

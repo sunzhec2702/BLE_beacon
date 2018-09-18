@@ -3,7 +3,7 @@
  * linkcmd.xdt in the ti.platforms.tiva package and will be overwritten.
  */
 
-"F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650lp\simple_peripheral\iar\config\configPkg\package\cfg\app_ble_prm3.orm3"
+"G:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650lp\simple_peripheral\iar\config\configPkg\package\cfg\app_ble_prm3.orm3"
 "C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/tidrivers_cc13xx_cc26xx_2_20_01_10/packages/ti/mw/display/lib/display.arm3"
 "C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/tidrivers_cc13xx_cc26xx_2_20_01_10/packages/ti/mw/lcd/lib/lcd.arm3"
 "C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/tidrivers_cc13xx_cc26xx_2_20_01_10/packages/ti/mw/grlib/lib/grlib.arm3"
@@ -13,7 +13,7 @@
 "C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/tidrivers_cc13xx_cc26xx_2_20_01_10/packages/ti/drivers/pdm/lib/pdm_cc26xxware.arm3"
 "C:\ti\tirtos_cc13xx_cc26xx_2_20_01_08\products\tidrivers_cc13xx_cc26xx_2_20_01_10\packages\ti\mw\fatfs\lib\release\ti.mw.fatfs.arm3"
 "C:/ti/tirtos_cc13xx_cc26xx_2_20_01_08/products/tidrivers_cc13xx_cc26xx_2_20_01_10/packages/ti/drivers/ports/lib/tirtosport.arm3"
-"F:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650lp\simple_peripheral\iar\config\src\sysbios\rom_sysbios.arm3"
+"G:\PersonalProject\BLE-CC2541\BLE_Meeting\CC2640_NEW\examples\cc2650lp\simple_peripheral\iar\config\src\sysbios\rom_sysbios.arm3"
 "C:\ti\tirtos_cc13xx_cc26xx_2_20_01_08\products\bios_6_46_01_38\packages\iar\targets\arm\rts\lib\release\boot.arm3"
 
 
