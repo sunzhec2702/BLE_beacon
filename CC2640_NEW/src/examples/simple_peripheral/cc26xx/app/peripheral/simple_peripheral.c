@@ -360,12 +360,14 @@ static void SimpleBLEPeripheral_init(void)
     // being discoverable for 30.72 second, and will not being advertising again
     // until the enabler is set back to TRUE
     uint16_t advertOffTime = 0;
-    //bleAdvControl(true);
     // Set the GAP Role Parameters
-    //bleSetTxPower(DEFAULT_TX_POWER);
-    //applyAdvData();
-    //applyResData();
-
+    /*
+    bleAdvControl(true);
+    bleSetTxPower(DEFAULT_TX_POWER);
+    applyAdvData();
+    applyResData();
+    */
+   
     uint8_t enableUpdateRequest = DEFAULT_ENABLE_UPDATE_REQUEST;
     uint16_t desiredMinInterval = DEFAULT_DESIRED_MIN_CONN_INTERVAL;
     uint16_t desiredMaxInterval = DEFAULT_DESIRED_MAX_CONN_INTERVAL;

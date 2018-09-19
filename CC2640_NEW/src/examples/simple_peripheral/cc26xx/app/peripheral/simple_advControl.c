@@ -10,7 +10,7 @@
 
 #define DEFAULT_DISCOVERABLE_MODE             GAP_ADTYPE_FLAGS_GENERAL
 
-static ADV_TYPE tarAdvType = NORMAL_ADV;
+//static ADV_TYPE tarAdvType = NORMAL_ADV;
 static uint8_t advEnable = false;
 
 // GAP - Advertisement data (max size = 31 bytes, though this is
@@ -99,7 +99,7 @@ static uint8_t fixUUIDAdvData[] =
 static uint8_t scanRspData[] =
 {
   // complete name
-  0x14,   // length of this data
+  0x0D,   // length of this data
   GAP_ADTYPE_LOCAL_NAME_COMPLETE,
   'I',
   'S',
@@ -109,18 +109,10 @@ static uint8_t scanRspData[] =
   'R',
   'T',
   'B',
-  'E',
-  'A',
-  'C',
-  'O',
-  'N',
-  'B',
   'A',
   'D',
   'G',
   'E',
-  '!',
-  /*
   // connection interval range
   0x05,   // length of this data
   GAP_ADTYPE_SLAVE_CONN_INTERVAL_RANGE,
@@ -128,7 +120,6 @@ static uint8_t scanRspData[] =
   HI_UINT16(DEFAULT_DESIRED_MIN_CONN_INTERVAL),
   LO_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),   // 1s
   HI_UINT16(DEFAULT_DESIRED_MAX_CONN_INTERVAL),
-  */
   // Tx power level
   0x02,   // length of this data
   GAP_ADTYPE_POWER_LEVEL,
@@ -154,13 +145,15 @@ void updateFixUUID(uint8_t *macAddr, uint8_t crcByte)
     }
 }
 
+/*
 void updateTargetAdv(ADV_TYPE type)
 {
     tarAdvType = type;
     return;
 }
+*/
 
-void applyAdvData()
+void applyAdvData(ADV_TYPE tarAdvType)
 {
     if (tarAdvType == NORMAL_ADV)
         GAPRole_SetParameter(GAPROLE_ADVERT_DATA, sizeof(advertData), advertData);
@@ -189,9 +182,15 @@ uint8_t* getResData()
 void updateRapidBit(uint8_t enable)
 {
     if (enable)
+    {
         advertData[ADV_FLAG_BYTE] |= (0x1 << ADV_FLAG_RAPID_BIT);
+        fixUUIDAdvData[ADV_FLAG_BYTE] |= (0x01 << ADV_FLAG_RAPID_BIT);
+    }
     else
+    {
         advertData[ADV_FLAG_BYTE] &= ~(0x1 << ADV_FLAG_RAPID_BIT);
+        fixUUIDAdvData[ADV_FLAG_BYTE] &= ~ (0x01 << ADV_FLAG_RAPID_BIT);
+    }
 }
 
 void updateComBit(uint8_t enable)

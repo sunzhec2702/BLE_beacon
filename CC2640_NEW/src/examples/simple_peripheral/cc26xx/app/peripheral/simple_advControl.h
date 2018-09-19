@@ -46,7 +46,7 @@ typedef enum
 
 void updateFixUUID(uint8_t *macAddr, uint8_t crcByte);
 void updateTargetAdv(ADV_TYPE type);
-void applyAdvData(void);
+void applyAdvData(ADV_TYPE tarAdvType);
 void updateMacCRCByte(uint8_t crcByte);
 void updateRapidBit(uint8_t enable);
 void updateComBit(uint8_t enable);
