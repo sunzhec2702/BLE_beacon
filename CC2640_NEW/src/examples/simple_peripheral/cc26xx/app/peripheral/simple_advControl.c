@@ -59,10 +59,10 @@ static uint8_t scanRspData[] =
     // complete name
     0x06, // length of this data
     GAP_ADTYPE_LOCAL_NAME_COMPLETE,
-    'D',
+    'B',
     'A',
-    'R',
-    'R',
+    'D',
+    'G',
     'E',
 
     0x11, // 0
@@ -72,7 +72,6 @@ static uint8_t scanRspData[] =
     BLE_DEV_BEACON, 0xFF,   // 6~7 Device Type, Version (higher 4 bits for HW, lower 4 bit for SW)
     0x05, 0x06, 0x07, 0x08, // 8~11 Advertise MAC.
     0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, // 12~17 real self mac.
-    0xFF, // 18 reserved.
 
     0x03,                               // 9
     GAP_ADTYPE_16BIT_COMPLETE,          //10
