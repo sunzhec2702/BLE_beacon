@@ -43,5 +43,37 @@ extern SYS_CONFIG bleSysConfig;
 #define MAC_RECORD_UPDATE_SEC_PERIOD    30 // 60 sec
 #define ADD_MAC_SUCCESS_BLINK_PERIOD    2000 // 2s
 
+
+
+
+
+// Advertise Config
+// Limited discoverable mode advertises for 30.72s, and then stops
+// General discoverable mode advertises indefinitely
+#define DEFAULT_DISCOVERABLE_MODE             GAP_ADTYPE_FLAGS_GENERAL
+
+// Minimum connection interval (units of 1.25ms, 80=100ms) if automatic
+// parameter update request is enabled
+#define DEFAULT_DESIRED_MIN_CONN_INTERVAL     120
+
+// Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic
+// parameter update request is enabled
+#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     320
+
+
+// Slave latency to use if automatic parameter update request is enabled
+#define DEFAULT_DESIRED_SLAVE_LATENCY         0
+
+// Supervision timeout value (units of 10ms, 1000=10s) if automatic parameter
+// update request is enabled
+#define DEFAULT_DESIRED_CONN_TIMEOUT          500
+
+// Whether to enable automatic parameter update request when a connection is
+// formed
+#define DEFAULT_ENABLE_UPDATE_REQUEST         TRUE
+
+// Connection Pause Peripheral time value (in seconds)
+#define DEFAULT_CONN_PAUSE_PERIPHERAL         6
+
 #endif
 

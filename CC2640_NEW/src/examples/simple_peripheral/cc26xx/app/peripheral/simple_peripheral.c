@@ -95,41 +95,6 @@
 /*********************************************************************
  * CONSTANTS
  */
-// Limited discoverable mode advertises for 30.72s, and then stops
-// General discoverable mode advertises indefinitely
-#define DEFAULT_DISCOVERABLE_MODE             GAP_ADTYPE_FLAGS_GENERAL
-
-#ifndef FEATURE_OAD
-// Minimum connection interval (units of 1.25ms, 80=100ms) if automatic
-// parameter update request is enabled
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL     80
-
-// Maximum connection interval (units of 1.25ms, 800=1000ms) if automatic
-// parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     800
-#else //!FEATURE_OAD
-// Minimum connection interval (units of 1.25ms, 8=10ms) if automatic
-// parameter update request is enabled
-#define DEFAULT_DESIRED_MIN_CONN_INTERVAL     8
-
-// Maximum connection interval (units of 1.25ms, 8=10ms) if automatic
-// parameter update request is enabled
-#define DEFAULT_DESIRED_MAX_CONN_INTERVAL     8
-#endif // FEATURE_OAD
-
-// Slave latency to use if automatic parameter update request is enabled
-#define DEFAULT_DESIRED_SLAVE_LATENCY         0
-
-// Supervision timeout value (units of 10ms, 1000=10s) if automatic parameter
-// update request is enabled
-#define DEFAULT_DESIRED_CONN_TIMEOUT          1000
-
-// Whether to enable automatic parameter update request when a connection is
-// formed
-#define DEFAULT_ENABLE_UPDATE_REQUEST         TRUE
-
-// Connection Pause Peripheral time value (in seconds)
-#define DEFAULT_CONN_PAUSE_PERIPHERAL         6
 
 // How often to perform periodic event (in msec)
 // #define SBP_PERIODIC_EVT_PERIOD               1000

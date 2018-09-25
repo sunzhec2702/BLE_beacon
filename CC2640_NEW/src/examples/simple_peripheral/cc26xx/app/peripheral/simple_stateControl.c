@@ -103,7 +103,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         pwmLedBlinkWithParameters(LED_BLINK_ON_PERIOD, LED_BLINK_OFF_PERIOD, 1);
         bleAdvControl(false, false);
         updateRapidBit(true);
-        applyAdvData(NORMAL_ADV);
+        applyAdvData();
         applyResData();
         bleSetTxPower(MAX_TX_POWER);
         updateAdvInterval(RAPID_ADVERTISING_INTERVAL);
@@ -115,7 +115,7 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         pwmLedBlinkWithParameters(LED_BLINK_COMMUNICATE_ON_PERIOD, LED_BLINK_COMMUNICATE_OFF_PERIOD, COMMS_STATE_PERIOD / (LED_BLINK_COMMUNICATE_ON_PERIOD + LED_BLINK_COMMUNICATE_OFF_PERIOD));
         bleAdvControl(false, true);
         updateComBit(true);
-        applyAdvData(FIXUUID_ADV);
+        applyAdvData();
         applyResData();
         bleSetTxPower(MAX_TX_POWER);
         updateAdvInterval(RAPID_ADVERTISING_INTERVAL);
