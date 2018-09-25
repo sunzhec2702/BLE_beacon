@@ -136,7 +136,6 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
         scanProcessControl(false);
 #endif
         bleAdvControl(false, false);
-        updateTargetAdv(NORMAL_ADV);
         updateRapidBit(false);
         updateComBit(false);
         applyAdvData();
@@ -158,13 +157,11 @@ void bleChangeBeaconState(BEACON_STATUS state, uint16_t keepTime)
 #endif
         pwmLedReset();
         bleAdvControl(false, false);
-        updateTargetAdv(FIXUUID_ADV);
         break;
     case BEACON_SLEEP:
         restoreState = BEACON_NORMAL;
         // Stop advertising.
         bleAdvControl(false, false);
-        updateTargetAdv(NORMAL_ADV);
         updateRapidBit(false);
         updateComBit(false);
         applyAdvData();

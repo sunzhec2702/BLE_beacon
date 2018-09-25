@@ -169,7 +169,7 @@ bool filterMacCRC(uint8_t *data, uint8_t *macAddr)
         crc += macAddr[i];
     }
     crc += MAC_CRC_KEY;
-    if (data[MAC_CRC_BYTE] == crc)
+    if (data[MAC_CRC_ADV_BYTE] == crc)
         return true;
     return false;
 }

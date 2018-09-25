@@ -5,9 +5,11 @@
 #define BEACON_START_INDEX 5
 #define BEACON_ISSMART_INDEX 9
 
-#define MAC_CRC_BYTE            12
-#define MAX_XOR_BYTE            13
+#define MAC_CRC_ADV_BYTE        12
+#define MAC_CRC_RES_BYTE        12
 #define MAC_XOR_ADV_BYTE        19
+#define MAC_XOR_RES_BYTE        19
+
 #define BEACON_DEVICE_TYPE_INDEX 13
 #define TOUCH_BEACON_MAC        15
 
@@ -37,16 +39,7 @@
 #define ADV_SPECIFIC_MAC_LAST_2 27
 #define ADV_SPECIFIC_MAC_LAST_1 28
 
-
-typedef enum
-{
-    NORMAL_ADV = 0,
-    FIXUUID_ADV = 1,
-} ADV_TYPE;
-
 void updateAdvMac(uint8_t *macAddr, uint8_t crcByte);
-void updateFixUUID(uint8_t *macAddr, uint8_t crcByte);
-void updateTargetAdv(ADV_TYPE type);
 void applyAdvData();
 void applyResData();
 void updateMacCRCByte(uint8_t crcByte);
