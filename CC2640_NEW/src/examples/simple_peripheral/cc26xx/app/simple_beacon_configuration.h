@@ -36,7 +36,7 @@ extern SYS_CONFIG bleSysConfig;
 #define VIBRA_SENSOR_CHECK_PERIOD   (1 * 60 * 1000) //1 min
 
 // Adv Power
-#define DEF_TX_POWER        HCI_EXT_TX_POWER_MINUS_6_DBM
+#define DEF_TX_POWER        HCI_EXT_TX_POWER_MINUS_21_DBM
 #define MAX_TX_POWER        HCI_EXT_TX_POWER_2_DBM
 
 // Touch Recrod
