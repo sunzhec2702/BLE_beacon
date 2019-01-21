@@ -130,7 +130,7 @@ void DelayS(unsigned char Time)
 void WDT_INITIAL(void)
 {
     CLRWDT();            //清看门狗
-    PSA = 1;             //时钟分频分给WDT
+    PSA = 1;             //时钟分频分给WDT，Darren修改了
     WDTCON = 0B00001010; //WDTPS=0101=1:1024,PS=000=1:1
                          //定时时间=(1024*1)/32000=32ms
 }
@@ -155,5 +155,6 @@ void main()
         DelayMs(1); //1ms
         DemoPortOut = 0;
         DelayMs(1); //1ms
+        SLEEP();
     }
 }
