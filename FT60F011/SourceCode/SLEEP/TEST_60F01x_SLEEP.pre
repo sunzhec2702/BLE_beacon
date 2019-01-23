@@ -1,5 +1,5 @@
 
-# 1 "MG117McuBeacon.C"
+# 1 "TEST_60F01x_SLEEP.c"
 
 # 90 "C:\Program Files (x86)\HI-TECH Software\PICC\9.83\include\pic16f684.h"
 volatile unsigned char INDF @ 0x000;
@@ -560,42 +560,21 @@ extern void memcpyee(eeprom unsigned char *to, const unsigned char *from, unsign
 #pragma inline(_delay)
 extern void _delay(unsigned long);
 
-# 20 "MG117McuBeacon.C"
-;
-
-# 21
-;
-
-# 41
-void interrupt ISR(void)
+# 44 "TEST_60F01x_SLEEP.c"
+void POWER_INITIAL (void)
 {
-}
-
-
-void POWER_INITIAL(void)
-{
-OSCCON = 0B01110001;
+OSCCON = 0X00|0X70|0X01;
 
 
 
 INTCON = 0;
 PORTA = 0B00000000;
-RA2 = 1;
-RA4 = 1;
-RA5 = 1;
+TRISA = 0B00000000;
+WPUA = 0B00100000;
 
-TRISA = 0B11111111;
 
-TRISA2 = 0;
-TRISA4 = 0;
-TRISA5 = 0;
-
-RA2 = 1;
-RA4 = 1;
-RA5 = 1;
-
-WPUA = 0B00000000;
 OPTION = 0B00001000;
+
 MSCKCON = 0B00000000;
 
 
@@ -603,73 +582,58 @@ MSCKCON = 0B00000000;
 
 }
 
-void WDT_INITIAL(void)
-{
-asm("clrwdt");
-PSA = 1;
-WDTCON = 0B00010100;
-SWDTEN = 0;
-}
-
+# 70
 void DelayUs(unsigned char Time)
 {
 unsigned char a;
-for (a = 0; a < Time; a++)
-{
-_nop();
-}
-}
-void DelayMs(unsigned char Time)
-{
-unsigned char a, b;
-for (a = 0; a < Time; a++)
-{
-for (b = 0; b < 5; b++)
-{
-DelayUs(98);
-}
-}
-}
-void DelayS(unsigned char Time)
-{
-unsigned char a, b;
-for (a = 0; a < Time; a++)
-{
-for (b = 0; b < 10; b++)
-{
-DelayMs(100);
-}
-}
-}
-
-# 121
-main()
-{
-POWER_INITIAL();
-WDT_INITIAL();
-
-
-RA2 = 0;
-DelayMs(100);
-RA2 = 1;
-
-
-RA5 = 0;
-DelayMs(1500 - 100);
-RA5 = 1;
-
-
-while (1)
+for(a=0;a<Time;a++)
 {
 asm("clrwdt");
-SWDTEN = 1;
+}
+}
 
-RA4 = 0;
-DelayMs(1050);
-RA4 = 1;
-DelayMs((1000 - 1050));
+# 84
+void DelayMs(unsigned char Time)
+{
+unsigned char a,b;
+for(a=0;a<Time;a++)
+{
+for(b=0;b<5;b++)
+{
+DelayUs(197);
+}
+}
+}
 
+# 101
+void DelayS(unsigned char Time)
+{
+unsigned char a,b;
+for(a=0;a<Time;a++)
+{
+for(b=0;b<10;b++)
+{
+DelayMs(100);
+}
+}
+}
+
+# 118
+void main()
+{
+POWER_INITIAL();
+RA1 = 1;
+RA0 = 1;
+DelayS(3);
+RA1 = 0;
+RA0 = 0;
+while(1)
+{
+asm("clrwdt");
+_nop();
 asm("sleep");
+_nop();
+
 }
 }
 

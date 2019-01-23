@@ -1,15 +1,16 @@
 
 	; HI-TECH C Compiler for PIC10/12/16 MCUs V9.83
 	; Copyright (C) 1984-2011 HI-TECH Software
+	;Serial no. HCPICP-111111
 
 	; Auto-generated runtime startup code for final link stage.
 
 	;
 	; Compiler options:
 	;
-	; -omg117mcubeacon.cof -mmg117mcubeacon.map --summary=default \
-	; --output=default mg117mcubeacon.p1 --chip=16F684 -P --runtime=default \
-	; --opt=default -D__DEBUG=1 -g --asmlist \
+	; -otest_60f01x_sleep.cof -mtest_60f01x_sleep.map --summary=default \
+	; --output=default test_60f01x_sleep.p1 --chip=16F684 -P \
+	; --runtime=default --opt=default -D__DEBUG=1 -g --asmlist \
 	; --errformat=Error   [%n] %f; %l.%c %s --msgformat=Advisory[%n] %s \
 	; --warnformat=Warning [%n] %f; %l.%c %s
 	;
@@ -54,11 +55,7 @@ intlevel5:
 	psect	reset_vec
 reset_vec:
 	; No powerup routine
-	global start
-
-; jump to start
-	goto	start & 0x7FF | (reset_vec & not 0x7FF)
-
+	; No interrupt routine
 
 
 	psect	init

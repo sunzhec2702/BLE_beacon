@@ -11,8 +11,8 @@
 *                  MG117  SOP8 
 *                 ----------------
 *  VDD-----------|1(VDD)    (GND)8|------------GND     
-*  LED_N---------|2(PA2)    (PA4)7|-----------BTN2 (Normal Adv Data)
-*  NC------------|3(PA1)    (PA5)6|-----------BTN3 (Rapid Adv Data)
+*  LED_N---------|2(PA2)    (PA4)7|-----------BTN3 (Rapid Adv Data)
+*  NC------------|3(PA1)    (PA5)6|-----------BTN2 (Normal Adv Data)
 *  RSTn----------|4(PA3)    (PA0)5|-------------NC
 *			      ----------------
 */
@@ -27,8 +27,8 @@
 #define unlong unsigned long
 
 #define LED_PIN RA2
-#define NORMAL_ADV_BTN RA4
-#define RAPID_ADV_BTN RA5
+#define NORMAL_ADV_BTN RA5
+#define RAPID_ADV_BTN RA4
 
 #define RAPID_PERIOD 1500 // 1500ms
 #define LED_ON_PERIOD 100 // 100ms
@@ -55,8 +55,8 @@ void POWER_INITIAL(void)
     NORMAL_ADV_BTN = 1;
     RAPID_ADV_BTN = 1;
 
-    TRISA = 0B11111111; //PA�������?0-���?1-����
-                        //PA2/PA4/PA5->���?
+    TRISA = 0B11111111; //PA�������??0-���??1-����
+                        //PA2/PA4/PA5->���??
     TRISA2 = 0;         //û�����룬Ψһ����Reset
     TRISA4 = 0;
     TRISA5 = 0;
@@ -67,10 +67,10 @@ void POWER_INITIAL(void)
 
     WPUA = 0B00000000; //PA�˿��������� 1-������ 0-������������OUTPUT����������
     OPTION = 0B00001000;  //Bit3=1 WDT MODE,PS=000=1:1 WDT RATE, Bit7(PAPU)=0 ENABLED PULL UP PA
-    MSCKCON = 0B00000000; //Bit6->0,��ֹPA4, PC5��ѹ���?60F01x����λ)
+    MSCKCON = 0B00000000; //Bit6->0,��ֹPA4, PC5��ѹ���??60F01x����λ)
                           //Bit5->0,TIMER2ʱ��ΪFosc(60F01x����λ)
                           //Bit4->0,��ֹLVR(60F01x O��֮ǰ)
-                          //Bit4->0, LVRENʹ��ʱ,����LVR(60F01x O�漰O���?
+                          //Bit4->0, LVRENʹ��ʱ,����LVR(60F01x O�漰O���??
                           //Bit4->1, LVRENʹ��ʱ,����ʱ����LVR, ˯��ʱ�Զ��ر�LVR(60F01x O�漰O��֮��)
 }
 

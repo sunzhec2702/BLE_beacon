@@ -1,8 +1,8 @@
-opt subtitle "HI-TECH Software Omniscient Code Generator (Lite mode) build 10920"
+opt subtitle "HI-TECH Software Omniscient Code Generator (PRO mode) build 10920"
 
 opt pagewidth 120
 
-	opt lm
+	opt pm
 
 	processor	16F684
 clrc	macro
@@ -40,17 +40,14 @@ c	equ	1
 z	equ	0
 pclath	equ	10
 	FNCALL	_main,_POWER_INITIAL
-	FNCALL	_main,_WDT_INITIAL
-	FNCALL	_main,_DelayMs
+	FNCALL	_main,_DelayS
+	FNCALL	_DelayS,_DelayMs
 	FNCALL	_DelayMs,_DelayUs
 	FNROOT	_main
-	FNCALL	intlevel1,_ISR
-	global	intlevel1
-	FNROOT	intlevel1
 	global	_FSR
-psect	text107,local,class=CODE,delta=2
-global __ptext107
-__ptext107:
+psect	text53,local,class=CODE,delta=2
+global __ptext53
+__ptext53:
 _FSR	set	4
 	DABS	1,4,1	;_FSR
 
@@ -1482,7 +1479,7 @@ _SFR9E	set	158
 _SFR9F	set	159
 	DABS	1,159,1	;_SFR9F
 
-	file	"mg117mcubeacon.as"
+	file	"test_60f01x_sleep.as"
 	line	#
 psect cinit,class=CODE,delta=2
 global start_initialization
@@ -1499,51 +1496,53 @@ ljmp _main	;jump to C main() function
 psect	cstackCOMMON,class=COMMON,space=1
 global __pcstackCOMMON
 __pcstackCOMMON:
-	global	?_ISR
-?_ISR:	; 0 bytes @ 0x0
-	global	??_ISR
-??_ISR:	; 0 bytes @ 0x0
 	global	?_POWER_INITIAL
 ?_POWER_INITIAL:	; 0 bytes @ 0x0
-	global	?_WDT_INITIAL
-?_WDT_INITIAL:	; 0 bytes @ 0x0
+	global	??_POWER_INITIAL
+??_POWER_INITIAL:	; 0 bytes @ 0x0
 	global	?_DelayUs
 ?_DelayUs:	; 0 bytes @ 0x0
+	global	??_DelayUs
+??_DelayUs:	; 0 bytes @ 0x0
 	global	?_DelayMs
 ?_DelayMs:	; 0 bytes @ 0x0
+	global	?_DelayS
+?_DelayS:	; 0 bytes @ 0x0
 	global	?_main
-?_main:	; 2 bytes @ 0x0
-	ds	4
-	global	??_POWER_INITIAL
-??_POWER_INITIAL:	; 0 bytes @ 0x4
-	global	??_WDT_INITIAL
-??_WDT_INITIAL:	; 0 bytes @ 0x4
-	global	??_DelayUs
-??_DelayUs:	; 0 bytes @ 0x4
-	ds	1
+?_main:	; 0 bytes @ 0x0
 	global	DelayUs@Time
-DelayUs@Time:	; 1 bytes @ 0x5
+DelayUs@Time:	; 1 bytes @ 0x0
 	ds	1
 	global	DelayUs@a
-DelayUs@a:	; 1 bytes @ 0x6
+DelayUs@a:	; 1 bytes @ 0x1
 	ds	1
 	global	??_DelayMs
-??_DelayMs:	; 0 bytes @ 0x7
-	ds	1
+??_DelayMs:	; 0 bytes @ 0x2
 	global	DelayMs@Time
-DelayMs@Time:	; 1 bytes @ 0x8
+DelayMs@Time:	; 1 bytes @ 0x2
 	ds	1
 	global	DelayMs@a
-DelayMs@a:	; 1 bytes @ 0x9
+DelayMs@a:	; 1 bytes @ 0x3
 	ds	1
 	global	DelayMs@b
-DelayMs@b:	; 1 bytes @ 0xA
+DelayMs@b:	; 1 bytes @ 0x4
+	ds	1
+	global	??_DelayS
+??_DelayS:	; 0 bytes @ 0x5
+	global	DelayS@Time
+DelayS@Time:	; 1 bytes @ 0x5
+	ds	1
+	global	DelayS@a
+DelayS@a:	; 1 bytes @ 0x6
+	ds	1
+	global	DelayS@b
+DelayS@b:	; 1 bytes @ 0x7
 	ds	1
 	global	??_main
-??_main:	; 0 bytes @ 0xB
+??_main:	; 0 bytes @ 0x8
 ;;Data sizes: Strings 0, constant 0, data 0, bss 0, persistent 0 stack 0
 ;;Auto spaces:   Size  Autos    Used
-;; COMMON          62     11      11
+;; COMMON          62      8       8
 
 ;;
 ;; Pointer list with targets:
@@ -1553,12 +1552,9 @@ DelayMs@b:	; 1 bytes @ 0xA
 ;;
 ;; Critical Paths under _main in COMMON
 ;;
-;;   _main->_DelayMs
+;;   _main->_DelayS
+;;   _DelayS->_DelayMs
 ;;   _DelayMs->_DelayUs
-;;
-;; Critical Paths under _ISR in COMMON
-;;
-;;   None.
 
 ;;
 ;;Main: autosize = 0, tempsize = 0, incstack = 0, save=0
@@ -1570,30 +1566,22 @@ DelayMs@b:	; 1 bytes @ 0xA
 ;; ---------------------------------------------------------------------------------
 ;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
 ;; ---------------------------------------------------------------------------------
-;; (0) _main                                                 0     0      0      90
+;; (0) _main                                                 0     0      0     150
 ;;                      _POWER_INITIAL
-;;                        _WDT_INITIAL
+;;                             _DelayS
+;; ---------------------------------------------------------------------------------
+;; (1) _DelayS                                               3     3      0     150
+;;                                              5 COMMON     3     3      0
 ;;                            _DelayMs
 ;; ---------------------------------------------------------------------------------
-;; (1) _DelayMs                                              4     4      0      90
-;;                                              7 COMMON     4     4      0
+;; (2) _DelayMs                                              3     3      0      90
+;;                                              2 COMMON     3     3      0
 ;;                            _DelayUs
 ;; ---------------------------------------------------------------------------------
-;; (2) _DelayUs                                              3     3      0      30
-;;                                              4 COMMON     3     3      0
+;; (3) _DelayUs                                              2     2      0      30
+;;                                              0 COMMON     2     2      0
 ;; ---------------------------------------------------------------------------------
-;; (1) _WDT_INITIAL                                          1     1      0       0
-;;                                              4 COMMON     1     1      0
-;; ---------------------------------------------------------------------------------
-;; (1) _POWER_INITIAL                                        1     1      0       0
-;;                                              4 COMMON     1     1      0
-;; ---------------------------------------------------------------------------------
-;; Estimated maximum stack depth 2
-;; ---------------------------------------------------------------------------------
-;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
-;; ---------------------------------------------------------------------------------
-;; (3) _ISR                                                  4     4      0       0
-;;                                              0 COMMON     4     4      0
+;; (1) _POWER_INITIAL                                        0     0      0       0
 ;; ---------------------------------------------------------------------------------
 ;; Estimated maximum stack depth 3
 ;; ---------------------------------------------------------------------------------
@@ -1602,11 +1590,9 @@ DelayMs@b:	; 1 bytes @ 0xA
 
 ;; _main (ROOT)
 ;;   _POWER_INITIAL
-;;   _WDT_INITIAL
-;;   _DelayMs
-;;     _DelayUs
-;;
-;; _ISR (ROOT)
+;;   _DelayS
+;;     _DelayMs
+;;       _DelayUs
 ;;
 
 ;; Address spaces:
@@ -1616,12 +1602,12 @@ DelayMs@b:	; 1 bytes @ 0xA
 ;;EEDATA             100      0       0       0        0.0%
 ;;NULL                 0      0       0       0        0.0%
 ;;CODE                 0      0       0       0        0.0%
-;;COMMON              3E      B       B       1       17.7%
+;;COMMON              3E      8       8       1       12.9%
 ;;BITSFR0              0      0       0       1        0.0%
 ;;SFR0                 0      0       0       1        0.0%
 ;;BITSFR1              0      0       0       2        0.0%
 ;;SFR1                 0      0       0       2        0.0%
-;;STACK                0      0       2       2        0.0%
+;;STACK                0      0       3       2        0.0%
 ;;ABS                  0      0       0       3        0.0%
 ;;DATA                 0      0       0       4        0.0%
 
@@ -1632,13 +1618,13 @@ __pmaintext:
 
 ;; *************** function _main *****************
 ;; Defined at:
-;;		line 122 in file "MG117McuBeacon.C"
+;;		line 119 in file "TEST_60F01x_SLEEP.c"
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
 ;;		None
 ;; Return value:  Size  Location     Type
-;;                  2  463[COMMON] int 
+;;		None               void
 ;; Registers used:
 ;;		wreg, status,2, status,0, pclath, cstack
 ;; Tracked objects:
@@ -1654,135 +1640,202 @@ __pmaintext:
 ;; Hardware stack levels required when called:    3
 ;; This function calls:
 ;;		_POWER_INITIAL
-;;		_WDT_INITIAL
-;;		_DelayMs
+;;		_DelayS
 ;; This function is called by:
 ;;		Startup code after reset
 ;; This function uses a non-reentrant model
 ;;
 psect	maintext
-	file	"MG117McuBeacon.C"
-	line	122
+	file	"TEST_60F01x_SLEEP.c"
+	line	119
 	global	__size_of_main
 	__size_of_main	equ	__end_of_main-_main
 	
 _main:	
 	opt	stack 5
 ; Regs used in _main: [wreg+status,2+status,0+pclath+cstack]
-	line	123
+	line	120
 	
-l2322:	
-;MG117McuBeacon.C: 123: POWER_INITIAL();
+l1442:	
+;TEST_60F01x_SLEEP.c: 120: POWER_INITIAL();
 	fcall	_POWER_INITIAL
+	line	121
+	
+l1444:	
+;TEST_60F01x_SLEEP.c: 121: RA1 = 1;
+	bsf	(41/8),(41)&7
+	line	122
+	
+l1446:	
+;TEST_60F01x_SLEEP.c: 122: RA0 = 1;
+	bsf	(40/8),(40)&7
+	line	123
+;TEST_60F01x_SLEEP.c: 123: DelayS(3);
+	movlw	(03h)
+	fcall	_DelayS
 	line	124
-;MG117McuBeacon.C: 124: WDT_INITIAL();
-	fcall	_WDT_INITIAL
-	line	127
 	
-l2324:	
-;MG117McuBeacon.C: 127: RA2 = 0;
+l1448:	
+;TEST_60F01x_SLEEP.c: 124: RA1 = 0;
 	bcf	status, 5	;RP0=0, select bank0
-	bcf	(42/8),(42)&7
+	bcf	(41/8),(41)&7
+	line	125
+	
+l1450:	
+;TEST_60F01x_SLEEP.c: 125: RA0 = 0;
+	bcf	(40/8),(40)&7
 	line	128
-;MG117McuBeacon.C: 128: DelayMs(100);
-	movlw	(064h)
-	fcall	_DelayMs
-	line	129
 	
-l2326:	
-;MG117McuBeacon.C: 129: RA2 = 1;
-	bcf	status, 5	;RP0=0, select bank0
-	bsf	(42/8),(42)&7
-	line	132
-	
-l2328:	
-;MG117McuBeacon.C: 132: RA5 = 0;
-	bcf	(45/8),(45)&7
-	line	133
-;MG117McuBeacon.C: 133: DelayMs(1500 - 100);
-	movlw	(078h)
-	fcall	_DelayMs
-	line	134
-	
-l2330:	
-;MG117McuBeacon.C: 134: RA5 = 1;
-	bcf	status, 5	;RP0=0, select bank0
-	bsf	(45/8),(45)&7
-	goto	l2332
-	line	137
-;MG117McuBeacon.C: 137: while (1)
-	
-l464:	
-	line	139
-	
-l2332:	
-# 139 "MG117McuBeacon.C"
+l1452:	
+# 128 "TEST_60F01x_SLEEP.c"
 clrwdt ;#
 psect	maintext
-	line	140
+	line	129
 	
-l2334:	
-;MG117McuBeacon.C: 140: SWDTEN = 1;
-	bcf	status, 5	;RP0=0, select bank0
-	bsf	(192/8),(192)&7
-	line	142
+l1454:	
+;TEST_60F01x_SLEEP.c: 129: _nop();
+	nop
+	line	130
 	
-l2336:	
-;MG117McuBeacon.C: 142: RA4 = 0;
-	bcf	(44/8),(44)&7
-	line	143
-;MG117McuBeacon.C: 143: DelayMs(1050);
-	movlw	(01Ah)
-	fcall	_DelayMs
-	line	144
-	
-l2338:	
-;MG117McuBeacon.C: 144: RA4 = 1;
-	bcf	status, 5	;RP0=0, select bank0
-	bsf	(44/8),(44)&7
-	line	145
-;MG117McuBeacon.C: 145: DelayMs((1000 - 1050));
-	movlw	(0CEh)
-	fcall	_DelayMs
-	line	147
-	
-l2340:	
-# 147 "MG117McuBeacon.C"
+l1456:	
+# 130 "TEST_60F01x_SLEEP.c"
 sleep ;#
 psect	maintext
-	goto	l2332
-	line	148
+	line	131
 	
-l465:	
-	line	137
-	goto	l2332
-	
-l466:	
-	line	149
-	
-l467:	
+l1458:	
+;TEST_60F01x_SLEEP.c: 131: _nop();
+	nop
+	goto	l1452
 	global	start
 	ljmp	start
 	opt stack 0
+psect	maintext
+	line	134
 GLOBAL	__end_of_main
 	__end_of_main:
 ;; =============== function _main ends ============
 
-	signat	_main,90
-	global	_DelayMs
-psect	text108,local,class=CODE,delta=2
-global __ptext108
-__ptext108:
+	signat	_main,88
+	global	_DelayS
+psect	text54,local,class=CODE,delta=2
+global __ptext54
+__ptext54:
 
-;; *************** function _DelayMs *****************
+;; *************** function _DelayS *****************
 ;; Defined at:
-;;		line 94 in file "MG117McuBeacon.C"
+;;		line 102 in file "TEST_60F01x_SLEEP.c"
 ;; Parameters:    Size  Location     Type
 ;;  Time            1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
-;;  Time            1    8[COMMON] unsigned char 
-;;  b               1   10[COMMON] unsigned char 
-;;  a               1    9[COMMON] unsigned char 
+;;  Time            1    5[COMMON] unsigned char 
+;;  b               1    7[COMMON] unsigned char 
+;;  a               1    6[COMMON] unsigned char 
+;; Return value:  Size  Location     Type
+;;		None               void
+;; Registers used:
+;;		wreg, status,2, status,0, pclath, cstack
+;; Tracked objects:
+;;		On entry : 17F/0
+;;		On exit  : 0/0
+;;		Unchanged: FFE00/0
+;; Data sizes:     COMMON
+;;      Params:         0
+;;      Locals:         3
+;;      Temps:          0
+;;      Totals:         3
+;;Total ram usage:        3 bytes
+;; Hardware stack levels used:    1
+;; Hardware stack levels required when called:    2
+;; This function calls:
+;;		_DelayMs
+;; This function is called by:
+;;		_main
+;; This function uses a non-reentrant model
+;;
+psect	text54
+	file	"TEST_60F01x_SLEEP.c"
+	line	102
+	global	__size_of_DelayS
+	__size_of_DelayS	equ	__end_of_DelayS-_DelayS
+	
+_DelayS:	
+	opt	stack 5
+; Regs used in _DelayS: [wreg+status,2+status,0+pclath+cstack]
+;DelayS@Time stored from wreg
+	line	104
+	movwf	(DelayS@Time)
+	
+l1424:	
+;TEST_60F01x_SLEEP.c: 103: unsigned char a,b;
+;TEST_60F01x_SLEEP.c: 104: for(a=0;a<Time;a++)
+	clrf	(DelayS@a)
+	goto	l1440
+	line	106
+	
+l1426:	
+;TEST_60F01x_SLEEP.c: 105: {
+;TEST_60F01x_SLEEP.c: 106: for(b=0;b<10;b++)
+	clrf	(DelayS@b)
+	line	108
+	
+l1432:	
+;TEST_60F01x_SLEEP.c: 107: {
+;TEST_60F01x_SLEEP.c: 108: DelayMs(100);
+	movlw	(064h)
+	fcall	_DelayMs
+	line	106
+	
+l1434:	
+	incf	(DelayS@b),f
+	
+l1436:	
+	movlw	(0Ah)
+	subwf	(DelayS@b),w
+	skipc
+	goto	u41
+	goto	u40
+u41:
+	goto	l1432
+u40:
+	line	104
+	
+l1438:	
+	incf	(DelayS@a),f
+	
+l1440:	
+	movf	(DelayS@Time),w
+	subwf	(DelayS@a),w
+	skipc
+	goto	u51
+	goto	u50
+u51:
+	goto	l1426
+u50:
+	line	111
+	
+l455:	
+	return
+	opt stack 0
+GLOBAL	__end_of_DelayS
+	__end_of_DelayS:
+;; =============== function _DelayS ends ============
+
+	signat	_DelayS,4216
+	global	_DelayMs
+psect	text55,local,class=CODE,delta=2
+global __ptext55
+__ptext55:
+
+;; *************** function _DelayMs *****************
+;; Defined at:
+;;		line 85 in file "TEST_60F01x_SLEEP.c"
+;; Parameters:    Size  Location     Type
+;;  Time            1    wreg     unsigned char 
+;; Auto vars:     Size  Location     Type
+;;  Time            1    2[COMMON] unsigned char 
+;;  b               1    4[COMMON] unsigned char 
+;;  a               1    3[COMMON] unsigned char 
 ;; Return value:  Size  Location     Type
 ;;		None               void
 ;; Registers used:
@@ -1790,25 +1843,24 @@ __ptext108:
 ;; Tracked objects:
 ;;		On entry : 0/0
 ;;		On exit  : 0/0
-;;		Unchanged: 0/0
+;;		Unchanged: FFE00/0
 ;; Data sizes:     COMMON
 ;;      Params:         0
 ;;      Locals:         3
-;;      Temps:          1
-;;      Totals:         4
-;;Total ram usage:        4 bytes
+;;      Temps:          0
+;;      Totals:         3
+;;Total ram usage:        3 bytes
 ;; Hardware stack levels used:    1
-;; Hardware stack levels required when called:    2
+;; Hardware stack levels required when called:    1
 ;; This function calls:
 ;;		_DelayUs
 ;; This function is called by:
-;;		_main
 ;;		_DelayS
 ;; This function uses a non-reentrant model
 ;;
-psect	text108
-	file	"MG117McuBeacon.C"
-	line	94
+psect	text55
+	file	"TEST_60F01x_SLEEP.c"
+	line	85
 	global	__size_of_DelayMs
 	__size_of_DelayMs	equ	__end_of_DelayMs-_DelayMs
 	
@@ -1816,91 +1868,58 @@ _DelayMs:
 	opt	stack 5
 ; Regs used in _DelayMs: [wreg+status,2+status,0+pclath+cstack]
 ;DelayMs@Time stored from wreg
-	line	96
+	line	87
 	movwf	(DelayMs@Time)
 	
-l2306:	
-;MG117McuBeacon.C: 95: unsigned char a, b;
-;MG117McuBeacon.C: 96: for (a = 0; a < Time; a++)
+l1406:	
+;TEST_60F01x_SLEEP.c: 86: unsigned char a,b;
+;TEST_60F01x_SLEEP.c: 87: for(a=0;a<Time;a++)
 	clrf	(DelayMs@a)
-	goto	l2320
-	line	97
+	goto	l1422
+	line	89
 	
-l449:	
-	line	98
-;MG117McuBeacon.C: 97: {
-;MG117McuBeacon.C: 98: for (b = 0; b < 5; b++)
+l1408:	
+;TEST_60F01x_SLEEP.c: 88: {
+;TEST_60F01x_SLEEP.c: 89: for(b=0;b<5;b++)
 	clrf	(DelayMs@b)
+	line	91
 	
-l2308:	
-	movlw	(05h)
-	subwf	(DelayMs@b),w
-	skipc
-	goto	u2261
-	goto	u2260
-u2261:
-	goto	l2312
-u2260:
-	goto	l2318
-	
-l2310:	
-	goto	l2318
-	line	99
-	
-l450:	
-	line	100
-	
-l2312:	
-;MG117McuBeacon.C: 99: {
-;MG117McuBeacon.C: 100: DelayUs(98);
-	movlw	(062h)
+l1414:	
+;TEST_60F01x_SLEEP.c: 90: {
+;TEST_60F01x_SLEEP.c: 91: DelayUs(197);
+	movlw	(0C5h)
 	fcall	_DelayUs
-	line	98
+	line	89
 	
-l2314:	
-	movlw	(01h)
-	movwf	(??_DelayMs+0)+0
-	movf	(??_DelayMs+0)+0,w
-	addwf	(DelayMs@b),f
+l1416:	
+	incf	(DelayMs@b),f
 	
-l2316:	
+l1418:	
 	movlw	(05h)
 	subwf	(DelayMs@b),w
 	skipc
-	goto	u2271
-	goto	u2270
-u2271:
-	goto	l2312
-u2270:
-	goto	l2318
+	goto	u21
+	goto	u20
+u21:
+	goto	l1414
+u20:
+	line	87
 	
-l451:	
-	line	96
+l1420:	
+	incf	(DelayMs@a),f
 	
-l2318:	
-	movlw	(01h)
-	movwf	(??_DelayMs+0)+0
-	movf	(??_DelayMs+0)+0,w
-	addwf	(DelayMs@a),f
-	goto	l2320
-	
-l448:	
-	
-l2320:	
+l1422:	
 	movf	(DelayMs@Time),w
 	subwf	(DelayMs@a),w
 	skipc
-	goto	u2281
-	goto	u2280
-u2281:
-	goto	l449
-u2280:
-	goto	l453
+	goto	u31
+	goto	u30
+u31:
+	goto	l1408
+u30:
+	line	94
 	
-l452:	
-	line	103
-	
-l453:	
+l447:	
 	return
 	opt stack 0
 GLOBAL	__end_of_DelayMs
@@ -1909,18 +1928,18 @@ GLOBAL	__end_of_DelayMs
 
 	signat	_DelayMs,4216
 	global	_DelayUs
-psect	text109,local,class=CODE,delta=2
-global __ptext109
-__ptext109:
+psect	text56,local,class=CODE,delta=2
+global __ptext56
+__ptext56:
 
 ;; *************** function _DelayUs *****************
 ;; Defined at:
-;;		line 86 in file "MG117McuBeacon.C"
+;;		line 71 in file "TEST_60F01x_SLEEP.c"
 ;; Parameters:    Size  Location     Type
 ;;  Time            1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
-;;  Time            1    5[COMMON] unsigned char 
-;;  a               1    6[COMMON] unsigned char 
+;;  Time            1    0[COMMON] unsigned char 
+;;  a               1    1[COMMON] unsigned char 
 ;; Return value:  Size  Location     Type
 ;;		None               void
 ;; Registers used:
@@ -1928,24 +1947,23 @@ __ptext109:
 ;; Tracked objects:
 ;;		On entry : 0/0
 ;;		On exit  : 0/0
-;;		Unchanged: 0/0
+;;		Unchanged: FFE00/0
 ;; Data sizes:     COMMON
 ;;      Params:         0
 ;;      Locals:         2
-;;      Temps:          1
-;;      Totals:         3
-;;Total ram usage:        3 bytes
+;;      Temps:          0
+;;      Totals:         2
+;;Total ram usage:        2 bytes
 ;; Hardware stack levels used:    1
-;; Hardware stack levels required when called:    1
 ;; This function calls:
 ;;		Nothing
 ;; This function is called by:
 ;;		_DelayMs
 ;; This function uses a non-reentrant model
 ;;
-psect	text109
-	file	"MG117McuBeacon.C"
-	line	86
+psect	text56
+	file	"TEST_60F01x_SLEEP.c"
+	line	71
 	global	__size_of_DelayUs
 	__size_of_DelayUs	equ	__end_of_DelayUs-_DelayUs
 	
@@ -1953,47 +1971,38 @@ _DelayUs:
 	opt	stack 5
 ; Regs used in _DelayUs: [wreg+status,2+status,0]
 ;DelayUs@Time stored from wreg
-	line	88
+	line	73
 	movwf	(DelayUs@Time)
 	
-l2300:	
-;MG117McuBeacon.C: 87: unsigned char a;
-;MG117McuBeacon.C: 88: for (a = 0; a < Time; a++)
+l1400:	
+;TEST_60F01x_SLEEP.c: 72: unsigned char a;
+;TEST_60F01x_SLEEP.c: 73: for(a=0;a<Time;a++)
 	clrf	(DelayUs@a)
-	goto	l2304
-	line	89
+	goto	l1404
+	line	74
 	
-l443:	
-	line	90
-;MG117McuBeacon.C: 89: {
-;MG117McuBeacon.C: 90: _nop();
-	nop
-	line	88
+l437:	
+	line	75
+# 75 "TEST_60F01x_SLEEP.c"
+clrwdt ;#
+psect	text56
+	line	73
 	
-l2302:	
-	movlw	(01h)
-	movwf	(??_DelayUs+0)+0
-	movf	(??_DelayUs+0)+0,w
-	addwf	(DelayUs@a),f
-	goto	l2304
+l1402:	
+	incf	(DelayUs@a),f
 	
-l442:	
-	
-l2304:	
+l1404:	
 	movf	(DelayUs@Time),w
 	subwf	(DelayUs@a),w
 	skipc
-	goto	u2251
-	goto	u2250
-u2251:
-	goto	l443
-u2250:
-	goto	l445
+	goto	u11
+	goto	u10
+u11:
+	goto	l437
+u10:
+	line	77
 	
-l444:	
-	line	92
-	
-l445:	
+l439:	
 	return
 	opt stack 0
 GLOBAL	__end_of_DelayUs
@@ -2001,91 +2010,14 @@ GLOBAL	__end_of_DelayUs
 ;; =============== function _DelayUs ends ============
 
 	signat	_DelayUs,4216
-	global	_WDT_INITIAL
-psect	text110,local,class=CODE,delta=2
-global __ptext110
-__ptext110:
-
-;; *************** function _WDT_INITIAL *****************
-;; Defined at:
-;;		line 78 in file "MG117McuBeacon.C"
-;; Parameters:    Size  Location     Type
-;;		None
-;; Auto vars:     Size  Location     Type
-;;		None
-;; Return value:  Size  Location     Type
-;;		None               void
-;; Registers used:
-;;		wreg
-;; Tracked objects:
-;;		On entry : 0/0
-;;		On exit  : 0/0
-;;		Unchanged: 0/0
-;; Data sizes:     COMMON
-;;      Params:         0
-;;      Locals:         0
-;;      Temps:          1
-;;      Totals:         1
-;;Total ram usage:        1 bytes
-;; Hardware stack levels used:    1
-;; Hardware stack levels required when called:    1
-;; This function calls:
-;;		Nothing
-;; This function is called by:
-;;		_main
-;; This function uses a non-reentrant model
-;;
-psect	text110
-	file	"MG117McuBeacon.C"
-	line	78
-	global	__size_of_WDT_INITIAL
-	__size_of_WDT_INITIAL	equ	__end_of_WDT_INITIAL-_WDT_INITIAL
-	
-_WDT_INITIAL:	
-	opt	stack 6
-; Regs used in _WDT_INITIAL: [wreg]
-	line	79
-	
-l1420:	
-# 79 "MG117McuBeacon.C"
-clrwdt ;#
-psect	text110
-	line	80
-;MG117McuBeacon.C: 80: PSA = 1;
-	bsf	status, 5	;RP0=1, select bank1
-	bsf	(1035/8)^080h,(1035)&7
-	line	81
-	
-l1422:	
-;MG117McuBeacon.C: 81: WDTCON = 0B00010100;
-	movlw	(014h)
-	movwf	(??_WDT_INITIAL+0)+0
-	movf	(??_WDT_INITIAL+0)+0,w
-	bcf	status, 5	;RP0=0, select bank0
-	movwf	(24)	;volatile
-	line	82
-	
-l1424:	
-;MG117McuBeacon.C: 82: SWDTEN = 0;
-	bcf	(192/8),(192)&7
-	line	83
-	
-l439:	
-	return
-	opt stack 0
-GLOBAL	__end_of_WDT_INITIAL
-	__end_of_WDT_INITIAL:
-;; =============== function _WDT_INITIAL ends ============
-
-	signat	_WDT_INITIAL,88
 	global	_POWER_INITIAL
-psect	text111,local,class=CODE,delta=2
-global __ptext111
-__ptext111:
+psect	text57,local,class=CODE,delta=2
+global __ptext57
+__ptext57:
 
 ;; *************** function _POWER_INITIAL *****************
 ;; Defined at:
-;;		line 47 in file "MG117McuBeacon.C"
+;;		line 45 in file "TEST_60F01x_SLEEP.c"
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -2093,128 +2025,78 @@ __ptext111:
 ;; Return value:  Size  Location     Type
 ;;		None               void
 ;; Registers used:
-;;		wreg
+;;		wreg, status,2
 ;; Tracked objects:
-;;		On entry : 0/0
-;;		On exit  : 0/0
-;;		Unchanged: 0/0
+;;		On entry : 17F/0
+;;		On exit  : 17F/0
+;;		Unchanged: FFE80/0
 ;; Data sizes:     COMMON
 ;;      Params:         0
 ;;      Locals:         0
-;;      Temps:          1
-;;      Totals:         1
-;;Total ram usage:        1 bytes
+;;      Temps:          0
+;;      Totals:         0
+;;Total ram usage:        0 bytes
 ;; Hardware stack levels used:    1
-;; Hardware stack levels required when called:    1
 ;; This function calls:
 ;;		Nothing
 ;; This function is called by:
 ;;		_main
 ;; This function uses a non-reentrant model
 ;;
-psect	text111
-	file	"MG117McuBeacon.C"
-	line	47
+psect	text57
+	file	"TEST_60F01x_SLEEP.c"
+	line	45
 	global	__size_of_POWER_INITIAL
 	__size_of_POWER_INITIAL	equ	__end_of_POWER_INITIAL-_POWER_INITIAL
 	
 _POWER_INITIAL:	
-	opt	stack 6
-; Regs used in _POWER_INITIAL: [wreg]
-	line	48
+	opt	stack 7
+; Regs used in _POWER_INITIAL: [wreg+status,2]
+	line	46
 	
-l1392:	
-;MG117McuBeacon.C: 48: OSCCON = 0B01110001;
+l1386:	
+;TEST_60F01x_SLEEP.c: 46: OSCCON = 0X00|0X70|0X01;
 	movlw	(071h)
-	movwf	(??_POWER_INITIAL+0)+0
-	movf	(??_POWER_INITIAL+0)+0,w
 	bsf	status, 5	;RP0=1, select bank1
 	movwf	(143)^080h	;volatile
-	line	52
+	line	50
 	
-l1394:	
-;MG117McuBeacon.C: 52: INTCON = 0;
+l1388:	
+;TEST_60F01x_SLEEP.c: 50: INTCON = 0;
 	clrf	(11)	;volatile
-	line	53
+	line	51
 	
-l1396:	
-;MG117McuBeacon.C: 53: PORTA = 0B00000000;
+l1390:	
+;TEST_60F01x_SLEEP.c: 51: PORTA = 0B00000000;
 	bcf	status, 5	;RP0=0, select bank0
 	clrf	(5)	;volatile
-	line	54
+	line	52
 	
-l1398:	
-;MG117McuBeacon.C: 54: RA2 = 1;
-	bsf	(42/8),(42)&7
-	line	55
+l1392:	
+;TEST_60F01x_SLEEP.c: 52: TRISA = 0B00000000;
+	bsf	status, 5	;RP0=1, select bank1
+	clrf	(133)^080h	;volatile
+	line	53
 	
-l1400:	
-;MG117McuBeacon.C: 55: RA4 = 1;
-	bsf	(44/8),(44)&7
+l1394:	
+;TEST_60F01x_SLEEP.c: 53: WPUA = 0B00100000;
+	movlw	(020h)
+	movwf	(149)^080h	;volatile
 	line	56
 	
-l1402:	
-;MG117McuBeacon.C: 56: RA5 = 1;
-	bsf	(45/8),(45)&7
-	line	58
-;MG117McuBeacon.C: 58: TRISA = 0B11111111;
-	movlw	(0FFh)
-	movwf	(??_POWER_INITIAL+0)+0
-	movf	(??_POWER_INITIAL+0)+0,w
-	bsf	status, 5	;RP0=1, select bank1
-	movwf	(133)^080h	;volatile
-	line	60
-	
-l1404:	
-;MG117McuBeacon.C: 60: TRISA2 = 0;
-	bcf	(1066/8)^080h,(1066)&7
-	line	61
-	
-l1406:	
-;MG117McuBeacon.C: 61: TRISA4 = 0;
-	bcf	(1068/8)^080h,(1068)&7
-	line	62
-	
-l1408:	
-;MG117McuBeacon.C: 62: TRISA5 = 0;
-	bcf	(1069/8)^080h,(1069)&7
-	line	64
-	
-l1410:	
-;MG117McuBeacon.C: 64: RA2 = 1;
-	bcf	status, 5	;RP0=0, select bank0
-	bsf	(42/8),(42)&7
-	line	65
-	
-l1412:	
-;MG117McuBeacon.C: 65: RA4 = 1;
-	bsf	(44/8),(44)&7
-	line	66
-	
-l1414:	
-;MG117McuBeacon.C: 66: RA5 = 1;
-	bsf	(45/8),(45)&7
-	line	68
-	
-l1416:	
-;MG117McuBeacon.C: 68: WPUA = 0B00000000;
-	bsf	status, 5	;RP0=1, select bank1
-	clrf	(149)^080h	;volatile
-	line	69
-;MG117McuBeacon.C: 69: OPTION = 0B00001000;
+l1396:	
+;TEST_60F01x_SLEEP.c: 56: OPTION = 0B00001000;
 	movlw	(08h)
-	movwf	(??_POWER_INITIAL+0)+0
-	movf	(??_POWER_INITIAL+0)+0,w
 	movwf	(129)^080h	;volatile
-	line	70
+	line	58
 	
-l1418:	
-;MG117McuBeacon.C: 70: MSCKCON = 0B00000000;
+l1398:	
+;TEST_60F01x_SLEEP.c: 58: MSCKCON = 0B00000000;
 	bcf	status, 5	;RP0=0, select bank0
 	clrf	(27)	;volatile
-	line	75
+	line	63
 	
-l436:	
+l433:	
 	return
 	opt stack 0
 GLOBAL	__end_of_POWER_INITIAL
@@ -2222,90 +2104,9 @@ GLOBAL	__end_of_POWER_INITIAL
 ;; =============== function _POWER_INITIAL ends ============
 
 	signat	_POWER_INITIAL,88
-	global	_ISR
-psect	text112,local,class=CODE,delta=2
-global __ptext112
-__ptext112:
-
-;; *************** function _ISR *****************
-;; Defined at:
-;;		line 42 in file "MG117McuBeacon.C"
-;; Parameters:    Size  Location     Type
-;;		None
-;; Auto vars:     Size  Location     Type
-;;		None
-;; Return value:  Size  Location     Type
-;;		None               void
-;; Registers used:
-;;		None
-;; Tracked objects:
-;;		On entry : 0/0
-;;		On exit  : 0/0
-;;		Unchanged: 0/0
-;; Data sizes:     COMMON
-;;      Params:         0
-;;      Locals:         0
-;;      Temps:          4
-;;      Totals:         4
-;;Total ram usage:        4 bytes
-;; Hardware stack levels used:    1
-;; This function calls:
-;;		Nothing
-;; This function is called by:
-;;		Interrupt level 1
-;; This function uses a non-reentrant model
-;;
-psect	text112
-	file	"MG117McuBeacon.C"
-	line	42
-	global	__size_of_ISR
-	__size_of_ISR	equ	__end_of_ISR-_ISR
-	
-_ISR:	
-	opt	stack 5
-; Regs used in _ISR: []
-psect	intentry,class=CODE,delta=2
-global __pintentry
-__pintentry:
-global interrupt_function
-interrupt_function:
-	global saved_w
-	saved_w	set	btemp+0
-	movwf	saved_w
-	swapf	status,w
-	movwf	(??_ISR+0)
-	movf	fsr0,w
-	movwf	(??_ISR+1)
-	movf	pclath,w
-	movwf	(??_ISR+2)
-	bcf	status, 5	;RP0=0, select bank0
-	movf	btemp+1,w
-	movwf	(??_ISR+3)
-	ljmp	_ISR
-psect	text112
-	line	43
-	
-i1l433:	
-	movf	(??_ISR+3),w
-	movwf	btemp+1
-	movf	(??_ISR+2),w
-	movwf	pclath
-	movf	(??_ISR+1),w
-	movwf	fsr0
-	swapf	(??_ISR+0)^0FFFFFF80h,w
-	movwf	status
-	swapf	saved_w,f
-	swapf	saved_w,w
-	retfie
-	opt stack 0
-GLOBAL	__end_of_ISR
-	__end_of_ISR:
-;; =============== function _ISR ends ============
-
-	signat	_ISR,88
-psect	text113,local,class=CODE,delta=2
-global __ptext113
-__ptext113:
+psect	text58,local,class=CODE,delta=2
+global __ptext58
+__ptext58:
 	global	btemp
 	btemp set 07Eh
 

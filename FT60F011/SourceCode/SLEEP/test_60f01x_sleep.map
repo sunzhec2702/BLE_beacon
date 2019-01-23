@@ -3,16 +3,16 @@ HI-TECH Software C Compiler
 Linker command line:
 
 --edf=C:\Program Files (x86)\HI-TECH Software\PICC\9.83\dat\en_msgs.txt -cs \
-  -h+mg117mcubeacon.sym -z -Q16F684 -ol.obj -Mmg117mcubeacon.map -E1 \
+  -h+test_60f01x_sleep.sym -z -Q16F684 -ol.obj -Mtest_60f01x_sleep.map -E1 \
   -ACONST=00h-0FFhx4 -ACODE=00h-03FFh -ASTRCODE=00h-03FFh \
   -AENTRY=00h-0FFhx4 -ASTRING=00h-0FFhx4 -ABANK0=00h-01Fh -ABANK1=080h-09Fh \
   -ARAM=00h-01Fh,080h-09Fh -AABS1=00h-01Fh,040h-09Fh -ACOMMON=040h-07Fh \
   -ASFR0=00h-0FFFFFFFFh -ASFR1=080h-080h \
-  -preset_vec=00h,intentry=04h,init,end_init -ppowerup=CODE -pfunctab=CODE \
+  -preset_vec=00h,intentry,init,end_init -ppowerup=CODE -pfunctab=CODE \
   -ACONFIG=02007h-02007h -pconfig=CONFIG -DCONFIG=2 -AIDLOC=02000h-02003h \
   -pidloc=IDLOC -DIDLOC=2 -AEEDATA=00h-0FFh/02100h -peeprom_data=EEDATA \
   -DEEDATA=2 -DCODE=2 -DSTRCODE=2 -DSTRING=2 -DCONST=2 -DENTRY=2 -k \
-  startup.obj mg117mcubeacon.obj 
+  startup.obj test_60f01x_sleep.obj 
 
 Object code version is 3.10
 
@@ -21,33 +21,27 @@ Machine type is 16F684
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-startup.obj     end_init                              F        F        1        8       0
-                reset_vec                             0        0        1        0       0
-mg117mcubeacon.obj
-                intentry                              4        4        B        8       0
-                text112                              83       83        B        8       0
-                text111                              36       36       20        8       0
-                text110                              8E       8E        A        8       0
-                text109                              72       72       11        8       0
-                text108                              10       10       26        8       0
-                maintext                             56       56       1C        8       0
-                cstackCOMMON                         40       40        B       40       1
-                cinit                                98       98        2        8       0
+startup.obj     end_init                              0        0        1        0       0
+test_60f01x_sleep.obj
+                text57                              3D1      3D1        F      7A2       0
+                text56                              3BB      3BB        9      776       0
+                text55                              3E0      3E0       10      7C0       0
+                text54                              3F0      3F0       10      7E0       0
+                maintext                            3C4      3C4        D      788       0
+                cstackCOMMON                         40       40        8       40       1
+                cinit                               3B9      3B9        2      772       0
 
 TOTAL           Name                               Link     Load   Length     Space
         CLASS   CONST          
 
         CLASS   CODE           
-                end_init                              F        F        1         0
-                intentry                              4        4        B         0
-                reset_vec                             0        0        1         0
-                text112                              83       83        B         0
-                text111                              36       36       20         0
-                text110                              8E       8E        A         0
-                text109                              72       72       11         0
-                text108                              10       10       26         0
-                maintext                             56       56       1C         0
-                cinit                                98       98        2         0
+                end_init                              0        0        1         0
+                text57                              3D1      3D1        F         0
+                text56                              3BB      3BB        9         0
+                text55                              3E0      3E0       10         0
+                text54                              3F0      3F0       10         0
+                maintext                            3C4      3C4        D         0
+                cinit                               3B9      3B9        2         0
 
         CLASS   STRCODE        
 
@@ -66,7 +60,7 @@ TOTAL           Name                               Link     Load   Length     Sp
                 abs_s1                               7E       7E       22         1
 
         CLASS   COMMON         
-                cstackCOMMON                         40       40        B         1
+                cstackCOMMON                         40       40        8         1
 
         CLASS   SFR0           
 
@@ -83,47 +77,48 @@ TOTAL           Name                               Link     Load   Length     Sp
 SEGMENTS        Name                           Load    Length   Top    Selector   Space  Class     Delta
 
                 reset_vec                      000000  000001  000001         0       0  CODE        2
-                intentry                       000004  000096  00009A         8       0  CODE        2
-                cstackCOMMON                   000040  00000B  00004B        40       1  COMMON      1
+                cstackCOMMON                   000040  000008  000048        40       1  COMMON      1
+                cinit                          0003B9  000002  0003BB       772       0  CODE        2
+                text56                         0003BB  000009  0003C4       776       0  CODE        2
+                maintext                       0003C4  00000D  0003D1       788       0  CODE        2
+                text57                         0003D1  00000F  0003E0       7A2       0  CODE        2
+                text55                         0003E0  000010  0003F0       7C0       0  CODE        2
+                text54                         0003F0  000010  000400       7E0       0  CODE        2
 
 
 UNUSED ADDRESS RANGES
 
         Name                Unused          Largest block    Delta
-        CODE             001-003             3           2
-                         09A-3FF           366
-        COMMON           04B-07D            33           1
+        CODE             001-3B8           3B8           2
+        COMMON           048-07D            36           1
         CONFIG           2007-2007             1           2
-        CONST            001-003             3           2
-                         09A-3FF           100
+        CONST            001-3B8           100           2
         EEDATA           2100-21FF           100           2
-        ENTRY            001-003             3           2
-                         09A-3FF           100
+        ENTRY            001-3B8           100           2
         IDLOC            2000-2003             4           2
-        STRCODE          001-003             3           2
-                         09A-3FF           366
-        STRING           001-003             3           2
-                         09A-3FF           100
+        STRCODE          001-3B8           3B8           2
+        STRING           001-3B8           100           2
 
                                   Symbol Table
 
-??_DelayMs              cstackCOMMON 047
-??_DelayUs              cstackCOMMON 044
-??_ISR                  cstackCOMMON 040
-??_POWER_INITIAL        cstackCOMMON 044
-??_WDT_INITIAL          cstackCOMMON 044
-??_main                 cstackCOMMON 04B
+??_DelayMs              cstackCOMMON 042
+??_DelayS               cstackCOMMON 045
+??_DelayUs              cstackCOMMON 040
+??_POWER_INITIAL        cstackCOMMON 040
+??_main                 cstackCOMMON 048
 ?_DelayMs               cstackCOMMON 040
+?_DelayS                cstackCOMMON 040
 ?_DelayUs               cstackCOMMON 040
-?_ISR                   cstackCOMMON 040
 ?_POWER_INITIAL         cstackCOMMON 040
-?_WDT_INITIAL           cstackCOMMON 040
 ?_main                  cstackCOMMON 040
-DelayMs@Time            cstackCOMMON 048
-DelayMs@a               cstackCOMMON 049
-DelayMs@b               cstackCOMMON 04A
-DelayUs@Time            cstackCOMMON 045
-DelayUs@a               cstackCOMMON 046
+DelayMs@Time            cstackCOMMON 042
+DelayMs@a               cstackCOMMON 043
+DelayMs@b               cstackCOMMON 044
+DelayS@Time             cstackCOMMON 045
+DelayS@a                cstackCOMMON 046
+DelayS@b                cstackCOMMON 047
+DelayUs@Time            cstackCOMMON 040
+DelayUs@a               cstackCOMMON 041
 _ADCON0                 (abs)        01F
 _ADCON1                 (abs)        09F
 _ADCS0                  (abs)        4FC
@@ -181,8 +176,9 @@ _CMCON1                 (abs)        01A
 _DC                     (abs)        019
 _DC1B0                  (abs)        0AC
 _DC1B1                  (abs)        0AD
-_DelayMs                text108      010
-_DelayUs                text109      072
+_DelayMs                text55       3E0
+_DelayS                 text54       3F0
+_DelayUs                text56       3BB
 _ECCPAS                 (abs)        017
 _ECCPAS0                (abs)        0BC
 _ECCPAS1                (abs)        0BD
@@ -232,7 +228,6 @@ _IRCF0                  (abs)        47C
 _IRCF1                  (abs)        47D
 _IRCF2                  (abs)        47E
 _IRP                    (abs)        01F
-_ISR                    text112      083
 _LFIOFR                 (abs)        479
 _LFMOD                  (abs)        47F
 _LTS                    (abs)        479
@@ -278,7 +273,7 @@ _PIR1bits               (abs)        00C
 _PORTA                  (abs)        005
 _PORTAbits              (abs)        005
 _PORTC                  (abs)        007
-_POWER_INITIAL          text111      036
+_POWER_INITIAL          text57       3D1
 _PR2                    (abs)        092
 _PRSEN                  (abs)        0B7
 _PS0                    (abs)        408
@@ -454,7 +449,6 @@ _WDTPS0                 (abs)        0C1
 _WDTPS1                 (abs)        0C2
 _WDTPS2                 (abs)        0C3
 _WDTPS3                 (abs)        0C4
-_WDT_INITIAL            text110      08E
 _WPU                    (abs)        095
 _WPU0                   (abs)        4A8
 _WPU1                   (abs)        4A9
@@ -486,15 +480,16 @@ __Hcommon               common       000
 __Hconfig               config       000
 __HcstackCOMMON         cstackCOMMON 000
 __Heeprom_data          eeprom_data  000
-__Hend_init             end_init     010
+__Hend_init             end_init     001
 __Hfunctab              functab      000
 __Hidloc                idloc        000
-__Hinit                 init         00F
-__Hintentry             intentry     00F
+__Hinit                 init         000
+__Hintentry             intentry     000
 __Hmaintext             maintext     000
+__Hpa_nodes             pa_nodes     000
 __Hpowerup              powerup      000
 __Hram                  ram          000
-__Hreset_vec            reset_vec    001
+__Hreset_vec            reset_vec    000
 __Hsfr0                 sfr0         000
 __Hsfr1                 sfr1         000
 __Hstrings              strings      000
@@ -509,12 +504,13 @@ __Lcommon               common       000
 __Lconfig               config       000
 __LcstackCOMMON         cstackCOMMON 000
 __Leeprom_data          eeprom_data  000
-__Lend_init             end_init     00F
+__Lend_init             end_init     000
 __Lfunctab              functab      000
 __Lidloc                idloc        000
-__Linit                 init         00F
-__Lintentry             intentry     004
+__Linit                 init         000
+__Lintentry             intentry     000
 __Lmaintext             maintext     000
+__Lpa_nodes             pa_nodes     000
 __Lpowerup              powerup      000
 __Lram                  ram          000
 __Lreset_vec            reset_vec    000
@@ -522,33 +518,29 @@ __Lsfr0                 sfr0         000
 __Lsfr1                 sfr1         000
 __Lstrings              strings      000
 __Ltext                 text         000
-__S0                    (abs)        09A
-__S1                    (abs)        04B
+__S0                    (abs)        400
+__S1                    (abs)        048
 __S2                    (abs)        000
-__end_of_DelayMs        text108      036
-__end_of_DelayUs        text109      083
-__end_of_ISR            text112      08E
-__end_of_POWER_INITIAL  text111      056
-__end_of_WDT_INITIAL    text110      098
-__end_of_main           maintext     072
+__end_of_DelayMs        text55       3F0
+__end_of_DelayS         text54       400
+__end_of_DelayUs        text56       3C4
+__end_of_POWER_INITIAL  text57       3E0
+__end_of_main           maintext     3D1
 __pcstackCOMMON         cstackCOMMON 040
-__pintentry             intentry     004
-__pmaintext             maintext     056
-__ptext107              text107      000
-__ptext108              text108      010
-__ptext109              text109      072
-__ptext110              text110      08E
-__ptext111              text111      036
-__ptext112              text112      083
-__ptext113              text113      000
+__pmaintext             maintext     3C4
+__ptext53               text53       000
+__ptext54               text54       3F0
+__ptext55               text55       3E0
+__ptext56               text56       3BB
+__ptext57               text57       3D1
+__ptext58               text58       000
 __size_of_DelayMs       (abs)        000
+__size_of_DelayS        (abs)        000
 __size_of_DelayUs       (abs)        000
-__size_of_ISR           (abs)        000
 __size_of_POWER_INITIAL (abs)        000
-__size_of_WDT_INITIAL   (abs)        000
 __size_of_main          (abs)        000
-_exit                   init         00F
-_main                   maintext     056
+_exit                   init         000
+_main                   maintext     3C4
 _nBOD                   (abs)        470
 _nBOR                   (abs)        470
 _nDONE                  (abs)        0F9
@@ -561,16 +553,41 @@ _nT1SYNC                (abs)        082
 _nTF                    (abs)        01C
 _nTO                    (abs)        01C
 btemp                   (abs)        07E
-end_of_initialization   cinit        098
-interrupt_function      intentry     004
+end_of_initialization   cinit        3B9
 intlevel0               functab      000
 intlevel1               functab      000
 intlevel2               functab      000
 intlevel3               functab      000
 intlevel4               functab      000
 intlevel5               functab      000
+l1386                                   
+l1388                                   
+l1390                                   
+l1392                                   
+l1394                                   
+l1396                                   
+l1398                                   
+l1400                                   
+l1402                                   
+l1406                                   
+l1416                                   
+l1418                                   
+l1424                                   
+l1434                                   
+l1436                                   
+l1442                                   
+l1444                                   
+l1446                                   
+l1448                                   
+l1450                                   
+l1454                                   
+l1456                                   
+l1458                                   
+l433                                    
+l439                                    
+l447                                    
+l455                                    
 reset_vec               reset_vec    000
-saved_w                 (abs)        07E
-start                   init         00F
-start_initialization    cinit        098
+start                   init         000
+start_initialization    cinit        3B9
 wtemp0                  (abs)        07E
