@@ -41,16 +41,24 @@ z	equ	0
 pclath	equ	10
 	FNCALL	_main,_POWER_INITIAL
 	FNCALL	_main,_WDT_INITIAL
+	FNCALL	_main,_DelayS
 	FNCALL	_main,_DelayMs
+	FNCALL	_DelayS,_DelayMs
 	FNCALL	_DelayMs,_DelayUs
 	FNROOT	_main
 	FNCALL	intlevel1,_ISR
 	global	intlevel1
 	FNROOT	intlevel1
 	global	_FSR
+<<<<<<< HEAD
 psect	text107,local,class=CODE,delta=2
 global __ptext107
 __ptext107:
+=======
+psect	text70,local,class=CODE,delta=2
+global __ptext70
+__ptext70:
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 _FSR	set	4
 	DABS	1,4,1	;_FSR
 
@@ -1511,6 +1519,8 @@ __pcstackCOMMON:
 ?_DelayUs:	; 0 bytes @ 0x0
 	global	?_DelayMs
 ?_DelayMs:	; 0 bytes @ 0x0
+	global	?_DelayS
+?_DelayS:	; 0 bytes @ 0x0
 	global	?_main
 ?_main:	; 2 bytes @ 0x0
 	ds	4
@@ -1539,11 +1549,29 @@ DelayMs@a:	; 1 bytes @ 0x9
 	global	DelayMs@b
 DelayMs@b:	; 1 bytes @ 0xA
 	ds	1
+	global	??_DelayS
+??_DelayS:	; 0 bytes @ 0x7
+	global	DelayS@Time
+DelayS@Time:	; 1 bytes @ 0x7
+	ds	1
+	global	DelayS@a
+DelayS@a:	; 1 bytes @ 0x8
+	ds	1
+	global	DelayS@b
+DelayS@b:	; 1 bytes @ 0x9
+	ds	1
 	global	??_main
+<<<<<<< HEAD
 ??_main:	; 0 bytes @ 0xB
 ;;Data sizes: Strings 0, constant 0, data 0, bss 0, persistent 0 stack 0
 ;;Auto spaces:   Size  Autos    Used
 ;; COMMON          62     11      11
+=======
+??_main:	; 0 bytes @ 0xA
+;;Data sizes: Strings 0, constant 0, data 0, bss 0, persistent 0 stack 0
+;;Auto spaces:   Size  Autos    Used
+;; COMMON          62     10      10
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 
 ;;
 ;; Pointer list with targets:
@@ -1553,7 +1581,8 @@ DelayMs@b:	; 1 bytes @ 0xA
 ;;
 ;; Critical Paths under _main in COMMON
 ;;
-;;   _main->_DelayMs
+;;   _main->_DelayS
+;;   _DelayS->_DelayMs
 ;;   _DelayMs->_DelayUs
 ;;
 ;; Critical Paths under _ISR in COMMON
@@ -1570,9 +1599,14 @@ DelayMs@b:	; 1 bytes @ 0xA
 ;; ---------------------------------------------------------------------------------
 ;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
 ;; ---------------------------------------------------------------------------------
-;; (0) _main                                                 0     0      0      90
+;; (0) _main                                                 0     0      0     240
 ;;                      _POWER_INITIAL
 ;;                        _WDT_INITIAL
+;;                             _DelayS
+;;                            _DelayMs
+;; ---------------------------------------------------------------------------------
+;; (1) _DelayS                                               3     3      0     150
+;;                                              7 COMMON     3     3      0
 ;;                            _DelayMs
 ;; ---------------------------------------------------------------------------------
 ;; (1) _DelayMs                                              4     4      0      90
@@ -1592,10 +1626,15 @@ DelayMs@b:	; 1 bytes @ 0xA
 ;; ---------------------------------------------------------------------------------
 ;; (Depth) Function   	        Calls       Base Space   Used Autos Params    Refs
 ;; ---------------------------------------------------------------------------------
+<<<<<<< HEAD
 ;; (3) _ISR                                                  4     4      0       0
 ;;                                              0 COMMON     4     4      0
+=======
+;; (4) _ISR                                                  2     2      0       0
+;;                                              0 COMMON     2     2      0
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 ;; ---------------------------------------------------------------------------------
-;; Estimated maximum stack depth 3
+;; Estimated maximum stack depth 4
 ;; ---------------------------------------------------------------------------------
 
 ;; Call Graph Graphs:
@@ -1603,6 +1642,9 @@ DelayMs@b:	; 1 bytes @ 0xA
 ;; _main (ROOT)
 ;;   _POWER_INITIAL
 ;;   _WDT_INITIAL
+;;   _DelayS
+;;     _DelayMs
+;;       _DelayUs
 ;;   _DelayMs
 ;;     _DelayUs
 ;;
@@ -1616,12 +1658,16 @@ DelayMs@b:	; 1 bytes @ 0xA
 ;;EEDATA             100      0       0       0        0.0%
 ;;NULL                 0      0       0       0        0.0%
 ;;CODE                 0      0       0       0        0.0%
+<<<<<<< HEAD
 ;;COMMON              3E      B       B       1       17.7%
+=======
+;;COMMON              3E      A       A       1       16.1%
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 ;;BITSFR0              0      0       0       1        0.0%
 ;;SFR0                 0      0       0       1        0.0%
 ;;BITSFR1              0      0       0       2        0.0%
 ;;SFR1                 0      0       0       2        0.0%
-;;STACK                0      0       2       2        0.0%
+;;STACK                0      0       3       2        0.0%
 ;;ABS                  0      0       0       3        0.0%
 ;;DATA                 0      0       0       4        0.0%
 
@@ -1632,7 +1678,11 @@ __pmaintext:
 
 ;; *************** function _main *****************
 ;; Defined at:
+<<<<<<< HEAD
 ;;		line 122 in file "MG117McuBeacon.C"
+=======
+;;		line 126 in file "MG117McuBeacon.C"
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -1651,10 +1701,11 @@ __pmaintext:
 ;;      Temps:          0
 ;;      Totals:         0
 ;;Total ram usage:        0 bytes
-;; Hardware stack levels required when called:    3
+;; Hardware stack levels required when called:    4
 ;; This function calls:
 ;;		_POWER_INITIAL
 ;;		_WDT_INITIAL
+;;		_DelayS
 ;;		_DelayMs
 ;; This function is called by:
 ;;		Startup code after reset
@@ -1662,13 +1713,18 @@ __pmaintext:
 ;;
 psect	maintext
 	file	"MG117McuBeacon.C"
+<<<<<<< HEAD
 	line	122
+=======
+	line	126
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	global	__size_of_main
 	__size_of_main	equ	__end_of_main-_main
 	
 _main:	
-	opt	stack 5
+	opt	stack 4
 ; Regs used in _main: [wreg+status,2+status,0+pclath+cstack]
+<<<<<<< HEAD
 	line	123
 	
 l2322:	
@@ -1764,12 +1820,214 @@ l467:
 	global	start
 	ljmp	start
 	opt stack 0
+=======
+	line	127
+	
+l1468:	
+;MG117McuBeacon.C: 127: POWER_INITIAL();
+	fcall	_POWER_INITIAL
+	line	128
+;MG117McuBeacon.C: 128: WDT_INITIAL();
+	fcall	_WDT_INITIAL
+	line	133
+	
+l1470:	
+;MG117McuBeacon.C: 133: RA5 = 0;
+	bcf	(45/8),(45)&7
+	line	134
+;MG117McuBeacon.C: 134: DelayS(1);
+	movlw	(01h)
+	fcall	_DelayS
+	line	135
+;MG117McuBeacon.C: 135: DelayMs(500);
+	movlw	(0F4h)
+	fcall	_DelayMs
+	line	136
+	
+l1472:	
+;MG117McuBeacon.C: 136: RA5 = 1;
+	bcf	status, 5	;RP0=0, select bank0
+	bsf	(45/8),(45)&7
+	line	137
+;MG117McuBeacon.C: 137: DelayMs(10);
+	movlw	(0Ah)
+	fcall	_DelayMs
+	line	139
+	
+l1474:	
+;MG117McuBeacon.C: 139: RA2 = 0;
+	bcf	status, 5	;RP0=0, select bank0
+	bcf	(42/8),(42)&7
+	line	140
+;MG117McuBeacon.C: 140: DelayMs(50);
+	movlw	(032h)
+	fcall	_DelayMs
+	line	141
+	
+l1476:	
+;MG117McuBeacon.C: 141: RA2 = 1;
+	bcf	status, 5	;RP0=0, select bank0
+	bsf	(42/8),(42)&7
+	line	142
+;MG117McuBeacon.C: 142: DelayMs(10);
+	movlw	(0Ah)
+	fcall	_DelayMs
+	line	147
+	
+l1478:	
+# 147 "MG117McuBeacon.C"
+clrwdt ;#
+psect	maintext
+	line	148
+	
+l1480:	
+;MG117McuBeacon.C: 148: SWDTEN = 1;
+	bcf	status, 5	;RP0=0, select bank0
+	bsf	(192/8),(192)&7
+	line	150
+	
+l1482:	
+;MG117McuBeacon.C: 150: RA4 = 0;
+	bcf	(44/8),(44)&7
+	line	151
+;MG117McuBeacon.C: 151: DelayMs(1);
+	movlw	(01h)
+	fcall	_DelayMs
+	line	152
+	
+l1484:	
+;MG117McuBeacon.C: 152: RA4 = 1;
+	bcf	status, 5	;RP0=0, select bank0
+	bsf	(44/8),(44)&7
+	line	153
+;MG117McuBeacon.C: 153: DelayMs((2000 - 1));
+	movlw	(0CFh)
+	fcall	_DelayMs
+	line	155
+	
+l1486:	
+# 155 "MG117McuBeacon.C"
+sleep ;#
+psect	maintext
+	goto	l1478
+	global	start
+	ljmp	start
+	opt stack 0
+psect	maintext
+	line	157
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 GLOBAL	__end_of_main
 	__end_of_main:
 ;; =============== function _main ends ============
 
 	signat	_main,90
+	global	_DelayS
+psect	text71,local,class=CODE,delta=2
+global __ptext71
+__ptext71:
+
+;; *************** function _DelayS *****************
+;; Defined at:
+;;		line 109 in file "MG117McuBeacon.C"
+;; Parameters:    Size  Location     Type
+;;  Time            1    wreg     unsigned char 
+;; Auto vars:     Size  Location     Type
+;;  Time            1    7[COMMON] unsigned char 
+;;  b               1    9[COMMON] unsigned char 
+;;  a               1    8[COMMON] unsigned char 
+;; Return value:  Size  Location     Type
+;;		None               void
+;; Registers used:
+;;		wreg, status,2, status,0, pclath, cstack
+;; Tracked objects:
+;;		On entry : 20/0
+;;		On exit  : 0/0
+;;		Unchanged: 0/0
+;; Data sizes:     COMMON
+;;      Params:         0
+;;      Locals:         3
+;;      Temps:          0
+;;      Totals:         3
+;;Total ram usage:        3 bytes
+;; Hardware stack levels used:    1
+;; Hardware stack levels required when called:    3
+;; This function calls:
+;;		_DelayMs
+;; This function is called by:
+;;		_main
+;; This function uses a non-reentrant model
+;;
+psect	text71
+	file	"MG117McuBeacon.C"
+	line	109
+	global	__size_of_DelayS
+	__size_of_DelayS	equ	__end_of_DelayS-_DelayS
+	
+_DelayS:	
+	opt	stack 4
+; Regs used in _DelayS: [wreg+status,2+status,0+pclath+cstack]
+;DelayS@Time stored from wreg
+	line	111
+	movwf	(DelayS@Time)
+	
+l1450:	
+;MG117McuBeacon.C: 110: unsigned char a, b;
+;MG117McuBeacon.C: 111: for (a = 0; a < Time; a++)
+	clrf	(DelayS@a)
+	goto	l1466
+	line	113
+	
+l1452:	
+;MG117McuBeacon.C: 112: {
+;MG117McuBeacon.C: 113: for (b = 0; b < 10; b++)
+	clrf	(DelayS@b)
+	line	115
+	
+l1458:	
+;MG117McuBeacon.C: 114: {
+;MG117McuBeacon.C: 115: DelayMs(100);
+	movlw	(064h)
+	fcall	_DelayMs
+	line	113
+	
+l1460:	
+	incf	(DelayS@b),f
+	
+l1462:	
+	movlw	(0Ah)
+	subwf	(DelayS@b),w
+	skipc
+	goto	u41
+	goto	u40
+u41:
+	goto	l1458
+u40:
+	line	111
+	
+l1464:	
+	incf	(DelayS@a),f
+	
+l1466:	
+	movf	(DelayS@Time),w
+	subwf	(DelayS@a),w
+	skipc
+	goto	u51
+	goto	u50
+u51:
+	goto	l1452
+u50:
+	line	118
+	
+l461:	
+	return
+	opt stack 0
+GLOBAL	__end_of_DelayS
+	__end_of_DelayS:
+;; =============== function _DelayS ends ============
+
+	signat	_DelayS,4216
 	global	_DelayMs
+<<<<<<< HEAD
 psect	text108,local,class=CODE,delta=2
 global __ptext108
 __ptext108:
@@ -1777,6 +2035,15 @@ __ptext108:
 ;; *************** function _DelayMs *****************
 ;; Defined at:
 ;;		line 94 in file "MG117McuBeacon.C"
+=======
+psect	text72,local,class=CODE,delta=2
+global __ptext72
+__ptext72:
+
+;; *************** function _DelayMs *****************
+;; Defined at:
+;;		line 98 in file "MG117McuBeacon.C"
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 ;; Parameters:    Size  Location     Type
 ;;  Time            1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
@@ -1802,13 +2069,20 @@ __ptext108:
 ;; This function calls:
 ;;		_DelayUs
 ;; This function is called by:
+;;		_DelayS
 ;;		_main
 ;;		_DelayS
 ;; This function uses a non-reentrant model
 ;;
+<<<<<<< HEAD
 psect	text108
 	file	"MG117McuBeacon.C"
 	line	94
+=======
+psect	text72
+	file	"MG117McuBeacon.C"
+	line	98
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	global	__size_of_DelayMs
 	__size_of_DelayMs	equ	__end_of_DelayMs-_DelayMs
 	
@@ -1816,6 +2090,7 @@ _DelayMs:
 	opt	stack 5
 ; Regs used in _DelayMs: [wreg+status,2+status,0+pclath+cstack]
 ;DelayMs@Time stored from wreg
+<<<<<<< HEAD
 	line	96
 	movwf	(DelayMs@Time)
 	
@@ -1899,6 +2174,58 @@ u2280:
 	
 l452:	
 	line	103
+=======
+	line	100
+	movwf	(DelayMs@Time)
+	
+l1432:	
+;MG117McuBeacon.C: 99: unsigned char a, b;
+;MG117McuBeacon.C: 100: for (a = 0; a < Time; a++)
+	clrf	(DelayMs@a)
+	goto	l1448
+	line	102
+	
+l1434:	
+;MG117McuBeacon.C: 101: {
+;MG117McuBeacon.C: 102: for (b = 0; b < 5; b++)
+	clrf	(DelayMs@b)
+	line	104
+	
+l1440:	
+;MG117McuBeacon.C: 103: {
+;MG117McuBeacon.C: 104: DelayUs(98);
+	movlw	(062h)
+	fcall	_DelayUs
+	line	102
+	
+l1442:	
+	incf	(DelayMs@b),f
+	
+l1444:	
+	movlw	(05h)
+	subwf	(DelayMs@b),w
+	skipc
+	goto	u21
+	goto	u20
+u21:
+	goto	l1440
+u20:
+	line	100
+	
+l1446:	
+	incf	(DelayMs@a),f
+	
+l1448:	
+	movf	(DelayMs@Time),w
+	subwf	(DelayMs@a),w
+	skipc
+	goto	u31
+	goto	u30
+u31:
+	goto	l1434
+u30:
+	line	107
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	
 l453:	
 	return
@@ -1909,6 +2236,7 @@ GLOBAL	__end_of_DelayMs
 
 	signat	_DelayMs,4216
 	global	_DelayUs
+<<<<<<< HEAD
 psect	text109,local,class=CODE,delta=2
 global __ptext109
 __ptext109:
@@ -1916,6 +2244,15 @@ __ptext109:
 ;; *************** function _DelayUs *****************
 ;; Defined at:
 ;;		line 86 in file "MG117McuBeacon.C"
+=======
+psect	text73,local,class=CODE,delta=2
+global __ptext73
+__ptext73:
+
+;; *************** function _DelayUs *****************
+;; Defined at:
+;;		line 90 in file "MG117McuBeacon.C"
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 ;; Parameters:    Size  Location     Type
 ;;  Time            1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
@@ -1943,9 +2280,15 @@ __ptext109:
 ;;		_DelayMs
 ;; This function uses a non-reentrant model
 ;;
+<<<<<<< HEAD
 psect	text109
 	file	"MG117McuBeacon.C"
 	line	86
+=======
+psect	text73
+	file	"MG117McuBeacon.C"
+	line	90
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	global	__size_of_DelayUs
 	__size_of_DelayUs	equ	__end_of_DelayUs-_DelayUs
 	
@@ -1953,6 +2296,7 @@ _DelayUs:
 	opt	stack 5
 ; Regs used in _DelayUs: [wreg+status,2+status,0]
 ;DelayUs@Time stored from wreg
+<<<<<<< HEAD
 	line	88
 	movwf	(DelayUs@Time)
 	
@@ -1980,6 +2324,29 @@ l2302:
 l442:	
 	
 l2304:	
+=======
+	line	92
+	movwf	(DelayUs@Time)
+	
+l1426:	
+;MG117McuBeacon.C: 91: unsigned char a;
+;MG117McuBeacon.C: 92: for (a = 0; a < Time; a++)
+	clrf	(DelayUs@a)
+	goto	l1430
+	line	93
+	
+l443:	
+	line	94
+;MG117McuBeacon.C: 93: {
+;MG117McuBeacon.C: 94: _nop();
+	nop
+	line	92
+	
+l1428:	
+	incf	(DelayUs@a),f
+	
+l1430:	
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	movf	(DelayUs@Time),w
 	subwf	(DelayUs@a),w
 	skipc
@@ -1987,11 +2354,16 @@ l2304:
 	goto	u2250
 u2251:
 	goto	l443
+<<<<<<< HEAD
 u2250:
 	goto	l445
 	
 l444:	
 	line	92
+=======
+u10:
+	line	96
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	
 l445:	
 	return
@@ -2002,6 +2374,7 @@ GLOBAL	__end_of_DelayUs
 
 	signat	_DelayUs,4216
 	global	_WDT_INITIAL
+<<<<<<< HEAD
 psect	text110,local,class=CODE,delta=2
 global __ptext110
 __ptext110:
@@ -2009,6 +2382,15 @@ __ptext110:
 ;; *************** function _WDT_INITIAL *****************
 ;; Defined at:
 ;;		line 78 in file "MG117McuBeacon.C"
+=======
+psect	text74,local,class=CODE,delta=2
+global __ptext74
+__ptext74:
+
+;; *************** function _WDT_INITIAL *****************
+;; Defined at:
+;;		line 82 in file "MG117McuBeacon.C"
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -2035,15 +2417,22 @@ __ptext110:
 ;;		_main
 ;; This function uses a non-reentrant model
 ;;
+<<<<<<< HEAD
 psect	text110
 	file	"MG117McuBeacon.C"
 	line	78
+=======
+psect	text74
+	file	"MG117McuBeacon.C"
+	line	82
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	global	__size_of_WDT_INITIAL
 	__size_of_WDT_INITIAL	equ	__end_of_WDT_INITIAL-_WDT_INITIAL
 	
 _WDT_INITIAL:	
 	opt	stack 6
 ; Regs used in _WDT_INITIAL: [wreg]
+<<<<<<< HEAD
 	line	79
 	
 l1420:	
@@ -2058,17 +2447,42 @@ psect	text110
 	
 l1422:	
 ;MG117McuBeacon.C: 81: WDTCON = 0B00010100;
+=======
+	line	83
+	
+l1420:	
+# 83 "MG117McuBeacon.C"
+clrwdt ;#
+psect	text74
+	line	84
+;MG117McuBeacon.C: 84: PSA = 1;
+	bsf	status, 5	;RP0=1, select bank1
+	bsf	(1035/8)^080h,(1035)&7
+	line	85
+	
+l1422:	
+;MG117McuBeacon.C: 85: WDTCON = 0B00010100;
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	movlw	(014h)
 	movwf	(??_WDT_INITIAL+0)+0
 	movf	(??_WDT_INITIAL+0)+0,w
 	bcf	status, 5	;RP0=0, select bank0
 	movwf	(24)	;volatile
+<<<<<<< HEAD
 	line	82
 	
 l1424:	
 ;MG117McuBeacon.C: 82: SWDTEN = 0;
 	bcf	(192/8),(192)&7
 	line	83
+=======
+	line	86
+	
+l1424:	
+;MG117McuBeacon.C: 86: SWDTEN = 0;
+	bcf	(192/8),(192)&7
+	line	87
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	
 l439:	
 	return
@@ -2079,6 +2493,7 @@ GLOBAL	__end_of_WDT_INITIAL
 
 	signat	_WDT_INITIAL,88
 	global	_POWER_INITIAL
+<<<<<<< HEAD
 psect	text111,local,class=CODE,delta=2
 global __ptext111
 __ptext111:
@@ -2086,6 +2501,15 @@ __ptext111:
 ;; *************** function _POWER_INITIAL *****************
 ;; Defined at:
 ;;		line 47 in file "MG117McuBeacon.C"
+=======
+psect	text75,local,class=CODE,delta=2
+global __ptext75
+__ptext75:
+
+;; *************** function _POWER_INITIAL *****************
+;; Defined at:
+;;		line 51 in file "MG117McuBeacon.C"
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -2112,24 +2536,39 @@ __ptext111:
 ;;		_main
 ;; This function uses a non-reentrant model
 ;;
+<<<<<<< HEAD
 psect	text111
 	file	"MG117McuBeacon.C"
 	line	47
+=======
+psect	text75
+	file	"MG117McuBeacon.C"
+	line	51
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	global	__size_of_POWER_INITIAL
 	__size_of_POWER_INITIAL	equ	__end_of_POWER_INITIAL-_POWER_INITIAL
 	
 _POWER_INITIAL:	
 	opt	stack 6
+<<<<<<< HEAD
 ; Regs used in _POWER_INITIAL: [wreg]
 	line	48
 	
 l1392:	
 ;MG117McuBeacon.C: 48: OSCCON = 0B01110001;
+=======
+; Regs used in _POWER_INITIAL: [wreg+status,2]
+	line	52
+	
+l1392:	
+;MG117McuBeacon.C: 52: OSCCON = 0B01110001;
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	movlw	(071h)
 	movwf	(??_POWER_INITIAL+0)+0
 	movf	(??_POWER_INITIAL+0)+0,w
 	bsf	status, 5	;RP0=1, select bank1
 	movwf	(143)^080h	;volatile
+<<<<<<< HEAD
 	line	52
 	
 l1394:	
@@ -2158,11 +2597,42 @@ l1402:
 	bsf	(45/8),(45)&7
 	line	58
 ;MG117McuBeacon.C: 58: TRISA = 0B11111111;
+=======
+	line	56
+	
+l1394:	
+;MG117McuBeacon.C: 56: INTCON = 0;
+	clrf	(11)	;volatile
+	line	57
+	
+l1396:	
+;MG117McuBeacon.C: 57: PORTA = 0B00000000;
+	bcf	status, 5	;RP0=0, select bank0
+	clrf	(5)	;volatile
+	line	58
+	
+l1398:	
+;MG117McuBeacon.C: 58: RA2 = 1;
+	bsf	(42/8),(42)&7
+	line	59
+	
+l1400:	
+;MG117McuBeacon.C: 59: RA4 = 1;
+	bsf	(44/8),(44)&7
+	line	60
+	
+l1402:	
+;MG117McuBeacon.C: 60: RA5 = 1;
+	bsf	(45/8),(45)&7
+	line	62
+;MG117McuBeacon.C: 62: TRISA = 0B11111111;
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	movlw	(0FFh)
 	movwf	(??_POWER_INITIAL+0)+0
 	movf	(??_POWER_INITIAL+0)+0,w
 	bsf	status, 5	;RP0=1, select bank1
 	movwf	(133)^080h	;volatile
+<<<<<<< HEAD
 	line	60
 	
 l1404:	
@@ -2213,6 +2683,56 @@ l1418:
 	bcf	status, 5	;RP0=0, select bank0
 	clrf	(27)	;volatile
 	line	75
+=======
+	line	64
+	
+l1404:	
+;MG117McuBeacon.C: 64: TRISA2 = 0;
+	bcf	(1066/8)^080h,(1066)&7
+	line	65
+	
+l1406:	
+;MG117McuBeacon.C: 65: TRISA4 = 0;
+	bcf	(1068/8)^080h,(1068)&7
+	line	66
+	
+l1408:	
+;MG117McuBeacon.C: 66: TRISA5 = 0;
+	bcf	(1069/8)^080h,(1069)&7
+	line	68
+	
+l1410:	
+;MG117McuBeacon.C: 68: RA2 = 1;
+	bcf	status, 5	;RP0=0, select bank0
+	bsf	(42/8),(42)&7
+	line	69
+	
+l1412:	
+;MG117McuBeacon.C: 69: RA4 = 1;
+	bsf	(44/8),(44)&7
+	line	70
+	
+l1414:	
+;MG117McuBeacon.C: 70: RA5 = 1;
+	bsf	(45/8),(45)&7
+	line	72
+	
+l1416:	
+;MG117McuBeacon.C: 72: WPUA = 0B00000000;
+	bsf	status, 5	;RP0=1, select bank1
+	clrf	(149)^080h	;volatile
+	line	73
+	
+l1418:	
+;MG117McuBeacon.C: 73: OPTION = 0B00001000;
+	movlw	(08h)
+	movwf	(129)^080h	;volatile
+	line	74
+;MG117McuBeacon.C: 74: MSCKCON = 0B00000000;
+	bcf	status, 5	;RP0=0, select bank0
+	clrf	(27)	;volatile
+	line	79
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	
 l436:	
 	return
@@ -2223,6 +2743,7 @@ GLOBAL	__end_of_POWER_INITIAL
 
 	signat	_POWER_INITIAL,88
 	global	_ISR
+<<<<<<< HEAD
 psect	text112,local,class=CODE,delta=2
 global __ptext112
 __ptext112:
@@ -2230,6 +2751,15 @@ __ptext112:
 ;; *************** function _ISR *****************
 ;; Defined at:
 ;;		line 42 in file "MG117McuBeacon.C"
+=======
+psect	text76,local,class=CODE,delta=2
+global __ptext76
+__ptext76:
+
+;; *************** function _ISR *****************
+;; Defined at:
+;;		line 46 in file "MG117McuBeacon.C"
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -2255,14 +2785,20 @@ __ptext112:
 ;;		Interrupt level 1
 ;; This function uses a non-reentrant model
 ;;
+<<<<<<< HEAD
 psect	text112
 	file	"MG117McuBeacon.C"
 	line	42
+=======
+psect	text76
+	file	"MG117McuBeacon.C"
+	line	46
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	global	__size_of_ISR
 	__size_of_ISR	equ	__end_of_ISR-_ISR
 	
 _ISR:	
-	opt	stack 5
+	opt	stack 4
 ; Regs used in _ISR: []
 psect	intentry,class=CODE,delta=2
 global __pintentry
@@ -2282,8 +2818,13 @@ interrupt_function:
 	movf	btemp+1,w
 	movwf	(??_ISR+3)
 	ljmp	_ISR
+<<<<<<< HEAD
 psect	text112
 	line	43
+=======
+psect	text76
+	line	47
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	
 i1l433:	
 	movf	(??_ISR+3),w
@@ -2303,9 +2844,15 @@ GLOBAL	__end_of_ISR
 ;; =============== function _ISR ends ============
 
 	signat	_ISR,88
+<<<<<<< HEAD
 psect	text113,local,class=CODE,delta=2
 global __ptext113
 __ptext113:
+=======
+psect	text77,local,class=CODE,delta=2
+global __ptext77
+__ptext77:
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 	global	btemp
 	btemp set 07Eh
 

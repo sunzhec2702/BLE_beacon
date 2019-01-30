@@ -566,7 +566,11 @@ extern void _delay(unsigned long);
 # 21
 ;
 
+<<<<<<< HEAD
 # 41
+=======
+# 45
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 void interrupt ISR(void)
 {
 }
@@ -642,21 +646,29 @@ DelayMs(100);
 }
 }
 
+<<<<<<< HEAD
 # 121
+=======
+# 125
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 main()
 {
 POWER_INITIAL();
 WDT_INITIAL();
 
 
-RA2 = 0;
-DelayMs(100);
-RA2 = 1;
 
 
 RA5 = 0;
-DelayMs(1500 - 100);
+DelayS(1);
+DelayMs(500);
 RA5 = 1;
+DelayMs(10);
+
+RA2 = 0;
+DelayMs(50);
+RA2 = 1;
+DelayMs(10);
 
 
 while (1)
@@ -665,9 +677,9 @@ asm("clrwdt");
 SWDTEN = 1;
 
 RA4 = 0;
-DelayMs(1050);
+DelayMs(1);
 RA4 = 1;
-DelayMs((1000 - 1050));
+DelayMs((2000 - 1));
 
 asm("sleep");
 }

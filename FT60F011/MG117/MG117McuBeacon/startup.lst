@@ -1,7 +1,11 @@
 
 
 HI-TECH Software PIC Macro Assembler V9.83 build 10920 
+<<<<<<< HEAD
                                                                                                            Tue Jan 22 10:39:12 2019
+=======
+                                                                                                           Wed Jan 30 21:41:20 2019
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
 
 
      1                           
@@ -67,6 +71,7 @@ HI-TECH Software PIC Macro Assembler V9.83 build 10920
     61                           
     62                           
     63                           
+<<<<<<< HEAD
     64                           	psect	init
     65  000F                     start
     66  000F                     _exit
@@ -79,5 +84,20 @@ HI-TECH Software PICC Macro Assembler V9.83 build 10920
 Symbol Table                                                                                               Tue Jan 22 10:39:12 2019
 
                _main 0056                 _exit 000F                 start 000F  start_initialization 0098  
+=======
+    64                           
+    65                           	psect	init
+    66  000A                     start
+    67  000A                     _exit
+    68                           	psect	end_init
+    69                           	global start_initialization
+    70  000A  287C               	ljmp start_initialization	;jump to C runtime clear & initialization
+
+
+HI-TECH Software PICC Macro Assembler V9.83 build 10920 
+Symbol Table                                                                                               Wed Jan 30 21:41:20 2019
+
+               _main 000B                 _exit 000A                 start 000A  start_initialization 007C  
+>>>>>>> bc517fe... Test on board. No issue is seen so far.
            intlevel0 0000             intlevel1 0000             intlevel2 0000             intlevel3 0000  
            intlevel4 0000             intlevel5 0000             reset_vec 0000  

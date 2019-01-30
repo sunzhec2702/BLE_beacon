@@ -31,11 +31,15 @@
 #define RAPID_ADV_BTN RA4
 
 #define RAPID_PERIOD 1500 // 1500ms
-#define LED_ON_PERIOD 100 // 100ms
+#define RAPID_PERIOD_S  1
+#define RAPID_PERIOD_MS 500
 
-#define NORMAL_INTERVAL 1000   // Send Normal Adv every 1s.
-#define NORMAL_PRESS_HOLD 1050 //
+#define LED_ON_PERIOD 50 // 100ms
+
+#define NORMAL_INTERVAL 2000   // Send Normal Adv every 1s.
+#define NORMAL_PRESS_HOLD 1 //
 #define NORMAL_RELEASE_HOLD (NORMAL_INTERVAL - NORMAL_PRESS_HOLD)
+
 //===========================================================
 
 void interrupt ISR(void)
@@ -122,16 +126,20 @@ main()
 {
     POWER_INITIAL(); // System Init
     WDT_INITIAL();   // WDT Init. Watchdog Timeout set to 1.024s
+	
+    // Sleep 
 
+    // Hold RAPID_ADV_BTN for RAPID_PERIOD
+    RAPID_ADV_BTN = 0;
+    DelayS(RAPID_PERIOD_S);
+    DelayMs(RAPID_PERIOD_MS);
+    RAPID_ADV_BTN = 1;
+    DelayMs(10);
     // Blink one time.
     LED_PIN = 0;
     DelayMs(LED_ON_PERIOD);
     LED_PIN = 1;
-
-    // Hold RAPID_ADV_BTN for RAPID_PERIOD
-    RAPID_ADV_BTN = 0;
-    DelayMs(RAPID_PERIOD - LED_ON_PERIOD);
-    RAPID_ADV_BTN = 1;
+    DelayMs(10);
 
     // Enter Normal Status. Doing while(1)
     while (1)
