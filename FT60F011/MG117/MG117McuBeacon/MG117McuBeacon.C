@@ -27,8 +27,8 @@
 #define unlong unsigned long
 
 #define LED_PIN RA2
-#define NORMAL_ADV_BTN RA5
-#define RAPID_ADV_BTN RA4
+#define NORMAL_ADV_BTN RA4
+#define RAPID_ADV_BTN RA5
 
 #define RAPID_PERIOD 1500 // 1500ms
 #define RAPID_PERIOD_S  1
