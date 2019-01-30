@@ -37,8 +37,8 @@
 #define LED_ON_PERIOD 50 // 100ms
 
 #define NORMAL_INTERVAL 2000   // Send Normal Adv every 1s.
-#define NORMAL_PRESS_HOLD 1 //
-#define NORMAL_RELEASE_HOLD (NORMAL_INTERVAL - NORMAL_PRESS_HOLD)
+#define NORMAL_PRESS_HOLD 1 // 1ms
+#define NORMAL_RELEASE_HOLD (10) // 10 ms for release
 
 //===========================================================
 
@@ -59,8 +59,9 @@ void POWER_INITIAL(void)
     NORMAL_ADV_BTN = 1;
     RAPID_ADV_BTN = 1;
 
-    TRISA = 0B11111111; //PA�������??0-���??1-����
-                        //PA2/PA4/PA5->���??
+    TRISA = 0B11111111; //PA�������?0-���?1-����
+                        //PA2/PA4/PA5->���?
+
     TRISA2 = 0;         //û�����룬Ψһ����Reset
     TRISA4 = 0;
     TRISA5 = 0;
@@ -71,10 +72,11 @@ void POWER_INITIAL(void)
 
     WPUA = 0B00000000; //PA�˿��������� 1-������ 0-������������OUTPUT����������
     OPTION = 0B00001000;  //Bit3=1 WDT MODE,PS=000=1:1 WDT RATE, Bit7(PAPU)=0 ENABLED PULL UP PA
-    MSCKCON = 0B00000000; //Bit6->0,��ֹPA4, PC5��ѹ���??60F01x����λ)
+
+    MSCKCON = 0B00000000; //Bit6->0,��ֹPA4, PC5��ѹ���?60F01x����λ)
                           //Bit5->0,TIMER2ʱ��ΪFosc(60F01x����λ)
                           //Bit4->0,��ֹLVR(60F01x O��֮ǰ)
-                          //Bit4->0, LVRENʹ��ʱ,����LVR(60F01x O�漰O���??
+                          //Bit4->0, LVRENʹ��ʱ,����LVR(60F01x O�漰O���?
                           //Bit4->1, LVRENʹ��ʱ,����ʱ����LVR, ˯��ʱ�Զ��ر�LVR(60F01x O�漰O��֮��)
 }
 
@@ -82,7 +84,7 @@ void WDT_INITIAL(void)
 {
     CLRWDT();            //�忴�Ź�
     PSA = 1;             //ʱ�ӷ�Ƶ�ָ�WDT��Darren�޸���
-    WDTCON = 0B00010100; //WDTPS=1010=1:32768,PS=000=1:1. Watchdot Timeout=(32768*1)/32000=1.024s
+    WDTCON = 0B00010110; //WDTPS=1010=1:32768,PS=000=1:1. Watchdot Timeout=(32768*1)/32000=2.048s
     SWDTEN = 0;
 }
 
@@ -134,8 +136,7 @@ main()
     DelayS(RAPID_PERIOD_S);
     DelayMs(RAPID_PERIOD_MS);
     RAPID_ADV_BTN = 1;
-    DelayMs(10);
-    // Blink one time.
+     // Blink one time.
     LED_PIN = 0;
     DelayMs(LED_ON_PERIOD);
     LED_PIN = 1;

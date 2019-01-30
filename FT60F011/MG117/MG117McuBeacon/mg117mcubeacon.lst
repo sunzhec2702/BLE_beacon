@@ -2446,7 +2446,7 @@ Symbol Table                                                                    
             _STATUSbits 0003  
 =======
 HI-TECH Software PIC PRO Macro Assembler V9.83 build 10920 
-                                                                                               Wed Jan 30 21:41:20 2019
+                                                                                               Wed Jan 30 21:55:05 2019
 
 HI-TECH Software Omniscient Code Generator (PRO mode) build 10920
      1                           	processor	16F684
@@ -3441,13 +3441,13 @@ HI-TECH Software Omniscient Code Generator (PRO mode) build 10920
    990                           
    991                           ;MG117McuBeacon.C: 151: DelayMs(1);
    992  0023  2054               	fcall	_DelayMs
-   993  0024  30CF               	movlw	207
+   993  0024  300A               	movlw	10
    994                           
    995                           ;MG117McuBeacon.C: 152: RA4 = 1;
    996  0025  1283               	bcf	3,5	;RP0=0, select bank0
    997  0026  1605               	bsf	5,4
    998                           
-   999                           ;MG117McuBeacon.C: 153: DelayMs((2000 - 1));
+   999                           ;MG117McuBeacon.C: 153: DelayMs((10));
   1000  0027  2054               	fcall	_DelayMs
   1001  0028  0063               	sleep	;#
   1002  0029  281E               	goto	l1478
@@ -3687,13 +3687,13 @@ HI-TECH Software Omniscient Code Generator (PRO mode) build 10920
   1236                           
   1237                           ; Regs used in _WDT_INITIAL: [wreg]
   1238  006D  0064               	clrwdt	;#
-  1239  006E  3014               	movlw	20
+  1239  006E  3016               	movlw	22
   1240                           
   1241                           ;MG117McuBeacon.C: 84: PSA = 1;
   1242  006F  1683               	bsf	3,5	;RP0=1, select bank1
   1243  0070  1581               	bsf	1,3
   1244                           
-  1245                           ;MG117McuBeacon.C: 85: WDTCON = 0B00010100;
+  1245                           ;MG117McuBeacon.C: 85: WDTCON = 0B00010110;
   1246  0071  1283               	bcf	3,5	;RP0=0, select bank0
   1247  0072  0098               	movwf	24	;volatile
   1248                           
@@ -3862,7 +3862,7 @@ HI-TECH Software Omniscient Code Generator (PRO mode) build 10920
 
 
 HI-TECH Software PICC Macro Assembler V9.83 build 10920 
-Symbol Table                                                                                   Wed Jan 30 21:41:20 2019
+Symbol Table                                                                                   Wed Jan 30 21:55:05 2019
 
                      _C 0018                       _Z 001A                      _DC 0019                      _HC 0019  
                     _GO 00F9                      _RD 04E0                      _RP 001D                      _WR 04E8  

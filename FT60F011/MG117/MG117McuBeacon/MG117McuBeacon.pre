@@ -611,7 +611,7 @@ void WDT_INITIAL(void)
 {
 asm("clrwdt");
 PSA = 1;
-WDTCON = 0B00010100;
+WDTCON = 0B00010110;
 SWDTEN = 0;
 }
 
@@ -679,7 +679,7 @@ SWDTEN = 1;
 RA4 = 0;
 DelayMs(1);
 RA4 = 1;
-DelayMs((2000 - 1));
+DelayMs((10));
 
 asm("sleep");
 }

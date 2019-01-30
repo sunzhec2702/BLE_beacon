@@ -1900,8 +1900,8 @@ l1484:
 	bcf	status, 5	;RP0=0, select bank0
 	bsf	(44/8),(44)&7
 	line	153
-;MG117McuBeacon.C: 153: DelayMs((2000 - 1));
-	movlw	(0CFh)
+;MG117McuBeacon.C: 153: DelayMs((10));
+	movlw	(0Ah)
 	fcall	_DelayMs
 	line	155
 	
@@ -2461,11 +2461,16 @@ psect	text74
 	line	85
 	
 l1422:	
+<<<<<<< HEAD
 ;MG117McuBeacon.C: 85: WDTCON = 0B00010100;
 >>>>>>> bc517fe... Test on board. No issue is seen so far.
 	movlw	(014h)
 	movwf	(??_WDT_INITIAL+0)+0
 	movf	(??_WDT_INITIAL+0)+0,w
+=======
+;MG117McuBeacon.C: 85: WDTCON = 0B00010110;
+	movlw	(016h)
+>>>>>>> e33996d... Fix the Normal button release hold period and updated the WDT period
 	bcf	status, 5	;RP0=0, select bank0
 	movwf	(24)	;volatile
 <<<<<<< HEAD

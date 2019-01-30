@@ -1145,9 +1145,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;MG117McuBeacon.C: 84: PSA = 1;
 "84
 [e = _PSA -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 85: WDTCON = 0B00010100;
+[; ;MG117McuBeacon.C: 85: WDTCON = 0B00010110;
 "85
-[e = _WDTCON -> -> 20 `i `uc ]
+[e = _WDTCON -> -> 22 `i `uc ]
 [; ;MG117McuBeacon.C: 86: SWDTEN = 0;
 "86
 [e = _SWDTEN -> -> 0 `i `b ]
@@ -1554,9 +1554,9 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;MG117McuBeacon.C: 152: RA4 = 1;
 "152
 [e = _RA4 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 153: DelayMs((2000 - 1));
+[; ;MG117McuBeacon.C: 153: DelayMs((10));
 "153
-[e ( _DelayMs (1 -> - -> 2000 `i -> 1 `i `uc ]
+[e ( _DelayMs (1 -> -> 10 `i `uc ]
 [; ;MG117McuBeacon.C: 155: asm("sleep");
 "155
 [; sleep ;#

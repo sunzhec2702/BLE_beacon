@@ -1,7 +1,7 @@
 //Deviec:FT60F01X
 //-----------------------Variable---------------------------------
-		_ISR		EQU		D3EF28H
-		_ISR		EQU		D3EF28H
+		_ISR		EQU		53F218H
+		_ISR		EQU		53F218H
 //-----------------------Variable END---------------------------------
 		ORG		0000H
 		LJUMP 	0AH 			//0000 	380A
@@ -68,13 +68,13 @@
 		//;MG117McuBeacon.C: 151: DelayMs(1);
 		LCALL 	54H 			//0023 	3054
 		ORG		0024H
-		LDWI 	CFH 			//0024 	2ACF
+		LDWI 	AH 			//0024 	2A0A
 
 		//;MG117McuBeacon.C: 152: RA4 = 1;
 		BCR 	STATUS,5 		//0025 	1283
 		BSR 	5H,4 			//0026 	1A05
 
-		//;MG117McuBeacon.C: 153: DelayMs((2000 - 1));
+		//;MG117McuBeacon.C: 153: DelayMs((10));
 		LCALL 	54H 			//0027 	3054
 		SLEEP	 			//0028 	0002
 		LJUMP 	1EH 			//0029 	381E
@@ -209,13 +209,13 @@
 		ORG		006CH
 		LJUMP 	66H 			//006C 	3866
 		CLRWDT	 			//006D 	0001
-		LDWI 	14H 			//006E 	2A14
+		LDWI 	16H 			//006E 	2A16
 
 		//;MG117McuBeacon.C: 84: PSA = 1;
 		BSR 	STATUS,5 		//006F 	1A83
 		BSR 	1H,3 			//0070 	1981
 
-		//;MG117McuBeacon.C: 85: WDTCON = 0B00010100;
+		//;MG117McuBeacon.C: 85: WDTCON = 0B00010110;
 		BCR 	STATUS,5 		//0071 	1283
 		STR 	18H 			//0072 	0198
 
