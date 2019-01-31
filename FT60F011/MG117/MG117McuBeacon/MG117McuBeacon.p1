@@ -939,128 +939,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;SYSCFG.h: 154: extern void _delay(unsigned long);
 [; ;MG117McuBeacon.C: 20: ;
 [; ;MG117McuBeacon.C: 21: ;
-<<<<<<< HEAD
-"42 MG117McuBeacon.C
-[v F535 `(v  1 tf ]
-[v _ISR `IF535  1 e ]
-{
-[; ;MG117McuBeacon.C: 41: void interrupt ISR(void)
-[; ;MG117McuBeacon.C: 42: {
-[e :U _ISR ]
-[f ]
-[; ;MG117McuBeacon.C: 43: }
-"43
-[e :UE 45 ]
-}
-"47
-[v _POWER_INITIAL `(v  1 ef ]
-{
-[; ;MG117McuBeacon.C: 46: void POWER_INITIAL(void)
-[; ;MG117McuBeacon.C: 47: {
-[e :U _POWER_INITIAL ]
-[f ]
-[; ;MG117McuBeacon.C: 48: OSCCON = 0B01110001;
-"48
-[e = _OSCCON -> -> 113 `i `uc ]
-[; ;MG117McuBeacon.C: 52: INTCON = 0;
-"52
-[e = _INTCON -> -> 0 `i `uc ]
-[; ;MG117McuBeacon.C: 53: PORTA = 0B00000000;
-"53
-[e = _PORTA -> -> 0 `i `uc ]
-[; ;MG117McuBeacon.C: 54: RA2 = 1;
-"54
-[e = _RA2 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 55: RA4 = 1;
-"55
-[e = _RA4 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 56: RA5 = 1;
-"56
-[e = _RA5 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 58: TRISA = 0B11111111;
-"58
-[e = _TRISA -> -> 255 `i `uc ]
-[; ;MG117McuBeacon.C: 60: TRISA2 = 0;
-"60
-[e = _TRISA2 -> -> 0 `i `b ]
-[; ;MG117McuBeacon.C: 61: TRISA4 = 0;
-"61
-[e = _TRISA4 -> -> 0 `i `b ]
-[; ;MG117McuBeacon.C: 62: TRISA5 = 0;
-"62
-[e = _TRISA5 -> -> 0 `i `b ]
-[; ;MG117McuBeacon.C: 64: RA2 = 1;
-"64
-[e = _RA2 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 65: RA4 = 1;
-"65
-[e = _RA4 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 66: RA5 = 1;
-"66
-[e = _RA5 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 68: WPUA = 0B00000000;
-"68
-[e = _WPUA -> -> 0 `i `uc ]
-[; ;MG117McuBeacon.C: 69: OPTION = 0B00001000;
-"69
-[e = _OPTION -> -> 8 `i `uc ]
-[; ;MG117McuBeacon.C: 70: MSCKCON = 0B00000000;
-"70
-[e = _MSCKCON -> -> 0 `i `uc ]
-[; ;MG117McuBeacon.C: 75: }
-"75
-[e :UE 46 ]
-}
-"78
-[v _WDT_INITIAL `(v  1 ef ]
-{
-[; ;MG117McuBeacon.C: 77: void WDT_INITIAL(void)
-[; ;MG117McuBeacon.C: 78: {
-[e :U _WDT_INITIAL ]
-[f ]
-[; ;MG117McuBeacon.C: 79: asm("clrwdt");
-"79
-[; clrwdt ;#
-[; ;MG117McuBeacon.C: 80: PSA = 1;
-"80
-[e = _PSA -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 81: WDTCON = 0B00010100;
-"81
-[e = _WDTCON -> -> 20 `i `uc ]
-[; ;MG117McuBeacon.C: 82: SWDTEN = 0;
-"82
-[e = _SWDTEN -> -> 0 `i `b ]
-[; ;MG117McuBeacon.C: 83: }
-"83
-[e :UE 47 ]
-}
-"86
-[v _DelayUs `(v  1 ef1`uc ]
-{
-[; ;MG117McuBeacon.C: 85: void DelayUs(unsigned char Time)
-[; ;MG117McuBeacon.C: 86: {
-[e :U _DelayUs ]
-[v _Time `uc  1 r1 ]
-[f ]
-"87
-[v _a `uc  1 a ]
-[; ;MG117McuBeacon.C: 87: unsigned char a;
-[; ;MG117McuBeacon.C: 88: for (a = 0; a < Time; a++)
-"88
-{
-[e = _a -> -> 0 `i `uc ]
-[e $U 52  ]
-"89
-[e :U 49 ]
-[; ;MG117McuBeacon.C: 89: {
-{
-[; ;MG117McuBeacon.C: 90: _nop();
-"90
-[e ( __nop ..  ]
-"91
-}
-"88
-=======
 "46 MG117McuBeacon.C
 [v F535 `(v  1 tf ]
 [v _ISR `IF535  1 e ]
@@ -1181,43 +1059,10 @@ Version 3.2 HI-TECH Software Intermediate Code
 "95
 }
 "92
->>>>>>> bc517fe... Test on board. No issue is seen so far.
 [e ++ _a -> -> 1 `i `uc ]
 [e :U 52 ]
 [e $ < -> _a `i -> _Time `i 49  ]
 [e :U 50 ]
-<<<<<<< HEAD
-"91
-}
-[; ;MG117McuBeacon.C: 91: }
-[; ;MG117McuBeacon.C: 92: }
-"92
-[e :UE 48 ]
-}
-"94
-[v _DelayMs `(v  1 ef1`uc ]
-{
-[; ;MG117McuBeacon.C: 93: void DelayMs(unsigned char Time)
-[; ;MG117McuBeacon.C: 94: {
-[e :U _DelayMs ]
-[v _Time `uc  1 r1 ]
-[f ]
-"95
-[v _a `uc  1 a ]
-[v _b `uc  1 a ]
-[; ;MG117McuBeacon.C: 95: unsigned char a, b;
-[; ;MG117McuBeacon.C: 96: for (a = 0; a < Time; a++)
-"96
-{
-[e = _a -> -> 0 `i `uc ]
-[e $U 57  ]
-"97
-[e :U 54 ]
-[; ;MG117McuBeacon.C: 97: {
-{
-[; ;MG117McuBeacon.C: 98: for (b = 0; b < 5; b++)
-"98
-=======
 "95
 }
 [; ;MG117McuBeacon.C: 95: }
@@ -1248,31 +1093,10 @@ Version 3.2 HI-TECH Software Intermediate Code
 {
 [; ;MG117McuBeacon.C: 102: for (b = 0; b < 5; b++)
 "102
->>>>>>> bc517fe... Test on board. No issue is seen so far.
 {
 [e = _b -> -> 0 `i `uc ]
 [e $ < -> _b `i -> 5 `i 58  ]
 [e $U 59  ]
-<<<<<<< HEAD
-"99
-[e :U 58 ]
-[; ;MG117McuBeacon.C: 99: {
-{
-[; ;MG117McuBeacon.C: 100: DelayUs(98);
-"100
-[e ( _DelayUs (1 -> -> 98 `i `uc ]
-"101
-}
-"98
-[e ++ _b -> -> 1 `i `uc ]
-[e $ < -> _b `i -> 5 `i 58  ]
-[e :U 59 ]
-"101
-}
-"102
-}
-"96
-=======
 "103
 [e :U 58 ]
 [; ;MG117McuBeacon.C: 103: {
@@ -1291,44 +1115,10 @@ Version 3.2 HI-TECH Software Intermediate Code
 "106
 }
 "100
->>>>>>> bc517fe... Test on board. No issue is seen so far.
 [e ++ _a -> -> 1 `i `uc ]
 [e :U 57 ]
 [e $ < -> _a `i -> _Time `i 54  ]
 [e :U 55 ]
-<<<<<<< HEAD
-"102
-}
-[; ;MG117McuBeacon.C: 101: }
-[; ;MG117McuBeacon.C: 102: }
-[; ;MG117McuBeacon.C: 103: }
-"103
-[e :UE 53 ]
-}
-"105
-[v _DelayS `(v  1 ef1`uc ]
-{
-[; ;MG117McuBeacon.C: 104: void DelayS(unsigned char Time)
-[; ;MG117McuBeacon.C: 105: {
-[e :U _DelayS ]
-[v _Time `uc  1 r1 ]
-[f ]
-"106
-[v _a `uc  1 a ]
-[v _b `uc  1 a ]
-[; ;MG117McuBeacon.C: 106: unsigned char a, b;
-[; ;MG117McuBeacon.C: 107: for (a = 0; a < Time; a++)
-"107
-{
-[e = _a -> -> 0 `i `uc ]
-[e $U 65  ]
-"108
-[e :U 62 ]
-[; ;MG117McuBeacon.C: 108: {
-{
-[; ;MG117McuBeacon.C: 109: for (b = 0; b < 10; b++)
-"109
-=======
 "106
 }
 [; ;MG117McuBeacon.C: 105: }
@@ -1360,31 +1150,10 @@ Version 3.2 HI-TECH Software Intermediate Code
 {
 [; ;MG117McuBeacon.C: 113: for (b = 0; b < 10; b++)
 "113
->>>>>>> bc517fe... Test on board. No issue is seen so far.
 {
 [e = _b -> -> 0 `i `uc ]
 [e $ < -> _b `i -> 10 `i 66  ]
 [e $U 67  ]
-<<<<<<< HEAD
-"110
-[e :U 66 ]
-[; ;MG117McuBeacon.C: 110: {
-{
-[; ;MG117McuBeacon.C: 111: DelayMs(100);
-"111
-[e ( _DelayMs (1 -> -> 100 `i `uc ]
-"112
-}
-"109
-[e ++ _b -> -> 1 `i `uc ]
-[e $ < -> _b `i -> 10 `i 66  ]
-[e :U 67 ]
-"112
-}
-"113
-}
-"107
-=======
 "114
 [e :U 66 ]
 [; ;MG117McuBeacon.C: 114: {
@@ -1403,88 +1172,10 @@ Version 3.2 HI-TECH Software Intermediate Code
 "117
 }
 "111
->>>>>>> bc517fe... Test on board. No issue is seen so far.
 [e ++ _a -> -> 1 `i `uc ]
 [e :U 65 ]
 [e $ < -> _a `i -> _Time `i 62  ]
 [e :U 63 ]
-<<<<<<< HEAD
-"113
-}
-[; ;MG117McuBeacon.C: 112: }
-[; ;MG117McuBeacon.C: 113: }
-[; ;MG117McuBeacon.C: 114: }
-"114
-[e :UE 61 ]
-}
-"122
-[v _main `(i  1 ef ]
-{
-[; ;MG117McuBeacon.C: 121: main()
-[; ;MG117McuBeacon.C: 122: {
-[e :U _main ]
-[f ]
-[; ;MG117McuBeacon.C: 123: POWER_INITIAL();
-"123
-[e ( _POWER_INITIAL ..  ]
-[; ;MG117McuBeacon.C: 124: WDT_INITIAL();
-"124
-[e ( _WDT_INITIAL ..  ]
-[; ;MG117McuBeacon.C: 127: RA2 = 0;
-"127
-[e = _RA2 -> -> 0 `i `b ]
-[; ;MG117McuBeacon.C: 128: DelayMs(100);
-"128
-[e ( _DelayMs (1 -> -> 100 `i `uc ]
-[; ;MG117McuBeacon.C: 129: RA2 = 1;
-"129
-[e = _RA2 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 132: RA5 = 0;
-"132
-[e = _RA5 -> -> 0 `i `b ]
-[; ;MG117McuBeacon.C: 133: DelayMs(1500 - 100);
-"133
-[e ( _DelayMs (1 -> - -> 1500 `i -> 100 `i `uc ]
-[; ;MG117McuBeacon.C: 134: RA5 = 1;
-"134
-[e = _RA5 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 137: while (1)
-"137
-[e :U 71 ]
-[; ;MG117McuBeacon.C: 138: {
-"138
-{
-[; ;MG117McuBeacon.C: 139: asm("clrwdt");
-"139
-[; clrwdt ;#
-[; ;MG117McuBeacon.C: 140: SWDTEN = 1;
-"140
-[e = _SWDTEN -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 142: RA4 = 0;
-"142
-[e = _RA4 -> -> 0 `i `b ]
-[; ;MG117McuBeacon.C: 143: DelayMs(1050);
-"143
-[e ( _DelayMs (1 -> -> 1050 `i `uc ]
-[; ;MG117McuBeacon.C: 144: RA4 = 1;
-"144
-[e = _RA4 -> -> 1 `i `b ]
-[; ;MG117McuBeacon.C: 145: DelayMs((1000 - 1050));
-"145
-[e ( _DelayMs (1 -> - -> 1000 `i -> 1050 `i `uc ]
-[; ;MG117McuBeacon.C: 147: asm("sleep");
-"147
-[; sleep ;#
-"148
-}
-[e :U 70 ]
-"137
-[e $U 71  ]
-[e :U 72 ]
-[; ;MG117McuBeacon.C: 148: }
-[; ;MG117McuBeacon.C: 149: }
-"149
-=======
 "117
 }
 [; ;MG117McuBeacon.C: 116: }
@@ -1569,6 +1260,5 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;MG117McuBeacon.C: 156: }
 [; ;MG117McuBeacon.C: 157: }
 "157
->>>>>>> bc517fe... Test on board. No issue is seen so far.
 [e :UE 69 ]
 }
