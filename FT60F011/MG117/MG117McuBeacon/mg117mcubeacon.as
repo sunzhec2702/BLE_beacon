@@ -1,8 +1,8 @@
-opt subtitle "HI-TECH Software Omniscient Code Generator (Lite mode) build 10920"
+opt subtitle "HI-TECH Software Omniscient Code Generator (PRO mode) build 10920"
 
 opt pagewidth 120
 
-	opt lm
+	opt pm
 
 	processor	16F684
 clrc	macro
@@ -1517,31 +1517,29 @@ __pcstackCOMMON:
 ?_DelayS:	; 0 bytes @ 0x0
 	global	?_main
 ?_main:	; 2 bytes @ 0x0
-	ds	4
+	ds	2
 	global	??_POWER_INITIAL
-??_POWER_INITIAL:	; 0 bytes @ 0x4
+??_POWER_INITIAL:	; 0 bytes @ 0x2
 	global	??_WDT_INITIAL
-??_WDT_INITIAL:	; 0 bytes @ 0x4
+??_WDT_INITIAL:	; 0 bytes @ 0x2
 	global	??_DelayUs
-??_DelayUs:	; 0 bytes @ 0x4
-	ds	1
+??_DelayUs:	; 0 bytes @ 0x2
 	global	DelayUs@Time
-DelayUs@Time:	; 1 bytes @ 0x5
+DelayUs@Time:	; 1 bytes @ 0x2
 	ds	1
 	global	DelayUs@a
-DelayUs@a:	; 1 bytes @ 0x6
+DelayUs@a:	; 1 bytes @ 0x3
 	ds	1
 	global	??_DelayMs
-??_DelayMs:	; 0 bytes @ 0x7
-	ds	1
+??_DelayMs:	; 0 bytes @ 0x4
 	global	DelayMs@Time
-DelayMs@Time:	; 1 bytes @ 0x8
+DelayMs@Time:	; 1 bytes @ 0x4
 	ds	1
 	global	DelayMs@a
-DelayMs@a:	; 1 bytes @ 0x9
+DelayMs@a:	; 1 bytes @ 0x5
 	ds	1
 	global	DelayMs@b
-DelayMs@b:	; 1 bytes @ 0xA
+DelayMs@b:	; 1 bytes @ 0x6
 	ds	1
 	global	??_DelayS
 ??_DelayS:	; 0 bytes @ 0x7
@@ -1596,18 +1594,16 @@ DelayS@b:	; 1 bytes @ 0x9
 ;;                                              7 COMMON     3     3      0
 ;;                            _DelayMs
 ;; ---------------------------------------------------------------------------------
-;; (1) _DelayMs                                              4     4      0      90
-;;                                              7 COMMON     4     4      0
+;; (1) _DelayMs                                              3     3      0      90
+;;                                              4 COMMON     3     3      0
 ;;                            _DelayUs
 ;; ---------------------------------------------------------------------------------
-;; (2) _DelayUs                                              3     3      0      30
-;;                                              4 COMMON     3     3      0
+;; (2) _DelayUs                                              2     2      0      30
+;;                                              2 COMMON     2     2      0
 ;; ---------------------------------------------------------------------------------
-;; (1) _WDT_INITIAL                                          1     1      0       0
-;;                                              4 COMMON     1     1      0
+;; (1) _WDT_INITIAL                                          0     0      0       0
 ;; ---------------------------------------------------------------------------------
-;; (1) _POWER_INITIAL                                        1     1      0       0
-;;                                              4 COMMON     1     1      0
+;; (1) _POWER_INITIAL                                        0     0      0       0
 ;; ---------------------------------------------------------------------------------
 ;; Estimated maximum stack depth 2
 ;; ---------------------------------------------------------------------------------
@@ -1656,7 +1652,7 @@ __pmaintext:
 
 ;; *************** function _main *****************
 ;; Defined at:
-;;		line 126 in file "MG117McuBeacon.C"
+;;		line 129 in file "MG117McuBeacon.C"
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -1687,99 +1683,94 @@ __pmaintext:
 ;;
 psect	maintext
 	file	"MG117McuBeacon.C"
-	line	126
+	line	129
 	global	__size_of_main
 	__size_of_main	equ	__end_of_main-_main
 	
 _main:	
 	opt	stack 4
 ; Regs used in _main: [wreg+status,2+status,0+pclath+cstack]
-	line	127
+	line	130
 	
 l1468:	
-;MG117McuBeacon.C: 127: POWER_INITIAL();
+;MG117McuBeacon.C: 130: POWER_INITIAL();
 	fcall	_POWER_INITIAL
-	line	128
-;MG117McuBeacon.C: 128: WDT_INITIAL();
+	line	131
+;MG117McuBeacon.C: 131: WDT_INITIAL();
 	fcall	_WDT_INITIAL
-	line	133
-	
-l1470:	
-;MG117McuBeacon.C: 133: RA5 = 0;
-	bcf	(45/8),(45)&7
-	line	134
-;MG117McuBeacon.C: 134: DelayS(1);
-	movlw	(01h)
-	fcall	_DelayS
-	line	135
-;MG117McuBeacon.C: 135: DelayMs(500);
-	movlw	(0F4h)
-	fcall	_DelayMs
 	line	136
 	
-l1472:	
-;MG117McuBeacon.C: 136: RA5 = 1;
-	bcf	status, 5	;RP0=0, select bank0
-	bsf	(45/8),(45)&7
+l1470:	
+;MG117McuBeacon.C: 136: RA5 = 0;
+	bcf	(45/8),(45)&7
 	line	137
-;MG117McuBeacon.C: 137: DelayMs(10);
-	movlw	(0Ah)
+;MG117McuBeacon.C: 137: DelayS(1);
+	movlw	(01h)
+	fcall	_DelayS
+	line	138
+;MG117McuBeacon.C: 138: DelayMs(500);
+	movlw	(0F4h)
 	fcall	_DelayMs
 	line	139
 	
-l1474:	
-;MG117McuBeacon.C: 139: RA2 = 0;
+l1472:	
+;MG117McuBeacon.C: 139: RA5 = 1;
 	bcf	status, 5	;RP0=0, select bank0
-	bcf	(42/8),(42)&7
-	line	140
-;MG117McuBeacon.C: 140: DelayMs(50);
-	movlw	(032h)
-	fcall	_DelayMs
+	bsf	(45/8),(45)&7
 	line	141
 	
+l1474:	
+;MG117McuBeacon.C: 141: RA2 = 0;
+	bcf	(42/8),(42)&7
+	line	142
+;MG117McuBeacon.C: 142: DelayMs(50);
+	movlw	(032h)
+	fcall	_DelayMs
+	line	143
+	
 l1476:	
-;MG117McuBeacon.C: 141: RA2 = 1;
+;MG117McuBeacon.C: 143: RA2 = 1;
 	bcf	status, 5	;RP0=0, select bank0
 	bsf	(42/8),(42)&7
-	line	142
-;MG117McuBeacon.C: 142: DelayMs(10);
+	line	144
+;MG117McuBeacon.C: 144: DelayMs(10);
 	movlw	(0Ah)
 	fcall	_DelayMs
-	line	147
+	line	149
 	
 l1478:	
-# 147 "MG117McuBeacon.C"
+# 149 "MG117McuBeacon.C"
 clrwdt ;#
 psect	maintext
-	line	148
-	
-l1480:	
-;MG117McuBeacon.C: 148: SWDTEN = 1;
-	bcf	status, 5	;RP0=0, select bank0
-	bsf	(192/8),(192)&7
 	line	150
 	
-l1482:	
-;MG117McuBeacon.C: 150: RA4 = 0;
-	bcf	(44/8),(44)&7
-	line	151
-;MG117McuBeacon.C: 151: DelayMs(1);
-	movlw	(01h)
-	fcall	_DelayMs
+l1480:	
+;MG117McuBeacon.C: 150: SWDTEN = 1;
+	bcf	status, 5	;RP0=0, select bank0
+	bsf	(192/8),(192)&7
 	line	152
 	
+l1482:	
+;MG117McuBeacon.C: 152: RA4 = 0;
+	bcf	(44/8),(44)&7
+	line	153
+;MG117McuBeacon.C: 153: DelayMs(1);
+	movlw	(01h)
+	fcall	_DelayMs
+	line	154
+	
 l1484:	
-;MG117McuBeacon.C: 152: RA4 = 1;
+;MG117McuBeacon.C: 154: RA4 = 1;
 	bcf	status, 5	;RP0=0, select bank0
 	bsf	(44/8),(44)&7
-	line	153
-;MG117McuBeacon.C: 153: DelayMs((10));
+	line	155
+;MG117McuBeacon.C: 155: DelayMs((10));
 	movlw	(0Ah)
 	fcall	_DelayMs
-	line	155
+	line	157
 	
 l1486:	
-# 155 "MG117McuBeacon.C"
+# 157 "MG117McuBeacon.C"
 sleep ;#
 psect	maintext
 	goto	l1478
@@ -1787,7 +1778,7 @@ psect	maintext
 	ljmp	start
 	opt stack 0
 psect	maintext
-	line	157
+	line	159
 GLOBAL	__end_of_main
 	__end_of_main:
 ;; =============== function _main ends ============
@@ -1800,7 +1791,7 @@ __ptext71:
 
 ;; *************** function _DelayS *****************
 ;; Defined at:
-;;		line 109 in file "MG117McuBeacon.C"
+;;		line 112 in file "MG117McuBeacon.C"
 ;; Parameters:    Size  Location     Type
 ;;  Time            1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
@@ -1831,7 +1822,7 @@ __ptext71:
 ;;
 psect	text71
 	file	"MG117McuBeacon.C"
-	line	109
+	line	112
 	global	__size_of_DelayS
 	__size_of_DelayS	equ	__end_of_DelayS-_DelayS
 	
@@ -1839,28 +1830,28 @@ _DelayS:
 	opt	stack 4
 ; Regs used in _DelayS: [wreg+status,2+status,0+pclath+cstack]
 ;DelayS@Time stored from wreg
-	line	111
+	line	114
 	movwf	(DelayS@Time)
 	
 l1450:	
-;MG117McuBeacon.C: 110: unsigned char a, b;
-;MG117McuBeacon.C: 111: for (a = 0; a < Time; a++)
+;MG117McuBeacon.C: 113: unsigned char a, b;
+;MG117McuBeacon.C: 114: for (a = 0; a < Time; a++)
 	clrf	(DelayS@a)
 	goto	l1466
-	line	113
+	line	116
 	
 l1452:	
-;MG117McuBeacon.C: 112: {
-;MG117McuBeacon.C: 113: for (b = 0; b < 10; b++)
+;MG117McuBeacon.C: 115: {
+;MG117McuBeacon.C: 116: for (b = 0; b < 10; b++)
 	clrf	(DelayS@b)
-	line	115
+	line	118
 	
 l1458:	
-;MG117McuBeacon.C: 114: {
-;MG117McuBeacon.C: 115: DelayMs(100);
+;MG117McuBeacon.C: 117: {
+;MG117McuBeacon.C: 118: DelayMs(100);
 	movlw	(064h)
 	fcall	_DelayMs
-	line	113
+	line	116
 	
 l1460:	
 	incf	(DelayS@b),f
@@ -1874,7 +1865,7 @@ l1462:
 u41:
 	goto	l1458
 u40:
-	line	111
+	line	114
 	
 l1464:	
 	incf	(DelayS@a),f
@@ -1888,7 +1879,7 @@ l1466:
 u51:
 	goto	l1452
 u50:
-	line	118
+	line	121
 	
 l461:	
 	return
@@ -1905,13 +1896,13 @@ __ptext72:
 
 ;; *************** function _DelayMs *****************
 ;; Defined at:
-;;		line 98 in file "MG117McuBeacon.C"
+;;		line 101 in file "MG117McuBeacon.C"
 ;; Parameters:    Size  Location     Type
 ;;  Time            1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
-;;  Time            1    8[COMMON] unsigned char 
-;;  b               1   10[COMMON] unsigned char 
-;;  a               1    9[COMMON] unsigned char 
+;;  Time            1    4[COMMON] unsigned char 
+;;  b               1    6[COMMON] unsigned char 
+;;  a               1    5[COMMON] unsigned char 
 ;; Return value:  Size  Location     Type
 ;;		None               void
 ;; Registers used:
@@ -1923,9 +1914,9 @@ __ptext72:
 ;; Data sizes:     COMMON
 ;;      Params:         0
 ;;      Locals:         3
-;;      Temps:          1
-;;      Totals:         4
-;;Total ram usage:        4 bytes
+;;      Temps:          0
+;;      Totals:         3
+;;Total ram usage:        3 bytes
 ;; Hardware stack levels used:    1
 ;; Hardware stack levels required when called:    2
 ;; This function calls:
@@ -1933,12 +1924,11 @@ __ptext72:
 ;; This function is called by:
 ;;		_DelayS
 ;;		_main
-;;		_DelayS
 ;; This function uses a non-reentrant model
 ;;
 psect	text72
 	file	"MG117McuBeacon.C"
-	line	98
+	line	101
 	global	__size_of_DelayMs
 	__size_of_DelayMs	equ	__end_of_DelayMs-_DelayMs
 	
@@ -1946,28 +1936,28 @@ _DelayMs:
 	opt	stack 5
 ; Regs used in _DelayMs: [wreg+status,2+status,0+pclath+cstack]
 ;DelayMs@Time stored from wreg
-	line	100
+	line	103
 	movwf	(DelayMs@Time)
 	
 l1432:	
-;MG117McuBeacon.C: 99: unsigned char a, b;
-;MG117McuBeacon.C: 100: for (a = 0; a < Time; a++)
+;MG117McuBeacon.C: 102: unsigned char a, b;
+;MG117McuBeacon.C: 103: for (a = 0; a < Time; a++)
 	clrf	(DelayMs@a)
 	goto	l1448
-	line	102
+	line	105
 	
 l1434:	
-;MG117McuBeacon.C: 101: {
-;MG117McuBeacon.C: 102: for (b = 0; b < 5; b++)
+;MG117McuBeacon.C: 104: {
+;MG117McuBeacon.C: 105: for (b = 0; b < 5; b++)
 	clrf	(DelayMs@b)
-	line	104
+	line	107
 	
 l1440:	
-;MG117McuBeacon.C: 103: {
-;MG117McuBeacon.C: 104: DelayUs(98);
-	movlw	(062h)
+;MG117McuBeacon.C: 106: {
+;MG117McuBeacon.C: 107: DelayUs(25);
+	movlw	(019h)
 	fcall	_DelayUs
-	line	102
+	line	105
 	
 l1442:	
 	incf	(DelayMs@b),f
@@ -1981,7 +1971,7 @@ l1444:
 u21:
 	goto	l1440
 u20:
-	line	100
+	line	103
 	
 l1446:	
 	incf	(DelayMs@a),f
@@ -1995,7 +1985,7 @@ l1448:
 u31:
 	goto	l1434
 u30:
-	line	107
+	line	110
 	
 l453:	
 	return
@@ -2012,12 +2002,12 @@ __ptext73:
 
 ;; *************** function _DelayUs *****************
 ;; Defined at:
-;;		line 90 in file "MG117McuBeacon.C"
+;;		line 93 in file "MG117McuBeacon.C"
 ;; Parameters:    Size  Location     Type
 ;;  Time            1    wreg     unsigned char 
 ;; Auto vars:     Size  Location     Type
-;;  Time            1    5[COMMON] unsigned char 
-;;  a               1    6[COMMON] unsigned char 
+;;  Time            1    2[COMMON] unsigned char 
+;;  a               1    3[COMMON] unsigned char 
 ;; Return value:  Size  Location     Type
 ;;		None               void
 ;; Registers used:
@@ -2029,9 +2019,9 @@ __ptext73:
 ;; Data sizes:     COMMON
 ;;      Params:         0
 ;;      Locals:         2
-;;      Temps:          1
-;;      Totals:         3
-;;Total ram usage:        3 bytes
+;;      Temps:          0
+;;      Totals:         2
+;;Total ram usage:        2 bytes
 ;; Hardware stack levels used:    1
 ;; Hardware stack levels required when called:    1
 ;; This function calls:
@@ -2042,7 +2032,7 @@ __ptext73:
 ;;
 psect	text73
 	file	"MG117McuBeacon.C"
-	line	90
+	line	93
 	global	__size_of_DelayUs
 	__size_of_DelayUs	equ	__end_of_DelayUs-_DelayUs
 	
@@ -2050,22 +2040,22 @@ _DelayUs:
 	opt	stack 5
 ; Regs used in _DelayUs: [wreg+status,2+status,0]
 ;DelayUs@Time stored from wreg
-	line	92
+	line	95
 	movwf	(DelayUs@Time)
 	
 l1426:	
-;MG117McuBeacon.C: 91: unsigned char a;
-;MG117McuBeacon.C: 92: for (a = 0; a < Time; a++)
+;MG117McuBeacon.C: 94: unsigned char a;
+;MG117McuBeacon.C: 95: for (a = 0; a < Time; a++)
 	clrf	(DelayUs@a)
 	goto	l1430
-	line	93
+	line	96
 	
 l443:	
-	line	94
-;MG117McuBeacon.C: 93: {
-;MG117McuBeacon.C: 94: _nop();
+	line	97
+;MG117McuBeacon.C: 96: {
+;MG117McuBeacon.C: 97: _nop();
 	nop
-	line	92
+	line	95
 	
 l1428:	
 	incf	(DelayUs@a),f
@@ -2074,12 +2064,12 @@ l1430:
 	movf	(DelayUs@Time),w
 	subwf	(DelayUs@a),w
 	skipc
-	goto	u2251
-	goto	u2250
-u2251:
+	goto	u11
+	goto	u10
+u11:
 	goto	l443
 u10:
-	line	96
+	line	99
 	
 l445:	
 	return
@@ -2096,7 +2086,7 @@ __ptext74:
 
 ;; *************** function _WDT_INITIAL *****************
 ;; Defined at:
-;;		line 82 in file "MG117McuBeacon.C"
+;;		line 85 in file "MG117McuBeacon.C"
 ;; Parameters:    Size  Location     Type
 ;;		None
 ;; Auto vars:     Size  Location     Type
@@ -2106,15 +2096,15 @@ __ptext74:
 ;; Registers used:
 ;;		wreg
 ;; Tracked objects:
-;;		On entry : 0/0
-;;		On exit  : 0/0
-;;		Unchanged: 0/0
+;;		On entry : 17F/0
+;;		On exit  : 20/0
+;;		Unchanged: FFE00/0
 ;; Data sizes:     COMMON
 ;;      Params:         0
 ;;      Locals:         0
-;;      Temps:          1
-;;      Totals:         1
-;;Total ram usage:        1 bytes
+;;      Temps:          0
+;;      Totals:         0
+;;Total ram usage:        0 bytes
 ;; Hardware stack levels used:    1
 ;; Hardware stack levels required when called:    1
 ;; This function calls:
@@ -2125,36 +2115,36 @@ __ptext74:
 ;;
 psect	text74
 	file	"MG117McuBeacon.C"
-	line	82
+	line	85
 	global	__size_of_WDT_INITIAL
 	__size_of_WDT_INITIAL	equ	__end_of_WDT_INITIAL-_WDT_INITIAL
 	
 _WDT_INITIAL:	
 	opt	stack 6
 ; Regs used in _WDT_INITIAL: [wreg]
-	line	83
+	line	86
 	
 l1420:	
-# 83 "MG117McuBeacon.C"
+# 86 "MG117McuBeacon.C"
 clrwdt ;#
 psect	text74
-	line	84
-;MG117McuBeacon.C: 84: PSA = 1;
+	line	87
+;MG117McuBeacon.C: 87: PSA = 1;
 	bsf	status, 5	;RP0=1, select bank1
 	bsf	(1035/8)^080h,(1035)&7
-	line	85
+	line	88
 	
 l1422:	
-;MG117McuBeacon.C: 85: WDTCON = 0B00010110;
+;MG117McuBeacon.C: 88: WDTCON = 0B00010110;
 	movlw	(016h)
 	bcf	status, 5	;RP0=0, select bank0
 	movwf	(24)	;volatile
-	line	86
+	line	89
 	
 l1424:	
-;MG117McuBeacon.C: 86: SWDTEN = 0;
+;MG117McuBeacon.C: 89: SWDTEN = 0;
 	bcf	(192/8),(192)&7
-	line	87
+	line	90
 	
 l439:	
 	return
@@ -2179,17 +2169,17 @@ __ptext75:
 ;; Return value:  Size  Location     Type
 ;;		None               void
 ;; Registers used:
-;;		wreg
+;;		wreg, status,2
 ;; Tracked objects:
-;;		On entry : 0/0
-;;		On exit  : 0/0
-;;		Unchanged: 0/0
+;;		On entry : 17F/0
+;;		On exit  : 17F/0
+;;		Unchanged: FFE80/0
 ;; Data sizes:     COMMON
 ;;      Params:         0
 ;;      Locals:         0
-;;      Temps:          1
-;;      Totals:         1
-;;Total ram usage:        1 bytes
+;;      Temps:          0
+;;      Totals:         0
+;;Total ram usage:        0 bytes
 ;; Hardware stack levels used:    1
 ;; Hardware stack levels required when called:    1
 ;; This function calls:
@@ -2210,93 +2200,89 @@ _POWER_INITIAL:
 	line	52
 	
 l1392:	
-;MG117McuBeacon.C: 52: OSCCON = 0B01110001;
-	movlw	(071h)
-	movwf	(??_POWER_INITIAL+0)+0
-	movf	(??_POWER_INITIAL+0)+0,w
+;MG117McuBeacon.C: 52: OSCCON = 0B01010001;
+	movlw	(051h)
 	bsf	status, 5	;RP0=1, select bank1
 	movwf	(143)^080h	;volatile
-	line	56
-	
-l1394:	
-;MG117McuBeacon.C: 56: INTCON = 0;
-	clrf	(11)	;volatile
 	line	57
 	
-l1396:	
-;MG117McuBeacon.C: 57: PORTA = 0B00000000;
-	bcf	status, 5	;RP0=0, select bank0
-	clrf	(5)	;volatile
+l1394:	
+;MG117McuBeacon.C: 57: INTCON = 0;
+	clrf	(11)	;volatile
 	line	58
 	
-l1398:	
-;MG117McuBeacon.C: 58: RA2 = 1;
-	bsf	(42/8),(42)&7
+l1396:	
+;MG117McuBeacon.C: 58: PORTA = 0B00000000;
+	bcf	status, 5	;RP0=0, select bank0
+	clrf	(5)	;volatile
 	line	59
 	
-l1400:	
-;MG117McuBeacon.C: 59: RA4 = 1;
-	bsf	(44/8),(44)&7
+l1398:	
+;MG117McuBeacon.C: 59: RA2 = 1;
+	bsf	(42/8),(42)&7
 	line	60
 	
+l1400:	
+;MG117McuBeacon.C: 60: RA4 = 1;
+	bsf	(44/8),(44)&7
+	line	61
+	
 l1402:	
-;MG117McuBeacon.C: 60: RA5 = 1;
+;MG117McuBeacon.C: 61: RA5 = 1;
 	bsf	(45/8),(45)&7
-	line	62
-;MG117McuBeacon.C: 62: TRISA = 0B11111111;
+	line	63
+;MG117McuBeacon.C: 63: TRISA = 0B11111111;
 	movlw	(0FFh)
-	movwf	(??_POWER_INITIAL+0)+0
-	movf	(??_POWER_INITIAL+0)+0,w
 	bsf	status, 5	;RP0=1, select bank1
 	movwf	(133)^080h	;volatile
-	line	64
-	
-l1404:	
-;MG117McuBeacon.C: 64: TRISA2 = 0;
-	bcf	(1066/8)^080h,(1066)&7
-	line	65
-	
-l1406:	
-;MG117McuBeacon.C: 65: TRISA4 = 0;
-	bcf	(1068/8)^080h,(1068)&7
 	line	66
 	
-l1408:	
-;MG117McuBeacon.C: 66: TRISA5 = 0;
-	bcf	(1069/8)^080h,(1069)&7
+l1404:	
+;MG117McuBeacon.C: 66: TRISA2 = 0;
+	bcf	(1066/8)^080h,(1066)&7
+	line	67
+	
+l1406:	
+;MG117McuBeacon.C: 67: TRISA4 = 0;
+	bcf	(1068/8)^080h,(1068)&7
 	line	68
 	
-l1410:	
-;MG117McuBeacon.C: 68: RA2 = 1;
-	bcf	status, 5	;RP0=0, select bank0
-	bsf	(42/8),(42)&7
-	line	69
-	
-l1412:	
-;MG117McuBeacon.C: 69: RA4 = 1;
-	bsf	(44/8),(44)&7
+l1408:	
+;MG117McuBeacon.C: 68: TRISA5 = 0;
+	bcf	(1069/8)^080h,(1069)&7
 	line	70
 	
-l1414:	
-;MG117McuBeacon.C: 70: RA5 = 1;
-	bsf	(45/8),(45)&7
+l1410:	
+;MG117McuBeacon.C: 70: RA2 = 1;
+	bcf	status, 5	;RP0=0, select bank0
+	bsf	(42/8),(42)&7
+	line	71
+	
+l1412:	
+;MG117McuBeacon.C: 71: RA4 = 1;
+	bsf	(44/8),(44)&7
 	line	72
 	
+l1414:	
+;MG117McuBeacon.C: 72: RA5 = 1;
+	bsf	(45/8),(45)&7
+	line	74
+	
 l1416:	
-;MG117McuBeacon.C: 72: WPUA = 0B00000000;
+;MG117McuBeacon.C: 74: WPUA = 0B00000000;
 	bsf	status, 5	;RP0=1, select bank1
 	clrf	(149)^080h	;volatile
-	line	73
+	line	75
 	
 l1418:	
-;MG117McuBeacon.C: 73: OPTION = 0B00001000;
+;MG117McuBeacon.C: 75: OPTION = 0B00001000;
 	movlw	(08h)
 	movwf	(129)^080h	;volatile
-	line	74
-;MG117McuBeacon.C: 74: MSCKCON = 0B00000000;
+	line	77
+;MG117McuBeacon.C: 77: MSCKCON = 0B00000000;
 	bcf	status, 5	;RP0=0, select bank0
 	clrf	(27)	;volatile
-	line	79
+	line	82
 	
 l436:	
 	return
@@ -2325,13 +2311,13 @@ __ptext76:
 ;; Tracked objects:
 ;;		On entry : 0/0
 ;;		On exit  : 0/0
-;;		Unchanged: 0/0
+;;		Unchanged: FFFFF/0
 ;; Data sizes:     COMMON
 ;;      Params:         0
 ;;      Locals:         0
-;;      Temps:          4
-;;      Totals:         4
-;;Total ram usage:        4 bytes
+;;      Temps:          2
+;;      Totals:         2
+;;Total ram usage:        2 bytes
 ;; Hardware stack levels used:    1
 ;; This function calls:
 ;;		Nothing
@@ -2358,24 +2344,15 @@ interrupt_function:
 	movwf	saved_w
 	swapf	status,w
 	movwf	(??_ISR+0)
-	movf	fsr0,w
-	movwf	(??_ISR+1)
 	movf	pclath,w
-	movwf	(??_ISR+2)
-	bcf	status, 5	;RP0=0, select bank0
-	movf	btemp+1,w
-	movwf	(??_ISR+3)
+	movwf	(??_ISR+1)
 	ljmp	_ISR
 psect	text76
 	line	47
 	
 i1l433:	
-	movf	(??_ISR+3),w
-	movwf	btemp+1
-	movf	(??_ISR+2),w
-	movwf	pclath
 	movf	(??_ISR+1),w
-	movwf	fsr0
+	movwf	pclath
 	swapf	(??_ISR+0)^0FFFFFF80h,w
 	movwf	status
 	swapf	saved_w,f

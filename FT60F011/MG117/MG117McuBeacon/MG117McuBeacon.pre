@@ -574,7 +574,8 @@ void interrupt ISR(void)
 
 void POWER_INITIAL(void)
 {
-OSCCON = 0B01110001;
+OSCCON = 0B01010001;
+
 
 
 
@@ -586,6 +587,7 @@ RA5 = 1;
 
 TRISA = 0B11111111;
 
+
 TRISA2 = 0;
 TRISA4 = 0;
 TRISA5 = 0;
@@ -596,6 +598,7 @@ RA5 = 1;
 
 WPUA = 0B00000000;
 OPTION = 0B00001000;
+
 MSCKCON = 0B00000000;
 
 
@@ -626,7 +629,7 @@ for (a = 0; a < Time; a++)
 {
 for (b = 0; b < 5; b++)
 {
-DelayUs(98);
+DelayUs(25);
 }
 }
 }
@@ -642,7 +645,7 @@ DelayMs(100);
 }
 }
 
-# 125
+# 128
 main()
 {
 POWER_INITIAL();
@@ -655,7 +658,6 @@ RA5 = 0;
 DelayS(1);
 DelayMs(500);
 RA5 = 1;
-DelayMs(10);
 
 RA2 = 0;
 DelayMs(50);

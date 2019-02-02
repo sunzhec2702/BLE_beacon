@@ -1,4 +1,4 @@
-[p LITE_MODE AUTOSTATIC PIC14 PICREGULAR PICMID ]
+[p PRO_MODE GLOBOPT AUTOSTATIC PIC14 PICREGULAR PICMID SPACEOPT ]
 [d version 1.1 ]
 [d edition pro ]
 [d chip 16F684 ]
@@ -297,15 +297,15 @@
 [v _ISR `I(v  1 e 0 0 ]
 "51
 [v _POWER_INITIAL `(v  1 e 0 0 ]
-"82
+"85
 [v _WDT_INITIAL `(v  1 e 0 0 ]
-"90
+"93
 [v _DelayUs `(v  1 e 0 0 ]
-"98
+"101
 [v _DelayMs `(v  1 e 0 0 ]
-"109
+"112
 [v _DelayS `(v  1 e 0 0 ]
-"126
+"129
 [v _main `(i  1 e 2 0 ]
 "90 /hitech/products/compilers/pic/pro/9.83/dist/linux/include/pic16f684.h
 [v _INDF `VEuc  1 e 1 @0 ]
@@ -1023,52 +1023,52 @@
 [v _SFR9E `VEuc  1 e 1 @158 ]
 "634
 [v _SFR9F `VEuc  1 e 1 @159 ]
-"126 MG117McuBeacon.C
+"129 MG117McuBeacon.C
 [v _main `(i  1 e 2 0 ]
 {
-"157
+"159
 } 0
-"109
+"112
 [v _DelayS `(v  1 e 0 0 ]
 {
 [v DelayS@Time `uc  1 a 1 wreg ]
-"110
+"113
 [v DelayS@b `uc  1 a 1 9 ]
 [v DelayS@a `uc  1 a 1 8 ]
-"109
+"112
 [v DelayS@Time `uc  1 a 1 wreg ]
-"118
+"121
 } 0
-"98
+"101
 [v _DelayMs `(v  1 e 0 0 ]
 {
 [v DelayMs@Time `uc  1 a 1 wreg ]
-"99
+"102
 [v DelayMs@b `uc  1 a 1 6 ]
 [v DelayMs@a `uc  1 a 1 5 ]
-"98
+"101
 [v DelayMs@Time `uc  1 a 1 wreg ]
-"107
+"110
 } 0
-"90
+"93
 [v _DelayUs `(v  1 e 0 0 ]
 {
 [v DelayUs@Time `uc  1 a 1 wreg ]
-"91
+"94
 [v DelayUs@a `uc  1 a 1 3 ]
-"90
+"93
 [v DelayUs@Time `uc  1 a 1 wreg ]
-"96
+"99
 } 0
-"82
+"85
 [v _WDT_INITIAL `(v  1 e 0 0 ]
 {
-"87
+"90
 } 0
 "51
 [v _POWER_INITIAL `(v  1 e 0 0 ]
 {
-"79
+"82
 } 0
 "46
 [v _ISR `I(v  1 e 0 0 ]

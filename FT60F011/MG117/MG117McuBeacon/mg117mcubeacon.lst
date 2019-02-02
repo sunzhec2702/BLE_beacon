@@ -1,7 +1,7 @@
 
 
 HI-TECH Software PIC PRO Macro Assembler V9.83 build 10920 
-                                                                                               Wed Jan 30 21:55:05 2019
+                                                                                               Sat Feb 02 14:54:42 2019
 
 HI-TECH Software Omniscient Code Generator (PRO mode) build 10920
      1                           	processor	16F684
@@ -742,12 +742,12 @@ HI-TECH Software Omniscient Code Generator (PRO mode) build 10920
    736  009F                     _SFR9F	set	159	;_SFR9F
    737                           
    738                           	psect	cinit
-   739  007C                     start_initialization:	
-   740  007C                     end_of_initialization:	
+   739  0079                     start_initialization:	
+   740  0079                     end_of_initialization:	
    741                           ;End of C runtime variable initialization code
    742                           
-   743  007C  0183               	clrf	3
-   744  007D  280B               	ljmp	_main	;jump to C main() function
+   743  0079  0183               	clrf	3
+   744  007A  280B               	ljmp	_main	;jump to C main() function
    745                           
    746                           	psect	cstackCOMMON
    747  0040                     __pcstackCOMMON:	
@@ -912,7 +912,7 @@ HI-TECH Software Omniscient Code Generator (PRO mode) build 10920
    906                           
    907 ;; *************** function _main *****************
    908 ;; Defined at:
-   909 ;;		line 126 in file "MG117McuBeacon.C"
+   909 ;;		line 129 in file "MG117McuBeacon.C"
    910 ;; Parameters:    Size  Location     Type
    911 ;;		None
    912 ;; Auto vars:     Size  Location     Type
@@ -943,481 +943,474 @@ HI-TECH Software Omniscient Code Generator (PRO mode) build 10920
    937 ;;
    938  000B                     _main:	
    939                           
-   940                           ;MG117McuBeacon.C: 127: POWER_INITIAL();
+   940                           ;MG117McuBeacon.C: 130: POWER_INITIAL();
    941                           
    942                           ; Regs used in _main: [wreg+status,2+status,0+pclath+cstack]
-   943  000B  202A               	fcall	_POWER_INITIAL
+   943  000B  2027               	fcall	_POWER_INITIAL
    944                           
-   945                           ;MG117McuBeacon.C: 128: WDT_INITIAL();
-   946  000C  206D               	fcall	_WDT_INITIAL
+   945                           ;MG117McuBeacon.C: 131: WDT_INITIAL();
+   946  000C  206A               	fcall	_WDT_INITIAL
    947  000D  3001               	movlw	1
    948                           
-   949                           ;MG117McuBeacon.C: 133: RA5 = 0;
+   949                           ;MG117McuBeacon.C: 136: RA5 = 0;
    950  000E  1285               	bcf	5,5
    951                           
-   952                           ;MG117McuBeacon.C: 134: DelayS(1);
-   953  000F  2044               	fcall	_DelayS
+   952                           ;MG117McuBeacon.C: 137: DelayS(1);
+   953  000F  2041               	fcall	_DelayS
    954                           
-   955                           ;MG117McuBeacon.C: 135: DelayMs(500);
+   955                           ;MG117McuBeacon.C: 138: DelayMs(500);
    956  0010  30F4               	movlw	244
-   957  0011  2054               	fcall	_DelayMs
-   958  0012  300A               	movlw	10
+   957  0011  2051               	fcall	_DelayMs
+   958  0012  3032               	movlw	50
    959                           
-   960                           ;MG117McuBeacon.C: 136: RA5 = 1;
+   960                           ;MG117McuBeacon.C: 139: RA5 = 1;
    961  0013  1283               	bcf	3,5	;RP0=0, select bank0
    962  0014  1685               	bsf	5,5
-   963                           
-   964                           ;MG117McuBeacon.C: 137: DelayMs(10);
-   965  0015  2054               	fcall	_DelayMs
-   966  0016  3032               	movlw	50
-   967                           
-   968                           ;MG117McuBeacon.C: 139: RA2 = 0;
-   969  0017  1283               	bcf	3,5	;RP0=0, select bank0
-   970  0018  1105               	bcf	5,2
-   971                           
-   972                           ;MG117McuBeacon.C: 140: DelayMs(50);
-   973  0019  2054               	fcall	_DelayMs
-   974  001A  300A               	movlw	10
-   975                           
-   976                           ;MG117McuBeacon.C: 141: RA2 = 1;
-   977  001B  1283               	bcf	3,5	;RP0=0, select bank0
-   978  001C  1505               	bsf	5,2
-   979                           
-   980                           ;MG117McuBeacon.C: 142: DelayMs(10);
-   981  001D  2054               	fcall	_DelayMs
-   982  001E                     l1478:	
-   983  001E  0064               	clrwdt	;#
-   984  001F  3001               	movlw	1
-   985                           
-   986                           ;MG117McuBeacon.C: 148: SWDTEN = 1;
-   987  0020  1283               	bcf	3,5	;RP0=0, select bank0
-   988  0021  1418               	bsf	24,0
-   989  0022  1205               	bcf	5,4
-   990                           
-   991                           ;MG117McuBeacon.C: 151: DelayMs(1);
-   992  0023  2054               	fcall	_DelayMs
-   993  0024  300A               	movlw	10
-   994                           
-   995                           ;MG117McuBeacon.C: 152: RA4 = 1;
-   996  0025  1283               	bcf	3,5	;RP0=0, select bank0
-   997  0026  1605               	bsf	5,4
-   998                           
-   999                           ;MG117McuBeacon.C: 153: DelayMs((10));
-  1000  0027  2054               	fcall	_DelayMs
-  1001  0028  0063               	sleep	;#
-  1002  0029  281E               	goto	l1478
-  1003  002A                     __end_of_main:	
-  1004                           
-  1005                           	psect	text71
-  1006  0044                     __ptext71:	
-  1007 ;; =============== function _main ends ============
-  1008                           
-  1009                           
-  1010 ;; *************** function _DelayS *****************
-  1011 ;; Defined at:
-  1012 ;;		line 109 in file "MG117McuBeacon.C"
-  1013 ;; Parameters:    Size  Location     Type
-  1014 ;;  Time            1    wreg     unsigned char 
-  1015 ;; Auto vars:     Size  Location     Type
-  1016 ;;  Time            1    7[COMMON] unsigned char 
-  1017 ;;  b               1    9[COMMON] unsigned char 
-  1018 ;;  a               1    8[COMMON] unsigned char 
-  1019 ;; Return value:  Size  Location     Type
-  1020 ;;		None               void
-  1021 ;; Registers used:
-  1022 ;;		wreg, status,2, status,0, pclath, cstack
-  1023 ;; Tracked objects:
-  1024 ;;		On entry : 20/0
-  1025 ;;		On exit  : 0/0
-  1026 ;;		Unchanged: 0/0
-  1027 ;; Data sizes:     COMMON
-  1028 ;;      Params:         0
-  1029 ;;      Locals:         3
-  1030 ;;      Temps:          0
-  1031 ;;      Totals:         3
-  1032 ;;Total ram usage:        3 bytes
-  1033 ;; Hardware stack levels used:    1
-  1034 ;; Hardware stack levels required when called:    3
-  1035 ;; This function calls:
-  1036 ;;		_DelayMs
-  1037 ;; This function is called by:
-  1038 ;;		_main
-  1039 ;; This function uses a non-reentrant model
-  1040 ;;
-  1041  0044                     _DelayS:	
-  1042                           
-  1043                           ; Regs used in _DelayS: [wreg+status,2+status,0+pclath+cstack]
-  1044                           ;DelayS@Time stored from wreg
-  1045  0044  00C7               	movwf	DelayS@Time
-  1046                           
-  1047                           ;MG117McuBeacon.C: 110: unsigned char a, b;
-  1048                           ;MG117McuBeacon.C: 111: for (a = 0; a < Time; a++)
-  1049  0045  01C8               	clrf	DelayS@a
-  1050  0046                     l1466:	
-  1051  0046  0847               	movf	DelayS@Time,w
-  1052  0047  0248               	subwf	DelayS@a,w
-  1053  0048  1803               	btfsc	3,0
-  1054  0049  0008               	return
-  1055                           
-  1056                           ;MG117McuBeacon.C: 112: {
-  1057                           ;MG117McuBeacon.C: 113: for (b = 0; b < 10; b++)
-  1058  004A  01C9               	clrf	DelayS@b
-  1059  004B                     l1458:	
-  1060                           
-  1061                           ;MG117McuBeacon.C: 114: {
-  1062                           ;MG117McuBeacon.C: 115: DelayMs(100);
-  1063  004B  3064               	movlw	100
-  1064  004C  2054               	fcall	_DelayMs
-  1065  004D  300A               	movlw	10
-  1066  004E  0AC9               	incf	DelayS@b,f
-  1067  004F  0249               	subwf	DelayS@b,w
-  1068  0050  1C03               	skipc
-  1069  0051  284B               	goto	l1458
-  1070  0052  0AC8               	incf	DelayS@a,f
-  1071  0053  2846               	goto	l1466
-  1072  0054                     __end_of_DelayS:	
-  1073                           
-  1074                           	psect	text72
-  1075  0054                     __ptext72:	
-  1076 ;; =============== function _DelayS ends ============
-  1077                           
-  1078                           
-  1079 ;; *************** function _DelayMs *****************
-  1080 ;; Defined at:
-  1081 ;;		line 98 in file "MG117McuBeacon.C"
-  1082 ;; Parameters:    Size  Location     Type
-  1083 ;;  Time            1    wreg     unsigned char 
-  1084 ;; Auto vars:     Size  Location     Type
-  1085 ;;  Time            1    4[COMMON] unsigned char 
-  1086 ;;  b               1    6[COMMON] unsigned char 
-  1087 ;;  a               1    5[COMMON] unsigned char 
-  1088 ;; Return value:  Size  Location     Type
-  1089 ;;		None               void
-  1090 ;; Registers used:
-  1091 ;;		wreg, status,2, status,0, pclath, cstack
-  1092 ;; Tracked objects:
-  1093 ;;		On entry : 0/0
-  1094 ;;		On exit  : 0/0
-  1095 ;;		Unchanged: 0/0
-  1096 ;; Data sizes:     COMMON
-  1097 ;;      Params:         0
-  1098 ;;      Locals:         3
-  1099 ;;      Temps:          0
-  1100 ;;      Totals:         3
-  1101 ;;Total ram usage:        3 bytes
-  1102 ;; Hardware stack levels used:    1
-  1103 ;; Hardware stack levels required when called:    2
-  1104 ;; This function calls:
-  1105 ;;		_DelayUs
-  1106 ;; This function is called by:
-  1107 ;;		_DelayS
-  1108 ;;		_main
-  1109 ;; This function uses a non-reentrant model
-  1110 ;;
-  1111  0054                     _DelayMs:	
-  1112                           
-  1113                           ; Regs used in _DelayMs: [wreg+status,2+status,0+pclath+cstack]
-  1114                           ;DelayMs@Time stored from wreg
-  1115  0054  00C4               	movwf	DelayMs@Time
-  1116                           
-  1117                           ;MG117McuBeacon.C: 99: unsigned char a, b;
-  1118                           ;MG117McuBeacon.C: 100: for (a = 0; a < Time; a++)
-  1119  0055  01C5               	clrf	DelayMs@a
-  1120  0056                     l1448:	
-  1121  0056  0844               	movf	DelayMs@Time,w
-  1122  0057  0245               	subwf	DelayMs@a,w
-  1123  0058  1803               	btfsc	3,0
-  1124  0059  0008               	return
-  1125                           
-  1126                           ;MG117McuBeacon.C: 101: {
-  1127                           ;MG117McuBeacon.C: 102: for (b = 0; b < 5; b++)
-  1128  005A  01C6               	clrf	DelayMs@b
-  1129  005B                     l1440:	
-  1130                           
-  1131                           ;MG117McuBeacon.C: 103: {
-  1132                           ;MG117McuBeacon.C: 104: DelayUs(98);
-  1133  005B  3062               	movlw	98
-  1134  005C  2064               	fcall	_DelayUs
-  1135  005D  3005               	movlw	5
-  1136  005E  0AC6               	incf	DelayMs@b,f
-  1137  005F  0246               	subwf	DelayMs@b,w
-  1138  0060  1C03               	skipc
-  1139  0061  285B               	goto	l1440
-  1140  0062  0AC5               	incf	DelayMs@a,f
-  1141  0063  2856               	goto	l1448
-  1142  0064                     __end_of_DelayMs:	
-  1143                           
-  1144                           	psect	text73
-  1145  0064                     __ptext73:	
-  1146 ;; =============== function _DelayMs ends ============
-  1147                           
-  1148                           
-  1149 ;; *************** function _DelayUs *****************
-  1150 ;; Defined at:
-  1151 ;;		line 90 in file "MG117McuBeacon.C"
-  1152 ;; Parameters:    Size  Location     Type
-  1153 ;;  Time            1    wreg     unsigned char 
-  1154 ;; Auto vars:     Size  Location     Type
-  1155 ;;  Time            1    2[COMMON] unsigned char 
-  1156 ;;  a               1    3[COMMON] unsigned char 
-  1157 ;; Return value:  Size  Location     Type
-  1158 ;;		None               void
-  1159 ;; Registers used:
-  1160 ;;		wreg, status,2, status,0
-  1161 ;; Tracked objects:
-  1162 ;;		On entry : 0/0
-  1163 ;;		On exit  : 0/0
-  1164 ;;		Unchanged: 0/0
-  1165 ;; Data sizes:     COMMON
-  1166 ;;      Params:         0
-  1167 ;;      Locals:         2
-  1168 ;;      Temps:          0
-  1169 ;;      Totals:         2
-  1170 ;;Total ram usage:        2 bytes
-  1171 ;; Hardware stack levels used:    1
-  1172 ;; Hardware stack levels required when called:    1
-  1173 ;; This function calls:
-  1174 ;;		Nothing
-  1175 ;; This function is called by:
-  1176 ;;		_DelayMs
-  1177 ;; This function uses a non-reentrant model
-  1178 ;;
-  1179  0064                     _DelayUs:	
-  1180                           
-  1181                           ; Regs used in _DelayUs: [wreg+status,2+status,0]
-  1182                           ;DelayUs@Time stored from wreg
-  1183  0064  00C2               	movwf	DelayUs@Time
-  1184                           
-  1185                           ;MG117McuBeacon.C: 91: unsigned char a;
-  1186                           ;MG117McuBeacon.C: 92: for (a = 0; a < Time; a++)
-  1187  0065  01C3               	clrf	DelayUs@a
-  1188  0066                     l1430:	
-  1189  0066  0842               	movf	DelayUs@Time,w
-  1190  0067  0243               	subwf	DelayUs@a,w
-  1191  0068  1803               	btfsc	3,0
-  1192  0069  0008               	return
+   963  0015  1105               	bcf	5,2
+   964                           
+   965                           ;MG117McuBeacon.C: 142: DelayMs(50);
+   966  0016  2051               	fcall	_DelayMs
+   967  0017  300A               	movlw	10
+   968                           
+   969                           ;MG117McuBeacon.C: 143: RA2 = 1;
+   970  0018  1283               	bcf	3,5	;RP0=0, select bank0
+   971  0019  1505               	bsf	5,2
+   972                           
+   973                           ;MG117McuBeacon.C: 144: DelayMs(10);
+   974  001A  2051               	fcall	_DelayMs
+   975  001B                     l1478:	
+   976  001B  0064               	clrwdt	;#
+   977  001C  3001               	movlw	1
+   978                           
+   979                           ;MG117McuBeacon.C: 150: SWDTEN = 1;
+   980  001D  1283               	bcf	3,5	;RP0=0, select bank0
+   981  001E  1418               	bsf	24,0
+   982  001F  1205               	bcf	5,4
+   983                           
+   984                           ;MG117McuBeacon.C: 153: DelayMs(1);
+   985  0020  2051               	fcall	_DelayMs
+   986  0021  300A               	movlw	10
+   987                           
+   988                           ;MG117McuBeacon.C: 154: RA4 = 1;
+   989  0022  1283               	bcf	3,5	;RP0=0, select bank0
+   990  0023  1605               	bsf	5,4
+   991                           
+   992                           ;MG117McuBeacon.C: 155: DelayMs((10));
+   993  0024  2051               	fcall	_DelayMs
+   994  0025  0063               	sleep	;#
+   995  0026  281B               	goto	l1478
+   996  0027                     __end_of_main:	
+   997                           
+   998                           	psect	text71
+   999  0041                     __ptext71:	
+  1000 ;; =============== function _main ends ============
+  1001                           
+  1002                           
+  1003 ;; *************** function _DelayS *****************
+  1004 ;; Defined at:
+  1005 ;;		line 112 in file "MG117McuBeacon.C"
+  1006 ;; Parameters:    Size  Location     Type
+  1007 ;;  Time            1    wreg     unsigned char 
+  1008 ;; Auto vars:     Size  Location     Type
+  1009 ;;  Time            1    7[COMMON] unsigned char 
+  1010 ;;  b               1    9[COMMON] unsigned char 
+  1011 ;;  a               1    8[COMMON] unsigned char 
+  1012 ;; Return value:  Size  Location     Type
+  1013 ;;		None               void
+  1014 ;; Registers used:
+  1015 ;;		wreg, status,2, status,0, pclath, cstack
+  1016 ;; Tracked objects:
+  1017 ;;		On entry : 20/0
+  1018 ;;		On exit  : 0/0
+  1019 ;;		Unchanged: 0/0
+  1020 ;; Data sizes:     COMMON
+  1021 ;;      Params:         0
+  1022 ;;      Locals:         3
+  1023 ;;      Temps:          0
+  1024 ;;      Totals:         3
+  1025 ;;Total ram usage:        3 bytes
+  1026 ;; Hardware stack levels used:    1
+  1027 ;; Hardware stack levels required when called:    3
+  1028 ;; This function calls:
+  1029 ;;		_DelayMs
+  1030 ;; This function is called by:
+  1031 ;;		_main
+  1032 ;; This function uses a non-reentrant model
+  1033 ;;
+  1034  0041                     _DelayS:	
+  1035                           
+  1036                           ; Regs used in _DelayS: [wreg+status,2+status,0+pclath+cstack]
+  1037                           ;DelayS@Time stored from wreg
+  1038  0041  00C7               	movwf	DelayS@Time
+  1039                           
+  1040                           ;MG117McuBeacon.C: 113: unsigned char a, b;
+  1041                           ;MG117McuBeacon.C: 114: for (a = 0; a < Time; a++)
+  1042  0042  01C8               	clrf	DelayS@a
+  1043  0043                     l1466:	
+  1044  0043  0847               	movf	DelayS@Time,w
+  1045  0044  0248               	subwf	DelayS@a,w
+  1046  0045  1803               	btfsc	3,0
+  1047  0046  0008               	return
+  1048                           
+  1049                           ;MG117McuBeacon.C: 115: {
+  1050                           ;MG117McuBeacon.C: 116: for (b = 0; b < 10; b++)
+  1051  0047  01C9               	clrf	DelayS@b
+  1052  0048                     l1458:	
+  1053                           
+  1054                           ;MG117McuBeacon.C: 117: {
+  1055                           ;MG117McuBeacon.C: 118: DelayMs(100);
+  1056  0048  3064               	movlw	100
+  1057  0049  2051               	fcall	_DelayMs
+  1058  004A  300A               	movlw	10
+  1059  004B  0AC9               	incf	DelayS@b,f
+  1060  004C  0249               	subwf	DelayS@b,w
+  1061  004D  1C03               	skipc
+  1062  004E  2848               	goto	l1458
+  1063  004F  0AC8               	incf	DelayS@a,f
+  1064  0050  2843               	goto	l1466
+  1065  0051                     __end_of_DelayS:	
+  1066                           
+  1067                           	psect	text72
+  1068  0051                     __ptext72:	
+  1069 ;; =============== function _DelayS ends ============
+  1070                           
+  1071                           
+  1072 ;; *************** function _DelayMs *****************
+  1073 ;; Defined at:
+  1074 ;;		line 101 in file "MG117McuBeacon.C"
+  1075 ;; Parameters:    Size  Location     Type
+  1076 ;;  Time            1    wreg     unsigned char 
+  1077 ;; Auto vars:     Size  Location     Type
+  1078 ;;  Time            1    4[COMMON] unsigned char 
+  1079 ;;  b               1    6[COMMON] unsigned char 
+  1080 ;;  a               1    5[COMMON] unsigned char 
+  1081 ;; Return value:  Size  Location     Type
+  1082 ;;		None               void
+  1083 ;; Registers used:
+  1084 ;;		wreg, status,2, status,0, pclath, cstack
+  1085 ;; Tracked objects:
+  1086 ;;		On entry : 0/0
+  1087 ;;		On exit  : 0/0
+  1088 ;;		Unchanged: 0/0
+  1089 ;; Data sizes:     COMMON
+  1090 ;;      Params:         0
+  1091 ;;      Locals:         3
+  1092 ;;      Temps:          0
+  1093 ;;      Totals:         3
+  1094 ;;Total ram usage:        3 bytes
+  1095 ;; Hardware stack levels used:    1
+  1096 ;; Hardware stack levels required when called:    2
+  1097 ;; This function calls:
+  1098 ;;		_DelayUs
+  1099 ;; This function is called by:
+  1100 ;;		_DelayS
+  1101 ;;		_main
+  1102 ;; This function uses a non-reentrant model
+  1103 ;;
+  1104  0051                     _DelayMs:	
+  1105                           
+  1106                           ; Regs used in _DelayMs: [wreg+status,2+status,0+pclath+cstack]
+  1107                           ;DelayMs@Time stored from wreg
+  1108  0051  00C4               	movwf	DelayMs@Time
+  1109                           
+  1110                           ;MG117McuBeacon.C: 102: unsigned char a, b;
+  1111                           ;MG117McuBeacon.C: 103: for (a = 0; a < Time; a++)
+  1112  0052  01C5               	clrf	DelayMs@a
+  1113  0053                     l1448:	
+  1114  0053  0844               	movf	DelayMs@Time,w
+  1115  0054  0245               	subwf	DelayMs@a,w
+  1116  0055  1803               	btfsc	3,0
+  1117  0056  0008               	return
+  1118                           
+  1119                           ;MG117McuBeacon.C: 104: {
+  1120                           ;MG117McuBeacon.C: 105: for (b = 0; b < 5; b++)
+  1121  0057  01C6               	clrf	DelayMs@b
+  1122  0058                     l1440:	
+  1123                           
+  1124                           ;MG117McuBeacon.C: 106: {
+  1125                           ;MG117McuBeacon.C: 107: DelayUs(25);
+  1126  0058  3019               	movlw	25
+  1127  0059  2061               	fcall	_DelayUs
+  1128  005A  3005               	movlw	5
+  1129  005B  0AC6               	incf	DelayMs@b,f
+  1130  005C  0246               	subwf	DelayMs@b,w
+  1131  005D  1C03               	skipc
+  1132  005E  2858               	goto	l1440
+  1133  005F  0AC5               	incf	DelayMs@a,f
+  1134  0060  2853               	goto	l1448
+  1135  0061                     __end_of_DelayMs:	
+  1136                           
+  1137                           	psect	text73
+  1138  0061                     __ptext73:	
+  1139 ;; =============== function _DelayMs ends ============
+  1140                           
+  1141                           
+  1142 ;; *************** function _DelayUs *****************
+  1143 ;; Defined at:
+  1144 ;;		line 93 in file "MG117McuBeacon.C"
+  1145 ;; Parameters:    Size  Location     Type
+  1146 ;;  Time            1    wreg     unsigned char 
+  1147 ;; Auto vars:     Size  Location     Type
+  1148 ;;  Time            1    2[COMMON] unsigned char 
+  1149 ;;  a               1    3[COMMON] unsigned char 
+  1150 ;; Return value:  Size  Location     Type
+  1151 ;;		None               void
+  1152 ;; Registers used:
+  1153 ;;		wreg, status,2, status,0
+  1154 ;; Tracked objects:
+  1155 ;;		On entry : 0/0
+  1156 ;;		On exit  : 0/0
+  1157 ;;		Unchanged: 0/0
+  1158 ;; Data sizes:     COMMON
+  1159 ;;      Params:         0
+  1160 ;;      Locals:         2
+  1161 ;;      Temps:          0
+  1162 ;;      Totals:         2
+  1163 ;;Total ram usage:        2 bytes
+  1164 ;; Hardware stack levels used:    1
+  1165 ;; Hardware stack levels required when called:    1
+  1166 ;; This function calls:
+  1167 ;;		Nothing
+  1168 ;; This function is called by:
+  1169 ;;		_DelayMs
+  1170 ;; This function uses a non-reentrant model
+  1171 ;;
+  1172  0061                     _DelayUs:	
+  1173                           
+  1174                           ; Regs used in _DelayUs: [wreg+status,2+status,0]
+  1175                           ;DelayUs@Time stored from wreg
+  1176  0061  00C2               	movwf	DelayUs@Time
+  1177                           
+  1178                           ;MG117McuBeacon.C: 94: unsigned char a;
+  1179                           ;MG117McuBeacon.C: 95: for (a = 0; a < Time; a++)
+  1180  0062  01C3               	clrf	DelayUs@a
+  1181  0063                     l1430:	
+  1182  0063  0842               	movf	DelayUs@Time,w
+  1183  0064  0243               	subwf	DelayUs@a,w
+  1184  0065  1803               	btfsc	3,0
+  1185  0066  0008               	return
+  1186                           
+  1187                           ;MG117McuBeacon.C: 96: {
+  1188                           ;MG117McuBeacon.C: 97: _nop();
+  1189  0067  0000               	nop
+  1190  0068  0AC3               	incf	DelayUs@a,f
+  1191  0069  2863               	goto	l1430
+  1192  006A                     __end_of_DelayUs:	
   1193                           
-  1194                           ;MG117McuBeacon.C: 93: {
-  1195                           ;MG117McuBeacon.C: 94: _nop();
-  1196  006A  0000               	nop
-  1197  006B  0AC3               	incf	DelayUs@a,f
-  1198  006C  2866               	goto	l1430
-  1199  006D                     __end_of_DelayUs:	
-  1200                           
-  1201                           	psect	text74
-  1202  006D                     __ptext74:	
-  1203 ;; =============== function _DelayUs ends ============
-  1204                           
-  1205                           
-  1206 ;; *************** function _WDT_INITIAL *****************
-  1207 ;; Defined at:
-  1208 ;;		line 82 in file "MG117McuBeacon.C"
-  1209 ;; Parameters:    Size  Location     Type
-  1210 ;;		None
-  1211 ;; Auto vars:     Size  Location     Type
-  1212 ;;		None
-  1213 ;; Return value:  Size  Location     Type
-  1214 ;;		None               void
-  1215 ;; Registers used:
-  1216 ;;		wreg
-  1217 ;; Tracked objects:
-  1218 ;;		On entry : 17F/0
-  1219 ;;		On exit  : 20/0
-  1220 ;;		Unchanged: FFE00/0
-  1221 ;; Data sizes:     COMMON
-  1222 ;;      Params:         0
-  1223 ;;      Locals:         0
-  1224 ;;      Temps:          0
-  1225 ;;      Totals:         0
-  1226 ;;Total ram usage:        0 bytes
-  1227 ;; Hardware stack levels used:    1
-  1228 ;; Hardware stack levels required when called:    1
-  1229 ;; This function calls:
-  1230 ;;		Nothing
-  1231 ;; This function is called by:
-  1232 ;;		_main
-  1233 ;; This function uses a non-reentrant model
-  1234 ;;
-  1235  006D                     _WDT_INITIAL:	
-  1236                           
-  1237                           ; Regs used in _WDT_INITIAL: [wreg]
-  1238  006D  0064               	clrwdt	;#
-  1239  006E  3016               	movlw	22
-  1240                           
-  1241                           ;MG117McuBeacon.C: 84: PSA = 1;
-  1242  006F  1683               	bsf	3,5	;RP0=1, select bank1
-  1243  0070  1581               	bsf	1,3
-  1244                           
-  1245                           ;MG117McuBeacon.C: 85: WDTCON = 0B00010110;
-  1246  0071  1283               	bcf	3,5	;RP0=0, select bank0
-  1247  0072  0098               	movwf	24	;volatile
-  1248                           
-  1249                           ;MG117McuBeacon.C: 86: SWDTEN = 0;
-  1250  0073  1018               	bcf	24,0
-  1251  0074  0008               	return
-  1252  0075                     __end_of_WDT_INITIAL:	
-  1253                           
-  1254                           	psect	text75
-  1255  002A                     __ptext75:	
-  1256 ;; =============== function _WDT_INITIAL ends ============
-  1257                           
-  1258                           
-  1259 ;; *************** function _POWER_INITIAL *****************
-  1260 ;; Defined at:
-  1261 ;;		line 51 in file "MG117McuBeacon.C"
-  1262 ;; Parameters:    Size  Location     Type
-  1263 ;;		None
-  1264 ;; Auto vars:     Size  Location     Type
-  1265 ;;		None
-  1266 ;; Return value:  Size  Location     Type
-  1267 ;;		None               void
-  1268 ;; Registers used:
-  1269 ;;		wreg, status,2
-  1270 ;; Tracked objects:
-  1271 ;;		On entry : 17F/0
-  1272 ;;		On exit  : 17F/0
-  1273 ;;		Unchanged: FFE80/0
-  1274 ;; Data sizes:     COMMON
-  1275 ;;      Params:         0
-  1276 ;;      Locals:         0
-  1277 ;;      Temps:          0
-  1278 ;;      Totals:         0
-  1279 ;;Total ram usage:        0 bytes
-  1280 ;; Hardware stack levels used:    1
-  1281 ;; Hardware stack levels required when called:    1
-  1282 ;; This function calls:
-  1283 ;;		Nothing
-  1284 ;; This function is called by:
-  1285 ;;		_main
-  1286 ;; This function uses a non-reentrant model
-  1287 ;;
-  1288  002A                     _POWER_INITIAL:	
+  1194                           	psect	text74
+  1195  006A                     __ptext74:	
+  1196 ;; =============== function _DelayUs ends ============
+  1197                           
+  1198                           
+  1199 ;; *************** function _WDT_INITIAL *****************
+  1200 ;; Defined at:
+  1201 ;;		line 85 in file "MG117McuBeacon.C"
+  1202 ;; Parameters:    Size  Location     Type
+  1203 ;;		None
+  1204 ;; Auto vars:     Size  Location     Type
+  1205 ;;		None
+  1206 ;; Return value:  Size  Location     Type
+  1207 ;;		None               void
+  1208 ;; Registers used:
+  1209 ;;		wreg
+  1210 ;; Tracked objects:
+  1211 ;;		On entry : 17F/0
+  1212 ;;		On exit  : 20/0
+  1213 ;;		Unchanged: FFE00/0
+  1214 ;; Data sizes:     COMMON
+  1215 ;;      Params:         0
+  1216 ;;      Locals:         0
+  1217 ;;      Temps:          0
+  1218 ;;      Totals:         0
+  1219 ;;Total ram usage:        0 bytes
+  1220 ;; Hardware stack levels used:    1
+  1221 ;; Hardware stack levels required when called:    1
+  1222 ;; This function calls:
+  1223 ;;		Nothing
+  1224 ;; This function is called by:
+  1225 ;;		_main
+  1226 ;; This function uses a non-reentrant model
+  1227 ;;
+  1228  006A                     _WDT_INITIAL:	
+  1229                           
+  1230                           ; Regs used in _WDT_INITIAL: [wreg]
+  1231  006A  0064               	clrwdt	;#
+  1232  006B  3016               	movlw	22
+  1233                           
+  1234                           ;MG117McuBeacon.C: 87: PSA = 1;
+  1235  006C  1683               	bsf	3,5	;RP0=1, select bank1
+  1236  006D  1581               	bsf	1,3
+  1237                           
+  1238                           ;MG117McuBeacon.C: 88: WDTCON = 0B00010110;
+  1239  006E  1283               	bcf	3,5	;RP0=0, select bank0
+  1240  006F  0098               	movwf	24	;volatile
+  1241                           
+  1242                           ;MG117McuBeacon.C: 89: SWDTEN = 0;
+  1243  0070  1018               	bcf	24,0
+  1244  0071  0008               	return
+  1245  0072                     __end_of_WDT_INITIAL:	
+  1246                           
+  1247                           	psect	text75
+  1248  0027                     __ptext75:	
+  1249 ;; =============== function _WDT_INITIAL ends ============
+  1250                           
+  1251                           
+  1252 ;; *************** function _POWER_INITIAL *****************
+  1253 ;; Defined at:
+  1254 ;;		line 51 in file "MG117McuBeacon.C"
+  1255 ;; Parameters:    Size  Location     Type
+  1256 ;;		None
+  1257 ;; Auto vars:     Size  Location     Type
+  1258 ;;		None
+  1259 ;; Return value:  Size  Location     Type
+  1260 ;;		None               void
+  1261 ;; Registers used:
+  1262 ;;		wreg, status,2
+  1263 ;; Tracked objects:
+  1264 ;;		On entry : 17F/0
+  1265 ;;		On exit  : 17F/0
+  1266 ;;		Unchanged: FFE80/0
+  1267 ;; Data sizes:     COMMON
+  1268 ;;      Params:         0
+  1269 ;;      Locals:         0
+  1270 ;;      Temps:          0
+  1271 ;;      Totals:         0
+  1272 ;;Total ram usage:        0 bytes
+  1273 ;; Hardware stack levels used:    1
+  1274 ;; Hardware stack levels required when called:    1
+  1275 ;; This function calls:
+  1276 ;;		Nothing
+  1277 ;; This function is called by:
+  1278 ;;		_main
+  1279 ;; This function uses a non-reentrant model
+  1280 ;;
+  1281  0027                     _POWER_INITIAL:	
+  1282                           
+  1283                           ;MG117McuBeacon.C: 52: OSCCON = 0B01010001;
+  1284                           
+  1285                           ; Regs used in _POWER_INITIAL: [wreg+status,2]
+  1286  0027  3051               	movlw	81
+  1287  0028  1683               	bsf	3,5	;RP0=1, select bank1
+  1288  0029  008F               	movwf	15	;volatile
   1289                           
-  1290                           ;MG117McuBeacon.C: 52: OSCCON = 0B01110001;
-  1291                           
-  1292                           ; Regs used in _POWER_INITIAL: [wreg+status,2]
-  1293  002A  3071               	movlw	113
-  1294  002B  1683               	bsf	3,5	;RP0=1, select bank1
-  1295  002C  008F               	movwf	15	;volatile
-  1296                           
-  1297                           ;MG117McuBeacon.C: 56: INTCON = 0;
-  1298  002D  018B               	clrf	11	;volatile
-  1299                           
-  1300                           ;MG117McuBeacon.C: 57: PORTA = 0B00000000;
-  1301  002E  1283               	bcf	3,5	;RP0=0, select bank0
-  1302  002F  0185               	clrf	5	;volatile
-  1303  0030  30FF               	movlw	255
+  1290                           ;MG117McuBeacon.C: 57: INTCON = 0;
+  1291  002A  018B               	clrf	11	;volatile
+  1292                           
+  1293                           ;MG117McuBeacon.C: 58: PORTA = 0B00000000;
+  1294  002B  1283               	bcf	3,5	;RP0=0, select bank0
+  1295  002C  0185               	clrf	5	;volatile
+  1296  002D  30FF               	movlw	255
+  1297                           
+  1298                           ;MG117McuBeacon.C: 59: RA2 = 1;
+  1299  002E  1505               	bsf	5,2
+  1300                           
+  1301                           ;MG117McuBeacon.C: 60: RA4 = 1;
+  1302  002F  1605               	bsf	5,4
+  1303  0030  1685               	bsf	5,5
   1304                           
-  1305                           ;MG117McuBeacon.C: 58: RA2 = 1;
-  1306  0031  1505               	bsf	5,2
-  1307                           
-  1308                           ;MG117McuBeacon.C: 59: RA4 = 1;
-  1309  0032  1605               	bsf	5,4
-  1310  0033  1685               	bsf	5,5
+  1305                           ;MG117McuBeacon.C: 63: TRISA = 0B11111111;
+  1306  0031  1683               	bsf	3,5	;RP0=1, select bank1
+  1307  0032  0085               	movwf	5	;volatile
+  1308                           
+  1309                           ;MG117McuBeacon.C: 66: TRISA2 = 0;
+  1310  0033  1105               	bcf	5,2
   1311                           
-  1312                           ;MG117McuBeacon.C: 62: TRISA = 0B11111111;
-  1313  0034  1683               	bsf	3,5	;RP0=1, select bank1
-  1314  0035  0085               	movwf	5	;volatile
-  1315                           
-  1316                           ;MG117McuBeacon.C: 64: TRISA2 = 0;
-  1317  0036  1105               	bcf	5,2
-  1318                           
-  1319                           ;MG117McuBeacon.C: 65: TRISA4 = 0;
-  1320  0037  1205               	bcf	5,4
+  1312                           ;MG117McuBeacon.C: 67: TRISA4 = 0;
+  1313  0034  1205               	bcf	5,4
+  1314                           
+  1315                           ;MG117McuBeacon.C: 68: TRISA5 = 0;
+  1316  0035  1285               	bcf	5,5
+  1317                           
+  1318                           ;MG117McuBeacon.C: 70: RA2 = 1;
+  1319  0036  1283               	bcf	3,5	;RP0=0, select bank0
+  1320  0037  1505               	bsf	5,2
   1321                           
-  1322                           ;MG117McuBeacon.C: 66: TRISA5 = 0;
-  1323  0038  1285               	bcf	5,5
+  1322                           ;MG117McuBeacon.C: 71: RA4 = 1;
+  1323  0038  1605               	bsf	5,4
   1324                           
-  1325                           ;MG117McuBeacon.C: 68: RA2 = 1;
-  1326  0039  1283               	bcf	3,5	;RP0=0, select bank0
-  1327  003A  1505               	bsf	5,2
-  1328                           
-  1329                           ;MG117McuBeacon.C: 69: RA4 = 1;
-  1330  003B  1605               	bsf	5,4
+  1325                           ;MG117McuBeacon.C: 72: RA5 = 1;
+  1326  0039  1685               	bsf	5,5
+  1327                           
+  1328                           ;MG117McuBeacon.C: 74: WPUA = 0B00000000;
+  1329  003A  1683               	bsf	3,5	;RP0=1, select bank1
+  1330  003B  0195               	clrf	21	;volatile
   1331                           
-  1332                           ;MG117McuBeacon.C: 70: RA5 = 1;
-  1333  003C  1685               	bsf	5,5
-  1334                           
-  1335                           ;MG117McuBeacon.C: 72: WPUA = 0B00000000;
-  1336  003D  1683               	bsf	3,5	;RP0=1, select bank1
-  1337  003E  0195               	clrf	21	;volatile
-  1338                           
-  1339                           ;MG117McuBeacon.C: 73: OPTION = 0B00001000;
-  1340  003F  3008               	movlw	8
-  1341  0040  0081               	movwf	1	;volatile
-  1342                           
-  1343                           ;MG117McuBeacon.C: 74: MSCKCON = 0B00000000;
-  1344  0041  1283               	bcf	3,5	;RP0=0, select bank0
-  1345  0042  019B               	clrf	27	;volatile
-  1346  0043  0008               	return
-  1347  0044                     __end_of_POWER_INITIAL:	
-  1348                           
-  1349                           	psect	text76
-  1350  0075                     __ptext76:	
-  1351 ;; =============== function _POWER_INITIAL ends ============
-  1352                           
-  1353                           
-  1354 ;; *************** function _ISR *****************
-  1355 ;; Defined at:
-  1356 ;;		line 46 in file "MG117McuBeacon.C"
-  1357 ;; Parameters:    Size  Location     Type
-  1358 ;;		None
-  1359 ;; Auto vars:     Size  Location     Type
-  1360 ;;		None
-  1361 ;; Return value:  Size  Location     Type
-  1362 ;;		None               void
-  1363 ;; Registers used:
-  1364 ;;		None
-  1365 ;; Tracked objects:
-  1366 ;;		On entry : 0/0
-  1367 ;;		On exit  : 0/0
-  1368 ;;		Unchanged: FFFFF/0
-  1369 ;; Data sizes:     COMMON
-  1370 ;;      Params:         0
-  1371 ;;      Locals:         0
-  1372 ;;      Temps:          2
-  1373 ;;      Totals:         2
-  1374 ;;Total ram usage:        2 bytes
-  1375 ;; Hardware stack levels used:    1
-  1376 ;; This function calls:
-  1377 ;;		Nothing
-  1378 ;; This function is called by:
-  1379 ;;		Interrupt level 1
-  1380 ;; This function uses a non-reentrant model
-  1381 ;;
-  1382  0075                     _ISR:	
-  1383  0075  0841               	movf	??_ISR+1,w
-  1384  0076  008A               	movwf	10
-  1385  0077  0E40               	swapf	??_ISR^(0+-128),w
-  1386  0078  0083               	movwf	3
-  1387  0079  0EFE               	swapf	126,f
-  1388  007A  0E7E               	swapf	126,w
-  1389  007B  0009               	retfie
-  1390  007C                     __end_of_ISR:	
-  1391                           
-  1392                           	psect	intentry
-  1393  0004                     __pintentry:	
-  1394                           ; Regs used in _ISR: []
-  1395                           
-  1396  0004                     interrupt_function:	
-  1397  007E                     saved_w	set	btemp
-  1398  0004  00FE               	movwf	btemp
-  1399  0005  0E03               	swapf	3,w
-  1400  0006  00C0               	movwf	??_ISR
-  1401  0007  080A               	movf	10,w
-  1402  0008  00C1               	movwf	??_ISR+1
-  1403  0009  2875               	ljmp	_ISR
-  1404                           
-  1405                           	psect	text77
-  1406  0000                     __ptext77:	
-  1407 ;; =============== function _ISR ends ============
-  1408                           
-  1409  007E                     btemp	set	126	;btemp
-  1410  007E                     wtemp0	set	126
+  1332                           ;MG117McuBeacon.C: 75: OPTION = 0B00001000;
+  1333  003C  3008               	movlw	8
+  1334  003D  0081               	movwf	1	;volatile
+  1335                           
+  1336                           ;MG117McuBeacon.C: 77: MSCKCON = 0B00000000;
+  1337  003E  1283               	bcf	3,5	;RP0=0, select bank0
+  1338  003F  019B               	clrf	27	;volatile
+  1339  0040  0008               	return
+  1340  0041                     __end_of_POWER_INITIAL:	
+  1341                           
+  1342                           	psect	text76
+  1343  0072                     __ptext76:	
+  1344 ;; =============== function _POWER_INITIAL ends ============
+  1345                           
+  1346                           
+  1347 ;; *************** function _ISR *****************
+  1348 ;; Defined at:
+  1349 ;;		line 46 in file "MG117McuBeacon.C"
+  1350 ;; Parameters:    Size  Location     Type
+  1351 ;;		None
+  1352 ;; Auto vars:     Size  Location     Type
+  1353 ;;		None
+  1354 ;; Return value:  Size  Location     Type
+  1355 ;;		None               void
+  1356 ;; Registers used:
+  1357 ;;		None
+  1358 ;; Tracked objects:
+  1359 ;;		On entry : 0/0
+  1360 ;;		On exit  : 0/0
+  1361 ;;		Unchanged: FFFFF/0
+  1362 ;; Data sizes:     COMMON
+  1363 ;;      Params:         0
+  1364 ;;      Locals:         0
+  1365 ;;      Temps:          2
+  1366 ;;      Totals:         2
+  1367 ;;Total ram usage:        2 bytes
+  1368 ;; Hardware stack levels used:    1
+  1369 ;; This function calls:
+  1370 ;;		Nothing
+  1371 ;; This function is called by:
+  1372 ;;		Interrupt level 1
+  1373 ;; This function uses a non-reentrant model
+  1374 ;;
+  1375  0072                     _ISR:	
+  1376  0072  0841               	movf	??_ISR+1,w
+  1377  0073  008A               	movwf	10
+  1378  0074  0E40               	swapf	??_ISR^(0+-128),w
+  1379  0075  0083               	movwf	3
+  1380  0076  0EFE               	swapf	126,f
+  1381  0077  0E7E               	swapf	126,w
+  1382  0078  0009               	retfie
+  1383  0079                     __end_of_ISR:	
+  1384                           
+  1385                           	psect	intentry
+  1386  0004                     __pintentry:	
+  1387                           ; Regs used in _ISR: []
+  1388                           
+  1389  0004                     interrupt_function:	
+  1390  007E                     saved_w	set	btemp
+  1391  0004  00FE               	movwf	btemp
+  1392  0005  0E03               	swapf	3,w
+  1393  0006  00C0               	movwf	??_ISR
+  1394  0007  080A               	movf	10,w
+  1395  0008  00C1               	movwf	??_ISR+1
+  1396  0009  2872               	ljmp	_ISR
+  1397                           
+  1398                           	psect	text77
+  1399  0000                     __ptext77:	
+  1400 ;; =============== function _ISR ends ============
+  1401                           
+  1402  007E                     btemp	set	126	;btemp
+  1403  007E                     wtemp0	set	126
 
 
 HI-TECH Software PICC Macro Assembler V9.83 build 10920 
-Symbol Table                                                                                   Wed Jan 30 21:55:05 2019
+Symbol Table                                                                                   Sat Feb 02 14:54:42 2019
 
                      _C 0018                       _Z 001A                      _DC 0019                      _HC 0019  
                     _GO 00F9                      _RD 04E0                      _RP 001D                      _WR 04E8  
@@ -1430,22 +1423,22 @@ Symbol Table                                                                    
                    _RC2 003A                     _RC3 003B                     _RC4 003C                     _RC5 003D  
                    _IOC 0096                     _FSR 0004                     _PCL 0002                     _PR2 0092  
                    _PS0 0408                     _PS1 0409                     _PS2 040A                     _RP0 001D  
-                   _IRP 001F                     _RP1 001E                     _HTS 047A                     _ISR 0075  
+                   _IRP 001F                     _RP1 001E                     _HTS 047A                     _ISR 0072  
                    _SCS 0478                     _PSA 040B                     _LTS 0479                     _VR0 04C8  
                    _VR1 04C9                     _VR2 04CA                     _VR3 04CB                     _VRR 04CD  
                    _WPU 0095                     _nPD 001B                     _nPF 001B                     _nTF 001C  
                    _nTO 001C                    ?_ISR 0040                    _C1IE 0463                    _C1IF 0063  
                   _C2IE 0464                    l1400 0000                    _C2IF 0064                    l1410 0000  
                   l1402 0000                    l1412 0000                    l1404 0000                    l1420 0000  
-                  l1414 0000                    l1406 0000                    l1422 0000                    l1430 0066  
-                  l1416 0000                    l1408 0000                    l1424 0000                    l1440 005B  
+                  l1414 0000                    l1406 0000                    l1422 0000                    l1430 0063  
+                  l1416 0000                    l1408 0000                    l1424 0000                    l1440 0058  
                   l1432 0000                    l1418 0000                    l1426 0000                    l1442 0000  
                   l1450 0000                    l1428 0000                    l1444 0000                    l1460 0000  
-                  l1462 0000                    l1470 0000                    l1392 0000                    l1448 0056  
-                  l1480 0000                    l1472 0000                    l1394 0000                    l1458 004B  
-                  l1466 0046                    l1482 0000                    l1474 0000                    l1396 0000  
+                  l1462 0000                    l1470 0000                    l1392 0000                    l1448 0053  
+                  l1480 0000                    l1472 0000                    l1394 0000                    l1458 0048  
+                  l1466 0043                    l1482 0000                    l1474 0000                    l1396 0000  
                   l1484 0000                    l1476 0000                    l1468 0000                    l1398 0000  
-                  l1486 0000                    l1478 001E                    _ADIE 0466                    _ADIF 0066  
+                  l1486 0000                    l1478 001B                    _ADIE 0466                    _ADIF 0066  
                   _ADFM 00FF                    _ADON 00F8                    _P1M0 00AE                    _CHS0 00FA  
                   _P1M1 00AF                    _CHS1 00FB                    _CHS2 00FC                    _EEIE 0467  
                   _EEIF 0067                    _ANS0 0488                    _ANS1 0489                    _ANS2 048A  
@@ -1465,7 +1458,7 @@ Symbol Table                                                                    
                   _WPU2 04AA                    _WPU4 04AC                    _WPU5 04AD                    _ZERO 001A  
                   _WREN 04E2                    _WPUA 0095                    _nBOD 0470                    _nBOR 0470  
                   _nPOR 0471                    _main 000B                    btemp 007E                    start 000A  
-       __end_of_DelayMs 0064         __end_of_DelayUs 006D                   ??_ISR 0040                   _C1INV 00CC  
+       __end_of_DelayMs 0061         __end_of_DelayUs 006A                   ??_ISR 0040                   _C1INV 00CC  
                  _DC1B0 00AC                   _DC1B1 00AD                   _C2INV 00CD                   _C1OUT 00CE  
                  _C2OUT 00CF                   _ADCS0 04FC                   _ADCS1 04FD                   _ADCS2 04FE  
                  ?_main 0040                   _EEADR 009B                   _CCPR1 0013                   _EEDAT 009A  
@@ -1495,7 +1488,7 @@ Symbol Table                                                                    
                  _VRCON 0099                   _WPUA0 04A8                   _WPUA1 04A9                   _WPUA2 04AA  
                  _WPUA4 04AC                   _WPUA5 04AD                   _WRERR 04E3                   _nDONE 00F9  
                  _nPAPU 040F                   _nRAPU 040F                   pclath 000A                   status 0003  
-                 wtemp0 007E            __end_of_main 002A                  ??_main 004A                  _C2SYNC 00D0  
+                 wtemp0 007E            __end_of_main 0027                  ??_main 004A                  _C2SYNC 00D0  
                 _ADCON0 001F                  _ADCON1 009F                  _CCP1M0 00A8                  _CCP1M1 00A9  
                 _CCP1M2 00AA                  _CCP1M3 00AB                  _CCP1IE 0465                  _CCP1IF 0065  
                 _ADRESH 001E                  _ADRESL 009E                  _EEDATA 009A                  _ECCPAS 0017  
@@ -1513,26 +1506,26 @@ Symbol Table                                                                    
                 _TRISA3 042B                  _TRISC0 0438                  _TRISA4 042C                  _TRISC1 0439  
                 _TRISA5 042D                  _TRISC2 043A                  _TRISC3 043B                  _TRISC4 043C  
                 _TRISC5 043D                  _SLVREN 00DC                  _STATUS 0003                  _SWDTEN 00C0  
-                _ULPWUE 0475                  _DelayS 0044                  saved_w 007E            ?_WDT_INITIAL 0040  
- __end_of_POWER_INITIAL 0044          __pcstackCOMMON 0040                 ?_DelayS 0040              __pmaintext 000B  
+                _ULPWUE 0475                  _DelayS 0041                  saved_w 007E            ?_WDT_INITIAL 0040  
+ __end_of_POWER_INITIAL 0041          __pcstackCOMMON 0040                 ?_DelayS 0040              __pmaintext 000B  
             __pintentry 0004                 _CCP1CON 0015                 _ECCPAS0 00BC                 _ECCPAS1 00BD  
                _ECCPAS2 00BE                 _ECCPASE 00BF                 _CKMEAIE 0466                 _CKMEAIF 0066  
                _T1CKPS0 0084                 _T1CKPS1 0085                 _T2CKPS0 0090                 _T2CKPS1 0091  
                _T1OSCEN 0083                 DelayS@a 0048                 DelayS@b 0049                 _GO_DONE 00F9  
                _MSCKCON 001B                 _OSCTUNE 0090                 _PWM1CON 0016                 _SOSCPRH 001D  
                _SOSCPRL 001C                 _TOUTPS0 0093                 _TOUTPS1 0094                 _TOUTPS2 0095  
-               _TOUTPS3 0096                 _DelayMs 0054                 _DelayUs 0064         __size_of_DelayS 0010  
-               _nT1SYNC 0082            __size_of_ISR 0007               _T2CONbits 0012    end_of_initialization 007C  
-  __size_of_WDT_INITIAL 0008               _PORTAbits 0005               _TRISAbits 0085          __end_of_DelayS 0054  
-   start_initialization 007C             __end_of_ISR 007C                ??_DelayS 0047  __size_of_POWER_INITIAL 001A  
-              ?_DelayMs 0040                ?_DelayUs 0040       interrupt_function 0004           _POWER_INITIAL 002A  
+               _TOUTPS3 0096                 _DelayMs 0051                 _DelayUs 0061         __size_of_DelayS 0010  
+               _nT1SYNC 0082            __size_of_ISR 0007               _T2CONbits 0012    end_of_initialization 0079  
+  __size_of_WDT_INITIAL 0008               _PORTAbits 0005               _TRISAbits 0085          __end_of_DelayS 0051  
+   start_initialization 0079             __end_of_ISR 0079                ??_DelayS 0047  __size_of_POWER_INITIAL 001A  
+              ?_DelayMs 0040                ?_DelayUs 0040       interrupt_function 0004           _POWER_INITIAL 0027  
               _IOCAbits 0096                DelayMs@a 0045                DelayMs@b 0046                DelayUs@a 0043  
               _PIE1bits 008C                _PCONbits 008E                _PIR1bits 000C                _GO_nDONE 00F9  
               _WPUAbits 0095             DelayMs@Time 0044           ??_WDT_INITIAL 0042          ?_POWER_INITIAL 0040  
            DelayUs@Time 0042        __size_of_DelayMs 0010        __size_of_DelayUs 0009              _EECON1bits 009C  
-            _EECON2bits 009D             _MSCKCONbits 001B                __ptext70 0000                __ptext71 0044  
-              __ptext72 0054                __ptext73 0064                __ptext74 006D                __ptext75 002A  
-              __ptext76 0075                __ptext77 0000           __size_of_main 001F     __end_of_WDT_INITIAL 0075  
+            _EECON2bits 009D             _MSCKCONbits 001B                __ptext70 0000                __ptext71 0041  
+              __ptext72 0051                __ptext73 0061                __ptext74 006A                __ptext75 0027  
+              __ptext76 0072                __ptext77 0000           __size_of_main 001C     __end_of_WDT_INITIAL 0072  
             DelayS@Time 0047              _PCLATHbits 000A              _INTCONbits 000B         ??_POWER_INITIAL 0042  
               intlevel1 0000              _OSCCONbits 008F              _OPTION_REG 0081             _SOSCPRHbits 001D  
-            _OPTIONbits 0081              _WDTCONbits 0018             _WDT_INITIAL 006D              _STATUSbits 0003  
+            _OPTIONbits 0081              _WDTCONbits 0018             _WDT_INITIAL 006A              _STATUSbits 0003  

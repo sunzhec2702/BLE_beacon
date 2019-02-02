@@ -21,35 +21,35 @@ Machine type is 16F684
 
 
                 Name                               Link     Load   Length Selector   Space Scale
-startup.obj     end_init                              F        F        1        8       0
+startup.obj     end_init                              A        A        1        8       0
                 reset_vec                             0        0        1        0       0
 mg117mcubeacon.obj
                 intentry                              4        4        6        8       0
-                text76                               75       75        7        8       0
-                text75                               2A       2A       1A        8       0
-                text74                               6D       6D        8        8       0
-                text73                               64       64        9        8       0
-                text72                               54       54       10        8       0
-                text71                               44       44       10        8       0
-                maintext                              B        B       1F        8       0
+                text76                               72       72        7        8       0
+                text75                               27       27       1A        8       0
+                text74                               6A       6A        8        8       0
+                text73                               61       61        9        8       0
+                text72                               51       51       10        8       0
+                text71                               41       41       10        8       0
+                maintext                              B        B       1C        8       0
                 cstackCOMMON                         40       40        A       40       1
-                cinit                                7C       7C        2        8       0
+                cinit                                79       79        2        8       0
 
 TOTAL           Name                               Link     Load   Length     Space
         CLASS   CONST          
 
         CLASS   CODE           
-                end_init                              F        F        1         0
-                intentry                              4        4        B         0
+                end_init                              A        A        1         0
+                intentry                              4        4        6         0
                 reset_vec                             0        0        1         0
-                text76                               75       75        7         0
-                text75                               2A       2A       1A         0
-                text74                               6D       6D        8         0
-                text73                               64       64        9         0
-                text72                               54       54       10         0
-                text71                               44       44       10         0
-                maintext                              B        B       1F         0
-                cinit                                7C       7C        2         0
+                text76                               72       72        7         0
+                text75                               27       27       1A         0
+                text74                               6A       6A        8         0
+                text73                               61       61        9         0
+                text72                               51       51       10         0
+                text71                               41       41       10         0
+                maintext                              B        B       1C         0
+                cinit                                79       79        2         0
 
         CLASS   STRCODE        
 
@@ -85,7 +85,7 @@ TOTAL           Name                               Link     Load   Length     Sp
 SEGMENTS        Name                           Load    Length   Top    Selector   Space  Class     Delta
 
                 reset_vec                      000000  000001  000001         0       0  CODE        2
-                intentry                       000004  00007A  00007E         8       0  CODE        2
+                intentry                       000004  000077  00007B         8       0  CODE        2
                 cstackCOMMON                   000040  00000A  00004A        40       1  COMMON      1
 
 
@@ -93,19 +93,19 @@ UNUSED ADDRESS RANGES
 
         Name                Unused          Largest block    Delta
         CODE             001-003             3           2
-                         07E-3FF           382
+                         07B-3FF           385
         COMMON           04A-07D            34           1
         CONFIG           2007-2007             1           2
         CONST            001-003             3           2
-                         07E-3FF           100
+                         07B-3FF           100
         EEDATA           2100-21FF           100           2
         ENTRY            001-003             3           2
-                         07E-3FF           100
+                         07B-3FF           100
         IDLOC            2000-2003             4           2
         STRCODE          001-003             3           2
-                         07E-3FF           382
+                         07B-3FF           385
         STRING           001-003             3           2
-                         07E-3FF           100
+                         07B-3FF           100
 
                                   Symbol Table
 
@@ -188,9 +188,9 @@ _CMCON1                 (abs)        01A
 _DC                     (abs)        019
 _DC1B0                  (abs)        0AC
 _DC1B1                  (abs)        0AD
-_DelayMs                text72       054
-_DelayS                 text71       044
-_DelayUs                text73       064
+_DelayMs                text72       051
+_DelayS                 text71       041
+_DelayUs                text73       061
 _ECCPAS                 (abs)        017
 _ECCPAS0                (abs)        0BC
 _ECCPAS1                (abs)        0BD
@@ -240,7 +240,7 @@ _IRCF0                  (abs)        47C
 _IRCF1                  (abs)        47D
 _IRCF2                  (abs)        47E
 _IRP                    (abs)        01F
-_ISR                    text76       075
+_ISR                    text76       072
 _LFIOFR                 (abs)        479
 _LFMOD                  (abs)        47F
 _LTS                    (abs)        479
@@ -286,7 +286,7 @@ _PIR1bits               (abs)        00C
 _PORTA                  (abs)        005
 _PORTAbits              (abs)        005
 _PORTC                  (abs)        007
-_POWER_INITIAL          text75       02A
+_POWER_INITIAL          text75       027
 _PR2                    (abs)        092
 _PRSEN                  (abs)        0B7
 _PS0                    (abs)        408
@@ -462,7 +462,7 @@ _WDTPS0                 (abs)        0C1
 _WDTPS1                 (abs)        0C2
 _WDTPS2                 (abs)        0C3
 _WDTPS3                 (abs)        0C4
-_WDT_INITIAL            text74       06D
+_WDT_INITIAL            text74       06A
 _WPU                    (abs)        095
 _WPU0                   (abs)        4A8
 _WPU1                   (abs)        4A9
@@ -494,12 +494,13 @@ __Hcommon               common       000
 __Hconfig               config       000
 __HcstackCOMMON         cstackCOMMON 000
 __Heeprom_data          eeprom_data  000
-__Hend_init             end_init     010
+__Hend_init             end_init     00B
 __Hfunctab              functab      000
 __Hidloc                idloc        000
-__Hinit                 init         00F
-__Hintentry             intentry     00F
+__Hinit                 init         00A
+__Hintentry             intentry     00A
 __Hmaintext             maintext     000
+__Hpa_nodes             pa_nodes     000
 __Hpowerup              powerup      000
 __Hram                  ram          000
 __Hreset_vec            reset_vec    001
@@ -517,12 +518,13 @@ __Lcommon               common       000
 __Lconfig               config       000
 __LcstackCOMMON         cstackCOMMON 000
 __Leeprom_data          eeprom_data  000
-__Lend_init             end_init     00F
+__Lend_init             end_init     00A
 __Lfunctab              functab      000
 __Lidloc                idloc        000
-__Linit                 init         00F
+__Linit                 init         00A
 __Lintentry             intentry     004
 __Lmaintext             maintext     000
+__Lpa_nodes             pa_nodes     000
 __Lpowerup              powerup      000
 __Lram                  ram          000
 __Lreset_vec            reset_vec    000
@@ -530,26 +532,26 @@ __Lsfr0                 sfr0         000
 __Lsfr1                 sfr1         000
 __Lstrings              strings      000
 __Ltext                 text         000
-__S0                    (abs)        07E
+__S0                    (abs)        07B
 __S1                    (abs)        04A
 __S2                    (abs)        000
-__end_of_DelayMs        text72       064
-__end_of_DelayS         text71       054
-__end_of_DelayUs        text73       06D
-__end_of_ISR            text76       07C
-__end_of_POWER_INITIAL  text75       044
-__end_of_WDT_INITIAL    text74       075
-__end_of_main           maintext     02A
+__end_of_DelayMs        text72       061
+__end_of_DelayS         text71       051
+__end_of_DelayUs        text73       06A
+__end_of_ISR            text76       079
+__end_of_POWER_INITIAL  text75       041
+__end_of_WDT_INITIAL    text74       072
+__end_of_main           maintext     027
 __pcstackCOMMON         cstackCOMMON 040
 __pintentry             intentry     004
 __pmaintext             maintext     00B
 __ptext70               text70       000
-__ptext71               text71       044
-__ptext72               text72       054
-__ptext73               text73       064
-__ptext74               text74       06D
-__ptext75               text75       02A
-__ptext76               text76       075
+__ptext71               text71       041
+__ptext72               text72       051
+__ptext73               text73       061
+__ptext74               text74       06A
+__ptext75               text75       027
+__ptext76               text76       072
 __ptext77               text77       000
 __size_of_DelayMs       (abs)        000
 __size_of_DelayS        (abs)        000
@@ -572,7 +574,7 @@ _nT1SYNC                (abs)        082
 _nTF                    (abs)        01C
 _nTO                    (abs)        01C
 btemp                   (abs)        07E
-end_of_initialization   cinit        07C
+end_of_initialization   cinit        079
 i1l433                                  
 interrupt_function      intentry     004
 intlevel0               functab      000
@@ -623,5 +625,5 @@ l461
 reset_vec               reset_vec    000
 saved_w                 (abs)        07E
 start                   init         00A
-start_initialization    cinit        07C
+start_initialization    cinit        079
 wtemp0                  (abs)        07E
