@@ -3,6 +3,8 @@
 
 #include "hal_board.h"
 
+#if (USE_VIBRA_SENSOR == TRUE)
+
 /* Vibra Sensor in on P0.6 */
 
 #define HAL_VIBRA_RISING_EDGE   0
@@ -33,5 +35,6 @@ void HalVibraSensorConfig (bool interruptEnable);
 void clearVibraTriggered(void);
 bool readVibraTriggered(void);
 bool getVibraEnableStatus(void);
+#endif
 
 #endif

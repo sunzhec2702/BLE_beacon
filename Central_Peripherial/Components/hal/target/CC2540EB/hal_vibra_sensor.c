@@ -7,6 +7,8 @@
 #include "hal_key.h"
 #include "osal.h"
 
+#if (USE_VIRBA_SENSOR == TRUE)
+
 #define VIBRA_INT_THRESHOLD     5
 static uint16 vibraIntCount = 0;
 static bool vibraEnable = FALSE;
@@ -75,3 +77,5 @@ void HalVibraSensorConfig(bool interruptEnable)
   #endif
     HalVibraSensorInterruptControl(TRUE);
 }
+
+#endif

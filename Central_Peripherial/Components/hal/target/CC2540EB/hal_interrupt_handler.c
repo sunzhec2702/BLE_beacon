@@ -34,6 +34,7 @@ HAL_ISR_FUNCTION( halPort0Isr, P0INT_VECTOR )
     halProcessKeyInterrupt();
     HAL_KEY_SW_6_PXIFG &= ~HAL_KEY_SW_6_BIT;
   }
+  #if (USE_VIBRA_SENSOR == TRUE)
   if ((HAL_VIBRA_PXIFG & HAL_VIBRA_BIT))
   {
     if (HAL_VIBRA_ICTL & HAL_VIBRA_ICTLBIT)
@@ -42,6 +43,7 @@ HAL_ISR_FUNCTION( halPort0Isr, P0INT_VECTOR )
     }
     HAL_VIBRA_PXIFG &= ~HAL_VIBRA_BIT;
   }
+  #endif
 #endif
   HAL_KEY_CPU_PORT_0_IF = 0;
   CLEAR_SLEEP_MODE();

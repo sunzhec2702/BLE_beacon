@@ -85,7 +85,10 @@ extern uint16 SimpleBLEPeripheral_ProcessEvent( uint8 task_id, uint16 events );
 void PeripherialPerformPeriodicTask(uint16 event_id);
 void change_advertise_data(uint8 key_pressed);
 void exit_sleep_mode(uint8 first);
+
+#if (USE_VIBRA_SENSOR == TRUE)
 void wake_from_vibra_sensor(void);
+#endif
 
 /*********************************************************************
 *********************************************************************/
