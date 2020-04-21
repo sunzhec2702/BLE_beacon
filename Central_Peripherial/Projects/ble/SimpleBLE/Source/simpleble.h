@@ -13,7 +13,7 @@ extern "C"
 
 #define TARGET_BOARD PRODUCT_BOARD
 
-#define POWER_OFF_SUPPORT TRUE
+#define POWER_OFF_SUPPORT FALSE
 //#define DEBUG_BOARD 1
 
 #define PRESET_ROLE BLE_ROLE_PERIPHERAL
@@ -90,8 +90,9 @@ typedef enum
 #define RESET_WAKE_TIME_HOURS_THRES                     (1) // 1 days
 #else
 #define SBP_PERIODIC_PER_HOUR_PERIOD                    3600000   // 1 hour
-#define DEFAULT_WAKE_TIME_HOURS                         (1535) // 5 days
-#define DEFAULT_RIGHT_MOVE_BIT                          3
+#define DEFAULT_WAKE_TIME_HOURS                         (6 * 24) // 6 days
+#define DEFAULT_RIGHT_MOVE_BIT                          0 //If WAKETIMEHOURS is over 255 hours, we can only broadcast 8bit in the advertisement. 
+                                                          //So we only broadcast WAKE_TIME_HOURS >> MOVE_BIT & 0xFF
 #define BUTTON_WAKE_TIME_HOURS                          (2 * 24) // 2 days
 #define RESET_WAKE_TIME_HOURS_THRES                     (1 * 24) // 1 days
 #endif
@@ -133,7 +134,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //--------------------------------------------------------------------------------
 
-//#define RELEASE_VER                      //����汾������
+//#define RELEASE_VER                      //����汾������?
 #define     VERSION     "v0.1"  //
 #define MAJOR_HW_VERSION   0x00
 #define MINOR_HW_VERSION   0x03
@@ -143,7 +144,7 @@ typedef enum
 #elif (POWER_OFF_SUPPORT == FALSE)
 #define MIDDLE_SW_VERSION  0x00
 #endif
-#define MINOR_SW_VERSION   0x03
+#define MINOR_SW_VERSION   0x04
 
 //�豸���Ƶ��ַ����� <= 12
 #define DEV_NAME_DEFAULT                           "DarrenBLE"
@@ -154,7 +155,7 @@ typedef enum
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 
-// ϵͳ��ʱ�����ʱ��
+// ϵͳ��ʱ�����ʱ��?
 #define SBP_PERIODIC_EVT_PERIOD                   100//������100ms
 
 //����¼�Ĵӻ���ַ
@@ -163,11 +164,11 @@ typedef enum
 //mac��ַ���ַ����� (һ���ֽڵ��������ַ�)
 #define MAC_ADDR_CHAR_LEN                          12//mac��ַ���ַ����� (һ���ֽڵ��������ַ�)
 
-// �������û���������Ϣ��ӻ���Ϣ
+// �������û���������Ϣ��ӻ����?
 typedef enum
 {
     PARA_ALL_FACTORY = 0,           //ȫ���ָ���������
-    PARA_PARI_FACTORY = 1,          //�����Ϣ�ָ���������-�൱����������Ϣ��ӻ���Ϣ
+    PARA_PARI_FACTORY = 1,          //������?�ָ���������-�൱����������Ϣ��ӻ����?
 }PARA_SET_FACTORY;
 
 // Ӧ�ó���״̬
@@ -193,15 +194,15 @@ typedef enum
 typedef enum
 {
   BLE_CENTRAL_CONNECT_CMD_NULL,              //���� AT ��������  ��
-  BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ�ַ
+  BLE_CENTRAL_CONNECT_CMD_CONNL,             //���� AT ��������  ��������ɹ����ĵ��?
   BLE_CENTRAL_CONNECT_CMD_CON,               //���� AT ��������  ����ָ����ַ
-  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����
-  BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ�ַ
+  BLE_CENTRAL_CONNECT_CMD_DISC,              //���� AT ɨ��ӻ�����?
+  BLE_CENTRAL_CONNECT_CMD_CONN,              //���� AT ��������  ����ɨ�赽�ĵ�ַ���±�Ŷ�Ӧ�ĵ��?
 }BLE_CENTRAL_CONNECT_CMD;
 extern BLE_CENTRAL_CONNECT_CMD g_Central_connect_cmd ;
 
 // ����ϵͳ�ṹ������ �ýṹ���ڿ���ʱ��nv flash �ж�ȡ�� �������޸�ʱ�� ��Ҫд��nv flash
-// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�
+// ������ ��ʵ����ϵͳ��������ݻ�����һ�����õ�?
 typedef struct 
 {
     /*
@@ -218,7 +219,7 @@ typedef struct
     // �豸���ƣ�� 11 λ���ֻ���ĸ�����л��ߺ��»��ߣ��������������ַ�    
     uint8 name[12];                 
     BLE_ROLE role;                  //����ģʽ  0: �ӻ�   1: ����
-    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���12λ �ַ���ʾ
+    uint8 mac_addr[MAC_ADDR_CHAR_LEN+1];            //����mac��ַ ���?12λ �ַ���ʾ
     int8 rssi;                              //  RSSI �ź�ֵ
     uint8 rxGain;                           //  ��������ǿ��
     uint8 txPower;                          //  �����ź�ǿ��
@@ -262,7 +263,7 @@ extern bool simpleBLECentralCanSend;
 extern bool simpleBLEChar6DoWrite;
 
 #if 1
-// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ ������ ������С  --amomcu.com
+// �ú�����ʱʱ��Ϊ1ms�� ��ʾ������������ �������? ������С  --amomcu.com
 void simpleBLE_Delay_1ms(int times);
 
 // �ַ����Ա�
@@ -276,14 +277,14 @@ char *bdAddr2Str( uint8 *pAddr );
 // �����������ݵ�nv flash
 void simpleBLE_WriteAllDataToFlash();
 
-// ��ȡ�Զ���� nv flash ����  -------δʹ�õ�
+// ��ȡ�Զ����? nv flash ����  -------δʹ�õ�
 void simpleBLE_ReadAllDataToFlash();
 
 //flag: PARA_ALL_FACTORY:  ȫ���ָ���������
 //flag: PARA_PARI_FACTORY: ��������Ϣ
 void simpleBLE_SetAllParaDefault(PARA_SET_FACTORY flag); 
 
-// ��ӡ���д洢��nv flash�����ݣ� ������Դ���
+// ��ӡ���д洢��nv flash�����ݣ� ������Դ���?
 void PrintAllPara(void);
 
 // �����豸��ɫ

@@ -1,0 +1,15 @@
+2020年4月21日：BLEBeaconDevice_Bootup_6Day_PressResetWaketime.hex
+#define MAJOR_HW_VERSION   0x00
+#define MINOR_HW_VERSION   0x03
+
+#define MAJOR_SW_VERSION   0x01
+#if (POWER_OFF_SUPPORT == TRUE)
+#define MIDDLE_SW_VERSION  0x01
+#elif (POWER_OFF_SUPPORT == FALSE)
+#define MIDDLE_SW_VERSION  0x00
+#endif
+#define MINOR_SW_VERSION   0x04
+1)boot up directly
+2)Boot up 6Days
+3)No Power off support (long + double click)
+4)once press button, reset the wake up timer.
