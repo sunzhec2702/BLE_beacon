@@ -194,7 +194,7 @@ static uint8 battery_voltage = 0;
 // Key related
 static uint8 key_pressed_count = 0;
 static uint8 key_processing = FALSE;
-//first boot up
+//first boot up. First boot up means "insert battery, blink to show good, then go to sleep mode."
 static bool first_boot = FALSE;
 // Low power status
 static bool low_power_state = FALSE;
@@ -428,6 +428,7 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
       return (events ^ SBP_WAKE_EVT);
     }
     g_sleepFlag = FALSE;
+    // First boot will not start the adv. Only blink then go to sleep mode, need to press two times to really boot up.
     if (first_boot == TRUE)
     {
       first_boot = FALSE;
@@ -588,9 +589,9 @@ uint16 SimpleBLEPeripheral_ProcessEvent(uint8 task_id, uint16 events)
     {
       if (key_pressed_count == 1)
       {
-        first_boot = TRUE;
+        first_boot = FALSE;
+        osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);   
       }
-      osal_set_event(simpleBLETaskId, SBP_WAKE_EVT);        
     }
     else if (g_sleepFlag == FALSE)
     {
